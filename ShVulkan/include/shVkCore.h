@@ -67,15 +67,15 @@ typedef struct ShVkCore {
 } ShVkCore;
 
 
-#define shGetGraphicsQueue(p_core) vkGetDeviceQueue(p_core->device, p_core->graphics_queue.queue_family_index, 0, &p_core->graphics_queue.queue)
+#define shGetGraphicsQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->graphics_queue.queue_family_index, 0, &(p_core)->graphics_queue.queue)
 
-#define shGetComputeQueue(p_core) vkGetDeviceQueue(p_core->device, p_core->compute_queue.queue_family_index, 0, &p_core->compute_queue.queue)
+#define shGetComputeQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->compute_queue.queue_family_index, 0, &(p_core)->compute_queue.queue)
 
 #define shInitSwapchainData(p_core) shCreateSwapchain(p_core); shGetSwapchainImages(p_core); shCreateSwapchainImageViews(p_core)
 
-#define shCreateDepthImageView(p_core) shCreateImageView(p_core, p_core->depth_image, SH_DEPTH_IMAGE, &p_core->depth_image_view)
+#define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
 
-#define shInitCommands(p_core) shCreateCmdPool(p_core->device, p_core->graphics_queue.queue_family_index, &p_core->cmd_pools[0]); shCreateCmdBuffer(p_core->device, p_core->cmd_pools[0], &p_core->cmd_buffers[0])
+#define shInitCommands(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->cmd_pools[0]); shCreateCmdBuffer((p_core)->device, (p_core)->cmd_pools[0], &(p_core)->cmd_buffers[0])
 
 extern ShVkCore shVkCoreInitPrerequisites();
 
