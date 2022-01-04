@@ -76,13 +76,13 @@ void shBindDescriptorSets(const ShVkCore core, ShVkPipelineData pipeData) {
 		0, NULL);
 }
 
-void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count, const uint32_t stride, const uint8_t indexed) {
+void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count_ds, const uint32_t stride, const uint8_t indexed) {
 
 	if (indexed) {
-		vkCmdDrawIndexed(graphicsCmdBuffer, count, 1, 0, 0, 0);
+		vkCmdDrawIndexed(graphicsCmdBuffer, count_ds, 1, 0, 0, 0);
 	}
 	else {
-		vkCmdDraw(graphicsCmdBuffer, count / stride, 1, 0, 0);
+		vkCmdDraw(graphicsCmdBuffer, count_ds, 1, 0, 0);
 	}
 }
 

@@ -27,7 +27,7 @@ extern void shBindIndexBuffer(const ShVkCore core, VkBuffer* p_index_buffer);
 
 extern void shBindDescriptorSets(const ShVkCore core, ShVkPipelineData pipeData);
 
-extern void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count, const uint32_t stride, const uint8_t indexed);
+extern void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count_ds, const uint8_t indexed);
 
 extern void shFrameEnd(const ShVkCore core, const uint32_t swapchainImageIndex);
 
