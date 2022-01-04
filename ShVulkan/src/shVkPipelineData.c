@@ -346,9 +346,8 @@ void shSetFixedStates(const ShVkCore core, ShFixedStateFlags flags, ShVkFixedSta
 
 }
 
-void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates, ShPipelineSetupFlags setupFlags, ShVkPipelineData* p_pipe_data) {
+void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
-	p_pipe_data->setupFlags = setupFlags;
 
 	VkPipelineLayoutCreateInfo mainPipelineLayoutCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,	//sType;

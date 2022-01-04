@@ -44,11 +44,6 @@ typedef struct ShVkFixedStates {
 
 } ShVkFixedStates;
 
-typedef enum ShPipelineSetupFlags {
-	SH_PIPELINE_SETUP_PUSH_CONSTANTS_BIT = 0b0001,
-	SH_PIPELINE_SETUP_UNIFORM_BUFFER_BIT = 0b0010,
-} ShPipelineSetupFlags;
-
 typedef struct ShUniformBuffer {
 	VkBuffer						uniform_buffer;
 	uint32_t						uniform_buffer_size;
@@ -76,7 +71,6 @@ typedef struct ShVkPipelineData {
 	/*Pipeline*/
 	VkPipelineLayout					main_pipeline_layout;
 	VkPipeline							pipeline;
-	ShPipelineSetupFlags				setupFlags;
 } ShVkPipelineData;
 
 
@@ -108,7 +102,7 @@ extern void shCreateDescriptorPool(const ShVkCore core, ShUniformBuffer* p_unifo
 
 extern void shAllocateDescriptorSets(const ShVkCore core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data);
 
-extern void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates, ShPipelineSetupFlags setupFlags, ShVkPipelineData* p_pipe_data);
+extern void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates, ShVkPipelineData* p_pipe_data);
 
 extern void shDestroyPipeline(const ShVkCore core, ShVkPipelineData* p_pipe_data);
 
