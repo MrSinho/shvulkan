@@ -15,12 +15,6 @@ typedef enum ShFixedStateFlags {
 	SH_FIXED_STATES_VERTEX_TCOORDS_BIT = 0x100
 } ShFixedStateFlags;
 
-typedef enum ShShaderStageFlags {
-	SH_SHADER_STAGE_VERTEX_BIT = 0x00000001,
-	SH_SHADER_STAGE_GEOMETRY_BIT = 0x00000008,
-	SH_SHADER_STAGE_FRAGMENT_BIT = 0x00000010
-} ShShaderStageFlags;
-
 typedef struct ShVkFixedStates {
 	/*Shader inputs*/
 	VkVertexInputBindingDescription			vertex_binding_description;
