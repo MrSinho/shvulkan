@@ -159,7 +159,7 @@ void shSetVertexInputState(const ShFixedStateFlags flags, VkVertexInputBindingDe
 		VK_FORMAT_R32G32B32_SFLOAT,	//format;
 		0							//offset;
 	};
-	if (flags & SH_FIXED_STATES_VERTEX_POSITIONS_BIT) {
+	if (flags & SH_FIXED_STATES_VERTEX_POSITIONS) {
 		*p_vertex_input_attribute_count += 1;
 		vertex_binding_description.stride += sizeof(float) * 3;
 	}
@@ -170,7 +170,7 @@ void shSetVertexInputState(const ShFixedStateFlags flags, VkVertexInputBindingDe
 		VK_FORMAT_R32G32B32_SFLOAT,		//format;
 		sizeof(float) * 5				//offset;
 	};
-	if (flags & SH_FIXED_STATES_VERTEX_NORMALS_BIT) {
+	if (flags & SH_FIXED_STATES_VERTEX_NORMALS) {
 		*p_vertex_input_attribute_count += 1;
 		vertex_binding_description.stride += sizeof(float) * 3;
 	}
@@ -181,20 +181,20 @@ void shSetVertexInputState(const ShFixedStateFlags flags, VkVertexInputBindingDe
 		VK_FORMAT_R32G32_SFLOAT,	//format;
 		sizeof(float)*3				//offset;
 	};
-	if (flags & SH_FIXED_STATES_VERTEX_TCOORDS_BIT) {
+	if (flags & SH_FIXED_STATES_VERTEX_TCOORDS) {
 		*p_vertex_input_attribute_count += 1;
 		vertex_binding_description.stride += sizeof(float) * 2;
 	}
 
 	p_vertex_input_attributes = (VkVertexInputAttributeDescription*)malloc(*p_vertex_input_attribute_count * sizeof(VkVertexInputAttributeDescription));
 	assert(p_vertex_input_attributes != NULL);
-	if (flags & SH_FIXED_STATES_VERTEX_POSITIONS_BIT) {
+	if (flags & SH_FIXED_STATES_VERTEX_POSITIONS) {
 		p_vertex_input_attributes[0] = positionInputAttributeDescription;
 	}
-	if (flags & SH_FIXED_STATES_VERTEX_NORMALS_BIT) {
+	if (flags & SH_FIXED_STATES_VERTEX_NORMALS) {
 		p_vertex_input_attributes[1] = normalInputAttributeDescription;
 	}
-	if (flags & SH_FIXED_STATES_VERTEX_TCOORDS_BIT) {
+	if (flags & SH_FIXED_STATES_VERTEX_TCOORDS) {
 		p_vertex_input_attributes[2] = uvInputAttributeDescription;
 	}
 
@@ -333,10 +333,10 @@ void shSetFixedStates(const ShVkCore core, ShFixedStateFlags flags, ShVkFixedSta
 	}
 
 	shCreateRasterizer(&p_fixed_states->rasterizer);
-	if (flags & SH_FIXED_STATES_POLYGON_MODE_WIREFRAME_BIT) {
+	if (flags & SH_FIXED_STATES_POLYGON_MODE_WIREFRAME) {
 		p_fixed_states->rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
 	}
-	if (flags & SH_FIXED_STATES_POLYGON_MODE_POINTS_BIT) {
+	if (flags & SH_FIXED_STATES_POLYGON_MODE_POINTS) {
 		p_fixed_states->rasterizer.polygonMode = VK_POLYGON_MODE_POINT;
 	}
 

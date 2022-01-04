@@ -1,7 +1,5 @@
 #include "shVkMemoryInfo.h"
-#include "shVkCore.h"
 #include "shVkCheck.h"
-#include "shVkPipelineData.h"
 
 #include <stdlib.h>
 #include <memory.h>
@@ -87,7 +85,7 @@ void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkD
 	vkFreeMemory(device, memory, NULL);
 }
 
-void shCreateImage(ShVkCore core, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory) {
+void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory) {
 	VkExtent3D image_extent = {
 		width, height, 1
 	};
@@ -108,15 +106,15 @@ void shCreateImage(ShVkCore core, const uint32_t width, const uint32_t height, V
 		0,										//queueFamilyIndexCount;
 		NULL									//pQueueFamilyIndices;
 	};
-	shCheckVkResult(vkCreateImage(core.device, &image_create_info, NULL, p_image),
+	shCheckVkResult(vkCreateImage(device, &image_create_info, NULL, p_image),
 		"error creating image"
 	);
 
 	VkMemoryRequirements memory_requirements;
-	vkGetImageMemoryRequirements(core.device, *p_image, &memory_requirements);
+	vkGetImageMemoryRequirements(device, *p_image, &memory_requirements);
 
 	uint32_t memory_type_index = 0;
-	shGetMemoryType(core.device, core.physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index);
+	shGetMemoryType(device, physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index);
 
 	VkMemoryAllocateInfo memory_allocate_info = {
 		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -125,9 +123,9 @@ void shCreateImage(ShVkCore core, const uint32_t width, const uint32_t height, V
 		memory_type_index
 	};
 
-	shCheckVkResult(vkAllocateMemory(core.device, &memory_allocate_info, NULL, p_image_memory),
+	shCheckVkResult(vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
 		"error allocating image memory"
 	);
 
-	vkBindImageMemory(core.device, *p_image, *p_image_memory, 0);
+	vkBindImageMemory(device, *p_image, *p_image_memory, 0);
 }

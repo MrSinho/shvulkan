@@ -32,13 +32,6 @@ typedef struct ShVkCore	ShVkCore;
 #define shInitDepthData(p_core)\
 	shCreateDepthImage(p_core); shCreateDepthImageView(p_core)
 
-typedef struct ShMesh {
-	VkBuffer 		vertex_buffer;
-	VkDeviceMemory 	vertex_buffer_memory;
-	VkBuffer		index_buffer;
-	VkDeviceMemory	index_buffer_memory;
-} ShMesh;
-
 extern void shCreateBuffer(const VkDevice device, const uint32_t bufferSize, VkBufferUsageFlagBits usage_flags, VkBuffer* p_buffer);
 
 extern void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t typeFlags, uint32_t *p_memory_type_index);
@@ -49,6 +42,6 @@ extern void shMapMemory(const VkDevice device, const VkDeviceMemory memory, cons
 
 extern void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory);
 
-extern void shCreateImage(ShVkCore core, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
+extern void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
 
 #endif//SH_VK_MEMORY_H

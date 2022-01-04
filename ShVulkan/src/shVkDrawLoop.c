@@ -51,13 +51,13 @@ void shBindPipeline(const VkCommandBuffer graphicsCmdBuffer, const ShVkPipelineD
 	vkCmdBindPipeline(graphicsCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeData.pipeline);
 }
 
-void shBindVertexBuffers(const ShVkCore core, const ShMesh mesh) {
+void shBindVertexBuffer(const ShVkCore core, VkBuffer* p_vertex_buffer) {
 	const VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(core.cmd_buffers[0], 0, 1, &mesh.vertex_buffer, &offset);
+	vkCmdBindVertexBuffers(core.cmd_buffers[0], 0, 1, p_vertex_buffer, &offset);
 }
 
-void shBindIndexBuffers(const ShVkCore core, const ShMesh mesh) {
-	vkCmdBindIndexBuffer(core.cmd_buffers[0], mesh.index_buffer, 0, VK_INDEX_TYPE_UINT32);
+void shBindIndexBuffer(const ShVkCore core, VkBuffer* p_index_buffer) {
+	vkCmdBindIndexBuffer(core.cmd_buffers[0], *p_index_buffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
 void shPushConstants(const VkCommandBuffer graphicsCmdBuffer, const ShVkPipelineData pipeData, const void* pPushConstantsData) {
@@ -76,13 +76,13 @@ void shBindDescriptorSets(const ShVkCore core, ShVkPipelineData pipeData) {
 		0, NULL);
 }
 
-void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count, const uint32_t stride, const ShMesh mesh) {
+void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count, const uint32_t stride, const uint8_t indexed) {
 
-	if (mesh.index_buffer_memory == NULL) {
-		vkCmdDraw(graphicsCmdBuffer, count / stride, 1, 0, 0);
+	if (indexed) {
+		vkCmdDrawIndexed(graphicsCmdBuffer, count, 1, 0, 0, 0);
 	}
 	else {
-		vkCmdDrawIndexed(graphicsCmdBuffer, count, 1, 0, 0, 0);
+		vkCmdDraw(graphicsCmdBuffer, count / stride, 1, 0, 0);
 	}
 }
 
