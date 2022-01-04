@@ -76,7 +76,7 @@ void shBindDescriptorSets(const ShVkCore core, ShVkPipelineData pipeData) {
 		0, NULL);
 }
 
-void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count_ds, const uint32_t stride, const uint8_t indexed) {
+void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count_ds, const uint8_t indexed) {
 
 	if (indexed) {
 		vkCmdDrawIndexed(graphicsCmdBuffer, count_ds, 1, 0, 0, 0);
