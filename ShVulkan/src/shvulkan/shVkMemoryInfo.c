@@ -1,5 +1,5 @@
-#include "shVkMemoryInfo.h"
-#include "shVkCheck.h"
+#include "shvulkan/shVkMemoryInfo.h"
+#include "shvulkan/shVkCheck.h"
 
 #include <stdlib.h>
 #include <memory.h>

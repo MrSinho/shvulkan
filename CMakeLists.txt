@@ -16,7 +16,7 @@ if(SH_USE_VULKAN_1_1)
 endif(SH_USE_VULKAN_1_1)
 
 #ShVulkan
-set(SH_VULKAN_SRC_DIR ShVulkan/src/)
+set(SH_VULKAN_SRC_DIR ShVulkan/src/shvulkan)
 add_library(ShVulkan STATIC 
     ${SH_VULKAN_SRC_DIR}/shVkCore.c
     ${SH_VULKAN_SRC_DIR}/shVkMemoryInfo.c

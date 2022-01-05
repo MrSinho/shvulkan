@@ -4,7 +4,7 @@
 #include <vulkan/vulkan.h>
 #include <stdint.h>
 
-#include "shVkVersion.h"
+#include "shvulkan/shVkVersion.h"
 
 typedef struct ShVkPipelineData ShVkPipelineData;
 

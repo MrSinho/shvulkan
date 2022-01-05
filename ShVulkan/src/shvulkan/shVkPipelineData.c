@@ -1,7 +1,7 @@
-#include "shVkCore.h"
-#include "shVkPipelineData.h"
-#include "shVkCheck.h"
-#include "shVkMemoryInfo.h"
+#include "shvulkan/shVkCore.h"
+#include "shvulkan/shVkPipelineData.h"
+#include "shvulkan/shVkCheck.h"
+#include "shvulkan/shVkMemoryInfo.h"
 
 #include <stdlib.h>
 #include <assert.h>
