@@ -6,23 +6,23 @@
 
 typedef struct ShVkCore	ShVkCore;
 
-#define shCreateVertexBuffer(core, p_mesh_info, p_mesh)\
-	shCreateBuffer(core.device, (p_mesh_info)->vertex_count * sizeof((p_mesh_info)->p_vertices[0]), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, &(p_mesh)->vertex_buffer)
+#define shCreateVertexBuffer(core, size, p_vertex_buffer)\
+	shCreateBuffer(core.device, size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, p_vertex_buffer)
 
-#define shAllocateVertexBuffer(core, p_mesh)\
-	shAllocateMemory(core.device, core.physical_device, (p_mesh)->vertex_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &(p_mesh)->vertex_buffer_memory)
+#define shAllocateVertexBuffer(core, vertex_buffer, p_vertex_buffer_memory)\
+	shAllocateMemory(core.device, core.physical_device, vertex_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_vertex_buffer_memory)
 
-#define shMapVertexBufferMemory(core, p_mesh_info, p_mesh)\
-	shMapMemory(core.device, (p_mesh)->vertex_buffer_memory, (p_mesh_info)->vertex_count * sizeof((p_mesh_info)->p_vertices[0]), (void*)(p_mesh_info)->p_vertices)
+#define shMapVertexBufferMemory(core, vertex_buffer_memory, size, p_vertices)\
+	shMapMemory(core.device, vertex_buffer_memory, size, (void*)p_vertices)
 
-#define shCreateIndexBuffer(core, p_mesh_info, p_mesh)\
-	shCreateBuffer(core.device, (p_mesh_info)->index_count * sizeof((p_mesh_info)->p_indices[0]), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, &(p_mesh)->index_buffer)
+#define shCreateIndexBuffer(core, size, p_index_buffer)\
+	shCreateBuffer(core.device, size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, p_index_buffer)
 
-#define shAllocateIndexBuffer(core, p_mesh)\
-	shAllocateMemory(core.device, core.physical_device, (p_mesh)->index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &(p_mesh)->index_buffer_memory)
+#define shAllocateIndexBuffer(core, index_buffer, p_index_buffer_memory)\
+	shAllocateMemory(core.device, core.physical_device, index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, index_buffer_memory)
 
-#define shMapIndexBufferMemory(core, p_mesh_info, p_mesh)\
-	shMapMemory(core.device, (p_mesh)->index_buffer_memory, (p_mesh_info)->index_count * sizeof((p_mesh_info)->p_indices[0]), (void*)(p_mesh_info)->p_indices)
+#define shMapIndexBufferMemory(core, index_buffer_memory, size, p_indices)\
+	shMapMemory(core.device, index_buffer_memory, size, (void*)p_indices)
 
 #define SH_DEPTH_IMAGE_FORMAT VK_FORMAT_D32_SFLOAT
 
