@@ -19,7 +19,7 @@ typedef struct ShVkCore	ShVkCore;
 	shCreateBuffer(core.device, size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, p_index_buffer)
 
 #define shAllocateIndexBuffer(core, index_buffer, p_index_buffer_memory)\
-	shAllocateMemory(core.device, core.physical_device, index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, index_buffer_memory)
+	shAllocateMemory(core.device, core.physical_device, index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_index_buffer_memory)
 
 #define shMapIndexBufferMemory(core, index_buffer_memory, size, p_indices)\
 	shMapMemory(core.device, index_buffer_memory, size, (void*)p_indices)
