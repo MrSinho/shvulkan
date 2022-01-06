@@ -6,6 +6,18 @@
 
 typedef struct ShVkCore	ShVkCore;
 
+#define SH_VEC1_SIGNED_FLOAT		VK_FORMAT_R32_SFLOAT
+#define SH_VEC2_SIGNED_FLOAT		VK_FORMAT_R32G32_SFLOAT
+#define SH_VEC3_SIGNED_FLOAT		VK_FORMAT_R32G32B32_SFLOAT
+
+#define SH_VEC1_SIGNED_INT			VK_FORMAT_R32_SINT
+#define SH_VEC2_SIGNED_INT			VK_FORMAT_R32G32_SINT
+#define SH_VEC3_SIGNED_INT			VK_FORMAT_R32G32B32_SINT
+
+#define SH_VEC1_UNSIGNED_INT		VK_FORMAT_R32_UINT
+#define SH_VEC2_UNSIGNED_INT		VK_FORMAT_R32G32_UINT
+#define SH_VEC3_UNSIGNED_INT		VK_FORMAT_R32G32B32_UINT
+
 #define shCreateVertexBuffer(core, size, p_vertex_buffer)\
 	shCreateBuffer(core.device, size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, p_vertex_buffer)
 
@@ -23,6 +35,12 @@ typedef struct ShVkCore	ShVkCore;
 
 #define shMapIndexBufferMemory(core, index_buffer_memory, size, p_indices)\
 	shMapMemory(core.device, index_buffer_memory, size, (void*)p_indices)
+
+#define shClearVertexBufferMemory(device, vertex_buffer, vertex_buffer_memory)\
+	shClearBufferMemory(device, vertex_buffer, vertex_buffer_memory)
+
+#define shClearIndexBufferMemory(device, index_buffer, index_buffer_memory)\
+	shClearBufferMemory(device, index_buffer, index_buffer_memory)
 
 #define SH_DEPTH_IMAGE_FORMAT VK_FORMAT_D32_SFLOAT
 

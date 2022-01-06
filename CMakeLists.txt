@@ -29,14 +29,19 @@ target_include_directories(ShVulkan PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/ShVulkan/include
 )
 target_link_libraries(ShVulkan PUBLIC ${Vulkan_LIBRARIES})
+set_target_properties(ShVulkan PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-#ShVulkanExample
-add_executable(ShVulkanExample ShVulkanExample/src/ShVulkanExample.c)
-target_link_libraries(ShVulkanExample PUBLIC ShVulkan)
-
-#OUTPUT
-set_target_properties(ShVulkan ShVulkanExample PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
+#ShVulkan_graphics_example
+option(SH_VULKAN_BUILD_EXAMPLES OFF)
+if (SH_VULKAN_BUILD_EXAMPLES)
+add_subdirectory(external/glfw)
+add_executable(ShVulkan_graphics_example 
+	examples/src/graphicsExample.c
+	examples/src/computeExample.c
+)
+target_link_libraries(ShVulkan_graphics_example PUBLIC ShVulkan glfw)
+set_target_properties(ShVulkan_graphics_example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
     VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
 )
+endif(SH_VULKAN_BUILD_EXAMPLES)

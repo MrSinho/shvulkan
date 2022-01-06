@@ -81,6 +81,7 @@ void shMapMemory(const VkDevice device, const VkDeviceMemory memory, const uint3
 }
 
 void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory) {
+	vkDeviceWaitIdle(device);
 	vkDestroyBuffer(device, buffer, NULL);
 	vkFreeMemory(device, memory, NULL);
 }

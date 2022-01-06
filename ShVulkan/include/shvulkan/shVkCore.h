@@ -46,8 +46,10 @@ typedef struct ShVkCore {
 	ShQueue						graphics_queue;
 	ShQueue						compute_queue;
 	/*Commands*/
-	VkCommandPool				cmd_pools[2];
-	VkCommandBuffer				cmd_buffers[2];
+	VkCommandPool				graphics_cmd_pool;
+	VkCommandPool				compute_cmd_pool;
+	VkCommandBuffer				graphics_cmd_buffer;
+	VkCommandBuffer				compute_cmd_buffer;
 	/*Swapchain*/
 	VkSwapchainKHR				swapchain;
 	VkFormat					swapchain_image_format;
@@ -75,7 +77,7 @@ typedef struct ShVkCore {
 
 #define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
 
-#define shInitCommands(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->cmd_pools[0]); shCreateCmdBuffer((p_core)->device, (p_core)->cmd_pools[0], &(p_core)->cmd_buffers[0])
+#define shInitCommands(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->graphics_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->graphics_cmd_pool, &(p_core)->graphics_cmd_buffer)
 
 extern ShVkCore shVkCoreInitPrerequisites();
 

@@ -570,8 +570,8 @@ void shCmdRelease(ShVkCore* p_core) {
 	vkDestroySemaphore(p_core->device, p_core->render_semaphore, NULL);
 	vkDestroyFence(p_core->device, p_core->render_fence, NULL);
 
-	vkFreeCommandBuffers(p_core->device, p_core->cmd_pools[0], 1, &p_core->cmd_buffers[0]);
-	vkDestroyCommandPool(p_core->device, p_core->cmd_pools[0], NULL);
+	vkFreeCommandBuffers(p_core->device, p_core->graphics_cmd_pool, 1, &p_core->graphics_cmd_buffer);
+	vkDestroyCommandPool(p_core->device, p_core->graphics_cmd_pool, NULL);
 }
 
 void shRenderPassRelease(ShVkCore* p_core) {
@@ -593,6 +593,7 @@ void shInstanceRelease(ShVkCore* p_core) {
 
 void shVulkanRelease(ShVkCore* p_core) {
 	assert(p_core != NULL);
+	vkDeviceWaitIdle(p_core->device);
 	shSwapchainRelease(p_core);
 	shDepthBufferRelease(p_core);
 	shSurfaceRelease(p_core);

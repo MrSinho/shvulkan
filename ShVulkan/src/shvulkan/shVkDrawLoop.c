@@ -9,7 +9,7 @@ void shFrameReset(const ShVkCore core) {
 	vkWaitForFences(core.device, 1, &core.render_fence, 1, 1000000000);
 	vkResetFences(core.device, 1, &core.render_fence);
 
-	vkResetCommandBuffer(core.cmd_buffers[0], 0);
+	vkResetCommandBuffer(core.graphics_cmd_buffer, 0);
 }
 
 void shFrameBegin(const ShVkCore core, uint32_t* p_swapchain_image_index) {
@@ -42,54 +42,54 @@ void shFrameBegin(const ShVkCore core, uint32_t* p_swapchain_image_index) {
 		renderPassBeginInfo.clearValueCount = 2;
 	}
 
-	vkBeginCommandBuffer(core.cmd_buffers[0], &cmdBufferBeginInfo);
+	vkBeginCommandBuffer(core.graphics_cmd_buffer, &cmdBufferBeginInfo);
 
-	vkCmdBeginRenderPass(core.cmd_buffers[0], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(core.graphics_cmd_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void shBindPipeline(const VkCommandBuffer graphicsCmdBuffer, const ShVkPipelineData pipeData) {
-	vkCmdBindPipeline(graphicsCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeData.pipeline);
+void shBindPipeline(const VkCommandBuffer graphics_cmd_buffer, const ShVkPipelineData pipe_data) {
+	vkCmdBindPipeline(graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipe_data.pipeline);
 }
 
 void shBindVertexBuffer(const ShVkCore core, VkBuffer* p_vertex_buffer) {
 	const VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(core.cmd_buffers[0], 0, 1, p_vertex_buffer, &offset);
+	vkCmdBindVertexBuffers(core.graphics_cmd_buffer, 0, 1, p_vertex_buffer, &offset);
 }
 
 void shBindIndexBuffer(const ShVkCore core, VkBuffer* p_index_buffer) {
-	vkCmdBindIndexBuffer(core.cmd_buffers[0], *p_index_buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdBindIndexBuffer(core.graphics_cmd_buffer, *p_index_buffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
-void shPushConstants(const VkCommandBuffer graphicsCmdBuffer, const ShVkPipelineData pipeData, const void* pPushConstantsData) {
-	if (pipeData.push_constant_range.size > 0 || pPushConstantsData != NULL) {
-		vkCmdPushConstants(graphicsCmdBuffer, pipeData.main_pipeline_layout, pipeData.push_constant_range.stageFlags, pipeData.push_constant_range.offset, pipeData.push_constant_range.size, pPushConstantsData);
+void shPushConstants(const VkCommandBuffer graphics_cmd_buffer, const ShVkPipelineData pipe_data, const void* p_push_constants_data) {
+	if (pipe_data.push_constant_range.size > 0 || p_push_constants_data != NULL) {
+		vkCmdPushConstants(graphics_cmd_buffer, pipe_data.main_pipeline_layout, pipe_data.push_constant_range.stageFlags, pipe_data.push_constant_range.offset, pipe_data.push_constant_range.size, p_push_constants_data);
 	}
 }
 
-void shBindDescriptorSets(const ShVkCore core, ShVkPipelineData pipeData) {
+void shBindDescriptorSets(const ShVkCore core, ShVkPipelineData pipe_data) {
 	vkUpdateDescriptorSets(core.device, 
-		pipeData.uniform_buffer_count, pipeData.p_write_descriptor_sets, 
+		pipe_data.uniform_buffer_count, pipe_data.p_write_descriptor_sets, 
 		0, NULL);
-	vkCmdBindDescriptorSets(core.cmd_buffers[0], VK_PIPELINE_BIND_POINT_GRAPHICS,
-		pipeData.main_pipeline_layout, 
-		0, pipeData.uniform_buffer_count, pipeData.p_descriptor_sets, 
+	vkCmdBindDescriptorSets(core.graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipe_data.main_pipeline_layout, 
+		0, pipe_data.uniform_buffer_count, pipe_data.p_descriptor_sets, 
 		0, NULL);
 }
 
-void shDraw(const VkCommandBuffer graphicsCmdBuffer, const uint32_t count_ds, const uint8_t indexed) {
+void shDraw(const VkCommandBuffer graphics_cmd_buffer, const uint32_t count_div_stride, const uint8_t indexed) {
 
 	if (indexed) {
-		vkCmdDrawIndexed(graphicsCmdBuffer, count_ds, 1, 0, 0, 0);
+		vkCmdDrawIndexed(graphics_cmd_buffer, count_div_stride, 1, 0, 0, 0);
 	}
 	else {
-		vkCmdDraw(graphicsCmdBuffer, count_ds, 1, 0, 0);
+		vkCmdDraw(graphics_cmd_buffer, count_div_stride, 1, 0, 0);
 	}
 }
 
-void shFrameEnd(const ShVkCore core, const uint32_t swapchainImageIndex) {
+void shFrameEnd(const ShVkCore core, const uint32_t swapchain_image_index) {
 
-	vkCmdEndRenderPass(core.cmd_buffers[0]);
-	vkEndCommandBuffer(core.cmd_buffers[0]);
+	vkCmdEndRenderPass(core.graphics_cmd_buffer);
+	vkEndCommandBuffer(core.graphics_cmd_buffer);
 
 	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
@@ -102,7 +102,7 @@ void shFrameEnd(const ShVkCore core, const uint32_t swapchainImageIndex) {
 		&core.present_semaphore,		//pWaitSemaphores;
 		&waitStage,						//pWaitDstStageMask;
 		1,								//commandBufferCount;
-		&core.cmd_buffers[0],			//pCommandBuffers;
+		&core.graphics_cmd_buffer,			//pCommandBuffers;
 		1,								//signalSemaphoreCount;
 		&core.render_semaphore,			//pSignalSemaphores;
 	};
@@ -117,7 +117,7 @@ void shFrameEnd(const ShVkCore core, const uint32_t swapchainImageIndex) {
 		&core.render_semaphore, 			//pWaitSemaphores;
 		1,									//swapchainCount;
 		&core.swapchain,					//pSwapchains;
-		&swapchainImageIndex,				//pImageIndices;
+		&swapchain_image_index,				//pImageIndices;
 		NULL								//pResults;
 	};
 

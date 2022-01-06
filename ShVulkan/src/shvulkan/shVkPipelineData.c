@@ -142,70 +142,31 @@ void shCreateShaderStage(const VkDevice device, const VkShaderModule shModule, c
 
 }
 
-void shSetVertexInputState(const ShFixedStateFlags flags, VkVertexInputBindingDescription* p_vertex_binding, uint32_t* p_vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
-	assert(p_vertex_binding != NULL && p_vertex_input_attribute_count != NULL && p_vertex_input_state);
-	*p_vertex_input_attribute_count = 0;
-	
-	VkVertexInputBindingDescription vertex_binding_description = {
-		0,									//binding;
-		0,									//stride;
-		VK_VERTEX_INPUT_RATE_VERTEX 		//inputRate;
+void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states) {
+	assert(p_fixed_states != NULL);
+	VkVertexInputAttributeDescription vertex_input_attribute = {
+		location,
+		0,
+		format,
+		offset
 	};
-	
+	p_fixed_states->p_vertex_input_attributes[location] = vertex_input_attribute;
+	p_fixed_states->vertex_binding_description.stride += size;
+}
 
-	VkVertexInputAttributeDescription positionInputAttributeDescription = {
-		0,							//location;
-		0,							//binding;
-		VK_FORMAT_R32G32B32_SFLOAT,	//format;
-		0							//offset;
-	};
-	if (flags & SH_FIXED_STATES_VERTEX_POSITIONS) {
-		*p_vertex_input_attribute_count += 1;
-		vertex_binding_description.stride += sizeof(float) * 3;
-	}
-	
-	VkVertexInputAttributeDescription normalInputAttributeDescription = {
-		1,								//location;
-		0,								//binding;
-		VK_FORMAT_R32G32B32_SFLOAT,		//format;
-		sizeof(float) * 5				//offset;
-	};
-	if (flags & SH_FIXED_STATES_VERTEX_NORMALS) {
-		*p_vertex_input_attribute_count += 1;
-		vertex_binding_description.stride += sizeof(float) * 3;
-	}
+void shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
+	assert(p_vertex_binding != NULL && p_vertex_input_state);
 
-	VkVertexInputAttributeDescription uvInputAttributeDescription = {
-		2,							//location;
-		0,							//binding;
-		VK_FORMAT_R32G32_SFLOAT,	//format;
-		sizeof(float)*3				//offset;
-	};
-	if (flags & SH_FIXED_STATES_VERTEX_TCOORDS) {
-		*p_vertex_input_attribute_count += 1;
-		vertex_binding_description.stride += sizeof(float) * 2;
-	}
+	p_vertex_binding->binding = 0;
+	p_vertex_binding->inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
-	p_vertex_input_attributes = (VkVertexInputAttributeDescription*)malloc(*p_vertex_input_attribute_count * sizeof(VkVertexInputAttributeDescription));
-	assert(p_vertex_input_attributes != NULL);
-	if (flags & SH_FIXED_STATES_VERTEX_POSITIONS) {
-		p_vertex_input_attributes[0] = positionInputAttributeDescription;
-	}
-	if (flags & SH_FIXED_STATES_VERTEX_NORMALS) {
-		p_vertex_input_attributes[1] = normalInputAttributeDescription;
-	}
-	if (flags & SH_FIXED_STATES_VERTEX_TCOORDS) {
-		p_vertex_input_attributes[2] = uvInputAttributeDescription;
-	}
-
-	*p_vertex_binding = vertex_binding_description;
 	VkPipelineVertexInputStateCreateInfo vertexInput = {
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,//sType;
 		NULL,									//pNext;
 		0,										//flags;
 		1,										//vertexBindingDescriptionCount;
 		p_vertex_binding,						//pVertexBindingDescriptions;
-		*p_vertex_input_attribute_count,		//vertexAttributeDescriptionCount;
+		vertex_input_attribute_count,			//vertexAttributeDescriptionCount;
 		p_vertex_input_attributes,				//pVertexAttributeDescriptions;
 	};
 	*p_vertex_input_state = vertexInput;
@@ -322,7 +283,7 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 
 void shSetFixedStates(const ShVkCore core, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
 	assert(p_fixed_states != NULL);
-	shSetVertexInputState(flags, &p_fixed_states->vertex_binding_description, &p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->p_vertex_input_assembly_descriptions, &p_fixed_states->vertex_input_state_info);
+	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->p_vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
 	
 	shCreateInputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE, &p_fixed_states->input_assembly);
 	if (flags & SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_LINE_LIST) {
@@ -397,8 +358,8 @@ void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates,
 		VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,	//sType;
 		NULL,												//pNext;
 		0,													//flags;
-		p_pipe_data->shaderStageCount,						//stageCount;
-		p_pipe_data->p_shader_stages,						//pStages;
+		p_pipe_data->shader_stage_count,					//stageCount;
+		p_pipe_data->shader_stages,							//pStages;
 		&fStates.vertex_input_state_info,					//pVertexInputState;
 		&fStates.input_assembly,							//pInputAssemblyState;
 		NULL,												//pTessellationState;
@@ -415,8 +376,6 @@ void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates,
 		0													//basePipelineIndex;
 	};
 
-	p_pipe_data->vertexStride = fStates.vertex_input_state_info.pVertexBindingDescriptions->stride;
-
 	shCheckVkResult(
 		vkCreateGraphicsPipelines(core.device, 0, 1, &graphicsPipelineCreateInfo, NULL, &p_pipe_data->pipeline),
 		"error creating graphics pipeline"
@@ -427,6 +386,7 @@ void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates,
 
 void shDestroyPipeline(const ShVkCore core, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
+	vkDeviceWaitIdle(core.device);
 	for (uint32_t i = 0; i < p_pipe_data->uniform_buffer_count; i++) {
 		shClearBufferMemory(core.device, p_pipe_data->p_uniform_buffers[i].uniform_buffer, p_pipe_data->p_uniform_buffers[i].uniform_buffer_memory);
 	}
@@ -437,12 +397,6 @@ void shDestroyPipeline(const ShVkCore core, ShVkPipelineData* p_pipe_data) {
 	
 	vkDestroyPipelineLayout(core.device, p_pipe_data->main_pipeline_layout, NULL);
 	vkDestroyPipeline(core.device, p_pipe_data->pipeline, NULL);
-	vkDestroyShaderModule(core.device, p_pipe_data->p_shader_modules[0], NULL);
-	vkDestroyShaderModule(core.device, p_pipe_data->p_shader_modules[1], NULL);
-	
-	if (p_pipe_data->p_uniform_buffers		!= NULL) { free(p_pipe_data->p_uniform_buffers);		 }
-	if (p_pipe_data->p_descriptor_sets		!= NULL) { free(p_pipe_data->p_descriptor_sets);		 }
-	if (p_pipe_data->p_write_descriptor_sets	!= NULL) { free(p_pipe_data->p_write_descriptor_sets); }
-	if (p_pipe_data->p_shader_stages			!= NULL) { free(p_pipe_data->p_shader_stages);			 }
-	if (p_pipe_data->p_shader_modules			!= NULL) { free(p_pipe_data->p_shader_modules);			 }
+	vkDestroyShaderModule(core.device, p_pipe_data->shader_modules[0], NULL);
+	vkDestroyShaderModule(core.device, p_pipe_data->shader_modules[1], NULL);
 }																

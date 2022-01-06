@@ -10,16 +10,13 @@ typedef enum ShFixedStateFlags {
 	SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST	= 0b000001000,
 	SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_LINE_LIST		= 0b000010000,
 	SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_POINT_LIST		= 0b000100000,
-	SH_FIXED_STATES_VERTEX_POSITIONS					= 0b001000000,
-	SH_FIXED_STATES_VERTEX_NORMALS						= 0b010000000,
-	SH_FIXED_STATES_VERTEX_TCOORDS						= 0b100000000
 } ShFixedStateFlags;
 
 typedef struct ShVkFixedStates {
 	/*Shader inputs*/
 	VkVertexInputBindingDescription			vertex_binding_description;
 	uint32_t								vertex_input_attribute_description_count;
-	VkVertexInputAttributeDescription*		p_vertex_input_assembly_descriptions;
+	VkVertexInputAttributeDescription*		p_vertex_input_attributes;
 	VkPipelineVertexInputStateCreateInfo	vertex_input_state_info;
 	VkPipelineInputAssemblyStateCreateInfo	input_assembly;
 	/*Viewport*/
@@ -35,7 +32,6 @@ typedef struct ShVkFixedStates {
 	VkPipelineMultisampleStateCreateInfo	multisample_state_info;
 	/**/
 	ShFixedStateFlags						fixed_state_flags;
-
 } ShVkFixedStates;
 
 typedef struct ShUniformBuffer {
@@ -49,12 +45,11 @@ typedef struct ShUniformBuffer {
 } ShUniformBuffer;
 
 typedef struct ShVkPipelineData {
-	uint32_t vertexStride;
 	/*Shaders*/
-	uint32_t							shaderStageCount;
-	VkPipelineShaderStageCreateInfo*	p_shader_stages;
+	uint32_t							shader_stage_count;
+	VkPipelineShaderStageCreateInfo		shader_stages[2];
 	uint32_t							shader_module_count;
-	VkShaderModule*						p_shader_modules;
+	VkShaderModule						shader_modules[2];
 	/*Push constants*/
 	VkPushConstantRange					push_constant_range;
 	/*Uniform buffers*/	
@@ -82,7 +77,9 @@ extern void shCreateShaderModule(const VkDevice device, const uint32_t size, con
 
 extern void shCreateShaderStage(const VkDevice device, const VkShaderModule shModule, const VkShaderStageFlagBits stageFlag, VkPipelineShaderStageCreateInfo* p_shader_stage);
 
-extern void shSetVertexInputState(const ShFixedStateFlags flags, VkVertexInputBindingDescription* p_vertex_binding, uint32_t* p_vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state);
+extern void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states);
+
+extern void shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state);
 
 extern void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, const VkBool32 primitive_restart_enable, VkPipelineInputAssemblyStateCreateInfo* p_input_assembly);
 
