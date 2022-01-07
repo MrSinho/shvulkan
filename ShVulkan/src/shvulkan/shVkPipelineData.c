@@ -10,15 +10,8 @@
 #pragma warning (disable: 6386)
 #endif//_MSC_VER
 
-void shAllocateUniformBufferData(const ShVkCore core, const uint32_t bufferSize, ShUniformBuffer* p_uniform) {
-	assert(p_uniform != NULL);
-	p_uniform->uniform_buffer_size = bufferSize;
-	shCreateBuffer(core.device, p_uniform->uniform_buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &p_uniform->uniform_buffer);
-	shAllocateMemory(core.device, core.physical_device, p_uniform->uniform_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &p_uniform->uniform_buffer_memory);
-}
-
-void shDescriptorSetLayout(const ShVkCore core, const uint32_t binding, const VkShaderStageFlags shaderStageFlags, ShUniformBuffer* p_uniform) {
-	assert(p_uniform != NULL);
+void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t binding, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkPipelineData* p_pipe_data) {
+	assert(p_pipe_data != NULL);
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {
 		binding,							//binding;
 		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//descriptorType;
@@ -34,73 +27,73 @@ void shDescriptorSetLayout(const ShVkCore core, const uint32_t binding, const Vk
 		1,														//bindingCount;
 		&descriptorSetLayoutBinding								//pBindings;
 	};
-	p_uniform->descriptor_set_layout_binding = descriptorSetLayoutBinding;
+	p_pipe_data->descriptor_set_layout_bindings[uniform_idx] = descriptorSetLayoutBinding;
 
 	shCheckVkResult(
-		vkCreateDescriptorSetLayout(core.device, &descriptorSetLayoutCreateInfo, NULL, &p_uniform->descriptor_set_layout),
+		vkCreateDescriptorSetLayout(p_core->device, &descriptorSetLayoutCreateInfo, NULL, &p_pipe_data->descriptor_set_layouts[uniform_idx]),
 		"error creating descriptor set layout"
 	);
 }
 
-void shCreateDescriptorPool(const ShVkCore core, ShUniformBuffer* p_uniform) {
-	assert(p_uniform != NULL);
+extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data) {
+	assert(p_pipe_data != NULL);
 	VkDescriptorPoolSize descriptorPoolSize = {
 		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//type;
-		core.swapchain_image_count			//descriptorCount;
+		p_core->swapchain_image_count			//descriptorCount;
 	};
 
 	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,	//sType;
 		NULL,											//pNext;
 		0,												//flags;
-		core.swapchain_image_count,						//maxSets;
+		p_core->swapchain_image_count,						//maxSets;
 		1,												//poolSizeCount;
 		&descriptorPoolSize								//pPoolSizes;
 	};
 
 	shCheckVkResult(
-		vkCreateDescriptorPool(core.device, &descriptorPoolCreateInfo, NULL, &p_uniform->descriptor_pool),
+		vkCreateDescriptorPool(p_core->device, &descriptorPoolCreateInfo, NULL, &p_pipe_data->descriptor_pools[uniform_idx]),
 		"error creating descriptor pool"
 	);
 }
 
-void shAllocateDescriptorSets(const ShVkCore core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data) {
+void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
-	ShUniformBuffer* p_uniform = &p_pipe_data->p_uniform_buffers[uniform_idx];
 	VkDescriptorSetAllocateInfo allocateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,				//sType;
 		NULL,														//pNext;
-		p_pipe_data->p_uniform_buffers[uniform_idx].descriptor_pool,//descriptorPool;
+		p_pipe_data->descriptor_pools[uniform_idx],					//descriptorPool;
 		1,															//descriptorSetCount;
-		&p_uniform->descriptor_set_layout							//pSetLayouts;
+		& p_pipe_data->descriptor_set_layouts[uniform_idx]			//pSetLayouts;
 	};
 
 	shCheckVkResult(
-		vkAllocateDescriptorSets(core.device, &allocateInfo, &p_pipe_data->p_descriptor_sets[uniform_idx]),
+		vkAllocateDescriptorSets(p_core->device, &allocateInfo, &p_pipe_data->descriptor_sets[uniform_idx]),
 		"error allocating descriptor set"
 	);
 
 	VkDescriptorBufferInfo descriptorBufferInfo = {
-		p_uniform->uniform_buffer,		//buffer;
-		0,								//offset;
-		p_uniform->uniform_buffer_size,	//range;
+		p_pipe_data->uniform_buffers[uniform_idx],		//buffer;
+		0,												//offset;
+		p_pipe_data->uniform_buffers_size[uniform_idx],	//range;
 	};
-	p_uniform->descriptor_buffer_info = descriptorBufferInfo;
+
+	p_pipe_data->descriptor_buffer_infos[uniform_idx] = descriptorBufferInfo;
 
 	VkWriteDescriptorSet writeDescriptorSet = {		
 		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,					//sType;
 		NULL,													//pNext;
-		p_pipe_data->p_descriptor_sets[uniform_idx],			//dstSet;
+		p_pipe_data->descriptor_sets[uniform_idx],				//dstSet;
 		0,														//dstBinding;
 		0,														//dstArrayElement;
 		1,														//descriptorCount;
 		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,						//descriptorType;
 		NULL,													//pImageInfo;
-		&p_uniform->descriptor_buffer_info,						//pBufferInfo;
+		&p_pipe_data->descriptor_buffer_infos[uniform_idx],		//pBufferInfo;
 		NULL													//pTexelBufferView;
 	};
-	p_pipe_data->p_write_descriptor_sets[uniform_idx] = writeDescriptorSet;
-	p_pipe_data->p_write_descriptor_sets[uniform_idx].pBufferInfo = &p_pipe_data->p_uniform_buffers[uniform_idx].descriptor_buffer_info;
+	p_pipe_data->write_descriptor_sets[uniform_idx] = writeDescriptorSet;
+	p_pipe_data->write_descriptor_sets[uniform_idx].pBufferInfo = &p_pipe_data->descriptor_buffer_infos[uniform_idx];
 }
 
 void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_t offset, const uint32_t size, ShVkPipelineData* p_pipe_data) {
@@ -281,7 +274,7 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 	*p_viewport_state = viewportStateCreateInfo;
 }
 
-void shSetFixedStates(const ShVkCore core, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
+void shSetFixedStates(ShVkCore* p_core, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
 	assert(p_fixed_states != NULL);
 	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->p_vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
 	
@@ -303,19 +296,19 @@ void shSetFixedStates(const ShVkCore core, ShFixedStateFlags flags, ShVkFixedSta
 
 	shSetMultisampleState(&p_fixed_states->multisample_state_info);
 	shColorBlendSettings(&p_fixed_states->color_blend_attachment, &p_fixed_states->color_blend_state);
-	shSetViewport(core.surface.width, core.surface.height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
+	shSetViewport(p_core->surface.width, p_core->surface.height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
 
 }
 
-void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates, ShVkPipelineData* p_pipe_data) {
+void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
 
 	VkPipelineLayoutCreateInfo mainPipelineLayoutCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,	//sType;
 		NULL,											//pNext;
 		0,												//flags;
-		0,												//setLayoutCount;
-		NULL,											//pSetLayouts;
+		p_pipe_data->uniform_buffer_count,				//setLayoutCount;
+		p_pipe_data->descriptor_set_layouts,			//pSetLayouts;
 		0,												//pushConstantRangeCount;
 		NULL,											//pPushConstantRanges;
 	};
@@ -324,14 +317,7 @@ void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates,
 		mainPipelineLayoutCreateInfo.pushConstantRangeCount = 1;
 		mainPipelineLayoutCreateInfo.pPushConstantRanges = &p_pipe_data->push_constant_range;
 	}
-	VkDescriptorSetLayout* p_descriptor_set_layouts = calloc(p_pipe_data->uniform_buffer_count, sizeof(VkDescriptorSetLayout));
-	if (p_descriptor_set_layouts != NULL) {
-		mainPipelineLayoutCreateInfo.setLayoutCount = p_pipe_data->uniform_buffer_count;
-		for (uint32_t i = 0; i < p_pipe_data->uniform_buffer_count; i++) {
-			p_descriptor_set_layouts[i] = p_pipe_data->p_uniform_buffers[i].descriptor_set_layout;
-		}
-		mainPipelineLayoutCreateInfo.pSetLayouts = p_descriptor_set_layouts;
-	}											   
+	
 
 	VkPipelineDepthStencilStateCreateInfo depthStencilStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,	//sType;
@@ -350,7 +336,7 @@ void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates,
 
 
 	shCheckVkResult(
-		vkCreatePipelineLayout(core.device, &mainPipelineLayoutCreateInfo, NULL, &p_pipe_data->main_pipeline_layout),
+		vkCreatePipelineLayout(p_core->device, &mainPipelineLayoutCreateInfo, NULL, &p_pipe_data->main_pipeline_layout),
 		"error creating main pipeline layout"
 	);
 
@@ -370,33 +356,27 @@ void shSetupGraphicsPipeline(const ShVkCore core, const ShVkFixedStates fStates,
 		&fStates.color_blend_state,							//pColorBlendState;
 		NULL,												//pDynamicState;
 		p_pipe_data->main_pipeline_layout,					//layout;
-		core.render_pass,									//renderPass;
+		p_core->render_pass,									//renderPass;
 		0,													//subpass;
 		0,													//basePipelineHandle;
 		0													//basePipelineIndex;
 	};
 
 	shCheckVkResult(
-		vkCreateGraphicsPipelines(core.device, 0, 1, &graphicsPipelineCreateInfo, NULL, &p_pipe_data->pipeline),
+		vkCreateGraphicsPipelines(p_core->device, 0, 1, &graphicsPipelineCreateInfo, NULL, &p_pipe_data->pipeline),
 		"error creating graphics pipeline"
 	);
-
-	if (p_descriptor_set_layouts != NULL) { free(p_descriptor_set_layouts); }
 }
 
-void shDestroyPipeline(const ShVkCore core, ShVkPipelineData* p_pipe_data) {
+void shDestroyPipeline(ShVkCore* p_core, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
-	vkDeviceWaitIdle(core.device);
+	vkDeviceWaitIdle(p_core->device);
 	for (uint32_t i = 0; i < p_pipe_data->uniform_buffer_count; i++) {
-		shClearBufferMemory(core.device, p_pipe_data->p_uniform_buffers[i].uniform_buffer, p_pipe_data->p_uniform_buffers[i].uniform_buffer_memory);
+		vkDestroyDescriptorPool(p_core->device, p_pipe_data->descriptor_pools[i], NULL);
+		vkDestroyDescriptorSetLayout(p_core->device, p_pipe_data->descriptor_set_layouts[i], NULL);
 	}
-	for (uint32_t i = 0; i < p_pipe_data->uniform_buffer_count; i++) {
-		vkDestroyDescriptorPool(core.device, p_pipe_data->p_uniform_buffers[i].descriptor_pool, NULL);
-		vkDestroyDescriptorSetLayout(core.device, p_pipe_data->p_uniform_buffers[i].descriptor_set_layout, NULL);
-	}
-	
-	vkDestroyPipelineLayout(core.device, p_pipe_data->main_pipeline_layout, NULL);
-	vkDestroyPipeline(core.device, p_pipe_data->pipeline, NULL);
-	vkDestroyShaderModule(core.device, p_pipe_data->shader_modules[0], NULL);
-	vkDestroyShaderModule(core.device, p_pipe_data->shader_modules[1], NULL);
+	vkDestroyPipelineLayout(p_core->device, p_pipe_data->main_pipeline_layout, NULL);
+	vkDestroyPipeline(p_core->device, p_pipe_data->pipeline, NULL);
+	vkDestroyShaderModule(p_core->device, p_pipe_data->shader_modules[0], NULL);
+	vkDestroyShaderModule(p_core->device, p_pipe_data->shader_modules[1], NULL);
 }																

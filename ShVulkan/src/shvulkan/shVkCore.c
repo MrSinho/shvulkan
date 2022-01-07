@@ -11,8 +11,6 @@
 
 ShVkCore shVkCoreInitPrerequisites() {
 	ShVkCore core = { 0 };
-	core.graphics_queue.required_queue_flag	= VK_QUEUE_GRAPHICS_BIT;
-	core.compute_queue.required_queue_flag	= VK_QUEUE_COMPUTE_BIT;
 	core.swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
 	return core;
 }
@@ -60,8 +58,10 @@ void shGetSurfaceCapabilities(const VkPhysicalDevice pDevice, const VkSurfaceKHR
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pDevice, surface, p_surface_capabilities);
 }
 
-void shSetPhysicalDevice(ShVkCore* p_core) {
+void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	assert(p_core != NULL);
+	p_core->required_queue_flags = requirements;
+
 	uint32_t pDeviceCount = 0;
 	vkEnumeratePhysicalDevices(p_core->instance, &pDeviceCount, NULL);
 
@@ -88,17 +88,22 @@ void shSetPhysicalDevice(ShVkCore* p_core) {
 		VkBool32 surfaceSupport = 0;
 
 		for (uint32_t j = 0; j < queueFamilyPropertyCount; j++) {
-			if (!surfaceSupport) {
+			if (!surfaceSupport && p_core->surface.surface != NULL) {
 				vkGetPhysicalDeviceSurfaceSupportKHR(pDevices[i], j, p_core->surface.surface, &surfaceSupport);
 				if (surfaceSupport) {
 					surfaceQueueFamilyIndices[i] = j;
 				}
 			}
-			if (pQueueFamilyProperties[j].queueFlags &p_core->graphics_queue.required_queue_flag) {
-				graphicsQueueFamilyIndices[i] = j;
+			if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
+				if (pQueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+					graphicsQueueFamilyIndices[i] = j;
+				}
+				if (pQueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT && surfaceSupport) {
+					suitableDeviceCount++;
+				}
 			}
-			if (pQueueFamilyProperties[j].queueFlags & p_core->graphics_queue.required_queue_flag && surfaceSupport) {
-				suitableDeviceCount += 1;
+			else if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT && pQueueFamilyProperties[j].queueFlags & VK_QUEUE_COMPUTE_BIT) {
+				suitableDeviceCount++;
 				break;
 			}
 		}
@@ -122,8 +127,20 @@ void shSetPhysicalDevice(ShVkCore* p_core) {
 		VkPhysicalDeviceFeatures deviceFeatures;
 		vkGetPhysicalDeviceFeatures(pDevices[i], &deviceFeatures);
 		
-		scores[i] += pDeviceProperties.limits.maxComputeSharedMemorySize;
-		scores[i] += pDeviceProperties.limits.maxComputeWorkGroupInvocations;
+		if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT) {
+			scores[i] += pDeviceProperties.limits.maxMemoryAllocationCount;
+			scores[i] += pDeviceProperties.limits.maxComputeSharedMemorySize;
+			scores[i] += pDeviceProperties.limits.maxComputeWorkGroupInvocations;
+		}
+		if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
+			scores[i] += pDeviceProperties.limits.maxMemoryAllocationCount;
+			scores[i] += pDeviceProperties.limits.maxVertexInputAttributes;
+			scores[i] += pDeviceProperties.limits.maxVertexInputBindings;
+			scores[i] += pDeviceProperties.limits.maxVertexInputAttributeOffset;
+			scores[i] += pDeviceProperties.limits.maxVertexInputBindingStride;
+			scores[i] += pDeviceProperties.limits.maxVertexOutputComponents;
+			scores[i] += pDeviceProperties.limits.maxComputeWorkGroupInvocations;
+		}
 
 	}
 
@@ -169,23 +186,34 @@ void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDe
 void shSetLogicalDevice(ShVkCore* p_core) {
 	assert(p_core != NULL);
 	const float queue_priority = 1.0f;
+	uint32_t queue_info_count = 0;
 	VkDeviceQueueCreateInfo queues_info[2];
-	shSetQueueInfo(p_core->graphics_queue.queue_family_index, &queue_priority, &queues_info[0]);
-	shSetQueueInfo(p_core->compute_queue.required_queue_flag, &queue_priority, &queues_info[1]);
+	if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
+		shSetQueueInfo(p_core->graphics_queue.queue_family_index, &queue_priority, &queues_info[0]);
+		queue_info_count++;
+	}
+	if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT) {
+		shSetQueueInfo(p_core->compute_queue.queue_family_index, &queue_priority, (queue_info_count == 1) ? &queues_info[1] : &queues_info[0]);
+		queue_info_count++;
+	}
 	
 	const char* swapchain_extension_name = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 	VkDeviceCreateInfo deviceCreateInfo = {
 		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,	//sType;
 		NULL,									//pNext;
 		0,										//flags;
-		2, 										//queueCreateInfoCount;
+		queue_info_count,						//queueCreateInfoCount;
 		queues_info,							//pQueueCreateInfos;
 		0, 										//enabledLayerCount;
 		NULL,									//ppEnabledLayerNames;
-		1, 										//enabledExtensionCount;
-		&swapchain_extension_name,				//ppEnabledExtensionNames;
+		0, 										//enabledExtensionCount;
+		NULL,									//ppEnabledExtensionNames;
 		NULL									//pEnabledFeatures;
 	};
+	if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
+		deviceCreateInfo.enabledExtensionCount = 1;
+		deviceCreateInfo.ppEnabledExtensionNames = &swapchain_extension_name;
+	}
 
 	shCheckVkResult(
 		vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device),

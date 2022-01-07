@@ -28,7 +28,6 @@ typedef struct ShSurface {
 } ShSurface;
 
 typedef struct ShQueue {
-	VkQueueFlags	required_queue_flag;
 	uint32_t		queue_family_index;
 	VkQueue			queue;
 } ShQueue;
@@ -43,6 +42,7 @@ typedef struct ShVkCore {
 	/*Surface*/
 	ShSurface					surface;
 	/*Queues*/
+	VkQueueFlags				required_queue_flags;
 	ShQueue						graphics_queue;
 	ShQueue						compute_queue;
 	/*Commands*/
@@ -77,7 +77,13 @@ typedef struct ShVkCore {
 
 #define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
 
-#define shInitCommands(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->graphics_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->graphics_cmd_pool, &(p_core)->graphics_cmd_buffer)
+#define shCreateGraphicsCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->graphics_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->graphics_cmd_pool, &(p_core)->graphics_cmd_buffer)
+
+#define shCreateComputeCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->compute_queue.queue_family_index, &(p_core)->compute_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->compute_cmd_pool, &(p_core)->compute_cmd_buffer)
+
+#define SH_VK_CORE_GRAPHICS VK_QUEUE_GRAPHICS_BIT
+
+#define SH_VK_CORE_COMPUTE VK_QUEUE_COMPUTE_BIT
 
 extern ShVkCore shVkCoreInitPrerequisites();
 
@@ -85,7 +91,7 @@ extern void shCreateInstance(ShVkCore* p_core, const char* application_name, con
 
 extern void shGetSurfaceCapabilities(const VkPhysicalDevice pDevice, const VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* p_surface_capabilities);
 
-extern void shSetPhysicalDevice(ShVkCore* p_core);
+extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
 extern void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
 
