@@ -8,6 +8,6 @@ layout (set = 0, binding = 0) uniform uniformBuffer {
 } ubo;
 
 void main(){
-    float r = distance(frag_position, ubo.light_position);
-    frag_color = vec4(ubo.light_color / (r*r));
+    vec4 dir = frag_position - ubo.light_position;
+    frag_color = vec4(0.01) + vec4(ubo.light_color / dot(dir, dir));
 }

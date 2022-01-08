@@ -69,11 +69,11 @@ void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_devi
 	);
 }
 
-void shMapMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t data_size, const void *p_data) {
+void shMapMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void *p_data) {
 	assert(p_data != NULL);
 	void* data;
 	shCheckVkResult(
-		vkMapMemory(device, memory, 0, data_size, 0, &data),
+		vkMapMemory(device, memory, offset, data_size, 0, &data),
 		"error mapping memory"
 	);
 	memcpy(data, p_data, (size_t)data_size);

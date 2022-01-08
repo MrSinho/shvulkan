@@ -16,7 +16,7 @@ typedef struct ShVkFixedStates {
 	/*Shader inputs*/
 	VkVertexInputBindingDescription			vertex_binding_description;
 	uint32_t								vertex_input_attribute_description_count;
-	VkVertexInputAttributeDescription*		p_vertex_input_attributes;
+	VkVertexInputAttributeDescription		vertex_input_attributes[32];
 	VkPipelineVertexInputStateCreateInfo	vertex_input_state_info;
 	VkPipelineInputAssemblyStateCreateInfo	input_assembly;
 	/*Viewport*/
@@ -45,14 +45,20 @@ typedef struct ShVkPipelineData {
 	/*Uniform buffers*/	
 	uint32_t							uniform_buffer_count;
 	uint32_t							uniform_buffers_size[32];
+	VkDescriptorSet						descriptor_sets[32];
+	VkWriteDescriptorSet				write_descriptor_sets[32];
+	uint32_t							dynamic_uniform_buffer_count;
+	uint32_t							dynamic_uniform_buffers_size[32];
+	uint32_t							dynamic_uniform_buffers_offsets[32];
+	VkDescriptorSet						dynamic_descriptor_sets[32];
+	VkWriteDescriptorSet				dynamic_write_descriptor_sets[32];
 	VkBuffer							uniform_buffers[32];
 	VkDeviceMemory						uniform_buffers_memory[32];
 	VkDescriptorSetLayoutBinding		descriptor_set_layout_bindings[32];
 	VkDescriptorSetLayout				descriptor_set_layouts[32];
 	VkDescriptorBufferInfo				descriptor_buffer_infos[32];
 	VkDescriptorPool					descriptor_pools[32];
-	VkWriteDescriptorSet				write_descriptor_sets[32];
-	VkDescriptorSet						descriptor_sets[32];
+
 	/*Pipeline*/
 	VkPipelineLayout					main_pipeline_layout;
 	VkPipeline							pipeline;
@@ -80,13 +86,15 @@ extern void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, 
 
 extern void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_t offset, const uint32_t size, ShVkPipelineData* p_pipe_data);
 
-extern void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t binding, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkPipelineData* p_pipe_data);
+extern void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkPipelineData* p_pipe_data);
 
 extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data);
 
 extern void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data);
 
 extern void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, ShVkPipelineData* p_pipe_data);
+
+extern void shEndPipeline(ShVkPipelineData* p_pipe_data);
 
 extern void shDestroyPipeline(ShVkCore* p_core, ShVkPipelineData* p_pipe_data);
 

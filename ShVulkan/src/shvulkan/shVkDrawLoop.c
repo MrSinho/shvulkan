@@ -66,26 +66,6 @@ void shPushConstants(ShVkCore* p_core, const void* p_push_constants_data, ShVkPi
 	}
 }
 
-void shBindDescriptorSets(ShVkCore* p_core, ShVkPipelineData* p_pipe_data) {
-	vkUpdateDescriptorSets(p_core->device, 
-		p_pipe_data->uniform_buffer_count, p_pipe_data->write_descriptor_sets, 
-		0, NULL);
-	vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-		p_pipe_data->main_pipeline_layout, 
-		0, p_pipe_data->uniform_buffer_count, p_pipe_data->descriptor_sets, 
-		0, NULL);
-}
-
-void shDraw(ShVkCore* p_core, const uint32_t count_div_stride, const uint8_t indexed) {
-
-	if (indexed) {
-		vkCmdDrawIndexed(p_core->graphics_cmd_buffer, count_div_stride, 1, 0, 0, 0);
-	}
-	else {
-		vkCmdDraw(p_core->graphics_cmd_buffer, count_div_stride, 1, 0, 0);
-	}
-}
-
 void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index) {
 
 	vkCmdEndRenderPass(p_core->graphics_cmd_buffer);

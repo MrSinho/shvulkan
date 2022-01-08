@@ -6,12 +6,6 @@
 
 #include "shvulkan/shVkVersion.h"
 
-typedef struct ShVkPipelineData ShVkPipelineData;
-
-typedef struct ShMesh ShMesh;
-
-typedef enum ShVkLogInfo ShVkLogInfo;
-
 typedef enum shImageType {
 	SH_SWAPCHAIN_IMAGE = 0b001,
 	SH_DEPTH_IMAGE = 0b010
@@ -84,8 +78,6 @@ typedef struct ShVkCore {
 #define SH_VK_CORE_GRAPHICS VK_QUEUE_GRAPHICS_BIT
 
 #define SH_VK_CORE_COMPUTE VK_QUEUE_COMPUTE_BIT
-
-extern ShVkCore shVkCoreInitPrerequisites();
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint32_t extension_count, const char** extension_names);
 

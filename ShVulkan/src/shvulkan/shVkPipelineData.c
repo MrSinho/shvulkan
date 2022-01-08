@@ -10,16 +10,16 @@
 #pragma warning (disable: 6386)
 #endif//_MSC_VER
 
-void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t binding, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkPipelineData* p_pipe_data) {
+void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {
-		binding,							//binding;
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//descriptorType;
-		1,									//descriptorCount;
-		shaderStageFlags,					//stageFlags;
-		NULL								//pImmutableSamplers;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? 1 : 0,	//binding;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//descriptorType;
+		1,											//descriptorCount;
+		shaderStageFlags,							//stageFlags;
+		NULL										//pImmutableSamplers;
 	};
-
+	
 	VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,	//sType;
 		NULL,													//pNext;
@@ -38,15 +38,15 @@ void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t binding, const uint3
 extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
 	VkDescriptorPoolSize descriptorPoolSize = {
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//type;
-		p_core->swapchain_image_count			//descriptorCount;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//type;
+		p_core->swapchain_image_count				//descriptorCount;
 	};
 
 	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,	//sType;
 		NULL,											//pNext;
 		0,												//flags;
-		p_core->swapchain_image_count,						//maxSets;
+		p_core->swapchain_image_count,					//maxSets;
 		1,												//poolSizeCount;
 		&descriptorPoolSize								//pPoolSizes;
 	};
@@ -68,32 +68,38 @@ void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkP
 	};
 
 	shCheckVkResult(
-		vkAllocateDescriptorSets(p_core->device, &allocateInfo, &p_pipe_data->descriptor_sets[uniform_idx]),
+		vkAllocateDescriptorSets(p_core->device, &allocateInfo, p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? &p_pipe_data->dynamic_descriptor_sets[uniform_idx] : &p_pipe_data->descriptor_sets[uniform_idx]),
 		"error allocating descriptor set"
 	);
 
 	VkDescriptorBufferInfo descriptorBufferInfo = {
 		p_pipe_data->uniform_buffers[uniform_idx],		//buffer;
 		0,												//offset;
-		p_pipe_data->uniform_buffers_size[uniform_idx],	//range;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] : p_pipe_data->uniform_buffers_size[uniform_idx],	//range;
 	};
 
 	p_pipe_data->descriptor_buffer_infos[uniform_idx] = descriptorBufferInfo;
 
-	VkWriteDescriptorSet writeDescriptorSet = {		
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,					//sType;
-		NULL,													//pNext;
-		p_pipe_data->descriptor_sets[uniform_idx],				//dstSet;
-		0,														//dstBinding;
-		0,														//dstArrayElement;
-		1,														//descriptorCount;
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,						//descriptorType;
-		NULL,													//pImageInfo;
-		&p_pipe_data->descriptor_buffer_infos[uniform_idx],		//pBufferInfo;
-		NULL													//pTexelBufferView;
+	VkWriteDescriptorSet writeDescriptorSet = {
+		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,															//sType;
+		NULL,																							//pNext;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? p_pipe_data->dynamic_descriptor_sets[uniform_idx] : p_pipe_data->descriptor_sets[uniform_idx],														//dstSet;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? 1 : 0,									//dstBinding;
+		0,																								//dstArrayElement;
+		1,																								//descriptorCount;
+		p_pipe_data->dynamic_uniform_buffers_size[uniform_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//descriptorType;
+		NULL,																							//pImageInfo;
+		&p_pipe_data->descriptor_buffer_infos[uniform_idx],												//pBufferInfo;
+		NULL																							//pTexelBufferView;
 	};
-	p_pipe_data->write_descriptor_sets[uniform_idx] = writeDescriptorSet;
-	p_pipe_data->write_descriptor_sets[uniform_idx].pBufferInfo = &p_pipe_data->descriptor_buffer_infos[uniform_idx];
+	if (p_pipe_data->uniform_buffers_size[uniform_idx]) {
+		p_pipe_data->write_descriptor_sets[uniform_idx] = writeDescriptorSet;
+		p_pipe_data->write_descriptor_sets[uniform_idx].pBufferInfo = &p_pipe_data->descriptor_buffer_infos[uniform_idx];
+	}
+	if (p_pipe_data->dynamic_uniform_buffers_size[uniform_idx]) {
+		p_pipe_data->dynamic_write_descriptor_sets[uniform_idx] = writeDescriptorSet;
+		p_pipe_data->dynamic_write_descriptor_sets[uniform_idx].pBufferInfo = &p_pipe_data->descriptor_buffer_infos[uniform_idx];
+	}
 }
 
 void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_t offset, const uint32_t size, ShVkPipelineData* p_pipe_data) {
@@ -143,8 +149,9 @@ void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const u
 		format,
 		offset
 	};
-	p_fixed_states->p_vertex_input_attributes[location] = vertex_input_attribute;
+	p_fixed_states->vertex_input_attributes[location] = vertex_input_attribute;
 	p_fixed_states->vertex_binding_description.stride += size;
+	p_fixed_states->vertex_input_attribute_description_count++;
 }
 
 void shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
@@ -276,7 +283,7 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 
 void shSetFixedStates(ShVkCore* p_core, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
 	assert(p_fixed_states != NULL);
-	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->p_vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
+	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
 	
 	shCreateInputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE, &p_fixed_states->input_assembly);
 	if (flags & SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_LINE_LIST) {
@@ -297,7 +304,6 @@ void shSetFixedStates(ShVkCore* p_core, ShFixedStateFlags flags, ShVkFixedStates
 	shSetMultisampleState(&p_fixed_states->multisample_state_info);
 	shColorBlendSettings(&p_fixed_states->color_blend_attachment, &p_fixed_states->color_blend_state);
 	shSetViewport(p_core->surface.width, p_core->surface.height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
-
 }
 
 void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, ShVkPipelineData* p_pipe_data) {
@@ -307,7 +313,7 @@ void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, Sh
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,	//sType;
 		NULL,											//pNext;
 		0,												//flags;
-		p_pipe_data->uniform_buffer_count,				//setLayoutCount;
+		p_pipe_data->uniform_buffer_count+ p_pipe_data->dynamic_uniform_buffer_count,				//setLayoutCount;
 		p_pipe_data->descriptor_set_layouts,			//pSetLayouts;
 		0,												//pushConstantRangeCount;
 		NULL,											//pPushConstantRanges;
@@ -368,10 +374,16 @@ void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, Sh
 	);
 }
 
+void shEndPipeline(ShVkPipelineData* p_pipe_data) {
+	for (uint8_t i = 0; i < 32; i++) {
+		p_pipe_data->dynamic_uniform_buffers_offsets[i] = 0;
+	}
+}
+
 void shDestroyPipeline(ShVkCore* p_core, ShVkPipelineData* p_pipe_data) {
 	assert(p_pipe_data != NULL);
 	vkDeviceWaitIdle(p_core->device);
-	for (uint32_t i = 0; i < p_pipe_data->uniform_buffer_count; i++) {
+	for (uint32_t i = 0; i < p_pipe_data->uniform_buffer_count + p_pipe_data->dynamic_uniform_buffer_count; i++) {
 		vkDestroyDescriptorPool(p_core->device, p_pipe_data->descriptor_pools[i], NULL);
 		vkDestroyDescriptorSetLayout(p_core->device, p_pipe_data->descriptor_set_layouts[i], NULL);
 	}

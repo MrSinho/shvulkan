@@ -8,7 +8,11 @@ layout (push_constant) uniform pushConstants {
 	mat4 view;
 } pconst;
 
+layout (set = 1, binding = 1) uniform uniformBuffer {
+    mat4 model;
+} ubo;
+
 void main() {
-  frag_position = vec4(position, 1.0);
+  frag_position =  ubo.model * vec4(position, 1.0);
   gl_Position = pconst.projection * pconst.view * frag_position;
 }

@@ -9,12 +9,6 @@
 #pragma warning (disable: 6011 6385 6386 6255)
 #endif // _MSC_VER
 
-ShVkCore shVkCoreInitPrerequisites() {
-	ShVkCore core = { 0 };
-	core.swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
-	return core;
-}
-
 void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint32_t extension_count, const char** extension_names) {
 	assert(p_core != NULL);
 	VkApplicationInfo application_info = {
@@ -233,6 +227,7 @@ void shCreateSwapchain(ShVkCore* p_core) {
     // If the format list includes just one entry of VK_FORMAT_UNDEFINED,
     // the surface has no preferred format.  Otherwise, at least one
     // supported format will be returned.
+	p_core->swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
     if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
         p_core->swapchain_image_format = VK_FORMAT_B8G8R8A8_UNORM;
     } else {
