@@ -80,13 +80,8 @@ int main(void) {
 	
 	ShVkPipelineData pipeline = { 0 };
 	
-	{//PUSH CONSTANTS SETUP
-		#define PUSH_CONSTANTS_SIZE 128
-	}
-	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, PUSH_CONSTANTS_SIZE, &pipeline);
+	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 	
-	pipeline.uniform_buffer_count = 1;
-	pipeline.dynamic_uniform_buffer_count = 1;
 	shCreateUniformBuffer(&core, 64, 0 , &pipeline);
 	shAllocateUniformBuffer(&core, 0, &pipeline);
 	shCreateDescriptorPool(&core, 0, &pipeline);
@@ -99,17 +94,14 @@ int main(void) {
 	shDescriptorSetLayout(&core, 1, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
 	shAllocateDescriptorSet(&core, 1, &pipeline);
 
-	#define SHADERS_COUNT 2
-	pipeline.shader_stage_count  = SHADERS_COUNT;
-	pipeline.shader_module_count = SHADERS_COUNT;
 	uint32_t vertex_shader_size = 0;
 	uint32_t fragment_shader_size = 0;
 	const char* vertex_code = readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
 	const char* fragment_code = readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
-	shCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline.shader_modules[0]);
-	shCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline.shader_modules[1]);
-	shCreateShaderStage(core.device, pipeline.shader_modules[0], VK_SHADER_STAGE_VERTEX_BIT, &pipeline.shader_stages[0]);
-	shCreateShaderStage(core.device, pipeline.shader_modules[1], VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline.shader_stages[1]);
+	shCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline);
+	shCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline);
+	shCreateShaderStage(core.device, pipeline.shader_modules[0], VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+	shCreateShaderStage(core.device, pipeline.shader_modules[1], VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
 	
 	
 	ShVkFixedStates fixed_states = { 0 };
@@ -131,12 +123,12 @@ int main(void) {
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
-	void* push_constants_data[PUSH_CONSTANTS_SIZE/8];
+	void* push_constants_data[128/8];
 	memcpy(push_constants_data, projection, 64);
 	memcpy(&push_constants_data[64/8], view, 64);
 	
 	//uniform buffer data
-	float uniform_buffer_data[8] = {
+	float light_data[8] = {
 		0.0f,  2.0f, 0.0f, 1.0f, //light position
 		0.0f, 0.45f, 0.9f, 1.0f // light color
 	};
@@ -165,27 +157,20 @@ int main(void) {
 
 		shPushConstants(&core, push_constants_data, &pipeline);
 
-		vkUpdateDescriptorSets(core.device,
-			1, &pipeline.write_descriptor_sets[0],
-			0, NULL
-		);
-		vkUpdateDescriptorSets(core.device,
-			1, &pipeline.dynamic_write_descriptor_sets[1],
-			0, NULL
-		);
+		shBeginPipeline(&core, &pipeline);
 
-		shWriteUniformBufferMemory(&core, 0, uniform_buffer_data, &pipeline);
+		shWriteUniformBufferMemory(&core, 0, light_data, &pipeline);
 		shBindUniformBuffer(&core, 0, &pipeline);
 		
-		shWriteDynamicUniformBufferMemory(&core, 1, model0, &pipeline);
-		shBindDynamicUniformBuffer(&core, 1, &pipeline);
+		shWriteUniformBufferMemory(&core, 1, model0, &pipeline);
+		shBindUniformBuffer(&core, 1, &pipeline);
 
 		shBindVertexBuffer(&core, &quad_vertex_buffer);
 		shBindIndexBuffer(&core, &quad_index_buffer);
 		shDrawIndexed(&core, QUAD_INDEX_COUNT);
 
-		shWriteDynamicUniformBufferMemory(&core, 1, model1, &pipeline);
-		shBindDynamicUniformBuffer(&core, 1, &pipeline);
+		shWriteUniformBufferMemory(&core, 1, model1, &pipeline);
+		shBindUniformBuffer(&core, 1, &pipeline);
 
 		shBindVertexBuffer(&core, &triangle_vertex_buffer);
 		shDraw(&core, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));

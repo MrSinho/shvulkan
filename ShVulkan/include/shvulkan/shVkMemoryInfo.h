@@ -46,22 +46,16 @@ typedef struct ShVkCore	ShVkCore;
 	shClearBufferMemory((p_core)->device, index_buffer, index_buffer_memory)
 
 #define shCreateDynamicUniformBuffer(p_core, size, uniform_idx, p_pipeline)\
-	shCreateBuffer((p_core)->device, SH_MAX_UNIFORM_BUFFER_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]); (p_pipeline)->dynamic_uniform_buffers_size[uniform_idx] = size; 
+	shCreateBuffer((p_core)->device, SH_MAX_UNIFORM_BUFFER_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]); (p_pipeline)->dynamic_uniform_buffers_size[uniform_idx] = size; (p_pipeline)->uniform_buffer_count++
 
 #define shCreateUniformBuffer(p_core, size, uniform_idx, p_pipeline)\
-	shCreateBuffer((p_core)->device, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]); (p_pipeline)->uniform_buffers_size[uniform_idx] = size
+	shCreateBuffer((p_core)->device, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]); (p_pipeline)->uniform_buffers_size[uniform_idx] = size; (p_pipeline)->uniform_buffer_count++
 
 #define shAllocateUniformBuffer(p_core, uniform_idx, p_pipeline)\
 	shAllocateMemory((p_core)->device, (p_core)->physical_device, (p_pipeline)->uniform_buffers[uniform_idx], VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &(p_pipeline)->uniform_buffers_memory[uniform_idx]);
 
 #define shClearUniformBufferMemory(p_core, uniform_idx, p_pipeline)\
 	shClearBufferMemory((p_core)->device, (p_pipeline)->uniform_buffers[uniform_idx], (p_pipeline)->uniform_buffers_memory[uniform_idx])
-
-#define shWriteDynamicUniformBufferMemory(p_core, uniform_idx, p_uniform_buffer_data, p_pipeline)\
-	shMapMemory((p_core)->device, (p_pipeline)->uniform_buffers_memory[uniform_idx], (p_pipeline)->dynamic_uniform_buffers_offsets[uniform_idx], (p_pipeline)->dynamic_uniform_buffers_size[uniform_idx], p_uniform_buffer_data);
-
-#define shWriteUniformBufferMemory(p_core, uniform_idx, p_uniform_buffer_data, p_pipeline)\
-	shMapMemory((p_core)->device, (p_pipeline)->uniform_buffers_memory[uniform_idx], 0, (p_pipeline)->uniform_buffers_size[uniform_idx], p_uniform_buffer_data)
 
 #define SH_DEPTH_IMAGE_FORMAT VK_FORMAT_D32_SFLOAT
 
