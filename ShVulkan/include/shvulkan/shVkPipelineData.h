@@ -45,18 +45,18 @@ typedef struct ShVkGraphicsPipeline {
 	/*Push constants*/
 	VkPushConstantRange					push_constant_range;
 	/*Uniform buffers*/
-	uint32_t							uniforms_idx;
-	uint32_t							dynamic_uniforms_idx;
-	uint32_t							uniform_buffers_size[2][32];
+	uint32_t							uniform_count;
+	uint32_t							uniform_buffers_size[32];
+	uint8_t								dynamic_uniforms[32];
 	uint32_t							uniform_buffers_offsets[32];
-	VkDescriptorSetLayout				descriptor_set_layouts[64];
-	VkDescriptorSet						descriptor_sets[2][32];
-	VkWriteDescriptorSet				write_descriptor_sets[2][32];
-	VkBuffer							uniform_buffers[2][32];
-	VkDeviceMemory						uniform_buffers_memory[2][32];
-	VkDescriptorSetLayoutBinding		descriptor_set_layout_bindings[2][32];
-	VkDescriptorBufferInfo				descriptor_buffer_infos[2][32];
-	VkDescriptorPool					descriptor_pools[2][32];
+	VkDescriptorSetLayout				descriptor_set_layouts[32];
+	VkDescriptorSet						descriptor_sets[32];
+	VkWriteDescriptorSet				write_descriptor_sets[32];
+	VkBuffer							uniform_buffers[32];
+	VkDeviceMemory						uniform_buffers_memory[32];
+	VkDescriptorSetLayoutBinding		descriptor_set_layout_bindings[32];
+	VkDescriptorBufferInfo				descriptor_buffer_infos[32];
+	VkDescriptorPool					descriptor_pools[32];
 	/*Pipeline*/
 	VkPipelineLayout					main_pipeline_layout;
 	VkPipeline							pipeline;
@@ -64,16 +64,16 @@ typedef struct ShVkGraphicsPipeline {
 
 #define shWriteUniformBufferMemory(p_core, uniform_idx, p_uniform_buffer_data, p_pipeline)\
 	shMapMemory((p_core)->device,\
-		(p_pipeline)->uniform_buffers_memory[0][uniform_idx],\
+		(p_pipeline)->uniform_buffers_memory[uniform_idx],\
 		0,\
-		(p_pipeline)->uniform_buffers_size[0][uniform_idx],\
+		(p_pipeline)->uniform_buffers_size[uniform_idx],\
 		p_uniform_buffer_data)
 
 #define shWriteDynamicUniformBufferMemory(p_core, uniform_idx, p_uniform_buffer_data, p_pipeline)\
 	shMapMemory((p_core)->device,\
-		(p_pipeline)->uniform_buffers_memory[1][uniform_idx],\
+		(p_pipeline)->uniform_buffers_memory[uniform_idx],\
 		(p_pipeline)->uniform_buffers_offsets[uniform_idx],\
-		(p_pipeline)->uniform_buffers_size[1][uniform_idx],\
+		(p_pipeline)->uniform_buffers_size[uniform_idx],\
 		p_uniform_buffer_data)
 
 #define SH_UNIFORM_BUFFER  0
@@ -101,11 +101,21 @@ extern void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, 
 
 extern void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_t offset, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const uint8_t type, const VkShaderStageFlags shaderStageFlags, ShVkGraphicsPipeline* p_pipeline);
+extern void shCreateUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, const uint8_t type, ShVkGraphicsPipeline* p_pipeline);
+extern void shCreateDynamicUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, const uint8_t type, ShVkGraphicsPipeline* p_pipeline);
+extern void shAllocateUniformBuffers(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+
+extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
+
+extern void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkGraphicsPipeline* p_pipeline);
+
+extern void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
+
+extern void shCreateDescriptorPools(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+
+extern void shAllocateDescriptorSets(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
 
 extern void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, ShVkGraphicsPipeline* p_pipeline);
 

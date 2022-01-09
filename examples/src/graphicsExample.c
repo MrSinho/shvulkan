@@ -83,16 +83,14 @@ int main(void) {
 	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 	
 	shCreateUniformBuffer(&core, 0, 32, &pipeline);
-	shAllocateUniformBuffer(&core, 0, &pipeline);
-	shCreateDescriptorPool(&core, 0, SH_UNIFORM_BUFFER, &pipeline);
-	shDescriptorSetLayout(&core, 0, SH_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
-	shAllocateDescriptorSet(&core, 0, SH_UNIFORM_BUFFER, &pipeline);
-
 	shCreateDynamicUniformBuffer(&core, 1, 64, &pipeline);
-	shAllocateDynamicUniformBuffer(&core, 1, &pipeline);
-	shCreateDescriptorPool(&core, 1, SH_DYNAMIC_UNIFORM_BUFFER, &pipeline);
-	shDescriptorSetLayout(&core, 1, SH_DYNAMIC_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
-	shAllocateDescriptorSet(&core, 1, SH_DYNAMIC_UNIFORM_BUFFER, &pipeline);
+	shAllocateUniformBuffers(&core, &pipeline);
+
+	shDescriptorSetLayout(&core, 0, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+	shDescriptorSetLayout(&core, 1, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+
+	shCreateDescriptorPools(&core, &pipeline);
+	shAllocateDescriptorSets(&core,&pipeline);
 
 	uint32_t vertex_shader_size = 0;
 	uint32_t fragment_shader_size = 0;
@@ -157,8 +155,7 @@ int main(void) {
 
 		shPushConstants(&core, push_constants_data, &pipeline);
 
-		shUpdateUniformBuffer(&core, 0, &pipeline);
-		shUpdateDynamicUniformBuffer(&core, 1, &pipeline);
+		shUpdateUniformBuffers(&core, &pipeline);
 
 		shWriteUniformBufferMemory(&core, 0, light_data, &pipeline);
 		shBindUniformBuffer(&core, 0, &pipeline);
@@ -180,8 +177,8 @@ int main(void) {
 		shFrameEnd(&core, frame_index);
 	}
 	
-	shClearUniformBufferMemory (&core, 0, &pipeline);
-	shClearDynamicUniformBufferMemory(&core, 1, &pipeline);
+	shClearUniformBufferMemory(&core, 0, &pipeline);
+	shClearUniformBufferMemory (&core, 1, &pipeline);
 	shClearVertexBufferMemory(&core, triangle_vertex_buffer, triangle_vertex_buffer_memory);
 	shClearVertexBufferMemory(&core, quad_vertex_buffer, quad_vertex_buffer_memory);
 	shClearIndexBufferMemory(&core, quad_index_buffer, quad_index_buffer_memory);

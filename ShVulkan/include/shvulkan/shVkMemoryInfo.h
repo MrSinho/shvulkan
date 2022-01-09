@@ -45,28 +45,12 @@ typedef struct ShVkCore	ShVkCore;
 #define shClearIndexBufferMemory(p_core, index_buffer, index_buffer_memory)\
 	shClearBufferMemory((p_core)->device, index_buffer, index_buffer_memory)
 
-#define shCreateUniformBuffer(p_core, uniform_idx, size, p_pipeline)\
-	shCreateBuffer((p_core)->device, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[SH_UNIFORM_BUFFER][uniform_idx]);\
-	(p_pipeline)->uniform_buffers_size[SH_UNIFORM_BUFFER][uniform_idx] = size;\
-	(p_pipeline)->uniforms_idx++
-
-#define shCreateDynamicUniformBuffer(p_core, uniform_idx, size, p_pipeline)\
-	shCreateBuffer((p_core)->device, SH_MAX_UNIFORM_BUFFER_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[SH_DYNAMIC_UNIFORM_BUFFER][uniform_idx]);\
-	(p_pipeline)->uniform_buffers_size[SH_DYNAMIC_UNIFORM_BUFFER][uniform_idx] = size;\
-	(p_pipeline)->dynamic_uniforms_idx++
-
 #define shAllocateUniformBuffer(p_core, uniform_idx, p_pipeline)\
-	shAllocateMemory((p_core)->device, (p_core)->physical_device, (p_pipeline)->uniform_buffers[SH_UNIFORM_BUFFER][uniform_idx], VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &(p_pipeline)->uniform_buffers_memory[SH_UNIFORM_BUFFER][uniform_idx])
-
-#define shAllocateDynamicUniformBuffer(p_core, uniform_idx, p_pipeline)\
-	shAllocateMemory((p_core)->device, (p_core)->physical_device, (p_pipeline)->uniform_buffers[SH_DYNAMIC_UNIFORM_BUFFER][uniform_idx], VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &(p_pipeline)->uniform_buffers_memory[SH_DYNAMIC_UNIFORM_BUFFER][uniform_idx])
+	shAllocateMemory((p_core)->device, (p_core)->physical_device, (p_pipeline)->uniform_buffers[uniform_idx], VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &(p_pipeline)->uniform_buffers_memory[uniform_idx])
 
 #define shClearUniformBufferMemory(p_core, uniform_idx, p_pipeline)\
-	shClearBufferMemory((p_core)->device, (p_pipeline)->uniform_buffers[SH_UNIFORM_BUFFER][uniform_idx], (p_pipeline)->uniform_buffers_memory[SH_UNIFORM_BUFFER][uniform_idx])
-
-#define shClearDynamicUniformBufferMemory(p_core, uniform_idx, p_pipeline)\
-	shClearBufferMemory((p_core)->device, (p_pipeline)->uniform_buffers[SH_DYNAMIC_UNIFORM_BUFFER][uniform_idx], (p_pipeline)->uniform_buffers_memory[SH_DYNAMIC_UNIFORM_BUFFER][uniform_idx])
-
+	shClearBufferMemory((p_core)->device, (p_pipeline)->uniform_buffers[uniform_idx], (p_pipeline)->uniform_buffers_memory[uniform_idx])
+	
 #define SH_DEPTH_IMAGE_FORMAT VK_FORMAT_D32_SFLOAT
 
 #define shCreateDepthImage(p_core)\

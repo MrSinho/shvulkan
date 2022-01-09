@@ -21,16 +21,9 @@ typedef struct ShVkFixedStates ShVkFixedStates;
 
 #define shUpdateUniformBuffer(p_core, uniform_idx, p_pipeline)\
 	vkUpdateDescriptorSets((p_core)->device,\
-		(p_pipeline)->uniforms_idx, &(p_pipeline)->write_descriptor_sets[0][uniform_idx],\
+		1, &(p_pipeline)->write_descriptor_sets[uniform_idx],\
 		0, NULL\
 	)
-
-#define shUpdateDynamicUniformBuffer(p_core, uniform_idx, p_pipeline)\
-	vkUpdateDescriptorSets((p_core)->device,\
-		(p_pipeline)->dynamic_uniforms_idx, &(p_pipeline)->write_descriptor_sets[1][uniform_idx],\
-		0, NULL\
-	)
-
 
 extern void shFrameReset(ShVkCore* p_core);
 
@@ -43,6 +36,8 @@ extern void shPushConstants(ShVkCore* p_core, const void* p_push_constants_data,
 extern void shBindVertexBuffer(ShVkCore* p_core, VkBuffer* p_vertex_buffer);
 
 extern void shBindIndexBuffer(ShVkCore* p_core, VkBuffer* p_index_buffer);
+
+extern void shUpdateUniformBuffers(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
 
 extern void shBindUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
 
