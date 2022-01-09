@@ -78,21 +78,21 @@ int main(void) {
 	shWriteIndexBufferMemory(&core, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
 	
 	
-	ShVkPipelineData pipeline = { 0 };
+	ShVkGraphicsPipeline pipeline = { 0 };
 	
 	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 	
-	shCreateUniformBuffer(&core, 64, 0 , &pipeline);
+	shCreateUniformBuffer(&core, 0, 32, &pipeline);
 	shAllocateUniformBuffer(&core, 0, &pipeline);
-	shCreateDescriptorPool(&core, 0, &pipeline);
-	shDescriptorSetLayout(&core, 0, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
-	shAllocateDescriptorSet(&core, 0, &pipeline);
+	shCreateDescriptorPool(&core, 0, SH_UNIFORM_BUFFER, &pipeline);
+	shDescriptorSetLayout(&core, 0, SH_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+	shAllocateDescriptorSet(&core, 0, SH_UNIFORM_BUFFER, &pipeline);
 
-	shCreateDynamicUniformBuffer(&core, 64, 1, &pipeline);
-	shAllocateUniformBuffer(&core, 1, &pipeline);
-	shCreateDescriptorPool(&core, 1, &pipeline);
-	shDescriptorSetLayout(&core, 1, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
-	shAllocateDescriptorSet(&core, 1, &pipeline);
+	shCreateDynamicUniformBuffer(&core, 1, 64, &pipeline);
+	shAllocateDynamicUniformBuffer(&core, 1, &pipeline);
+	shCreateDescriptorPool(&core, 1, SH_DYNAMIC_UNIFORM_BUFFER, &pipeline);
+	shDescriptorSetLayout(&core, 1, SH_DYNAMIC_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+	shAllocateDescriptorSet(&core, 1, SH_DYNAMIC_UNIFORM_BUFFER, &pipeline);
 
 	uint32_t vertex_shader_size = 0;
 	uint32_t fragment_shader_size = 0;
@@ -133,7 +133,7 @@ int main(void) {
 		0.0f, 0.45f, 0.9f, 1.0f // light color
 	};
 	
-	//dynamic uniform buffer data
+	//type uniform buffer data
 	float model0[4][4] = {
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 2.0f, 0.0f, 0.0f,
@@ -157,20 +157,21 @@ int main(void) {
 
 		shPushConstants(&core, push_constants_data, &pipeline);
 
-		shBeginPipeline(&core, &pipeline);
+		shUpdateUniformBuffer(&core, 0, &pipeline);
+		shUpdateDynamicUniformBuffer(&core, 1, &pipeline);
 
 		shWriteUniformBufferMemory(&core, 0, light_data, &pipeline);
 		shBindUniformBuffer(&core, 0, &pipeline);
 		
-		shWriteUniformBufferMemory(&core, 1, model0, &pipeline);
-		shBindUniformBuffer(&core, 1, &pipeline);
+		shWriteDynamicUniformBufferMemory(&core, 1, model0, &pipeline);
+		shBindDynamicUniformBuffer(&core, 1, &pipeline);
 
 		shBindVertexBuffer(&core, &quad_vertex_buffer);
 		shBindIndexBuffer(&core, &quad_index_buffer);
 		shDrawIndexed(&core, QUAD_INDEX_COUNT);
 
-		shWriteUniformBufferMemory(&core, 1, model1, &pipeline);
-		shBindUniformBuffer(&core, 1, &pipeline);
+		shWriteDynamicUniformBufferMemory(&core, 1, model1, &pipeline);
+		shBindDynamicUniformBuffer(&core, 1, &pipeline);
 
 		shBindVertexBuffer(&core, &triangle_vertex_buffer);
 		shDraw(&core, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
@@ -179,8 +180,8 @@ int main(void) {
 		shFrameEnd(&core, frame_index);
 	}
 	
-	shClearUniformBufferMemory(&core, 0, &pipeline);
-	shClearUniformBufferMemory(&core, 1, &pipeline);
+	shClearUniformBufferMemory (&core, 0, &pipeline);
+	shClearDynamicUniformBufferMemory(&core, 1, &pipeline);
 	shClearVertexBufferMemory(&core, triangle_vertex_buffer, triangle_vertex_buffer_memory);
 	shClearVertexBufferMemory(&core, quad_vertex_buffer, quad_vertex_buffer_memory);
 	shClearIndexBufferMemory(&core, quad_index_buffer, quad_index_buffer_memory);

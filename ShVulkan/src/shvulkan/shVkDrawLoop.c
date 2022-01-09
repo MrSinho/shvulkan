@@ -47,24 +47,7 @@ void shFrameBegin(ShVkCore* p_core, uint32_t* p_swapchain_image_index) {
 	vkCmdBeginRenderPass(p_core->graphics_cmd_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void shBeginPipeline(ShVkCore* p_core, ShVkPipelineData* p_pipeline) {
-	for (uint8_t i = 0; i < p_pipeline->uniform_buffer_count; i++) {
-		if (p_pipeline->dynamic_uniform_buffers_size[i]) {
-			vkUpdateDescriptorSets(p_core->device,
-				1, &p_pipeline->dynamic_write_descriptor_sets[i],
-				0, NULL
-			);
-		}
-		else {
-			vkUpdateDescriptorSets(p_core->device,
-				1, &p_pipeline->write_descriptor_sets[i],
-				0, NULL
-			);
-		}
-	}
-}
-
-void shBindPipeline(ShVkCore* p_core, ShVkPipelineData* p_pipeline) {
+void shBindPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
 	vkCmdBindPipeline(p_core->graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline->pipeline);
 }
 
@@ -77,32 +60,31 @@ void shBindIndexBuffer(ShVkCore* p_core, VkBuffer* p_index_buffer) {
 	vkCmdBindIndexBuffer(p_core->graphics_cmd_buffer, *p_index_buffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
-void shPushConstants(ShVkCore* p_core, const void* p_push_constants_data, ShVkPipelineData* p_pipeline) {
+void shPushConstants(ShVkCore* p_core, const void* p_push_constants_data, ShVkGraphicsPipeline* p_pipeline) {
 	if (p_pipeline->push_constant_range.size > 0 || p_push_constants_data != NULL) {
 		vkCmdPushConstants(p_core->graphics_cmd_buffer, p_pipeline->main_pipeline_layout, p_pipeline->push_constant_range.stageFlags, p_pipeline->push_constant_range.offset, p_pipeline->push_constant_range.size, p_push_constants_data);
 	}
 }
 
-void shBindUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkPipelineData* p_pipeline) {
-	if (p_pipeline->dynamic_uniform_buffers_size[uniform_idx]) {
-		vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer, 
-			VK_PIPELINE_BIND_POINT_GRAPHICS, 
-			p_pipeline->main_pipeline_layout, uniform_idx, 1, 
-			&(p_pipeline)->dynamic_descriptor_sets[uniform_idx], 
-			1, 
-			&(p_pipeline)->uniform_buffers_offsets[uniform_idx]
-		);
-	}
-	else {
-		vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			p_pipeline->main_pipeline_layout, uniform_idx, 1,
-			&(p_pipeline)->descriptor_sets[uniform_idx],
-			0,
-			NULL
-		);
-	}
-	(p_pipeline)->uniform_buffers_offsets[uniform_idx] += (p_pipeline)->dynamic_uniform_buffers_size[uniform_idx];
+void shBindUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
+	vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		p_pipeline->main_pipeline_layout, uniform_idx, 1,
+		&(p_pipeline)->descriptor_sets[0][uniform_idx],
+		0,
+		NULL
+	);
+}
+
+void shBindDynamicUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
+	vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		p_pipeline->main_pipeline_layout, uniform_idx, 1,
+		&(p_pipeline)->descriptor_sets[1][uniform_idx],
+		1,
+		&(p_pipeline)->uniform_buffers_offsets[uniform_idx]
+	);
+	(p_pipeline)->uniform_buffers_offsets[uniform_idx] += (p_pipeline)->uniform_buffers_size[1][uniform_idx];
 }
 
 void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index) {
