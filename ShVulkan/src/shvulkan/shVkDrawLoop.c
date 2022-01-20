@@ -60,12 +60,6 @@ void shBindIndexBuffer(ShVkCore* p_core, VkBuffer* p_index_buffer) {
 	vkCmdBindIndexBuffer(p_core->graphics_cmd_buffer, *p_index_buffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
-void shPushConstants(ShVkCore* p_core, const void* p_push_constants_data, ShVkGraphicsPipeline* p_pipeline) {
-	if (p_pipeline->push_constant_range.size > 0 || p_push_constants_data != NULL) {
-		vkCmdPushConstants(p_core->graphics_cmd_buffer, p_pipeline->main_pipeline_layout, p_pipeline->push_constant_range.stageFlags, p_pipeline->push_constant_range.offset, p_pipeline->push_constant_range.size, p_push_constants_data);
-	}
-}
-
 void shUpdateUniformBuffers(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
 	vkUpdateDescriptorSets((p_core)->device,
 		p_pipeline->uniform_count, p_pipeline->write_descriptor_sets,

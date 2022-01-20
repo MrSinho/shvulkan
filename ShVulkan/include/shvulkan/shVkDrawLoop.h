@@ -25,13 +25,14 @@ typedef struct ShVkFixedStates ShVkFixedStates;
 		0, NULL\
 	)
 
+#define shPushConstants(p_core, p_push_constants_data, p_pipeline)\
+	vkCmdPushConstants((p_core)->graphics_cmd_buffer, (p_pipeline)->main_pipeline_layout, (p_pipeline)->push_constant_range.stageFlags, (p_pipeline)->push_constant_range.offset, (p_pipeline)->push_constant_range.size, p_push_constants_data)
+
 extern void shFrameReset(ShVkCore* p_core);
 
 extern void shFrameBegin(ShVkCore* p_core, uint32_t* swapchain_image_index);
 
 extern void shBindPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
-
-extern void shPushConstants(ShVkCore* p_core, const void* p_push_constants_data, ShVkGraphicsPipeline* p_pipeline);
 
 extern void shBindVertexBuffer(ShVkCore* p_core, VkBuffer* p_vertex_buffer);
 

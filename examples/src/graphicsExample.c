@@ -11,6 +11,8 @@
 #include <memory.h>
 #include <errno.h>
 
+#include <math.h>
+
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title);
 const char* readBinary(const char* path, uint32_t* p_size);
 
@@ -45,23 +47,23 @@ int main(void) {
 	shSetSyncObjects(&core);
 	shCreateGraphicsCommandBuffer(&core);
 	
-	#define TRIANGLE_VERTEX_COUNT 15
+	#define TRIANGLE_VERTEX_COUNT 24
 	float triangle[TRIANGLE_VERTEX_COUNT] = {
-		-1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 	};
 	VkBuffer triangle_vertex_buffer;
 	VkDeviceMemory triangle_vertex_buffer_memory;
 	shCreateVertexBuffer(&core, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
 	shAllocateVertexBuffer(&core, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
 	shWriteVertexBufferMemory(&core, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
-	#define QUAD_VERTEX_COUNT 20
+	#define QUAD_VERTEX_COUNT 32
 	float quad[QUAD_VERTEX_COUNT] = {
-		-0.5f,-0.5f, 0.0f, 0.0f, 0.0f,
-		 0.5f,-0.5f, 0.0f, 0.0f, 0.0f,
-		 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+		-0.5f,-0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		 0.5f,-0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 	};
 	#define QUAD_INDEX_COUNT 6
 	uint32_t indices[QUAD_INDEX_COUNT] = {
@@ -101,10 +103,10 @@ int main(void) {
 	shCreateShaderStage(core.device, pipeline.shader_modules[0], VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
 	shCreateShaderStage(core.device, pipeline.shader_modules[1], VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
 	
-	
 	ShVkFixedStates fixed_states = { 0 };
 	shSetVertexInputAttribute(0, SH_VEC3_SIGNED_FLOAT, 0, 12, &fixed_states);
-	shSetVertexInputAttribute(1, SH_VEC2_SIGNED_FLOAT, 12, 8, &fixed_states);
+	shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT,12, 12, &fixed_states);
+	shSetVertexInputAttribute(2, SH_VEC2_SIGNED_FLOAT,24, 8, &fixed_states);
 	
 	shSetFixedStates(&core, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
 	shSetupGraphicsPipeline(&core, fixed_states, &pipeline);
@@ -170,6 +172,8 @@ int main(void) {
 		shWriteDynamicUniformBufferMemory(&core, 1, model1, &pipeline);
 		shBindDynamicUniformBuffer(&core, 1, &pipeline);
 
+		triangle[9] = (float)sin(glfwGetTime());
+		shWriteVertexBufferMemory(&core, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
 		shBindVertexBuffer(&core, &triangle_vertex_buffer);
 		shDraw(&core, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
@@ -212,9 +216,11 @@ const char* readBinary(const char* path, uint32_t* p_size) {
 	fseek(stream, 0, SEEK_SET);
 	char* code = (char*)calloc(1, code_size);
 	if (code == NULL) {
+		fclose(stream);
 		return NULL;
 	}
 	fread(code, code_size, 1, stream);
 	*p_size = code_size;
+	fclose(stream);
 	return code;
 }

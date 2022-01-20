@@ -79,16 +79,16 @@ void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkG
 
 
 	VkWriteDescriptorSet writeDescriptorSet = {
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,															//sType;
-		NULL,																							//pNext;
+		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,													//sType;
+		NULL,																					//pNext;
 		p_pipeline->descriptor_sets[uniform_idx],												//dstSet;
-		p_pipeline->dynamic_uniforms[uniform_idx],																						//dstBinding;
-		0,																								//dstArrayElement;
-		1,																								//descriptorCount;
+		p_pipeline->dynamic_uniforms[uniform_idx],												//dstBinding;
+		0,																						//dstArrayElement;
+		1,																						//descriptorCount;
 		p_pipeline->dynamic_uniforms[uniform_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,		//descriptorType;
-		NULL,																							//pImageInfo;
+		NULL,																					//pImageInfo;
 		&p_pipeline->descriptor_buffer_infos[uniform_idx],										//pBufferInfo;
-		NULL																							//pTexelBufferView;
+		NULL																					//pTexelBufferView;
 	};
 	p_pipeline->write_descriptor_sets[uniform_idx] = writeDescriptorSet;
 }

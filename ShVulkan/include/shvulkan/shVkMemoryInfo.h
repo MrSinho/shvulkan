@@ -19,7 +19,7 @@ typedef struct ShVkCore	ShVkCore;
 #define SH_VEC2_UNSIGNED_INT		VK_FORMAT_R32G32_UINT
 #define SH_VEC3_UNSIGNED_INT		VK_FORMAT_R32G32B32_UINT
 
-#define SH_MAX_UNIFORM_BUFFER_SIZE 16000
+#define SH_MAX_UNIFORM_BUFFER_SIZE 65536
 
 #define shCreateVertexBuffer(p_core, size, p_vertex_buffer)\
 	shCreateBuffer((p_core)->device, size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, p_vertex_buffer)
