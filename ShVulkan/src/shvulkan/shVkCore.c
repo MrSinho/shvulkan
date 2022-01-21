@@ -217,114 +217,58 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 
 void shCreateSwapchain(ShVkCore* p_core) {
 	assert(p_core != NULL);
-	// Get the list of VkFormats that are supported:
-    uint32_t formatCount;
-    int res = vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &formatCount, NULL);
-    assert(res == VK_SUCCESS);
-    VkSurfaceFormatKHR *surfFormats = (VkSurfaceFormatKHR *)malloc(formatCount * sizeof(VkSurfaceFormatKHR));
-    res = vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &formatCount, surfFormats);
-    assert(res == VK_SUCCESS);
-    // If the format list includes just one entry of VK_FORMAT_UNDEFINED,
-    // the surface has no preferred format.  Otherwise, at least one
-    // supported format will be returned.
+
+    shCheckVkResult(
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_core->physical_device, p_core->surface.surface, &p_core->surface.surface_capabilities),
+		"error getting surface capabilities"
+	);
+
 	p_core->swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
-    if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
-        p_core->swapchain_image_format = VK_FORMAT_B8G8R8A8_UNORM;
-    } else {
-        assert(formatCount >= 1);
-        p_core->swapchain_image_format = surfFormats[0].format;
-    }
-    free(surfFormats);
+	VkSwapchainCreateInfoKHR swapchain_create_info = {
+		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,				//sType;
+		NULL,														//pNext;
+		0,															//flags;
+		p_core->surface.surface,									//surface;
+		p_core->surface.surface_capabilities.minImageCount,			//minImageCount;
+		p_core->swapchain_image_format,								//imageFormat;
+		VK_COLORSPACE_SRGB_NONLINEAR_KHR,							//imageColorSpace;
+		(VkExtent2D) { p_core->surface.surface_capabilities.currentExtent.width,
+		p_core->surface.surface_capabilities.currentExtent.height},	//imageExtent;
+		1,															//imageArrayLayers;
+		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,						//imageUsage;
+		VK_SHARING_MODE_EXCLUSIVE,									//imageSharingMode;
+		0,															//queueFamilyIndexCount;
+		NULL,														//pQueueFamilyIndices;
+		p_core->surface.surface_capabilities.currentTransform,		//preTransform;
+		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,							//compositeAlpha;
+		VK_PRESENT_MODE_FIFO_KHR,									//presentMode;
+		1,															//clipped;
+		NULL,														//oldSwapchain;
+	};
 
-    res = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_core->physical_device, p_core->surface.surface, &p_core->surface.surface_capabilities);
-    assert(res == VK_SUCCESS);
-
-    uint32_t presentModeCount;
-    res = vkGetPhysicalDeviceSurfacePresentModesKHR(p_core->physical_device, p_core->surface.surface, &presentModeCount, NULL);
-    assert(res == VK_SUCCESS);
-    //VkPresentModeKHR *presentModes = (VkPresentModeKHR *)malloc(presentModeCount * sizeof(VkPresentModeKHR));
-
-    //res = vkGetPhysicalDeviceSurfacePresentModesKHR(p_core->physical_device, p_core->surface.surface, &presentModeCount, presentModes);
-    //assert(res == VK_SUCCESS);
-
-    VkExtent2D swapchainExtent;
-    // width and height are either both 0xFFFFFFFF, or both not 0xFFFFFFFF.
-    if (p_core->surface.surface_capabilities.currentExtent.width == 0xFFFFFFFF) {
-        // If the surface size is undefined, the size is set to
-        // the size of the images requested.
-        swapchainExtent.width = p_core->surface.width;
-        swapchainExtent.height = p_core->surface.height;
-        if (swapchainExtent.width < p_core->surface.surface_capabilities.minImageExtent.width) {
-            swapchainExtent.width = p_core->surface.surface_capabilities.minImageExtent.width;
-        } else if (swapchainExtent.width > p_core->surface.surface_capabilities.maxImageExtent.width) {
-            swapchainExtent.width = p_core->surface.surface_capabilities.maxImageExtent.width;
-        }
-
-        if (swapchainExtent.height < p_core->surface.surface_capabilities.minImageExtent.height) {
-            swapchainExtent.height = p_core->surface.surface_capabilities.minImageExtent.height;
-        } else if (swapchainExtent.height > p_core->surface.surface_capabilities.maxImageExtent.height) {
-            swapchainExtent.height = p_core->surface.surface_capabilities.maxImageExtent.height;
-        }
-    } else {
-        // If the surface size is defined, the swap chain size must match
-        swapchainExtent = p_core->surface.surface_capabilities.currentExtent;
-    }
-
-    // The FIFO present mode is guaranteed by the spec to be supported
-    VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
-
-    // Determine the number of VkImage's to use in the swap chain.
-    // We need to acquire only 1 presentable image at at time.
-    // Asking for minImageCount images ensures that we can acquire
-    // 1 presentable image as long as we present it before attempting
-    // to acquire another.
-    uint32_t desiredNumberOfSwapChainImages = p_core->surface.surface_capabilities.minImageCount;
-
-    VkSurfaceTransformFlagBitsKHR preTransform;
-    if (p_core->surface.surface_capabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) {
-        preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-    } else {
-        preTransform = p_core->surface.surface_capabilities.currentTransform;
-    }
-
-    // Find a supported composite alpha mode - one of these is guaranteed to be set
-    VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    VkCompositeAlphaFlagBitsKHR compositeAlphaFlags[4] = {
+    VkCompositeAlphaFlagBitsKHR composite_alpha_flags[4] = {
         VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
         VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
         VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
     };
-    for (uint32_t i = 0; i < sizeof(compositeAlphaFlags) / sizeof(compositeAlphaFlags[0]); i++) {
-        if (p_core->surface.surface_capabilities.supportedCompositeAlpha & compositeAlphaFlags[i]) {
-            compositeAlpha = compositeAlphaFlags[i];
+    for (uint32_t i = 0; i < 4; i++) {
+        if (p_core->surface.surface_capabilities.supportedCompositeAlpha & composite_alpha_flags[i]) {
+			swapchain_create_info.compositeAlpha = composite_alpha_flags[i];
             break;
         }
     }
-
-    VkSwapchainCreateInfoKHR swapchain_ci = { 0 };
-    swapchain_ci.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    swapchain_ci.pNext = NULL;
-    swapchain_ci.surface = p_core->surface.surface;
-    swapchain_ci.minImageCount = desiredNumberOfSwapChainImages;
-    swapchain_ci.imageFormat = p_core->swapchain_image_format;
-    swapchain_ci.imageExtent.width = swapchainExtent.width;
-    swapchain_ci.imageExtent.height = swapchainExtent.height;
-    swapchain_ci.preTransform = preTransform;
-    swapchain_ci.compositeAlpha = compositeAlpha;
-    swapchain_ci.imageArrayLayers = 1;
-    swapchain_ci.presentMode = swapchainPresentMode;
-    swapchain_ci.oldSwapchain = VK_NULL_HANDLE;
-    swapchain_ci.clipped = 1;
-    swapchain_ci.imageColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-    swapchain_ci.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    swapchain_ci.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    swapchain_ci.queueFamilyIndexCount = 0;
-    swapchain_ci.pQueueFamilyIndices = NULL;
-    uint32_t queueFamilyIndices[2] = {(uint32_t)p_core->graphics_queue.queue_family_index, (uint32_t)p_core->graphics_queue.queue_family_index };
+	
+	uint32_t present_mode_count;
+	VkPresentModeKHR present_modes[7];
+	shCheckVkResult(
+		vkGetPhysicalDeviceSurfacePresentModesKHR(p_core->physical_device, p_core->surface.surface, &present_mode_count, present_modes),
+		"error getting surface present modes"
+	);
+	swapchain_create_info.presentMode = present_modes[0];
 
 	shCheckVkResult(
-		vkCreateSwapchainKHR(p_core->device, &swapchain_ci, NULL, &p_core->swapchain),
+		vkCreateSwapchainKHR(p_core->device, &swapchain_create_info, NULL, &p_core->swapchain),
 		"error creating swapchain"
 	);
 
