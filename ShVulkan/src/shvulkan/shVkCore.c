@@ -188,7 +188,7 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 	}
 	if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT) {
 		shSetQueueInfo(p_core->compute_queue.queue_family_index, &queue_priority, (queue_info_count == 1) ? &queues_info[1] : &queues_info[0]);
-		queue_info_count++;
+		(p_core->graphics_queue.queue_family_index != p_core->compute_queue.queue_family_index) ? queue_info_count += 1 : 0;
 	}
 	
 	const char* swapchain_extension_name = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
