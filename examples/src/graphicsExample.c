@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <memory.h>
-#include <errno.h>
+#include <assert.h>
 
 #include <math.h>
 
@@ -193,10 +193,7 @@ int main(void) {
 }
 
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title) {
-	if (!glfwInit()) {
-		perror("Error initializing glfw");
-		return NULL;
-	}
+	assert(glfwInit());
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	return glfwCreateWindow(width, height, title, NULL, NULL);
