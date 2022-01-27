@@ -24,7 +24,7 @@ void shFrameBegin(ShVkCore* p_core, uint32_t* p_swapchain_image_index) {
 	};
 
 	VkClearValue clear_values[2];
-	clear_values[0].color = (VkClearColorValue){ 0.1f, 0.1f, 0.1f };
+	clear_values[0].color = (VkClearColorValue){ 0.0f, 0.0f, 0.0f };
 	clear_values[1].depthStencil = (VkClearDepthStencilValue){ 1.0f, 0 };
 	VkRenderPassBeginInfo renderPassBeginInfo = {
 		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,		//sType;
@@ -95,8 +95,6 @@ void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index) {
 
 	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-	//submit to GPU queue
-	// wait for the presentsemaphore, signal to the render semaphore
 	VkSubmitInfo submitInfo = {
 		VK_STRUCTURE_TYPE_SUBMIT_INFO,	//sType;
 		NULL,							//pNext;
@@ -111,7 +109,6 @@ void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index) {
 
 	vkQueueSubmit(p_core->graphics_queue.queue, 1, &submitInfo, p_core->render_fence);
 
-	// Present the ready image
 	VkPresentInfoKHR presentInfo = {
 		VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,	//sType;
 		NULL,								//pNext;
