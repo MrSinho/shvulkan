@@ -3,19 +3,18 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#ifndef NDEBUG
 #include <stdio.h>
 #include <string.h>
 #ifdef _MSC_VER
 #pragma warning (disable: 6385)
 #endif//_MSC_VER
 
-int shCheckValidationLayer(const char* validation_layer) {
+int shCheckValidationLayers(const char* validation_layer) {
 	assert(validation_layer != NULL);
 	uint32_t available_layer_count = 0;
 	vkEnumerateInstanceLayerProperties(&available_layer_count, NULL);
 
-	VkLayerProperties* p_available_layer_properties = (VkLayerProperties*)malloc(available_layer_count * sizeof(VkLayerProperties));
+	VkLayerProperties* p_available_layer_properties = (VkLayerProperties*)calloc(available_layer_count, sizeof(VkLayerProperties));
 	vkEnumerateInstanceLayerProperties(&available_layer_count, p_available_layer_properties);
 
 	if (p_available_layer_properties != NULL) {
@@ -32,8 +31,6 @@ int shCheckValidationLayer(const char* validation_layer) {
 
 	return 0;
 }
-
-#endif
 
 const char* shTranslateVkResult(const VkResult vk_result) {
 	switch (vk_result) {

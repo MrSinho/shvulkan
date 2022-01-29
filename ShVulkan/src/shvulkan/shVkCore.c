@@ -9,7 +9,7 @@
 #pragma warning (disable: 6011 6385 6386 6255)
 #endif // _MSC_VER
 
-void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint32_t extension_count, const char** extension_names) {
+void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names) {
 	assert(p_core != NULL);
 	VkApplicationInfo application_info = {
 		VK_STRUCTURE_TYPE_APPLICATION_INFO,	//sType;
@@ -33,14 +33,14 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 		extension_names							//ppEnabledExtensionNames;
 	};
 
-#ifndef NDEBUG
+	if (enable_validation_layers) {
 		const char* khronos_validation = "VK_LAYER_KHRONOS_validation";
-		if (shCheckValidationLayer(khronos_validation)) {
+		if (shCheckValidationLayers(khronos_validation)) {
 			instance_create_info.enabledLayerCount = 1;
 			instance_create_info.ppEnabledLayerNames = &khronos_validation;
 		}
-#endif
-
+	}
+	
 	shCheckVkResult(
 		vkCreateInstance(&instance_create_info, VK_NULL_HANDLE, &p_core->instance),
 		"error creating vkinstance"
@@ -82,13 +82,15 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 		VkBool32 surfaceSupport = 0;
 
 		for (uint32_t j = 0; j < queueFamilyPropertyCount; j++) {
-			if (!surfaceSupport && p_core->surface.surface != NULL) {
-				vkGetPhysicalDeviceSurfaceSupportKHR(pDevices[i], j, p_core->surface.surface, &surfaceSupport);
-				if (surfaceSupport) {
-					surfaceQueueFamilyIndices[i] = j;
-				}
-			}
 			if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
+				assert(p_core->surface.width != 0 && p_core->surface.height != 0);
+				if (!surfaceSupport) {
+					assert(p_core->surface.surface != NULL);
+					vkGetPhysicalDeviceSurfaceSupportKHR(pDevices[i], j, p_core->surface.surface, &surfaceSupport);
+					if (surfaceSupport) {
+						surfaceQueueFamilyIndices[i] = j;
+					}
+				}
 				if (pQueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 					graphicsQueueFamilyIndices[i] = j;
 				}
@@ -243,7 +245,7 @@ void shCreateSwapchain(ShVkCore* p_core) {
 		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,							//compositeAlpha;
 		VK_PRESENT_MODE_FIFO_KHR,									//presentMode;
 		1,															//clipped;
-		NULL,														//oldSwapchain;
+		0,															//oldSwapchain;
 	};
 
     VkCompositeAlphaFlagBitsKHR composite_alpha_flags[4] = {

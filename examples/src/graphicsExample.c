@@ -2,6 +2,7 @@
 #include <shvulkan/shVkMemoryInfo.h>
 #include <shvulkan/shVkPipelineData.h>
 #include <shvulkan/shVkDrawLoop.h>
+#include <shvulkan/shVkCheck.h>
 
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
@@ -18,25 +19,21 @@ const char* readBinary(const char* path, uint32_t* p_size);
 
 int main(void) {
 
-	/*
-	* NOTE: the example uses GLFW to create the window, and for creating the window surface
-	*/
 	const char* application_name = "shVulkan example";
 	const uint32_t width = 720;
 	const uint32_t height = 480;
 	GLFWwindow* window = createWindow(width, height, application_name);
-	//GET INSTANCE EXTENSIONS FOR AN OUTPUT ON THE SCREEN
-	uint32_t extensions_count = 0;
-	const char** extensions_names = glfwGetRequiredInstanceExtensions(&extensions_count);
-	
+
 	ShVkCore core = { 0 };
-	//INITIALIZE VULKAN INSTANCE
-	shCreateInstance(&core, application_name, "shVulkan Engine", extensions_count, extensions_names);
-	//CREATE WINDOW SURFACE
-	VkResult r = glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface);
+	assert(glfwVulkanSupported() != GLFW_FALSE);
+	uint32_t extension_count = 2;
+	const char** extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
+	shCreateInstance(&core, application_name, "ShVulkan Engine", 1, extension_count, extension_names);
+	shCheckVkResult(glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface),
+		"error creating window surface"
+	);
 	core.surface.width = width;
 	core.surface.height = height;
-
 	shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
 	shSetLogicalDevice(&core);
 	shGetGraphicsQueue(&core);
@@ -123,9 +120,9 @@ int main(void) {
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
-	void* push_constants_data[128/8];
+	void* push_constants_data[128/sizeof(void*)];
 	memcpy(push_constants_data, projection, 64);
-	memcpy(&push_constants_data[64/8], view, 64);
+	memcpy(&push_constants_data[64/sizeof(void*)], view, 64);
 	
 	//uniform buffer data
 	float light_data[8] = {
