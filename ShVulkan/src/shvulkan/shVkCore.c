@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <memory.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -571,3 +575,7 @@ void shVulkanRelease(ShVkCore* p_core) {
 	shDeviceRelease(p_core);
 	shInstanceRelease(p_core);
 }
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

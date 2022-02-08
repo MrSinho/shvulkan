@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include "shvulkan/shVkCore.h"
 #include "shvulkan/shVkPipelineData.h"
 #include "shvulkan/shVkCheck.h"
@@ -419,3 +423,7 @@ void shDestroyPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
 	vkDestroyShaderModule(p_core->device, p_pipeline->shader_modules[0], NULL);
 	vkDestroyShaderModule(p_core->device, p_pipeline->shader_modules[1], NULL);
 }																
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

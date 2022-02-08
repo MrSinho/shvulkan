@@ -1,6 +1,10 @@
 #ifndef SH_MEMORY_INFO_H
 #define SH_MEMORY_INFO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <stdint.h>
 #include <vulkan/vulkan.h>
 #include <memory.h>
@@ -70,5 +74,9 @@ extern void shMapMemory(const VkDevice device, const VkDeviceMemory memory, cons
 extern void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory);
 
 extern void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus
 
 #endif//SH_VK_MEMORY_H

@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include "shvulkan/shVkCheck.h"
 
 #include <stdlib.h>
@@ -71,3 +75,7 @@ void shCheckVkResult(VkResult result, const char* error_msg) {
 		exit(-1);
 	}
 }
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

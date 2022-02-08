@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include "shvulkan/shVkMemoryInfo.h"
 #include "shvulkan/shVkCheck.h"
 
@@ -130,3 +134,7 @@ void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device
 
 	vkBindImageMemory(device, *p_image, *p_image_memory, 0);
 }
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

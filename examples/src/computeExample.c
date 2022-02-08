@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <shvulkan/shVkCore.h>
 #include <shvulkan/shVkMemoryInfo.h>
 #include <shvulkan/shVkPipelineData.h>
@@ -32,3 +36,7 @@ int main(void) {
 
 	return 0;
 }
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

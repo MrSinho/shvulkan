@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include "shvulkan/shVkDrawLoop.h"
 #include "shvulkan/shVkCore.h"
 #include "shvulkan/shVkPipelineData.h"
@@ -122,3 +126,7 @@ void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index) {
 
 	vkQueuePresentKHR(p_core->graphics_queue.queue, &presentInfo);
 }
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

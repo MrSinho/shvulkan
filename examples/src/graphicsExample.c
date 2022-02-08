@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <shvulkan/shVkCore.h>
 #include <shvulkan/shVkMemoryInfo.h>
 #include <shvulkan/shVkPipelineData.h>
@@ -25,7 +29,6 @@ int main(void) {
 	GLFWwindow* window = createWindow(width, height, application_name);
 
 	ShVkCore core = { 0 };
-	assert(glfwVulkanSupported() != GLFW_FALSE);
 	uint32_t extension_count = 2;
 	const char** extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
 	shCreateInstance(&core, application_name, "ShVulkan Engine", 1, extension_count, extension_names);
@@ -191,6 +194,7 @@ int main(void) {
 
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title) {
 	assert(glfwInit());
+	assert(glfwVulkanSupported() != GLFW_FALSE);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	return glfwCreateWindow(width, height, title, NULL, NULL);
@@ -218,3 +222,7 @@ const char* readBinary(const char* path, uint32_t* p_size) {
 	fclose(stream);
 	return code;
 }
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus

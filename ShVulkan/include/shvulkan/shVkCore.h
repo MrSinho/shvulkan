@@ -1,6 +1,10 @@
 #ifndef SH_VK_CORE_H
 #define SH_VK_CORE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <vulkan/vulkan.h>
 #include <stdint.h>
 
@@ -120,5 +124,9 @@ extern void shRenderPassRelease(ShVkCore* p_core);
 extern void shInstanceRelease(ShVkCore* p_core);
 
 extern void shVulkanRelease(ShVkCore* p_core);
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus
 
 #endif//SH_VK_CORE_H

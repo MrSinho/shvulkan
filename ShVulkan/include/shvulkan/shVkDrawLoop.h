@@ -1,6 +1,10 @@
 #ifndef SH_DRAW_LOOP_H
 #define SH_DRAW_LOOP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <vulkan/vulkan.h>
 
 typedef struct ShVkCore ShVkCore;
@@ -45,5 +49,9 @@ extern void shBindUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, Sh
 extern void shBindDynamicUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
 
 extern void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index);
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus
 
 #endif//SH_VK_DRAW_LOOP_H

@@ -1,6 +1,10 @@
 #ifndef SH_PIPELINE_DATA_H
 #define SH_PIPELINE_DATA_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include <vulkan/vulkan.h>
 
 typedef enum ShFixedStateFlags {
@@ -122,5 +126,9 @@ extern void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fSta
 extern void shEndPipeline(ShVkGraphicsPipeline* p_pipeline);
 
 extern void shDestroyPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus
 
 #endif//SH_PIPELINE_DATA_H
