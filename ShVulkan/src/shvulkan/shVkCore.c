@@ -168,6 +168,7 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 
 	vkGetPhysicalDeviceProperties(p_core->physical_device, &p_core->physical_device_properties);
 	vkGetPhysicalDeviceFeatures(p_core->physical_device, &p_core->physical_device_features);
+	vkGetPhysicalDeviceMemoryProperties(p_core->physical_device, &p_core->physical_device_memory_properties);
 }
 
 void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDeviceQueueCreateInfo * p_queue_info) {

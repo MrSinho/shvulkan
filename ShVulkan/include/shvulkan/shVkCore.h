@@ -32,38 +32,39 @@ typedef struct ShQueue {
 
 typedef struct ShVkCore {
 	/*Primary*/
-	VkInstance					instance;
-	VkPhysicalDevice			physical_device;
-	VkPhysicalDeviceProperties	physical_device_properties;
-	VkPhysicalDeviceFeatures	physical_device_features;
-	VkDevice					device;
+	VkInstance							instance;
+	VkPhysicalDevice					physical_device;
+	VkPhysicalDeviceProperties			physical_device_properties;
+	VkPhysicalDeviceFeatures			physical_device_features;
+	VkPhysicalDeviceMemoryProperties	physical_device_memory_properties;
+	VkDevice							device;
 	/*Surface*/
-	ShSurface					surface;
+	ShSurface							surface;
 	/*Queues*/
-	VkQueueFlags				required_queue_flags;
-	ShQueue						graphics_queue;
-	ShQueue						compute_queue;
+	VkQueueFlags						required_queue_flags;
+	ShQueue								graphics_queue;
+	ShQueue								compute_queue;
 	/*Commands*/
-	VkCommandPool				graphics_cmd_pool;
-	VkCommandPool				compute_cmd_pool;
-	VkCommandBuffer				graphics_cmd_buffer;
-	VkCommandBuffer				compute_cmd_buffer;
+	VkCommandPool						graphics_cmd_pool;
+	VkCommandPool						compute_cmd_pool;
+	VkCommandBuffer						graphics_cmd_buffer;
+	VkCommandBuffer						compute_cmd_buffer;
 	/*Swapchain*/
-	VkSwapchainKHR				swapchain;
-	VkFormat					swapchain_image_format;
-	uint32_t					swapchain_image_count;
-	VkImage*					p_swapchain_images;
-	VkImageView*				p_swapchain_image_views;
-	VkFramebuffer*				p_frame_buffers;
+	VkSwapchainKHR						swapchain;
+	VkFormat							swapchain_image_format;
+	uint32_t							swapchain_image_count;
+	VkImage*							p_swapchain_images;
+	VkImageView*						p_swapchain_image_views;
+	VkFramebuffer*						p_frame_buffers;
 	/*Depth buffer*/
-	VkImage						depth_image;
-	VkDeviceMemory				depth_image_memory;
-	VkImageView					depth_image_view;
+	VkImage								depth_image;
+	VkDeviceMemory						depth_image_memory;
+	VkImageView							depth_image_view;
 	/*Render pass + sync objects*/
-	VkRenderPass				render_pass;
-	VkSemaphore					render_semaphore;
-	VkSemaphore					present_semaphore;
-	VkFence						render_fence;
+	VkRenderPass						render_pass;
+	VkSemaphore							render_semaphore;
+	VkSemaphore							present_semaphore;
+	VkFence								render_fence;
 } ShVkCore;
 
 
