@@ -31,7 +31,7 @@ cmake -DSH_USE_VULKAN_1_0=ON ..
 
 ## Examples
 
-The [examples](https://github.com/MrSinho/ShVulkan/blob/main/examples/src/graphicsExample.c) can be built by setting on the `SH_VULKAN_BUILD_EXAMPLES` cmake option. The example summarizes almost all the available features of the library, such as setting up the prerequisites, writing buffers, push constants, static and dynamic uniform buffers,  and creating graphics pipelines.
+The [examples](https://github.com/MrSinho/ShVulkan/blob/main/examples/src/graphicsExample.c) can be built by setting on the `SH_VULKAN_BUILD_EXAMPLES` cmake option. The example summarizes almost all the available features of the library, such as setting up the prerequisites, writing buffers, push constants, static and dynamic uniform buffers, creating graphics pipelines and rendering.
 
 ### More concrete examples
 * [SH-Engine](https://github.com/MrSinho/SH-Engine)
