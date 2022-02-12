@@ -198,7 +198,7 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		(p_core->graphics_queue.queue_family_index != p_core->compute_queue.queue_family_index) ? queue_info_count += 1 : 0;
 	}
 	
-	const char* swapchain_extension_name = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+	const char* extension_names[2] = { VK_EXT_MEMORY_BUDGET_EXTENSION_NAME, VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	VkDeviceCreateInfo deviceCreateInfo = {
 		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,	//sType;
 		NULL,									//pNext;
@@ -207,13 +207,12 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		queues_info,							//pQueueCreateInfos;
 		0, 										//enabledLayerCount;
 		NULL,									//ppEnabledLayerNames;
-		0, 										//enabledExtensionCount;
-		NULL,									//ppEnabledExtensionNames;
+		1, 										//enabledExtensionCount;
+		extension_names,						//ppEnabledExtensionNames;
 		NULL									//pEnabledFeatures;
 	};
 	if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
-		deviceCreateInfo.enabledExtensionCount = 1;
-		deviceCreateInfo.ppEnabledExtensionNames = &swapchain_extension_name;
+		deviceCreateInfo.enabledExtensionCount++;
 	}
 
 	shCheckVkResult(

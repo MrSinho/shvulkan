@@ -75,6 +75,8 @@ extern void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, co
 
 extern void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
 
+extern void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties);
+
 #ifdef __cplusplus
 }
 #endif//__cplusplus

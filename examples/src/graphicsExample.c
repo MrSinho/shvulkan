@@ -147,6 +147,9 @@ int main(void) {
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
+	uint32_t available_vram, process_used_vram = 0;
+	shGetMemoryBudgetProperties(core.physical_device, &available_vram, &process_used_vram, NULL);
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		shFrameReset(&core);

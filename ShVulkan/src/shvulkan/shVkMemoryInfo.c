@@ -135,6 +135,32 @@ void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device
 	vkBindImageMemory(device, *p_image, *p_image_memory, 0);
 }
 
+void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties) {
+
+	VkPhysicalDeviceMemoryBudgetPropertiesEXT memory_budget_properties = {
+		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+		NULL
+	};
+
+	VkPhysicalDeviceMemoryProperties2 memory_properties_2 = {
+		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
+		&memory_budget_properties,
+	};
+	vkGetPhysicalDeviceMemoryProperties2(physical_device, &memory_properties_2);
+
+	uint32_t memory_budget = 0;
+	uint32_t process_used_memory = 0;
+
+	for (uint32_t i = 0; i < VK_MAX_MEMORY_HEAPS; i++) {
+		memory_budget += (uint32_t)memory_budget_properties.heapBudget[i];
+		process_used_memory += (uint32_t)memory_budget_properties.heapUsage[i];
+	}
+	
+	(p_memory_budget != NULL) && (*p_memory_budget = memory_budget);
+	(p_process_used_memory != NULL ) && (*p_process_used_memory = process_used_memory);
+	(p_memory_budget_properties != NULL) && memcpy(p_memory_budget_properties, &memory_budget_properties, sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT));
+}
+
 #ifdef __cplusplus
 }
 #endif//__cplusplus
