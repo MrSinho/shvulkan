@@ -17,6 +17,7 @@ cmake ..
 ```
 
 ### Vulkan version
+> Vulkan 1.3 updates are coming soon
 
 If your machine does not support Vulkan 1.2 you can set the cmake options `SH_USE_VULKAN_1_0` or `SH_USE_VULKAN_1_1` as true:
 ```bash
@@ -24,7 +25,8 @@ cmake -DSH_USE_VULKAN_1_0=ON ..
 ```
 
 ## To do
-* Update changes for Vulkan 1.3
+* Update changes for Vulkan 1.3:
+	* Dynamic rendering
 * Memory allocation pools
 * Texture loader
 * Compute shaders and pipelines support
