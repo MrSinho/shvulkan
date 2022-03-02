@@ -18,8 +18,11 @@ extern "C" {
 
 #include <math.h>
 
+
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title);
+
 const char* readBinary(const char* path, uint32_t* p_size);
+
 
 int main(void) {
 
@@ -194,6 +197,8 @@ int main(void) {
 
 	return 0;
 }
+
+
 
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title) {
 	assert(glfwInit());
