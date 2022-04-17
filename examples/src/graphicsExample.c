@@ -35,7 +35,8 @@ int main(void) {
 	uint32_t extension_count = 2;
 	const char** extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
 	shCreateInstance(&core, application_name, "ShVulkan Engine", 1, extension_count, extension_names);
-	shVkAssert(glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface),
+	shVkAssertResult(
+		glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface),
 		"error creating window surface"
 	);
 	core.surface.width = width;

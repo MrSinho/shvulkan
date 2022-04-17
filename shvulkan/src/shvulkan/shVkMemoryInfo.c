@@ -8,11 +8,9 @@ extern "C" {
 #include <stdlib.h>
 #include <memory.h>
 
-#ifdef NDEBUG
 #ifdef _MSC_VER
-#pragma warning (disable: 6011 6001 4700)
+#pragma warning (disable: 6011 6001 4700 6387)
 #endif//_MSC_VER
-#endif//NDEBUG
 
 void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlagBits usage_flags, VkBuffer* p_buffer) {
 	shVkAssert(p_buffer != NULL, "invalid arguments ");
