@@ -67,12 +67,10 @@ const char* shTranslateVkResult(const VkResult vk_result) {
 }
 
 void shCheckVkResult(VkResult result, const char* error_msg) {
-	if (result != VK_SUCCESS) {
+	assert(result != VK_SUCCESS && "shvukan error: ") {
 #ifndef NDEBUG
-		printf("ShVulkan error: %s, %s\n", error_msg, shTranslateVkResult(result));
-#endif // NDEBUG
-		system("pause");
-		exit(-1);
+		printf("%s, %s\n", error_msg, shTranslateVkResult(result));
+#endif//NDEBUG
 	}
 }
 
