@@ -5,7 +5,6 @@ extern "C" {
 #include "shvulkan/shVkCheck.h"
 
 #include <stdlib.h>
-#include <assert.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -14,7 +13,7 @@ extern "C" {
 #endif//_MSC_VER
 
 int shCheckValidationLayers(const char* validation_layer) {
-	assert(validation_layer != NULL);
+	shVkAssert(validation_layer != NULL, "invalid validation layer ");
 	uint32_t available_layer_count = 0;
 	vkEnumerateInstanceLayerProperties(&available_layer_count, NULL);
 
@@ -66,8 +65,8 @@ const char* shTranslateVkResult(const VkResult vk_result) {
 	return "unknown vkresult";
 }
 
-void shCheckVkResult(VkResult result, const char* error_msg) {
-	assert(result != VK_SUCCESS && "shvukan error: ");
+void shVkCheckResult(VkResult result, const char* error_msg) {
+	shVkAssert(result != VK_SUCCESS, error_msg);
 #ifndef NDEBUG
 	printf("%s, %s\n", error_msg, shTranslateVkResult(result));
 #endif//NDEBUG

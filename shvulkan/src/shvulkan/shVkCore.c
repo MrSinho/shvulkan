@@ -4,17 +4,16 @@ extern "C" {
 
 #include <memory.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "shvulkan/shVkCore.h"
 #include "shvulkan/shVkCheck.h"
 
 #ifdef _MSC_VER
-#pragma warning (disable: 6011 6385 6386 6255)
+#pragma warning (disable: 6011 6385 6386 6255 6001)
 #endif // _MSC_VER
 
 void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	VkApplicationInfo application_info = {
 		VK_STRUCTURE_TYPE_APPLICATION_INFO,	//sType;
 		NULL,								//pNext;
@@ -45,19 +44,19 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 		}
 	}
 	
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateInstance(&instance_create_info, VK_NULL_HANDLE, &p_core->instance),
 		"error creating vkinstance"
 	);
 }
 
 void shGetSurfaceCapabilities(const VkPhysicalDevice pDevice, const VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* p_surface_capabilities) {
-	assert(p_surface_capabilities != NULL);
+	shVkAssert(p_surface_capabilities != NULL, "invalid surface capabilities pointer ");
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pDevice, surface, p_surface_capabilities);
 }
 
 void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid arguments ");
 	p_core->required_queue_flags = requirements;
 
 	uint32_t pDeviceCount = 0;
@@ -67,7 +66,7 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	vkEnumeratePhysicalDevices(p_core->instance, &pDeviceCount, pDevices);
 	
 	if (pDeviceCount == 0) {
-		shCheckVkResult(VK_ERROR_UNKNOWN, 
+		shVkAssert(VK_ERROR_UNKNOWN, 
 			"no Vulkan compatible gpu has been found"
 		);
 	}
@@ -87,9 +86,9 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 
 		for (uint32_t j = 0; j < queueFamilyPropertyCount; j++) {
 			if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
-				assert(p_core->surface.width != 0 && p_core->surface.height != 0);
+				shVkAssert(p_core->surface.width != 0 && p_core->surface.height != 0, "invalid surface parameters ");
 				if (!surfaceSupport) {
-					assert(p_core->surface.surface != NULL);
+					shVkAssert(p_core->surface.surface != NULL, "invalid surface ");
 					vkGetPhysicalDeviceSurfaceSupportKHR(pDevices[i], j, p_core->surface.surface, &surfaceSupport);
 					if (surfaceSupport) {
 						surfaceQueueFamilyIndices[i] = j;
@@ -111,7 +110,7 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	}
 
 	if (suitableDeviceCount == 0) {
-		shCheckVkResult(VK_ERROR_UNKNOWN,
+		shVkAssert(VK_ERROR_UNKNOWN,
 			"no suitable GPU has been found"
 		);
 	}
@@ -172,7 +171,7 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 }
 
 void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDeviceQueueCreateInfo * p_queue_info) {
-	assert(p_queue_info != NULL);
+	shVkAssert(p_queue_info != NULL, "invalid queue info pointer");
 	VkDeviceQueueCreateInfo queue_create_info = {
 		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,	//sType;
 		NULL,										//pNext;
@@ -185,7 +184,7 @@ void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDe
 }
 
 void shSetLogicalDevice(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	const float queue_priority = 1.0f;
 	uint32_t queue_info_count = 0;
 	VkDeviceQueueCreateInfo queues_info[2];
@@ -215,16 +214,16 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		deviceCreateInfo.enabledExtensionCount++;
 	}
 
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device),
 		"error creating logical device"
 	);
 }
 
 void shCreateSwapchain(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 
-    shCheckVkResult(
+    shVkAssertResult(
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_core->physical_device, p_core->surface.surface, &p_core->surface.surface_capabilities),
 		"error getting surface capabilities"
 	);
@@ -267,13 +266,13 @@ void shCreateSwapchain(ShVkCore* p_core) {
 	
 	uint32_t present_mode_count;
 	VkPresentModeKHR present_modes[7];
-	shCheckVkResult(
+	shVkAssertResult(
 		vkGetPhysicalDeviceSurfacePresentModesKHR(p_core->physical_device, p_core->surface.surface, &present_mode_count, present_modes),
 		"error getting surface present modes"
 	);
 	swapchain_create_info.presentMode = present_modes[0];
 
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateSwapchainKHR(p_core->device, &swapchain_create_info, NULL, &p_core->swapchain),
 		"error creating swapchain"
 	);
@@ -281,14 +280,15 @@ void shCreateSwapchain(ShVkCore* p_core) {
 }
 
 void shGetSwapchainImages(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, NULL);
 	p_core->p_swapchain_images = (VkImage*)malloc(p_core->swapchain_image_count * sizeof(VkImage));
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, p_core->p_swapchain_images);
 }
 
 void shCreateImageView(ShVkCore* p_core, const VkImage image, const shImageType type, VkImageView* p_image_view) {
-	assert(p_core != NULL && p_image_view != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
+	shVkAssert(p_image_view != NULL, "invalid image view pointer");
 	VkImageViewCreateInfo imageViewCreateInfo = {
 			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,	//sType;
 			NULL,										//pNext;
@@ -312,14 +312,14 @@ void shCreateImageView(ShVkCore* p_core, const VkImage image, const shImageType 
 	imageViewCreateInfo.subresourceRange.levelCount = 1;							//levelCount;
 	imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;						//baseArrayLayer;
 	imageViewCreateInfo.subresourceRange.layerCount = 1;							//layerCount;
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateImageView(p_core->device, &imageViewCreateInfo, NULL, p_image_view),
 		"error creating image view"
 	);
 }
 
 void shCreateSwapchainImageViews(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	p_core->p_swapchain_image_views = (VkImageView*)malloc(p_core->swapchain_image_count * sizeof(VkImageView));
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
 		shCreateImageView(p_core, p_core->p_swapchain_images[i], SH_SWAPCHAIN_IMAGE, &p_core->p_swapchain_image_views[i]);
@@ -327,7 +327,7 @@ void shCreateSwapchainImageViews(ShVkCore* p_core) {
 }
 
 void shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommandPool* p_cmd_pool) {
-	assert(p_cmd_pool != NULL);
+	shVkAssert(p_cmd_pool != NULL, "invalid command pool pointer ");
 	VkCommandPoolCreateInfo cmdPoolCreateInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,			//sType;
 		NULL,												//pNext;
@@ -335,14 +335,14 @@ void shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommand
 		queueFamilyIndex									//queueFamilyIndex;
 	};
 	
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateCommandPool(device, &cmdPoolCreateInfo, NULL, p_cmd_pool), 
 		"error creating command pool"
 	);
 }
 
 void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCommandBuffer* p_cmd_buffer) {
-	assert(p_cmd_buffer != NULL);
+	shVkAssert(p_cmd_buffer != NULL, "invalid command buffer pointer ");
 	VkCommandBufferAllocateInfo cmdBufferAllocateInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,	//sType;
 		NULL,											//pNext;
@@ -351,14 +351,14 @@ void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCom
 		1												//commandBufferCount;
 	};
 
-	shCheckVkResult(
+	shVkAssertResult(
 		vkAllocateCommandBuffers(device, &cmdBufferAllocateInfo, p_cmd_buffer), 
 		"error creating command buffer"
 	);
 }
 
 void shCreateRenderPass(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	VkAttachmentDescription colorAttachmentDescription = {
 		0,									//flags;
 		p_core->swapchain_image_format,		//format;
@@ -440,14 +440,14 @@ void shCreateRenderPass(ShVkCore* p_core) {
 		renderPassCreateInfo.pDependencies = &subpassDependency;
 	}
 
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateRenderPass(p_core->device, &renderPassCreateInfo, NULL, &p_core->render_pass),
 		"error creating render pass"
 	);
 }
 
 void shSetFramebuffers(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	VkFramebufferCreateInfo framebufferCreateInfo = {
 		VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,	//sType;
 		NULL,										//pNext;
@@ -469,7 +469,7 @@ void shSetFramebuffers(ShVkCore* p_core) {
 			framebufferCreateInfo.attachmentCount = 2;
 		}
 		framebufferCreateInfo.pAttachments = attachments;
-		shCheckVkResult(
+		shVkAssertResult(
 			vkCreateFramebuffer(p_core->device, &framebufferCreateInfo, NULL, &p_core->p_frame_buffers[i]),
 			"error creating framebuffer"
 		);
@@ -477,14 +477,14 @@ void shSetFramebuffers(ShVkCore* p_core) {
 }
 
 void shSetSyncObjects(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	VkFenceCreateInfo render_fenceCreateInfo = {
 		VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,	//sType;
 		NULL,									//pNext;
 		VK_FENCE_CREATE_SIGNALED_BIT			//flags;
 	};
 
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateFence(p_core->device, &render_fenceCreateInfo, NULL, &p_core->render_fence),
 		"error creating fence"
 	);
@@ -495,18 +495,18 @@ void shSetSyncObjects(ShVkCore* p_core) {
 		0											//flags;
 	};
 
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateSemaphore(p_core->device, &semaphoreCreateInfo, NULL, &p_core->render_semaphore),
 		"error creating render semaphore"
 	);
-	shCheckVkResult(
+	shVkAssertResult(
 		vkCreateSemaphore(p_core->device, &semaphoreCreateInfo, NULL, &p_core->present_semaphore),
 		"error creating present semaphore"
 	);
 }
 
 void shSwapchainRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
@@ -517,14 +517,14 @@ void shSwapchainRelease(ShVkCore* p_core) {
 }
 
 void shDepthBufferRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDestroyImageView(p_core->device, p_core->depth_image_view, NULL);
 	vkDestroyImage(p_core->device, p_core->depth_image, NULL);
 	vkFreeMemory(p_core->device, p_core->depth_image_memory, NULL);
 }
 
 void shSurfaceRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 
 	p_core->swapchain_image_count = 0;
@@ -536,7 +536,7 @@ void shSurfaceRelease(ShVkCore* p_core) {
 }
 
 void shCmdRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 
 	vkDestroySemaphore(p_core->device, p_core->present_semaphore, NULL);
@@ -548,24 +548,24 @@ void shCmdRelease(ShVkCore* p_core) {
 }
 
 void shRenderPassRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 	vkDestroyRenderPass(p_core->device, p_core->render_pass, NULL);
 }
 
 void shDeviceRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 	vkDestroyDevice(p_core->device, NULL);
 }
 
 void shInstanceRelease(ShVkCore* p_core) {	
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDestroyInstance(p_core->instance, NULL);
 }
 
 void shVulkanRelease(ShVkCore* p_core) {
-	assert(p_core != NULL);
+	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 	shSwapchainRelease(p_core);
 	shDepthBufferRelease(p_core);

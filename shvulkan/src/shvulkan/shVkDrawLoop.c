@@ -6,8 +6,7 @@ extern "C" {
 #include "shvulkan/shVkCore.h"
 #include "shvulkan/shVkPipelineData.h"
 #include "shvulkan/shVkMemoryInfo.h"
-
-#include <assert.h>
+#include "shvulkan/shVkCheck.h"
 
 void shFrameReset(ShVkCore* p_core) {
 	vkWaitForFences(p_core->device, 1, &p_core->render_fence, 1, 1000000000);
@@ -17,7 +16,7 @@ void shFrameReset(ShVkCore* p_core) {
 }
 
 void shFrameBegin(ShVkCore* p_core, uint32_t* p_swapchain_image_index) {
-	assert(p_swapchain_image_index != NULL);
+	shVkAssert(p_swapchain_image_index != NULL, "invalid arguments ");
 	vkAcquireNextImageKHR(p_core->device, p_core->swapchain, 1000000000, p_core->present_semaphore, 0, p_swapchain_image_index);
 
 	VkCommandBufferBeginInfo cmdBufferBeginInfo = {
