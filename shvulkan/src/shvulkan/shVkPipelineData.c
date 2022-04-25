@@ -2,7 +2,6 @@
 extern "C" {
 #endif//__cplusplus
 
-#include "shvulkan/shVkCore.h"
 #include "shvulkan/shVkPipelineData.h"
 #include "shvulkan/shVkCheck.h"
 #include "shvulkan/shVkMemoryInfo.h"
@@ -13,7 +12,7 @@ extern "C" {
 #pragma warning (disable: 6386 6011)
 #endif//_MSC_VER
 
-void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkGraphicsPipeline* p_pipeline) {
+void shDescriptorSetLayout(VkDevice device, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkGraphicsPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid arguments");
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {
 		p_pipeline->dynamic_uniforms[uniform_idx],																					//binding;
@@ -32,36 +31,34 @@ void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const V
 	};
 	p_pipeline->descriptor_set_layout_bindings[uniform_idx] = descriptorSetLayoutBinding;
 	shVkAssertResult(
-		vkCreateDescriptorSetLayout(p_core->device, &descriptorSetLayoutCreateInfo, NULL, &p_pipeline->descriptor_set_layouts[uniform_idx]),
+		vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, NULL, &p_pipeline->descriptor_set_layouts[uniform_idx]),
 		"error creating descriptor set layout"
 	);
 }
 
-extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
-	shVkAssert(p_core != NULL, "invalid core pointer ");
+extern void shCreateDescriptorPool(VkDevice device, const uint32_t swapchain_image_count, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer ");
 	VkDescriptorPoolSize descriptorPoolSize = {
 		p_pipeline->dynamic_uniforms[uniform_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//p_pipeline->dynamic_uniforms[uniform_idx];
-		p_core->swapchain_image_count				//descriptorCount;
+		swapchain_image_count				//descriptorCount;
 	};
 
 	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,	//sType;
 		NULL,											//pNext;
 		0,												//flags;
-		p_core->swapchain_image_count,					//maxSets;
+		swapchain_image_count,							//maxSets;
 		1,												//poolSizeCount;
 		&descriptorPoolSize								//pPoolSizes;
 	};
 
 	shVkAssertResult(
-		vkCreateDescriptorPool(p_core->device, &descriptorPoolCreateInfo, NULL, &p_pipeline->descriptor_pools[uniform_idx]),
+		vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, NULL, &p_pipeline->descriptor_pools[uniform_idx]),
 		"error creating descriptor pool"
 	);
 }
 
-void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
-	shVkAssert(p_core != NULL, "invalid core pointer ");
+void shAllocateDescriptorSet(VkDevice device, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer ");
 	VkDescriptorSetAllocateInfo allocateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,				//sType;
@@ -71,7 +68,7 @@ void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkG
 		&p_pipeline->descriptor_set_layouts[uniform_idx]			//pSetLayouts;
 	};
 	shVkAssertResult(
-		vkAllocateDescriptorSets(p_core->device, &allocateInfo, &p_pipeline->descriptor_sets[uniform_idx]),
+		vkAllocateDescriptorSets(device, &allocateInfo, &p_pipeline->descriptor_sets[uniform_idx]),
 		"error allocating descriptor set"
 	);
 
@@ -105,22 +102,22 @@ void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_
 	p_pipeline->push_constant_range.stageFlags = shaderStageFlags;
 }
 
-void shCreateUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline) {
-	shCreateBuffer((p_core)->device, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]);
+void shCreateUniformBuffer(VkDevice device, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline) {
+	shCreateBuffer(device, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]);
 	p_pipeline->uniform_buffers_size[uniform_idx] = size;
 	p_pipeline->uniform_count++;
 }
 
-void shCreateDynamicUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline) {
-	shCreateBuffer((p_core)->device, SH_MAX_UNIFORM_BUFFER_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]);
+void shCreateDynamicUniformBuffer(VkDevice device, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline) {
+	shCreateBuffer(device, SH_MAX_UNIFORM_BUFFER_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, &(p_pipeline)->uniform_buffers[uniform_idx]);
 	p_pipeline->uniform_buffers_size[uniform_idx] = size;
 	p_pipeline->dynamic_uniforms[uniform_idx] = 1;
 	p_pipeline->uniform_count++;
 }
 
-void shAllocateUniformBuffers(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
+void shAllocateUniformBuffers(VkDevice device, VkPhysicalDevice physical_device, ShVkGraphicsPipeline* p_pipeline) {
 	for (uint8_t i = 0; i < p_pipeline->uniform_count; i++) {
-		shAllocateMemory((p_core)->device, (p_core)->physical_device,
+		shAllocateMemory(device, physical_device,
 			(p_pipeline)->uniform_buffers[i],
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			&(p_pipeline)->uniform_buffers_memory[i]
@@ -307,8 +304,7 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 	*p_viewport_state = viewportStateCreateInfo;
 }
 
-void shSetFixedStates(ShVkCore* p_core, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
-	shVkAssert(p_core != NULL, "invalid core pointer");
+void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
 	shVkAssert(p_fixed_states != NULL, "invalid fixed states pointer ");
 	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
 	
@@ -330,23 +326,22 @@ void shSetFixedStates(ShVkCore* p_core, ShFixedStateFlags flags, ShVkFixedStates
 
 	shSetMultisampleState(&p_fixed_states->multisample_state_info);
 	shColorBlendSettings(&p_fixed_states->color_blend_attachment, &p_fixed_states->color_blend_state);
-	shSetViewport(p_core->surface.width, p_core->surface.height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
+	shSetViewport(surface_width, surface_height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
 }
 
-void shCreateDescriptorPools(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
+void shCreateDescriptorPools(VkDevice device, const uint32_t swapchain_image_count, ShVkGraphicsPipeline* p_pipeline) {
 	for (uint8_t i = 0; i < p_pipeline->uniform_count; i++) {
-		shCreateDescriptorPool(p_core, i, p_pipeline);
+		shCreateDescriptorPool(device, swapchain_image_count, i, p_pipeline);
 	}
 }
 
-void shAllocateDescriptorSets(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
+void shAllocateDescriptorSets(VkDevice device, ShVkGraphicsPipeline* p_pipeline) {
 	for (uint8_t i = 0; i < p_pipeline->uniform_count; i++) {
-		shAllocateDescriptorSet(p_core, i, p_pipeline);
+		shAllocateDescriptorSet(device, i, p_pipeline);
 	}
 }
 
-void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, ShVkGraphicsPipeline* p_pipeline) {
-	shVkAssert(p_core != NULL, "invalid core pointer ");
+void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fStates, ShVkGraphicsPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
 
 	VkPipelineLayoutCreateInfo mainPipelineLayoutCreateInfo = {
@@ -365,7 +360,7 @@ void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, Sh
 	}
 	
 	shVkAssertResult(
-		vkCreatePipelineLayout(p_core->device, &mainPipelineLayoutCreateInfo, NULL, &p_pipeline->main_pipeline_layout),
+		vkCreatePipelineLayout(device, &mainPipelineLayoutCreateInfo, NULL, &p_pipeline->main_pipeline_layout),
 		"error creating main pipeline layout"
 	);
 
@@ -400,14 +395,14 @@ void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, Sh
 		&fStates.color_blend_state,							//pColorBlendState;
 		NULL,												//pDynamicState;
 		p_pipeline->main_pipeline_layout,					//layout;
-		p_core->render_pass,								//renderPass;
+		render_pass,										//renderPass;
 		0,													//subpass;
 		0,													//basePipelineHandle;
 		0													//basePipelineIndex;
 	};
 
 	shVkAssertResult(
-		vkCreateGraphicsPipelines(p_core->device, 0, 1, &graphicsPipelineCreateInfo, NULL, &p_pipeline->pipeline),
+		vkCreateGraphicsPipelines(device, 0, 1, &graphicsPipelineCreateInfo, NULL, &p_pipeline->pipeline),
 		"error creating graphics pipeline"
 	);
 }
@@ -418,19 +413,19 @@ void shEndPipeline(ShVkGraphicsPipeline* p_pipeline) {
 	}
 }
 
-void shDestroyPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
+void shDestroyPipeline(VkDevice device, ShVkGraphicsPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer ");
-	vkDeviceWaitIdle(p_core->device);
+	vkDeviceWaitIdle(device);
 	for (uint32_t i = 0; i < p_pipeline->uniform_count; i++) {
 		if (p_pipeline->descriptor_sets[i] != NULL) {
-			vkDestroyDescriptorPool(p_core->device, p_pipeline->descriptor_pools[i], NULL);
-			vkDestroyDescriptorSetLayout(p_core->device, p_pipeline->descriptor_set_layouts[i], NULL);
+			vkDestroyDescriptorPool(device, p_pipeline->descriptor_pools[i], NULL);
+			vkDestroyDescriptorSetLayout(device, p_pipeline->descriptor_set_layouts[i], NULL);
 		}
 	}
-	vkDestroyPipelineLayout(p_core->device, p_pipeline->main_pipeline_layout, NULL);
-	vkDestroyPipeline(p_core->device, p_pipeline->pipeline, NULL);
-	vkDestroyShaderModule(p_core->device, p_pipeline->shader_modules[0], NULL);
-	vkDestroyShaderModule(p_core->device, p_pipeline->shader_modules[1], NULL);
+	vkDestroyPipelineLayout(device, p_pipeline->main_pipeline_layout, NULL);
+	vkDestroyPipeline(device, p_pipeline->pipeline, NULL);
+	vkDestroyShaderModule(device, p_pipeline->shader_modules[0], NULL);
+	vkDestroyShaderModule(device, p_pipeline->shader_modules[1], NULL);
 }																
 
 #ifdef __cplusplus

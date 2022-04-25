@@ -9,8 +9,6 @@ extern "C" {
 #include <vulkan/vulkan.h>
 #include <memory.h>
 
-typedef struct ShVkCore	ShVkCore;
-
 #define SH_VEC1_SIGNED_FLOAT		VK_FORMAT_R32_SFLOAT
 #define SH_VEC2_SIGNED_FLOAT		VK_FORMAT_R32G32_SFLOAT
 #define SH_VEC3_SIGNED_FLOAT		VK_FORMAT_R32G32B32_SFLOAT
@@ -34,6 +32,11 @@ typedef struct ShVkCore	ShVkCore;
 #define shWriteVertexBufferMemory(p_core, vertex_buffer_memory, size, p_vertices)\
 	shMapMemory((p_core)->device, vertex_buffer_memory, 0, size, (void*)p_vertices)
 
+static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_vertex_buffer) {
+	const VkDeviceSize offset = 0;
+	vkCmdBindVertexBuffers(graphics_cmd_buffer, 0, 1, p_vertex_buffer, &offset);
+}
+
 #define shCreateIndexBuffer(p_core, size, p_index_buffer)\
 	shCreateBuffer((p_core)->device, size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, p_index_buffer)
 
@@ -42,6 +45,9 @@ typedef struct ShVkCore	ShVkCore;
 
 #define shWriteIndexBufferMemory(p_core, index_buffer_memory, size, p_indices)\
 	shMapMemory((p_core)->device, index_buffer_memory, 0, size, (void*)p_indices)
+
+#define shBindIndexBuffer(graphics_cmd_buffer, p_index_buffer)\
+	vkCmdBindIndexBuffer(graphics_cmd_buffer, *p_index_buffer, 0, VK_INDEX_TYPE_UINT32)
 
 #define shClearVertexBufferMemory(p_core, vertex_buffer, vertex_buffer_memory)\
 	shClearBufferMemory((p_core)->device, vertex_buffer, vertex_buffer_memory)
@@ -62,6 +68,8 @@ typedef struct ShVkCore	ShVkCore;
 
 #define shInitDepthData(p_core)\
 	shCreateDepthImage(p_core); shCreateDepthImageView(p_core)
+
+
 
 extern void shCreateBuffer(const VkDevice device, const uint32_t bufferSize, VkBufferUsageFlagBits usage_flags, VkBuffer* p_buffer);
 

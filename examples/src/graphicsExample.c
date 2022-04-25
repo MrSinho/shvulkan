@@ -88,15 +88,15 @@ int main(void) {
 	
 	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 	
-	shCreateUniformBuffer(&core, 0, 32, &pipeline);
-	shCreateDynamicUniformBuffer(&core, 1, 64, &pipeline);
-	shAllocateUniformBuffers(&core, &pipeline);
+	shCreateUniformBuffer(core.device, 0, 32, &pipeline);
+	shCreateDynamicUniformBuffer(core.device, 1, 64, &pipeline);
+	shAllocateUniformBuffers(core.device, core.physical_device, &pipeline);
 
-	shDescriptorSetLayout(&core, 0, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
-	shDescriptorSetLayout(&core, 1, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+	shDescriptorSetLayout(core.device, 0, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+	shDescriptorSetLayout(core.device, 1, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
 
-	shCreateDescriptorPools(&core, &pipeline);
-	shAllocateDescriptorSets(&core,&pipeline);
+	shCreateDescriptorPools(core.device, core.swapchain_image_count, &pipeline);
+	shAllocateDescriptorSets(core.device,&pipeline);
 
 	uint32_t vertex_shader_size = 0;
 	uint32_t fragment_shader_size = 0;
@@ -112,8 +112,8 @@ int main(void) {
 	shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT,12, 12, &fixed_states);
 	shSetVertexInputAttribute(2, SH_VEC2_SIGNED_FLOAT,24, 8, &fixed_states);
 	
-	shSetFixedStates(&core, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
-	shSetupGraphicsPipeline(&core, fixed_states, &pipeline);
+	shSetFixedStates(core.device, core.surface.width, core.surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
+	shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, &pipeline);
 	
 	float projection[4][4] = {
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -160,29 +160,29 @@ int main(void) {
 		uint32_t frame_index = 0;
 		shFrameBegin(&core, &frame_index);
 		
-		shBindPipeline(&core, &pipeline);
+		shBindGraphicsPipeline(core.graphics_cmd_buffer, &pipeline);
 
-		shPushConstants(&core, push_constants_data, &pipeline);
+		shPushConstants(core.graphics_cmd_buffer, push_constants_data, &pipeline);
 
-		shUpdateUniformBuffers(&core, &pipeline);
+		shUpdateUniformBuffers(core.device, &pipeline);
 
-		shWriteUniformBufferMemory(&core, 0, light_data, &pipeline);
-		shBindUniformBuffer(&core, 0, &pipeline);
+		shWriteUniformBufferMemory(core.device, 0, light_data, &pipeline);
+		shBindUniformBuffer(core.graphics_cmd_buffer, 0, &pipeline);
 		
-		shWriteDynamicUniformBufferMemory(&core, 1, model0, &pipeline);
-		shBindDynamicUniformBuffer(&core, 1, &pipeline);
+		shWriteDynamicUniformBufferMemory(core.device, 1, model0, &pipeline);
+		shBindDynamicUniformBuffer(core.graphics_cmd_buffer, 1, &pipeline);
 
-		shBindVertexBuffer(&core, &quad_vertex_buffer);
-		shBindIndexBuffer(&core, &quad_index_buffer);
-		shDrawIndexed(&core, QUAD_INDEX_COUNT);
+		shBindVertexBuffer(core.graphics_cmd_buffer, &quad_vertex_buffer);
+		shBindIndexBuffer(core.graphics_cmd_buffer, &quad_index_buffer);
+		shDrawIndexed(core.graphics_cmd_buffer, QUAD_INDEX_COUNT);
 
-		shWriteDynamicUniformBufferMemory(&core, 1, model1, &pipeline);
-		shBindDynamicUniformBuffer(&core, 1, &pipeline);
+		shWriteDynamicUniformBufferMemory(core.device, 1, model1, &pipeline);
+		shBindDynamicUniformBuffer(core.graphics_cmd_buffer, 1, &pipeline);
 
 		triangle[9] = (float)sin(glfwGetTime());
 		shWriteVertexBufferMemory(&core, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
-		shBindVertexBuffer(&core, &triangle_vertex_buffer);
-		shDraw(&core, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
+		shBindVertexBuffer(core.graphics_cmd_buffer, &triangle_vertex_buffer);
+		shDraw(core.graphics_cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
 		shEndPipeline(&pipeline);
 		shFrameEnd(&core, frame_index);
@@ -193,7 +193,7 @@ int main(void) {
 	shClearVertexBufferMemory(&core, triangle_vertex_buffer, triangle_vertex_buffer_memory);
 	shClearVertexBufferMemory(&core, quad_vertex_buffer, quad_vertex_buffer_memory);
 	shClearIndexBufferMemory(&core, quad_index_buffer, quad_index_buffer_memory);
-	shDestroyPipeline(&core, &pipeline);
+	shDestroyPipeline(core.device, &pipeline);
 	shVulkanRelease(&core);
 
 	return 0;

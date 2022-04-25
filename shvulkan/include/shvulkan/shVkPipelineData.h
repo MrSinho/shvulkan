@@ -66,19 +66,58 @@ typedef struct ShVkGraphicsPipeline {
 	VkPipeline							pipeline;
 } ShVkGraphicsPipeline;
 
-#define shWriteUniformBufferMemory(p_core, uniform_idx, p_uniform_buffer_data, p_pipeline)\
-	shMapMemory((p_core)->device,\
+#define shWriteUniformBufferMemory(device, uniform_idx, p_uniform_buffer_data, p_pipeline)\
+	shMapMemory(device,\
 		(p_pipeline)->uniform_buffers_memory[uniform_idx],\
 		0,\
 		(p_pipeline)->uniform_buffers_size[uniform_idx],\
 		p_uniform_buffer_data)
 
-#define shWriteDynamicUniformBufferMemory(p_core, uniform_idx, p_uniform_buffer_data, p_pipeline)\
-	shMapMemory((p_core)->device,\
+#define shWriteDynamicUniformBufferMemory(device, uniform_idx, p_uniform_buffer_data, p_pipeline)\
+	shMapMemory(device,\
 		(p_pipeline)->uniform_buffers_memory[uniform_idx],\
 		(p_pipeline)->uniform_buffers_offsets[uniform_idx],\
 		(p_pipeline)->uniform_buffers_size[uniform_idx],\
 		p_uniform_buffer_data)
+
+#define shUpdateUniformBuffer(device, uniform_idx, p_pipeline)\
+	vkUpdateDescriptorSets(device,\
+		1, &(p_pipeline)->write_descriptor_sets[uniform_idx],\
+		0, NULL\
+	)
+
+#define shPushConstants(graphics_cmd_buffer, p_push_constants_data, p_pipeline)\
+	vkCmdPushConstants(graphics_cmd_buffer, (p_pipeline)->main_pipeline_layout, (p_pipeline)->push_constant_range.stageFlags, (p_pipeline)->push_constant_range.offset, (p_pipeline)->push_constant_range.size, p_push_constants_data)
+
+
+#define shBindGraphicsPipeline(graphics_cmd_buffer, p_pipeline)\
+	vkCmdBindPipeline(graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, (p_pipeline)->pipeline)
+
+#define shUpdateUniformBuffers(device, p_pipeline)\
+	vkUpdateDescriptorSets(device,\
+		(p_pipeline)->uniform_count, (p_pipeline)->write_descriptor_sets,\
+		0, NULL\
+	)
+
+#define shBindUniformBuffer(graphics_cmd_buffer, uniform_idx, p_pipeline)\
+	vkCmdBindDescriptorSets(graphics_cmd_buffer,\
+		VK_PIPELINE_BIND_POINT_GRAPHICS,\
+		(p_pipeline)->main_pipeline_layout, uniform_idx, 1,\
+		&(p_pipeline)->descriptor_sets[uniform_idx],\
+		0,\
+		NULL\
+	)
+
+static void shBindDynamicUniformBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
+	vkCmdBindDescriptorSets(graphics_cmd_buffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		p_pipeline->main_pipeline_layout, uniform_idx, 1,
+		&(p_pipeline)->descriptor_sets[uniform_idx],
+		1,
+		&(p_pipeline)->uniform_buffers_offsets[uniform_idx]
+	);
+	(p_pipeline)->uniform_buffers_offsets[uniform_idx] += (p_pipeline)->uniform_buffers_size[uniform_idx];
+}
 
 #define SH_UNIFORM_BUFFER  0
 #define SH_DYNAMIC_UNIFORM_BUFFER 1
@@ -91,7 +130,7 @@ extern void shColorBlendSettings(VkPipelineColorBlendAttachmentState* p_color_bl
 
 extern void shSetViewport(const uint32_t width, const uint32_t height, VkViewport *p_viewport, VkRect2D* p_scissors, VkPipelineViewportStateCreateInfo* p_viewport_state);
 
-extern void shSetFixedStates(ShVkCore* p_core, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states);
+extern void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states);
 
 extern void shCreateShaderModule(const VkDevice device, const uint32_t size, const char* code, ShVkGraphicsPipeline* p_pipeline);
 
@@ -105,27 +144,27 @@ extern void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, 
 
 extern void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_t offset, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shCreateUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
+extern void shCreateUniformBuffer(VkDevice device, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shCreateDynamicUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
+extern void shCreateDynamicUniformBuffer(VkDevice device, const uint32_t uniform_idx, const uint32_t size, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shAllocateUniformBuffers(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+extern void shAllocateUniformBuffers(VkDevice device, VkPhysicalDevice physical_device, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shCreateDescriptorPool(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
+extern void shCreateDescriptorPool(VkDevice device, const uint32_t swapchain_image_count, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shDescriptorSetLayout(ShVkCore* p_core, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkGraphicsPipeline* p_pipeline);
+extern void shDescriptorSetLayout(VkDevice device, const uint32_t uniform_idx, const VkShaderStageFlags shaderStageFlags, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shAllocateDescriptorSet(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
+extern void shAllocateDescriptorSet(VkDevice device, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shCreateDescriptorPools(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+extern void shCreateDescriptorPools(VkDevice device, const uint32_t swapchain_image_count, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shAllocateDescriptorSets(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+extern void shAllocateDescriptorSets(VkDevice device, ShVkGraphicsPipeline* p_pipeline);
 
-extern void shSetupGraphicsPipeline(ShVkCore* p_core, const ShVkFixedStates fStates, ShVkGraphicsPipeline* p_pipeline);
+extern void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fStates, ShVkGraphicsPipeline* p_pipeline);
 
 extern void shEndPipeline(ShVkGraphicsPipeline* p_pipeline);
 
-extern void shDestroyPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline);
+extern void shDestroyPipeline(VkDevice device, ShVkGraphicsPipeline* p_pipeline);
 
 #ifdef __cplusplus
 }

@@ -8,6 +8,10 @@ extern "C" {
 #include "shvulkan/shVkMemoryInfo.h"
 #include "shvulkan/shVkCheck.h"
 
+#ifdef _MSC_VER
+#pragma warning (disable: 6011)
+#endif//_MSC_VER
+
 void shFrameReset(ShVkCore* p_core) {
 	vkWaitForFences(p_core->device, 1, &p_core->render_fence, 1, 1000000000);
 	vkResetFences(p_core->device, 1, &p_core->render_fence);
@@ -16,7 +20,7 @@ void shFrameReset(ShVkCore* p_core) {
 }
 
 void shFrameBegin(ShVkCore* p_core, uint32_t* p_swapchain_image_index) {
-	shVkAssert(p_swapchain_image_index != NULL, "invalid arguments ");
+	shVkAssert(p_swapchain_image_index != NULL, "invalid pointer to swapchain image index");
 	vkAcquireNextImageKHR(p_core->device, p_core->swapchain, 1000000000, p_core->present_semaphore, 0, p_swapchain_image_index);
 
 	VkCommandBufferBeginInfo cmdBufferBeginInfo = {
@@ -48,47 +52,6 @@ void shFrameBegin(ShVkCore* p_core, uint32_t* p_swapchain_image_index) {
 	vkBeginCommandBuffer(p_core->graphics_cmd_buffer, &cmdBufferBeginInfo);
 
 	vkCmdBeginRenderPass(p_core->graphics_cmd_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-}
-
-void shBindPipeline(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
-	vkCmdBindPipeline(p_core->graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline->pipeline);
-}
-
-void shBindVertexBuffer(ShVkCore* p_core, VkBuffer* p_vertex_buffer) {
-	const VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(p_core->graphics_cmd_buffer, 0, 1, p_vertex_buffer, &offset);
-}
-
-void shBindIndexBuffer(ShVkCore* p_core, VkBuffer* p_index_buffer) {
-	vkCmdBindIndexBuffer(p_core->graphics_cmd_buffer, *p_index_buffer, 0, VK_INDEX_TYPE_UINT32);
-}
-
-void shUpdateUniformBuffers(ShVkCore* p_core, ShVkGraphicsPipeline* p_pipeline) {
-	vkUpdateDescriptorSets((p_core)->device,
-		p_pipeline->uniform_count, p_pipeline->write_descriptor_sets,
-		0, NULL
-	);
-}
-
-void shBindUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
-	vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		p_pipeline->main_pipeline_layout, uniform_idx, 1,
-		&(p_pipeline)->descriptor_sets[uniform_idx],
-		0,
-		NULL
-	);
-}
-
-void shBindDynamicUniformBuffer(ShVkCore* p_core, const uint32_t uniform_idx, ShVkGraphicsPipeline* p_pipeline) {
-	vkCmdBindDescriptorSets(p_core->graphics_cmd_buffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		p_pipeline->main_pipeline_layout, uniform_idx, 1,
-		&(p_pipeline)->descriptor_sets[uniform_idx],
-		1,
-		&(p_pipeline)->uniform_buffers_offsets[uniform_idx]
-	);
-	(p_pipeline)->uniform_buffers_offsets[uniform_idx] += (p_pipeline)->uniform_buffers_size[uniform_idx];
 }
 
 void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index) {
