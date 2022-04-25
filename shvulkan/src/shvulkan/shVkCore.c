@@ -197,7 +197,7 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		(p_core->graphics_queue.queue_family_index != p_core->compute_queue.queue_family_index) ? queue_info_count += 1 : 0;
 	}
 	
-	const char* extension_names[2] = { VK_EXT_MEMORY_BUDGET_EXTENSION_NAME, VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	const char* extension_names[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME };
 	VkDeviceCreateInfo deviceCreateInfo = {
 		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,	//sType;
 		NULL,									//pNext;
@@ -206,18 +206,18 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		queues_info,							//pQueueCreateInfos;
 		0, 										//enabledLayerCount;
 		NULL,									//ppEnabledLayerNames;
-		1, 										//enabledExtensionCount;
+		2, 										//enabledExtensionCount;
 		extension_names,						//ppEnabledExtensionNames;
 		NULL									//pEnabledFeatures;
 	};
-	if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
-		deviceCreateInfo.enabledExtensionCount++;
+	
+	if(vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device) != VK_SUCCESS) {
+		deviceCreateInfo.enabledExtensionCount = 1;
+		shVkAssertResult(
+			vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device), 
+			"error creating logical device"
+		);
 	}
-
-	shVkAssertResult(
-		vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device),
-		"error creating logical device"
-	);
 }
 
 void shCreateSwapchain(ShVkCore* p_core) {
@@ -251,6 +251,32 @@ void shCreateSwapchain(ShVkCore* p_core) {
 		0,															//oldSwapchain;
 	};
 
+	{
+		uint32_t format_count = 0;
+		shVkAssertResult(
+			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, NULL),
+			"error getting surface available format count"
+		);
+		VkSurfaceFormatKHR* p_formats = calloc(format_count, sizeof(VkSurfaceFormatKHR));
+		shVkAssertResult(
+			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, p_formats),
+			"error getting surface available formats"
+		);
+		uint8_t format_found = 0;
+		for (uint32_t i = 0; i < format_count; i++) {
+			if (p_formats[i].format == SH_SWAPCHAIN_IMAGE_FORMAT) {
+				format_found++;
+				swapchain_create_info.imageColorSpace = p_formats[i].colorSpace;
+				break;
+			}
+		}
+		if (!format_found) {
+			p_core->swapchain_image_format = p_formats[0].format;
+			swapchain_create_info.imageFormat = p_core->swapchain_image_format;
+			swapchain_create_info.imageColorSpace = p_formats[0].colorSpace;
+		}
+	}
+
     VkCompositeAlphaFlagBitsKHR composite_alpha_flags[4] = {
         VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
@@ -264,19 +290,10 @@ void shCreateSwapchain(ShVkCore* p_core) {
         }
     }
 	
-	uint32_t present_mode_count;
-	VkPresentModeKHR present_modes[7];
-	shVkAssertResult(
-		vkGetPhysicalDeviceSurfacePresentModesKHR(p_core->physical_device, p_core->surface.surface, &present_mode_count, present_modes),
-		"error getting surface present modes"
-	);
-	swapchain_create_info.presentMode = present_modes[0];
-
 	shVkAssertResult(
 		vkCreateSwapchainKHR(p_core->device, &swapchain_create_info, NULL, &p_core->swapchain),
 		"error creating swapchain"
 	);
-
 }
 
 void shGetSwapchainImages(ShVkCore* p_core) {
