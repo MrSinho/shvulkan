@@ -93,7 +93,7 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 #define shPipelineBindDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
 	shBindMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
 
-#define shClearDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
+#define shPipelineClearDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
 	shClearBufferMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
 
 #define SH_DEPTH_IMAGE_FORMAT VK_FORMAT_D32_SFLOAT
