@@ -221,9 +221,9 @@ static void shPipelineWriteDynamicDescriptorBufferMemory(const VkDevice device, 
 		NULL\
 	)
 
-static void shPipelineBindDynamicDescriptorSet(VkCommandBuffer cmd_buffer, const uint32_t descriptor_idx, ShVkPipeline* p_pipeline) {
+static void shPipelineBindDynamicDescriptorSet(const VkCommandBuffer cmd_buffer, const uint32_t descriptor_idx, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline) {
 	vkCmdBindDescriptorSets(cmd_buffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		bind_point,
 		p_pipeline->pipeline_layout, descriptor_idx, 1,
 		&(p_pipeline)->descriptor_sets[descriptor_idx],
 		1,
