@@ -9,7 +9,7 @@ extern "C" {
 
 typedef struct ShVkCore ShVkCore;
 
-typedef struct ShVkGraphicsPipeline ShVkGraphicsPipeline;
+typedef struct ShVkPipeline ShVkPipeline;
 
 typedef struct ShMeshInfo ShMeshInfo;
 

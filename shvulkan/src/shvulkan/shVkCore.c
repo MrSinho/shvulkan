@@ -9,7 +9,7 @@ extern "C" {
 #include "shvulkan/shVkCheck.h"
 
 #ifdef _MSC_VER
-#pragma warning (disable: 6011 6385 6386 6255 6001)
+#pragma warning (disable: 6385 6386 6255 6001)
 #endif // _MSC_VER
 
 void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names) {
@@ -115,7 +115,8 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 		);
 	}
 
-	uint32_t *scores = malloc(suitableDeviceCount * sizeof(uint32_t));
+	uint32_t* scores = malloc(suitableDeviceCount * sizeof(uint32_t));
+	shVkAssert(scores != NULL, "invalid scores pointer");
 	for (uint32_t i = 0; i < suitableDeviceCount; i++) {
 
 		scores[i] = 0;
@@ -183,7 +184,7 @@ void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDe
 	*p_queue_info = queue_create_info;
 }
 
-void shSetLogicalDevice(ShVkCore* p_core) {
+void shSetLogicalDevice(ShVkCore* p_core, VkQueueFlags requirements) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	const float queue_priority = 1.0f;
 	uint32_t queue_info_count = 0;
@@ -199,20 +200,20 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 	
 	const char* extension_names[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME };
 	VkDeviceCreateInfo deviceCreateInfo = {
-		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,	//sType;
-		NULL,									//pNext;
-		0,										//flags;
-		queue_info_count,						//queueCreateInfoCount;
-		queues_info,							//pQueueCreateInfos;
-		0, 										//enabledLayerCount;
-		NULL,									//ppEnabledLayerNames;
-		2, 										//enabledExtensionCount;
-		extension_names,						//ppEnabledExtensionNames;
-		NULL									//pEnabledFeatures;
+		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,										//sType;
+		NULL,																		//pNext;
+		0,																			//flags;
+		queue_info_count,															//queueCreateInfoCount;
+		queues_info,																//pQueueCreateInfos;
+		0, 																			//enabledLayerCount;
+		NULL,																		//ppEnabledLayerNames;
+		requirements == SH_VK_CORE_COMPUTE ? 1 : 2,									//enabledExtensionCount;
+		requirements == SH_VK_CORE_COMPUTE ? &extension_names[1] : extension_names,	//ppEnabledExtensionNames;
+		NULL																		//pEnabledFeatures;
 	};
 	
 	if(vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device) != VK_SUCCESS) {
-		deviceCreateInfo.enabledExtensionCount = 1;
+		deviceCreateInfo.enabledExtensionCount--;
 		shVkAssertResult(
 			vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device), 
 			"error creating logical device"
@@ -258,6 +259,7 @@ void shCreateSwapchain(ShVkCore* p_core) {
 			"error getting surface available format count"
 		);
 		VkSurfaceFormatKHR* p_formats = calloc(format_count, sizeof(VkSurfaceFormatKHR));
+		shVkAssert(p_formats != NULL, "invalid surface formats pointer");
 		shVkAssertResult(
 			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, p_formats),
 			"error getting surface available formats"
@@ -338,6 +340,7 @@ void shCreateImageView(ShVkCore* p_core, const VkImage image, const shImageType 
 void shCreateSwapchainImageViews(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	p_core->p_swapchain_image_views = (VkImageView*)malloc(p_core->swapchain_image_count * sizeof(VkImageView));
+	shVkAssert(p_core->p_swapchain_image_views != NULL, "invalid swapchain image views pointer");
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
 		shCreateImageView(p_core, p_core->p_swapchain_images[i], SH_SWAPCHAIN_IMAGE, &p_core->p_swapchain_image_views[i]);
 	}
@@ -478,6 +481,8 @@ void shSetFramebuffers(ShVkCore* p_core) {
 	};
 
 	p_core->p_frame_buffers = (VkFramebuffer*)malloc(p_core->swapchain_image_count * sizeof(VkFramebuffer));
+	shVkAssert(p_core->p_frame_buffers != NULL, "invalid frame buffers pointer");
+
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
 		VkImageView attachments[2] = {
 			p_core->p_swapchain_image_views[i], p_core->depth_image_view 
@@ -495,29 +500,34 @@ void shSetFramebuffers(ShVkCore* p_core) {
 
 void shSetSyncObjects(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
-	VkFenceCreateInfo render_fenceCreateInfo = {
+	VkFenceCreateInfo fence_create_info = {
 		VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,	//sType;
 		NULL,									//pNext;
 		VK_FENCE_CREATE_SIGNALED_BIT			//flags;
 	};
 
 	shVkAssertResult(
-		vkCreateFence(p_core->device, &render_fenceCreateInfo, NULL, &p_core->render_fence),
+		vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->render_fence),
 		"error creating fence"
 	);
 
-	VkSemaphoreCreateInfo semaphoreCreateInfo = {
+	shVkAssertResult(
+		vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->compute_fence),
+		"error creating fence"
+	);
+
+	VkSemaphoreCreateInfo semaphore_create_info = {
 		VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,	//sType;
 		NULL,										//pNext;
 		0											//flags;
 	};
 
 	shVkAssertResult(
-		vkCreateSemaphore(p_core->device, &semaphoreCreateInfo, NULL, &p_core->render_semaphore),
+		vkCreateSemaphore(p_core->device, &semaphore_create_info, NULL, &p_core->render_semaphore),
 		"error creating render semaphore"
 	);
 	shVkAssertResult(
-		vkCreateSemaphore(p_core->device, &semaphoreCreateInfo, NULL, &p_core->present_semaphore),
+		vkCreateSemaphore(p_core->device, &semaphore_create_info, NULL, &p_core->present_semaphore),
 		"error creating present semaphore"
 	);
 }
@@ -556,12 +566,26 @@ void shCmdRelease(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 
-	vkDestroySemaphore(p_core->device, p_core->present_semaphore, NULL);
-	vkDestroySemaphore(p_core->device, p_core->render_semaphore, NULL);
-	vkDestroyFence(p_core->device, p_core->render_fence, NULL);
-
-	vkFreeCommandBuffers(p_core->device, p_core->graphics_cmd_pool, 1, &p_core->graphics_cmd_buffer);
-	vkDestroyCommandPool(p_core->device, p_core->graphics_cmd_pool, NULL);
+	if (p_core->present_semaphore != VK_NULL_HANDLE) {
+		vkDestroySemaphore(p_core->device, p_core->present_semaphore, NULL);
+	}
+	if (p_core->present_semaphore != VK_NULL_HANDLE) {
+		vkDestroySemaphore(p_core->device, p_core->render_semaphore, NULL);
+	}
+	if (p_core->render_fence != NULL) {
+		vkDestroyFence(p_core->device, p_core->render_fence, NULL);
+	}
+	if (p_core->compute_fence != NULL) {
+		vkDestroyFence(p_core->device, p_core->compute_fence, NULL);
+	}
+	if (p_core->graphics_cmd_buffer != VK_NULL_HANDLE) { 
+		vkFreeCommandBuffers(p_core->device, p_core->graphics_cmd_pool, 1, &p_core->graphics_cmd_buffer);
+		vkDestroyCommandPool(p_core->device, p_core->graphics_cmd_pool, NULL);
+	}
+	if (p_core->compute_cmd_buffer != VK_NULL_HANDLE) {
+		vkFreeCommandBuffers(p_core->device, p_core->compute_cmd_pool, 1, &p_core->compute_cmd_buffer);
+		vkDestroyCommandPool(p_core->device, p_core->compute_cmd_pool, NULL);
+	}
 }
 
 void shRenderPassRelease(ShVkCore* p_core) {
@@ -584,13 +608,50 @@ void shInstanceRelease(ShVkCore* p_core) {
 void shVulkanRelease(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
-	shSwapchainRelease(p_core);
-	shDepthBufferRelease(p_core);
-	shSurfaceRelease(p_core);
-	shCmdRelease(p_core);
-	shRenderPassRelease(p_core);
-	shDeviceRelease(p_core);
-	shInstanceRelease(p_core);
+	if (p_core->swapchain != VK_NULL_HANDLE) { 
+		shSwapchainRelease(p_core); 
+	}
+	if (p_core->depth_image_memory != VK_NULL_HANDLE) { 
+		shDepthBufferRelease(p_core); 
+	}
+	if (p_core->surface.surface != VK_NULL_HANDLE) { 
+		shSurfaceRelease(p_core); 
+	}
+	shCmdRelease(p_core); 
+	if (p_core->render_pass != VK_NULL_HANDLE) { 
+		shRenderPassRelease(p_core); 
+	}
+	if (p_core->device != VK_NULL_HANDLE) {
+		shDeviceRelease(p_core); 
+	}
+	if (p_core->instance != VK_NULL_HANDLE) {
+		shInstanceRelease(p_core); 
+	}
+}
+
+
+
+void shBeginCommandBuffer(const VkCommandBuffer cmd_buffer) {
+	VkCommandBufferBeginInfo command_buffer_begin_info = {
+		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		NULL,
+		0,
+		NULL
+};
+	vkBeginCommandBuffer(cmd_buffer, &command_buffer_begin_info);
+}
+
+void shQueueSubmit(VkCommandBuffer* cmd_buffer, const VkQueue queue, VkFence fence) {
+	VkSubmitInfo submit_info = {
+			VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			NULL,
+			0,
+			NULL,
+			NULL,
+			1,
+			cmd_buffer
+	};
+	vkQueueSubmit(queue, 1, &submit_info, fence);
 }
 
 #ifdef __cplusplus

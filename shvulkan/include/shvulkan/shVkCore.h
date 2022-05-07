@@ -65,20 +65,10 @@ typedef struct ShVkCore {
 	VkSemaphore							render_semaphore;
 	VkSemaphore							present_semaphore;
 	VkFence								render_fence;
+	VkFence								compute_fence;
 } ShVkCore;
 
 
-#define shGetGraphicsQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->graphics_queue.queue_family_index, 0, &(p_core)->graphics_queue.queue)
-
-#define shGetComputeQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->compute_queue.queue_family_index, 0, &(p_core)->compute_queue.queue)
-
-#define shInitSwapchainData(p_core) shCreateSwapchain(p_core); shGetSwapchainImages(p_core); shCreateSwapchainImageViews(p_core)
-
-#define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
-
-#define shCreateGraphicsCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->graphics_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->graphics_cmd_pool, &(p_core)->graphics_cmd_buffer)
-
-#define shCreateComputeCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->compute_queue.queue_family_index, &(p_core)->compute_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->compute_cmd_pool, &(p_core)->compute_cmd_buffer)
 
 #define SH_VK_CORE_GRAPHICS VK_QUEUE_GRAPHICS_BIT
 
@@ -92,7 +82,7 @@ extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirem
 
 extern void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
 
-extern void shSetLogicalDevice(ShVkCore* p_core);
+extern void shSetLogicalDevice(ShVkCore* p_core, VkQueueFlags requirements);
 
 extern void shCreateSwapchain(ShVkCore* p_core);
 
@@ -125,6 +115,41 @@ extern void shRenderPassRelease(ShVkCore* p_core);
 extern void shInstanceRelease(ShVkCore* p_core);
 
 extern void shVulkanRelease(ShVkCore* p_core);
+
+
+
+#define shGetGraphicsQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->graphics_queue.queue_family_index, 0, &(p_core)->graphics_queue.queue)
+
+#define shGetComputeQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->compute_queue.queue_family_index, 0, &(p_core)->compute_queue.queue)
+
+#define shInitSwapchainData(p_core) shCreateSwapchain(p_core); shGetSwapchainImages(p_core); shCreateSwapchainImageViews(p_core)
+
+#define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
+
+#define shCreateGraphicsCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->graphics_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->graphics_cmd_pool, &(p_core)->graphics_cmd_buffer)
+
+#define shCreateComputeCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->compute_queue.queue_family_index, &(p_core)->compute_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->compute_cmd_pool, &(p_core)->compute_cmd_buffer)
+
+
+
+#define shResetCommandBuffer(cmd_buffer) vkResetCommandBuffer(cmd_buffer, 0)
+
+#define shResetFences(device, fence_count, p_fences) vkResetFences(device, fence_count, p_fences);
+
+#define shResetFence(device, p_fence) vkResetFences(device, 1, p_fence);
+
+extern void shBeginCommandBuffer(const VkCommandBuffer cmd_buffer);
+
+#define shCmdDispatch(cmd_buffer, group_count_x, group_count_y, group_count_z) vkCmdDispatch(cmd_buffer, group_count_x, group_count_y, group_count_z)
+
+extern void shQueueSubmit(VkCommandBuffer* cmd_buffer, const VkQueue queue, VkFence fence);
+
+#define shWaitForFences(device, fence_count, p_fences) vkWaitForFences(device, fence_count, p_fences, VK_TRUE, 100000000000)
+
+#define shWaitForFence(device, p_fence) vkWaitForFences(device, 1, p_fence, VK_TRUE, 100000000000)
+
+#define shEndCommandBuffer(cmd_buffer) vkEndCommandBuffer(cmd_buffer)
+
 
 #ifdef __cplusplus
 }

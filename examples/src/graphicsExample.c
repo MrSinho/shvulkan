@@ -18,6 +18,11 @@ extern "C" {
 
 #include <math.h>
 
+#ifndef NDEBUG
+#define VALIDATION_LAYERS_ENABLED 1
+#else
+#define VALIDATION_LAYERS_ENABLED 0
+#endif//NDEBUG
 
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title);
 
@@ -26,7 +31,7 @@ const char* readBinary(const char* path, uint32_t* p_size);
 
 int main(void) {
 
-	const char* application_name = "shVulkan example";
+	const char* application_name = "shvulkan example";
 	const uint32_t width = 720;
 	const uint32_t height = 480;
 	GLFWwindow* window = createWindow(width, height, application_name);
@@ -34,7 +39,7 @@ int main(void) {
 	ShVkCore core = { 0 };
 	uint32_t extension_count = 2;
 	const char** extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
-	shCreateInstance(&core, application_name, "ShVulkan Engine", 1, extension_count, extension_names);
+	shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, extension_count, extension_names);
 	shVkAssertResult(
 		glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface),
 		"error creating window surface"
@@ -42,7 +47,7 @@ int main(void) {
 	core.surface.width = width;
 	core.surface.height = height;
 	shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
-	shSetLogicalDevice(&core);
+	shSetLogicalDevice(&core, SH_VK_CORE_GRAPHICS);
 	shGetGraphicsQueue(&core);
 	shInitSwapchainData(&core);
 	shInitDepthData(&core);
@@ -59,9 +64,10 @@ int main(void) {
 	};
 	VkBuffer triangle_vertex_buffer;
 	VkDeviceMemory triangle_vertex_buffer_memory;
-	shCreateVertexBuffer(&core, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
-	shAllocateVertexBuffer(&core, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
-	shWriteVertexBufferMemory(&core, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+	shCreateVertexBuffer(core.device, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
+	shAllocateVertexBufferMemory(core.device, core.physical_device, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
+	shBindVertexBufferMemory(core.device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
+	shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
 	#define QUAD_VERTEX_COUNT 32
 	float quad[QUAD_VERTEX_COUNT] = {
 		-0.5f,-0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -76,36 +82,50 @@ int main(void) {
 	};
 	VkBuffer quad_vertex_buffer, quad_index_buffer;
 	VkDeviceMemory quad_vertex_buffer_memory, quad_index_buffer_memory;
-	shCreateVertexBuffer(&core, QUAD_VERTEX_COUNT * 4, &quad_vertex_buffer);
-	shCreateIndexBuffer(&core, QUAD_INDEX_COUNT * 4, &quad_index_buffer);
-	shAllocateVertexBuffer(&core, quad_vertex_buffer, &quad_vertex_buffer_memory);
-	shAllocateIndexBuffer(&core, quad_index_buffer, &quad_index_buffer_memory);
-	shWriteVertexBufferMemory(&core, quad_vertex_buffer_memory, QUAD_VERTEX_COUNT * 4, quad);
-	shWriteIndexBufferMemory(&core, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
+	shCreateVertexBuffer(core.device, QUAD_VERTEX_COUNT * 4, &quad_vertex_buffer);
+	shCreateIndexBuffer(core.device, QUAD_INDEX_COUNT * 4, &quad_index_buffer);
+	
+	shAllocateVertexBufferMemory(core.device, core.physical_device, quad_vertex_buffer, &quad_vertex_buffer_memory);
+	shAllocateIndexBufferMemory(core.device, core.physical_device, quad_index_buffer, &quad_index_buffer_memory);
+	
+	shBindVertexBufferMemory(core.device, quad_vertex_buffer, quad_vertex_buffer_memory);
+	shBindIndexBufferMemory(core.device, quad_index_buffer, quad_index_buffer_memory);
+
+	shWriteVertexBufferMemory(core.device, quad_vertex_buffer_memory, QUAD_VERTEX_COUNT * 4, quad);
+	shWriteIndexBufferMemory(core.device, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
 	
 	
-	ShVkGraphicsPipeline pipeline = { 0 };
+	ShVkPipeline pipeline = { 0 };
 	
 	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 	
-	shCreateUniformBuffer(core.device, 0, 32, &pipeline);
-	shCreateDynamicUniformBuffer(core.device, 1, 64, &pipeline);
-	shAllocateUniformBuffers(core.device, core.physical_device, &pipeline);
+	shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, 32, &pipeline);
+	shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, 64, 128, &pipeline);
 
-	shDescriptorSetLayout(core.device, 0, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
-	shDescriptorSetLayout(core.device, 1, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+	shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
+	shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);
 
-	shCreateDescriptorPools(core.device, core.swapchain_image_count, &pipeline);
-	shAllocateDescriptorSets(core.device,&pipeline);
+	shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
+	shPipelineBindDescriptorBufferMemory(core.device, 1, &pipeline);
 
+	shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+	shPipelineDescriptorSetLayout(core.device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+
+	shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
+	shPipelineCreateDescriptorPool(core.device, 1, &pipeline);
+
+	shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
+	shPipelineAllocateDescriptorSet(core.device, 1, &pipeline);
+	
 	uint32_t vertex_shader_size = 0;
 	uint32_t fragment_shader_size = 0;
 	const char* vertex_code = readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
 	const char* fragment_code = readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
-	shCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline);
-	shCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline);
-	shCreateShaderStage(core.device, pipeline.shader_modules[0], VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
-	shCreateShaderStage(core.device, pipeline.shader_modules[1], VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+	shPipelineCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline);
+	shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+	
+	shPipelineCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline);
+	shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
 	
 	ShVkFixedStates fixed_states = { 0 };
 	shSetVertexInputAttribute(0, SH_VEC3_SIGNED_FLOAT, 0, 12, &fixed_states);
@@ -160,40 +180,43 @@ int main(void) {
 		uint32_t frame_index = 0;
 		shFrameBegin(&core, &frame_index);
 		
-		shBindGraphicsPipeline(core.graphics_cmd_buffer, &pipeline);
+		shBindPipeline(core.graphics_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
-		shPushConstants(core.graphics_cmd_buffer, push_constants_data, &pipeline);
+		shPipelinePushConstants(core.graphics_cmd_buffer, push_constants_data, &pipeline);
 
-		shUpdateUniformBuffers(core.device, &pipeline);
+		shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-		shWriteUniformBufferMemory(core.device, 0, light_data, &pipeline);
-		shBindUniformBuffer(core.graphics_cmd_buffer, 0, &pipeline);
+		shPipelineWriteDescriptorBufferMemory(core.device, 0, light_data, &pipeline);
+		shPipelineBindDescriptorSet(core.graphics_cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
-		shWriteDynamicUniformBufferMemory(core.device, 1, model0, &pipeline);
-		shBindDynamicUniformBuffer(core.graphics_cmd_buffer, 1, &pipeline);
+		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model0, &pipeline);
+		shPipelineBindDynamicDescriptorBuffer(core.graphics_cmd_buffer, 1, &pipeline);
 
 		shBindVertexBuffer(core.graphics_cmd_buffer, &quad_vertex_buffer);
 		shBindIndexBuffer(core.graphics_cmd_buffer, &quad_index_buffer);
 		shDrawIndexed(core.graphics_cmd_buffer, QUAD_INDEX_COUNT);
 
-		shWriteDynamicUniformBufferMemory(core.device, 1, model1, &pipeline);
-		shBindDynamicUniformBuffer(core.graphics_cmd_buffer, 1, &pipeline);
+		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model1, &pipeline);
+		shPipelineBindDynamicDescriptorBuffer(core.graphics_cmd_buffer, 1, &pipeline);
 
 		triangle[9] = (float)sin(glfwGetTime());
-		shWriteVertexBufferMemory(&core, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
 		shBindVertexBuffer(core.graphics_cmd_buffer, &triangle_vertex_buffer);
 		shDraw(core.graphics_cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
 		shEndPipeline(&pipeline);
 		shFrameEnd(&core, frame_index);
 	}
+
+	shClearDescriptorBufferMemory(core.device, 0, &pipeline);
+	shClearDescriptorBufferMemory(core.device, 1, &pipeline);
 	
-	shClearUniformBufferMemory(&core, 0, &pipeline);
-	shClearUniformBufferMemory (&core, 1, &pipeline);
-	shClearVertexBufferMemory(&core, triangle_vertex_buffer, triangle_vertex_buffer_memory);
-	shClearVertexBufferMemory(&core, quad_vertex_buffer, quad_vertex_buffer_memory);
-	shClearIndexBufferMemory(&core, quad_index_buffer, quad_index_buffer_memory);
-	shDestroyPipeline(core.device, &pipeline);
+	shPipelineRelease(core.device, &pipeline);
+
+	shClearVertexBufferMemory(core.device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
+	shClearVertexBufferMemory(core.device, quad_vertex_buffer, quad_vertex_buffer_memory);
+	shClearIndexBufferMemory(core.device, quad_index_buffer, quad_index_buffer_memory);
+
 	shVulkanRelease(&core);
 
 	return 0;

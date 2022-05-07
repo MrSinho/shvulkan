@@ -13,28 +13,99 @@ extern "C" {
 #define VALIDATION_LAYERS_ENABLED 0
 #endif//NDEBUG
 
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+const char* readBinary(const char* path, uint32_t* p_size);
+
 int main(void) {
+
 	ShVkCore core = { 0 };
-	shCreateInstance(&core, "Vulkan compute example", "shVulkan Engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
+	shCreateInstance(&core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
 	shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
-	shSetLogicalDevice(&core);
+	shSetLogicalDevice(&core, SH_VK_CORE_COMPUTE);
 	shGetComputeQueue(&core);
 	shCreateComputeCommandBuffer(&core);
+	shSetSyncObjects(&core);
 
-	#define BUFFER_SIZE 32 * 4
+	ShVkPipeline pipeline = { 0 };
 
-	VkBuffer src_buffer;
-	VkDeviceMemory src_buffer_memory;
-	shCreateBuffer(core.device, BUFFER_SIZE, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, &src_buffer);
-	shAllocateMemory(
-		core.device,
-		core.physical_device,
-		src_buffer,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		&src_buffer_memory	
-	);
+	shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, 64 * sizeof(float), &pipeline);
+	shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
+	shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
+
+	shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
+	shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
+	shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
+
+	uint32_t shader_size = 0;
+	const char* shader_code = readBinary("../examples/shaders/bin/Compute.comp.spv", &shader_size);
+	shPipelineCreateShaderModule(core.device, shader_size, shader_code, &pipeline);
+	shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
+
+	shSetupComputePipeline(core.device, &pipeline);
+
+	{
+		shResetCommandBuffer(core.compute_cmd_buffer);
+		shResetFence(core.device, &core.compute_fence);
+
+		shBeginCommandBuffer(core.compute_cmd_buffer);
+
+		shBindPipeline(core.compute_cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+
+		shPipelineUpdateDescriptorSet(core.device, 0, &pipeline);
+		shPipelineBindDescriptorSet(core.compute_cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+
+		shCmdDispatch(core.compute_cmd_buffer, 64, 1, 1);
+
+		shEndCommandBuffer(core.compute_cmd_buffer);
+
+		shQueueSubmit(&core.compute_cmd_buffer, core.compute_queue.queue, core.compute_fence);
+
+		shWaitForFence(core.device, &core.compute_fence);
+
+		float dst[64];
+		shReadMemory(core.device, pipeline.descriptor_buffers_memory[0], 0, 64 * sizeof(float), dst);
+
+		printf("Compute shader output values:\n");
+		for (uint32_t i = 0; i < 64; i += 4) {
+			printf("%f, %f, %f, %f\n",
+				dst[i], dst[i + 1], dst[i + 2], dst[i + 3]);
+		}
+	}
+
+	shClearDescriptorBufferMemory(core.device, 0, &pipeline);
+
+	shPipelineRelease(core.device, &pipeline);
+
+	shVulkanRelease(&core);
 
 	return 0;
+}
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4996)
+#endif//_MSC_VER
+#include <stdlib.h>
+const char* readBinary(const char* path, uint32_t* p_size) {
+	FILE* stream = fopen(path, "rb");
+	if (stream == NULL) {
+		return NULL;
+	}
+	fseek(stream, 0, SEEK_END);
+	uint32_t code_size = ftell(stream);
+	fseek(stream, 0, SEEK_SET);
+	char* code = (char*)calloc(1, code_size);
+	if (code == NULL) {
+		fclose(stream);
+		return NULL;
+	}
+	fread(code, code_size, 1, stream);
+	*p_size = code_size;
+	fclose(stream);
+	return code;
 }
 
 #ifdef __cplusplus

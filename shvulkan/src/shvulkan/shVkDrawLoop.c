@@ -8,9 +8,7 @@ extern "C" {
 #include "shvulkan/shVkMemoryInfo.h"
 #include "shvulkan/shVkCheck.h"
 
-#ifdef _MSC_VER
-#pragma warning (disable: 6011)
-#endif//_MSC_VER
+
 
 void shFrameReset(ShVkCore* p_core) {
 	vkWaitForFences(p_core->device, 1, &p_core->render_fence, 1, 1000000000);

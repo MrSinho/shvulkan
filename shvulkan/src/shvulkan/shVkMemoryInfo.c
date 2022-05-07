@@ -9,7 +9,7 @@ extern "C" {
 #include <memory.h>
 
 #ifdef _MSC_VER
-#pragma warning (disable: 6011 6001 4700 6387)
+#pragma warning (disable: 6001 4700 6387)
 #endif//_MSC_VER
 
 void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlagBits usage_flags, VkBuffer* p_buffer) {
@@ -48,17 +48,12 @@ void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_dev
 
 	shVkAssertResult(
 		vkAllocateMemory(device, &memoryAllocateInfo, NULL, p_memory),
-		"error allocating memory "
-	);
-
-	shVkAssertResult(
-		vkBindBufferMemory(device, buffer, *p_memory, 0),
-		"error binding buffer memory "
+		"error allocating memory"
 	);
 }
 
 void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t typeFlags, uint32_t* p_memory_type_index) {
-	shVkAssert(p_memory_type_index != NULL, "invalid memory type index pointer ");
+	shVkAssert(p_memory_type_index != NULL, "invalid memory type index pointer");
 	VkPhysicalDeviceMemoryProperties memoryProperties;
 	vkGetPhysicalDeviceMemoryProperties(physical_device, &memoryProperties);
 
@@ -72,12 +67,23 @@ void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_devi
 
 	}
 	shVkAssert(VK_ERROR_UNKNOWN, 
-		"cannot find suitable memory type for the given buffer "
+		"cannot find suitable memory type for the given buffer"
 	);
 }
 
-void shMapMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void *p_data) {
-	shVkAssert(p_data != NULL, "invalid memory buffer ");
+void shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data) {
+	shVkAssert(p_data != NULL, "invalid memory buffer");
+	void* data;
+	shVkAssertResult(
+		vkMapMemory(device, memory, offset, data_size, 0, &data),
+		"error mapping memory"
+	);
+	memcpy(p_data, data, (size_t)data_size);
+	vkUnmapMemory(device, memory);
+}
+
+void shWriteMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void* p_data) {
+	shVkAssert(p_data != NULL, "invalid memory buffer");
 	void* data;
 	shVkAssertResult(
 		vkMapMemory(device, memory, offset, data_size, 0, &data),
