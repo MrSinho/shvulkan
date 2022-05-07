@@ -204,14 +204,14 @@ int main(void) {
 		shPipelineBindDescriptorSet(core.graphics_cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
 		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model0, &pipeline);
-		shPipelineBindDynamicDescriptorSet(core.graphics_cmd_buffer, 1, &pipeline);
+		shPipelineBindDynamicDescriptorSet(core.graphics_cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
 		shBindVertexBuffer(core.graphics_cmd_buffer, &quad_vertex_buffer);
 		shBindIndexBuffer(core.graphics_cmd_buffer, &quad_index_buffer);
 		shDrawIndexed(core.graphics_cmd_buffer, QUAD_INDEX_COUNT);
 
 		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model1, &pipeline);
-		shPipelineBindDynamicDescriptorSet(core.graphics_cmd_buffer, 1, &pipeline);
+		shPipelineBindDynamicDescriptorSet(core.graphics_cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
 		triangle[9] = (float)sin(glfwGetTime());
 		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
