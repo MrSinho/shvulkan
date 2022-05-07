@@ -9,7 +9,7 @@
 ## Build guide
 
 ```bash
-git clone https://github.com/MrSinho/ShVulkan
+git clone https://github.com/MrSinho/shvulkan
 cd shvulkan
 mkdir build 
 cd build
