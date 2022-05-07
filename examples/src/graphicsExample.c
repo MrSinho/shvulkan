@@ -222,8 +222,8 @@ int main(void) {
 		shFrameEnd(&core, frame_index);
 	}
 
-	shClearDescriptorBufferMemory(core.device, 0, &pipeline);
-	shClearDescriptorBufferMemory(core.device, 1, &pipeline);
+	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
+	shPipelineClearDescriptorBufferMemory(core.device, 1, &pipeline);
 	
 	shPipelineRelease(core.device, &pipeline);
 
