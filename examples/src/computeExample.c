@@ -23,29 +23,34 @@ const char* readBinary(const char* path, uint32_t* p_size);
 int main(void) {
 
 	ShVkCore core = { 0 };
-	shCreateInstance(&core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
-	shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
-	shSetLogicalDevice(&core, SH_VK_CORE_COMPUTE);
-	shGetComputeQueue(&core);
-	shCreateComputeCommandBuffer(&core);
-	shSetSyncObjects(&core);
+	{
+		shCreateInstance(&core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
+		shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
+		shSetLogicalDevice(&core, SH_VK_CORE_COMPUTE);
+		shGetComputeQueue(&core);
+		shCreateComputeCommandBuffer(&core);
+		shSetSyncObjects(&core);
+	}
+	
 
 	ShVkPipeline pipeline = { 0 };
+	{
+		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, 64 * sizeof(float), &pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
+		shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
 
-	shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, 64 * sizeof(float), &pipeline);
-	shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
-	shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
+		shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
+		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
+		shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
 
-	shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
-	shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
-	shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
+		uint32_t shader_size = 0;
+		const char* shader_code = readBinary("../examples/shaders/bin/Compute.comp.spv", &shader_size);
+		shPipelineCreateShaderModule(core.device, shader_size, shader_code, &pipeline);
+		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
 
-	uint32_t shader_size = 0;
-	const char* shader_code = readBinary("../examples/shaders/bin/Compute.comp.spv", &shader_size);
-	shPipelineCreateShaderModule(core.device, shader_size, shader_code, &pipeline);
-	shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
+		shSetupComputePipeline(core.device, &pipeline);
+	}
 
-	shSetupComputePipeline(core.device, &pipeline);
 
 	{
 		shResetCommandBuffer(core.compute_cmd_buffer);
@@ -76,7 +81,7 @@ int main(void) {
 		}
 	}
 
-	shClearDescriptorBufferMemory(core.device, 0, &pipeline);
+	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
 
 	shPipelineRelease(core.device, &pipeline);
 
