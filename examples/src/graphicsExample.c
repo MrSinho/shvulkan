@@ -28,7 +28,7 @@ GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char
 
 const char* readBinary(const char* path, uint32_t* p_size);
 
-#define THREAD_COUNT 2
+#define THREAD_COUNT 1
 
 int main(void) {
 
