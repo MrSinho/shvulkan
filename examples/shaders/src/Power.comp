@@ -16,10 +16,5 @@ void main() {
 
     vec4 src = values[gl_GlobalInvocationID.x];
     
-    if (gl_GlobalInvocationID.x != 0) {
-        values[gl_GlobalInvocationID.x] = vec4(4.0f, 3.0f, 2.0f, 1.0f);
-    }
-    else {
-        values[gl_GlobalInvocationID.x] = vec4(pow(src.x, 2), pow(src.y, 2), pow(src.z, 2), pow(src.w, 2));
-    }
+    values[gl_GlobalInvocationID.x] = vec4(pow(src.x, 2), pow(src.y, 2), pow(src.z, 2), pow(src.w, 2));
 }

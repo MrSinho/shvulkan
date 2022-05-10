@@ -44,7 +44,7 @@ int main(void) {
 		shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
 
 		uint32_t shader_size = 0;
-		const char* shader_code = readBinary("../examples/shaders/bin/Compute.comp.spv", &shader_size);
+		const char* shader_code = readBinary("../examples/shaders/bin/Power.comp.spv", &shader_size);
 		shPipelineCreateShaderModule(core.device, shader_size, shader_code, &pipeline);
 		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
 
@@ -62,8 +62,10 @@ int main(void) {
 
 		shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-		float inputs[4] = { 25.0f, 20.0f, 15.0f, 1.0f };
-
+		float inputs[64];
+		for (uint32_t i = 0; i < 64; i++) {
+			inputs[i] = (float)(i);
+		}
 		shPipelineWriteDescriptorBufferMemory(core.device, 0, inputs, &pipeline);
 		shPipelineBindDescriptorSet(core.p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
