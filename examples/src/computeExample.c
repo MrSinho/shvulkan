@@ -52,7 +52,7 @@ int main(void) {
 	}
 
 
-	{
+	{/*OPERATIONS HERE*/
 		shResetCommandBuffer(core.p_compute_commands[0].cmd_buffer);
 		shResetFence(core.device, &core.p_compute_commands[0].fence);
 
@@ -60,7 +60,11 @@ int main(void) {
 
 		shBindPipeline(core.p_compute_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
-		shPipelineUpdateDescriptorSet(core.device, 0, &pipeline);
+		shPipelineUpdateDescriptorSets(core.device, &pipeline);
+
+		float inputs[4] = { 25.0f, 20.0f, 15.0f, 1.0f };
+
+		shPipelineWriteDescriptorBufferMemory(core.device, 0, inputs, &pipeline);
 		shPipelineBindDescriptorSet(core.p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
 		shCmdDispatch(core.p_compute_commands[0].cmd_buffer, 64, 1, 1);
