@@ -28,7 +28,7 @@ int main(void) {
 		shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
 		shSetLogicalDevice(&core, SH_VK_CORE_COMPUTE);
 		shGetComputeQueue(&core);
-		shCreateComputeCommandBuffer(&core);
+		shCreateComputeCommandBuffers(&core, 1);
 		shSetSyncObjects(&core);
 	}
 	
@@ -53,23 +53,23 @@ int main(void) {
 
 
 	{
-		shResetCommandBuffer(core.compute_cmd_buffer);
-		shResetFence(core.device, &core.compute_fence);
+		shResetCommandBuffer(core.p_compute_commands[0].cmd_buffer);
+		shResetFence(core.device, &core.p_compute_commands[0].fence);
 
-		shBeginCommandBuffer(core.compute_cmd_buffer);
+		shBeginCommandBuffer(core.p_compute_commands[0].cmd_buffer);
 
-		shBindPipeline(core.compute_cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+		shBindPipeline(core.p_compute_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
 		shPipelineUpdateDescriptorSet(core.device, 0, &pipeline);
-		shPipelineBindDescriptorSet(core.compute_cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+		shPipelineBindDescriptorSet(core.p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
-		shCmdDispatch(core.compute_cmd_buffer, 64, 1, 1);
+		shCmdDispatch(core.p_compute_commands[0].cmd_buffer, 64, 1, 1);
 
-		shEndCommandBuffer(core.compute_cmd_buffer);
+		shEndCommandBuffer(core.p_compute_commands[0].cmd_buffer);
 
-		shQueueSubmit(&core.compute_cmd_buffer, core.compute_queue.queue, core.compute_fence);
+		shQueueSubmit(&core.p_compute_commands[0].cmd_buffer, core.compute_queue.queue, core.p_compute_commands[0].fence);
 
-		shWaitForFence(core.device, &core.compute_fence);
+		shWaitForFence(core.device, &core.p_compute_commands[0].fence);
 
 		float dst[64];
 		shReadMemory(core.device, pipeline.descriptor_buffers_memory[0], 0, 64 * sizeof(float), dst);
