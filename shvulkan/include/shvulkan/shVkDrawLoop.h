@@ -19,9 +19,9 @@ typedef struct ShVkFixedStates ShVkFixedStates;
 
 
 
-extern void shFrameReset(ShVkCore* p_core);
+extern void shFrameReset(ShVkCore* p_core, uint32_t thread_idx);
 
-extern void shFrameBegin(ShVkCore* p_core, uint32_t* swapchain_image_index);
+extern void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* swapchain_image_index);
 
 #define shDrawIndexed(graphics_cmd_buffer, index_count)\
 	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, 1, 0, 0, 0)
@@ -29,7 +29,7 @@ extern void shFrameBegin(ShVkCore* p_core, uint32_t* swapchain_image_index);
 #define shDraw(graphics_cmd_buffer, vertex_count_div_stride)\
 	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, 1, 0, 0)
 
-extern void shFrameEnd(ShVkCore* p_core, const uint32_t swapchain_image_index);
+extern void shFrameEnd(ShVkCore* p_core, const uint32_t thread_idx, const uint32_t swapchain_image_index);
 
 #ifdef __cplusplus
 }

@@ -28,7 +28,7 @@ GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char
 
 const char* readBinary(const char* path, uint32_t* p_size);
 
-#define THREAD_COUNT 1
+#define THREAD_COUNT 2
 
 int main(void) {
 
@@ -189,38 +189,43 @@ int main(void) {
 	uint32_t available_vram, process_used_vram = 0;
 	shGetMemoryBudgetProperties(core.physical_device, &available_vram, &process_used_vram, NULL);
 
+	uint32_t frame_index = 0;
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-		shFrameReset(&core);
-		uint32_t frame_index = 0;
-		shFrameBegin(&core, &frame_index);
-		
-		shBindPipeline(core.p_graphics_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
-		shPipelinePushConstants(core.p_graphics_commands[0].cmd_buffer, push_constants_data, &pipeline);
+		for (uint32_t thread_idx = 0; thread_idx < THREAD_COUNT; thread_idx++) {
+			shFrameReset(&core, thread_idx);
 
-		shPipelineUpdateDescriptorSets(core.device, &pipeline);
+			shFrameBegin(&core, thread_idx, &frame_index);
 
-		shPipelineWriteDescriptorBufferMemory(core.device, 0, light_data, &pipeline);
-		shPipelineBindDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
-		
-		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model0, &pipeline);
-		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+			shBindPipeline(core.p_graphics_commands[thread_idx].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
-		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, &quad_vertex_buffer);
-		shBindIndexBuffer(core.p_graphics_commands[0].cmd_buffer, &quad_index_buffer);
-		shDrawIndexed(core.p_graphics_commands[0].cmd_buffer, QUAD_INDEX_COUNT);
+			shPipelinePushConstants(core.p_graphics_commands[thread_idx].cmd_buffer, push_constants_data, &pipeline);
 
-		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model1, &pipeline);
-		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+			shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-		triangle[9] = (float)sin(glfwGetTime());
-		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
-		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, &triangle_vertex_buffer);
-		shDraw(core.p_graphics_commands[0].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
+			shPipelineWriteDescriptorBufferMemory(core.device, 0, light_data, &pipeline);
+			shPipelineBindDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
-		shEndPipeline(&pipeline);
-		shFrameEnd(&core, frame_index);
+			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model0, &pipeline);
+			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+
+			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_vertex_buffer);
+			shBindIndexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_index_buffer);
+			shDrawIndexed(core.p_graphics_commands[thread_idx].cmd_buffer, QUAD_INDEX_COUNT);
+
+			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model1, &pipeline);
+			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+
+			triangle[9] = (float)sin(glfwGetTime());
+			shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &triangle_vertex_buffer);
+			shDraw(core.p_graphics_commands[thread_idx].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
+
+			shEndPipeline(&pipeline);
+			shFrameEnd(&core, thread_idx, frame_index);
+		}
 	}
 
 	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
