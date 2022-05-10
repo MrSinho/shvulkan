@@ -9,6 +9,7 @@ extern "C" {
 #include <stdint.h>
 
 #include "shvulkan/shVkVersion.h"
+#include "shvulkan/shVkCheck.h"
 
 typedef enum shImageType {
 	SH_SWAPCHAIN_IMAGE = 0b001,
@@ -30,6 +31,12 @@ typedef struct ShQueue {
 	VkQueue			queue;
 } ShQueue;
 
+typedef struct ShVkCommand {
+	VkCommandBuffer cmd_buffer;
+	VkCommandPool	cmd_pool;
+	VkFence			fence;
+} ShVkCommand;
+
 typedef struct ShVkCore {
 	/*Primary*/
 	VkInstance							instance;
@@ -45,10 +52,9 @@ typedef struct ShVkCore {
 	ShQueue								graphics_queue;
 	ShQueue								compute_queue;
 	/*Commands*/
-	VkCommandPool						graphics_cmd_pool;
-	VkCommandPool						compute_cmd_pool;
-	VkCommandBuffer						graphics_cmd_buffer;
-	VkCommandBuffer						compute_cmd_buffer;
+	uint32_t							thread_count;
+	ShVkCommand*						p_graphics_commands;
+	ShVkCommand*						p_compute_commands;
 	/*Swapchain*/
 	VkSwapchainKHR						swapchain;
 	VkFormat							swapchain_image_format;
@@ -60,12 +66,9 @@ typedef struct ShVkCore {
 	VkImage								depth_image;
 	VkDeviceMemory						depth_image_memory;
 	VkImageView							depth_image_view;
-	/*Render pass + sync objects*/
+	/**/
 	VkRenderPass						render_pass;
-	VkSemaphore							render_semaphore;
-	VkSemaphore							present_semaphore;
-	VkFence								render_fence;
-	VkFence								compute_fence;
+	VkSemaphore*						p_render_semaphores;
 } ShVkCore;
 
 
@@ -95,6 +98,8 @@ extern void shCreateSwapchainImageViews(ShVkCore* p_core);
 extern void shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommandPool* p_cmd_pool);
 
 extern void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCommandBuffer* p_cmd_buffer);
+
+extern void shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const uint32_t thread_count, ShVkCommand** pp_command);
 
 extern void shCreateRenderPass(ShVkCore* p_core);
 
@@ -126,11 +131,11 @@ extern void shVulkanRelease(ShVkCore* p_core);
 
 #define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
 
-#define shCreateGraphicsCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &(p_core)->graphics_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->graphics_cmd_pool, &(p_core)->graphics_cmd_buffer)
+#define shCreateGraphicsCommandBuffers(p_core, thread_count)\
+	shCreateCommandData(p_core, VK_QUEUE_GRAPHICS_BIT, thread_count, &(p_core)->p_graphics_commands)\
 
-#define shCreateComputeCommandBuffer(p_core) shCreateCmdPool((p_core)->device, (p_core)->compute_queue.queue_family_index, &(p_core)->compute_cmd_pool); shCreateCmdBuffer((p_core)->device, (p_core)->compute_cmd_pool, &(p_core)->compute_cmd_buffer)
-
-
+#define shCreateComputeCommandBuffers(p_core, thread_count)\
+	shCreateCommandData(p_core, VK_QUEUE_COMPUTE_BIT, thread_count, &(p_core)->p_compute_commands)\
 
 #define shResetCommandBuffer(cmd_buffer) vkResetCommandBuffer(cmd_buffer, 0)
 

@@ -1,0 +1,19 @@
+#version 450
+
+layout (local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+
+layout(std140, binding = 0) buffer buf {
+   vec4 values[];
+};
+
+
+
+void main() {
+    //stop unused threads 
+    //if(gl_GlobalInvocationID.x >= 64) {
+    //  return;
+    //}
+
+    // store the rendered mandelbrot set into a storage buffer:
+    values[gl_GlobalInvocationID.x] = vec4(25.0f);
+}

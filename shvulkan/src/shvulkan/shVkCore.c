@@ -377,6 +377,25 @@ void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCom
 	);
 }
 
+void shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const uint32_t thread_count, ShVkCommand** pp_commands) {
+	shVkAssert(thread_count != 0, "invalid thread count");
+
+	*pp_commands = calloc(thread_count, sizeof(ShVkCommand));
+	ShVkCommand* p_commands = *pp_commands;
+	shVkAssert(p_commands != NULL, "invalid commands pointer");
+
+	for (uint32_t thread = 0; thread < thread_count; thread++) {
+		if (usage == VK_QUEUE_GRAPHICS_BIT) {
+			shCreateCmdPool((p_core)->device, (p_core)->graphics_queue.queue_family_index, &p_commands[thread].cmd_pool);
+		}
+		else if (usage == VK_QUEUE_COMPUTE_BIT) {
+			shCreateCmdPool((p_core)->device, (p_core)->compute_queue.queue_family_index, &p_commands[thread].cmd_pool);
+		}
+		shCreateCmdBuffer((p_core)->device, p_commands[thread].cmd_pool, &p_commands[thread].cmd_buffer);
+	}
+	p_core->thread_count = thread_count;
+}
+
 void shCreateRenderPass(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	VkAttachmentDescription colorAttachmentDescription = {
@@ -506,30 +525,39 @@ void shSetSyncObjects(ShVkCore* p_core) {
 		VK_FENCE_CREATE_SIGNALED_BIT			//flags;
 	};
 
-	shVkAssertResult(
-		vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->render_fence),
-		"error creating fence"
-	);
-
-	shVkAssertResult(
-		vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->compute_fence),
-		"error creating fence"
-	);
-
 	VkSemaphoreCreateInfo semaphore_create_info = {
 		VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,	//sType;
 		NULL,										//pNext;
 		0											//flags;
 	};
 
-	shVkAssertResult(
-		vkCreateSemaphore(p_core->device, &semaphore_create_info, NULL, &p_core->render_semaphore),
-		"error creating render semaphore"
-	);
-	shVkAssertResult(
-		vkCreateSemaphore(p_core->device, &semaphore_create_info, NULL, &p_core->present_semaphore),
-		"error creating present semaphore"
-	);
+	p_core->p_render_semaphores = calloc(p_core->thread_count, sizeof(VkSemaphore));
+	
+if (p_core->p_graphics_commands != NULL) {
+		for (uint32_t thread = 0; thread < p_core->thread_count; thread++) {
+			shVkAssertResult(
+				vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->p_graphics_commands[thread].fence),
+				"error creating fence"
+			);
+			
+			shVkAssert(p_core->p_render_semaphores != NULL, "invalid render semaphores pointer");
+			shVkAssertResult(
+				vkCreateSemaphore(p_core->device, &semaphore_create_info, NULL, &p_core->p_render_semaphores[thread]),
+				"error creating render semaphore"
+			);
+		}
+	}
+	
+
+	if (p_core->p_compute_commands != NULL) {
+		for (uint32_t thread = 0; thread < p_core->thread_count; thread++) {
+			shVkAssertResult(
+				vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->p_compute_commands[thread].fence),
+				"error creating fence"
+			);
+		}
+	}
+	
 }
 
 void shSwapchainRelease(ShVkCore* p_core) {
@@ -566,25 +594,21 @@ void shCmdRelease(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
 
-	if (p_core->present_semaphore != VK_NULL_HANDLE) {
-		vkDestroySemaphore(p_core->device, p_core->present_semaphore, NULL);
+	if (p_core->p_graphics_commands != NULL) {
+		for (uint32_t thread_idx = 0; thread_idx < p_core->thread_count; thread_idx++) {
+			vkDestroyFence(p_core->device, p_core->p_graphics_commands[thread_idx].fence, NULL);
+			vkDestroySemaphore(p_core->device, p_core->p_render_semaphores[thread_idx], NULL);
+			vkFreeCommandBuffers(p_core->device, p_core->p_graphics_commands[thread_idx].cmd_pool, 1, &p_core->p_graphics_commands[thread_idx].cmd_buffer);
+			vkDestroyCommandPool(p_core->device, p_core->p_graphics_commands[thread_idx].cmd_pool, NULL);
+		}
 	}
-	if (p_core->present_semaphore != VK_NULL_HANDLE) {
-		vkDestroySemaphore(p_core->device, p_core->render_semaphore, NULL);
-	}
-	if (p_core->render_fence != NULL) {
-		vkDestroyFence(p_core->device, p_core->render_fence, NULL);
-	}
-	if (p_core->compute_fence != NULL) {
-		vkDestroyFence(p_core->device, p_core->compute_fence, NULL);
-	}
-	if (p_core->graphics_cmd_buffer != VK_NULL_HANDLE) { 
-		vkFreeCommandBuffers(p_core->device, p_core->graphics_cmd_pool, 1, &p_core->graphics_cmd_buffer);
-		vkDestroyCommandPool(p_core->device, p_core->graphics_cmd_pool, NULL);
-	}
-	if (p_core->compute_cmd_buffer != VK_NULL_HANDLE) {
-		vkFreeCommandBuffers(p_core->device, p_core->compute_cmd_pool, 1, &p_core->compute_cmd_buffer);
-		vkDestroyCommandPool(p_core->device, p_core->compute_cmd_pool, NULL);
+
+	if (p_core->p_compute_commands != NULL) {
+		for (uint32_t thread_idx = 0; thread_idx < p_core->thread_count; thread_idx++) {
+			vkDestroyFence(p_core->device, p_core->p_compute_commands[thread_idx].fence, NULL);
+			vkFreeCommandBuffers(p_core->device, p_core->p_compute_commands[thread_idx].cmd_pool, 1, &p_core->p_compute_commands[thread_idx].cmd_buffer);
+			vkDestroyCommandPool(p_core->device, p_core->p_compute_commands[thread_idx].cmd_pool, NULL);
+		}
 	}
 }
 
