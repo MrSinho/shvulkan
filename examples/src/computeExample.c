@@ -20,6 +20,17 @@ extern "C" {
 
 const char* readBinary(const char* path, uint32_t* p_size);
 
+#ifdef _MSC_VER
+#pragma warning(disable: 6385 6386)
+#endif//_MSC_VER
+
+typedef struct ShaderInput {
+	float value;
+} ShaderInput;
+SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(ShaderInput)
+
+
+
 int main(void) {
 
 	ShVkCore core = { 0 };
@@ -34,8 +45,20 @@ int main(void) {
 	
 
 	ShVkPipeline pipeline = { 0 };
+
+	//Generated with macro definition
+	ShaderInputDescriptorStructureHandle inputs = shVkCreateShaderInputDescriptorStructures(
+		core.physical_device_properties, 
+		16
+	);
 	{
-		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, 64 * sizeof(float), &pipeline);
+		for (uint32_t i = 0; i < inputs.structure_count; i++) {
+			ShaderInput* p_input = shVkGetShaderInputDescriptorStructure(inputs, i, 0);
+			p_input->value = (float)(i);
+		}
+		shVkMapShaderInputDecriptorStructures(&inputs);
+
+		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, &pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
 		shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
 
@@ -44,7 +67,7 @@ int main(void) {
 		shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
 
 		uint32_t shader_size = 0;
-		const char* shader_code = readBinary("../examples/shaders/bin/Power.comp.spv", &shader_size);
+		const char* shader_code = readBinary("../examples/shaders/bin/power.comp.spv", &shader_size);
 		shPipelineCreateShaderModule(core.device, shader_size, shader_code, &pipeline);
 		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
 
@@ -62,11 +85,7 @@ int main(void) {
 
 		shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-		float inputs[64];
-		for (uint32_t i = 0; i < 64; i++) {
-			inputs[i] = (float)(i);
-		}
-		shPipelineWriteDescriptorBufferMemory(core.device, 0, inputs, &pipeline);
+		shPipelineWriteDescriptorBufferMemory(core.device, 0, inputs.p_ShaderInput_map, &pipeline);
 		shPipelineBindDescriptorSet(core.p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
 		shCmdDispatch(core.p_compute_commands[0].cmd_buffer, 64, 1, 1);
@@ -77,13 +96,12 @@ int main(void) {
 
 		shWaitForFence(core.device, &core.p_compute_commands[0].fence);
 
-		float dst[64];
-		shReadMemory(core.device, pipeline.descriptor_buffers_memory[0], 0, 64 * sizeof(float), dst);
-
+		shReadMemory(core.device, pipeline.descriptor_buffers_memory[0], 0, 64 * sizeof(float), inputs.p_ShaderInput_map);
+		
 		printf("Compute shader output values:\n");
-		for (uint32_t i = 0; i < 64; i += 4) {
-			printf("%f, %f, %f, %f\n",
-				dst[i], dst[i + 1], dst[i + 2], dst[i + 3]);
+		for (uint32_t i = 0; i < inputs.structure_count; i++) {
+			ShaderInput* p_input = shVkGetShaderInputDescriptorStructure(inputs, i, 1);
+			printf("%f\n", p_input->value);
 		}
 	}
 

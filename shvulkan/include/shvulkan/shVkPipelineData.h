@@ -135,15 +135,47 @@ extern void shComputeCreateShaderStage(const VkDevice device, ShVkPipeline* p_pi
 #include "shvulkan/shVkMemoryInfo.h"
 #include "shvulkan/shVkCheck.h"
 
-static void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline) {
+#define SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(STRUCT)\
+typedef struct STRUCT##DescriptorStructureHandle {\
+	uint32_t	structure_count;\
+	uint32_t	structure_size;\
+	STRUCT**	pp_##STRUCT;\
+	void*		p_##STRUCT##_map;\
+} STRUCT##DescriptorStructureHandle;\
+static uint32_t shVkGet ## STRUCT ## DescriptorStructureSize(const VkPhysicalDeviceProperties physical_device_properties) {\
+	return sizeof(STRUCT) > (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment ? (uint32_t)(sizeof(STRUCT) + (sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment)) : (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
+}\
+static STRUCT##DescriptorStructureHandle shVkCreate ## STRUCT ## DescriptorStructures(const VkPhysicalDeviceProperties physical_device_properties, const uint32_t structure_count) {\
+	STRUCT##DescriptorStructureHandle handle = { structure_count };\
+	handle.pp_##STRUCT = calloc(structure_count, sizeof(STRUCT*));\
+	for (uint32_t i = 0; i < handle.structure_count; i++) {\
+		handle.pp_##STRUCT[i] = (STRUCT*)calloc(1, sizeof(STRUCT));\
+		shVkAssert(handle.pp_##STRUCT[i] != NULL, "invalid input structure pointer");\
+	}\
+	shVkAssert(handle.pp_##STRUCT != NULL, "invalid input structure ppointer");\
+	handle.structure_size = shVkGet## STRUCT ##DescriptorStructureSize(physical_device_properties);\
+	handle.p_##STRUCT##_map = (STRUCT*)calloc(structure_count, handle.structure_size);\
+	shVkAssert(handle.p_##STRUCT##_map != NULL, "invalid input structure map pointer");\
+	return handle;\
+}\
+static STRUCT* shVkGet ## STRUCT ## DescriptorStructure(const STRUCT##DescriptorStructureHandle handle, const uint32_t idx, const uint8_t mapped) {\
+	return mapped ? (STRUCT*)(&((char*)handle.p_##STRUCT##_map)[idx * handle.structure_size]) : handle.pp_##STRUCT[idx];\
+}\
+static void shVkMap ## STRUCT ## DecriptorStructures(STRUCT##DescriptorStructureHandle* p_handle) {\
+	for (uint32_t i = 0; i < p_handle->structure_count; i++) {\
+		memcpy(&((char*)p_handle->p_##STRUCT##_map)[i * p_handle->structure_size], p_handle->pp_##STRUCT[i], sizeof(STRUCT));\
+	}\
+}\
+
+static void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkPhysicalDeviceProperties physical_device_properties, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
 	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
 	p_pipeline->descriptor_count++;
 }
 
-static void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_buffer_size, ShVkPipeline* p_pipeline) {
+static void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkPhysicalDeviceProperties properties, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
-	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, max_buffer_size, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
+	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size * max_bindings, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
 	p_pipeline->descriptor_count++;
 }
 

@@ -428,9 +428,7 @@ void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline) {
 
 void shEndPipeline(ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid graphics pipeline pointer ");
-	for (uint8_t descriptor_idx = 0; descriptor_idx < 32; descriptor_idx++) {
-		p_pipeline->dynamic_descriptor_buffer_offsets[descriptor_idx] = 0;
-	}
+	memset(p_pipeline->dynamic_descriptor_buffer_offsets, 0, 32 * 4);
 }
 
 void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {

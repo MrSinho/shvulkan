@@ -13,6 +13,7 @@ extern "C" {
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <memory.h>
 #include <assert.h>
 
@@ -27,6 +28,24 @@ extern "C" {
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title);
 
 const char* readBinary(const char* path, uint32_t* p_size);
+
+#ifdef _MSC_VER
+#pragma warning(disable: 6385 6386)
+#endif//_MSC_VER
+
+typedef struct Model {
+	float model[4][4];
+} Model;
+SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(Model)
+
+
+typedef struct Light {
+	float position[4];
+	float color[4];
+} Light;
+SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(Light)
+
+
 
 #define THREAD_COUNT 1
 
@@ -105,15 +124,66 @@ int main(void) {
 		shWriteIndexBufferMemory(core.device, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
 	}
 	
-	
+	float projection[4][4] = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+	float view[4][4] = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+	void* push_constants_data[128 / sizeof(void*)];
+	memcpy(push_constants_data, projection, 64);
+	memcpy(&push_constants_data[64 / sizeof(void*)], view, 64);
+
+
+	float model0_data[4][4] = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+	float model1_data[4][4] = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	ModelDescriptorStructureHandle model_handle = shVkCreateModelDescriptorStructures(core.physical_device_properties, 2);
+	for (uint32_t i = 0; i < model_handle.structure_count; i++) {
+		Model* p_model = shVkGetModelDescriptorStructure(model_handle, i, 0);
+		if (i == 0) {
+			memcpy(p_model->model, model0_data, 64);
+		}
+		else {
+			memcpy(p_model->model, model1_data, 64);
+		}
+	}
+	shVkMapModelDecriptorStructures(&model_handle);
+
+	LightDescriptorStructureHandle light_handle = shVkCreateLightDescriptorStructures(core.physical_device_properties, 1);
+	float light_data[8] = {
+		0.0f,  2.0f, 0.0f, 1.0f, //light position
+		0.0f, 0.45f, 0.9f, 1.0f // light color
+	};
+	Light* p_light = shVkGetLightDescriptorStructure(light_handle, 0, 0);
+	memcpy(p_light->position, light_data, 32);
+	shVkMapLightDecriptorStructures(&light_handle);
 	
 	ShVkPipeline pipeline = { 0 };
 	ShVkFixedStates fixed_states = { 0 };
 	{
 		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 
-		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, 32, &pipeline);
-		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, 64, 128, &pipeline);
+		uint32_t light_size = shVkGetLightDescriptorStructureSize(core.physical_device_properties);
+		uint32_t model_size = shVkGetModelDescriptorStructureSize(core.physical_device_properties);
+		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, light_size, &pipeline);
+		shPipelineCreateDynamicDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_size, 2, &pipeline);
 
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);
@@ -147,44 +217,6 @@ int main(void) {
 		shSetFixedStates(core.device, core.surface.width, core.surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
 		shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, &pipeline);
 	}
-	
-	
-
-	float projection[4][4] = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
-	float view[4][4] = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
-	void* push_constants_data[128/sizeof(void*)];
-	memcpy(push_constants_data, projection, 64);
-	memcpy(&push_constants_data[64/sizeof(void*)], view, 64);
-	
-	//uniform buffer data
-	float light_data[8] = {
-		0.0f,  2.0f, 0.0f, 1.0f, //light position
-		0.0f, 0.45f, 0.9f, 1.0f // light color
-	};
-	
-	//type uniform buffer data
-	float model0[4][4] = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 2.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
-	float model1[4][4] = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
 
 	uint32_t available_vram, process_used_vram = 0;
 	shGetMemoryBudgetProperties(core.physical_device, &available_vram, &process_used_vram, NULL);
@@ -205,19 +237,22 @@ int main(void) {
 
 			shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-			shPipelineWriteDescriptorBufferMemory(core.device, 0, light_data, &pipeline);
+			shPipelineWriteDescriptorBufferMemory(core.device, 0, p_light->position, &pipeline);
 			shPipelineBindDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
-
-			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model0, &pipeline);
+			
+			
+			Model* p_model0 = shVkGetModelDescriptorStructure(model_handle, 0, 1);
+			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, &pipeline);
 			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
-
+			
 			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_vertex_buffer);
 			shBindIndexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_index_buffer);
 			shDrawIndexed(core.p_graphics_commands[thread_idx].cmd_buffer, QUAD_INDEX_COUNT);
-
-			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, model1, &pipeline);
+			
+			Model* p_model1 = shVkGetModelDescriptorStructure(model_handle, 1, 1);
+			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model1->model, &pipeline);
 			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
-
+			
 			triangle[9] = (float)sin(glfwGetTime());
 			shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
 			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &triangle_vertex_buffer);

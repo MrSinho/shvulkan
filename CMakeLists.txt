@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
-project(ShVulkan C)
+project(shvulkan C)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 
