@@ -263,7 +263,7 @@ int main(void) {
 	}
 	
 	shVkReleaseModelDescriptorStructureMap(&model_map);
-	shVkReleaseModelDescriptorStructureMap(&light_map);
+	shVkReleaseLightDescriptorStructureMap(&light_map);
 
 	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
 	shPipelineClearDescriptorBufferMemory(core.device, 1, &pipeline);
