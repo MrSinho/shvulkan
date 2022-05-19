@@ -106,7 +106,7 @@ int main(void) {
 		}
 	}
 
-	ShVkReleaseShaderInputDescriptorStructureMap(&inputs);
+	shVkReleaseShaderInputDescriptorStructureMap(&inputs);
 
 	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
 

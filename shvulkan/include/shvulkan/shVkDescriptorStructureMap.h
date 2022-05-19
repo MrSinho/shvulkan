@@ -1,6 +1,10 @@
 #ifndef SH_VK_DESCRIPTOR_STRUCTURE_MAP_H
 #define SH_VK_DESCRIPTOR_STRUCTURE_MAP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 #include "shvulkan/shVkMemoryInfo.h"
 #include "shvulkan/shVkCheck.h"
 
@@ -39,7 +43,7 @@ static void shVkMap ## STRUCT ## DecriptorStructures(STRUCT##DescriptorStructure
 		memcpy(&((char*)p_map->p_##STRUCT##_map)[i * p_map->structure_size], p_map->pp_##STRUCT[i], sizeof(STRUCT));\
 	}\
 }\
-static void ShVkRelease ## STRUCT ## DescriptorStructureMap(STRUCT##DescriptorStructureMap* p_map) {\
+static void shVkRelease ## STRUCT ## DescriptorStructureMap(STRUCT##DescriptorStructureMap* p_map) {\
 	shVkAssert(p_map != NULL, "invalid descriptor structure map pointer");\
 	p_map->structure_size = 0;\
 	p_map->structure_count = 0;\
@@ -47,5 +51,9 @@ static void ShVkRelease ## STRUCT ## DescriptorStructureMap(STRUCT##DescriptorSt
 	free(p_map->p_##STRUCT##_map);\
 }
 
+
+#ifdef __cplusplus
+}
+#endif//__cplusplus
 
 #endif//SH_VK_DESCRIPTOR_STRUCTURE_MAP_H
