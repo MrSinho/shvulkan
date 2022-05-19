@@ -6,6 +6,7 @@ extern "C" {
 #include <shvulkan/shVkMemoryInfo.h>
 #include <shvulkan/shVkPipelineData.h>
 #include <shvulkan/shVkDrawLoop.h>
+#include <shvulkan/shVkDescriptorStructureMap.h>
 
 #ifndef NDEBUG
 #define VALIDATION_LAYERS_ENABLED 1
@@ -27,7 +28,7 @@ const char* readBinary(const char* path, uint32_t* p_size);
 typedef struct ShaderInput {
 	float value;
 } ShaderInput;
-SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(ShaderInput)
+SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(ShaderInput)
 
 
 
@@ -47,7 +48,7 @@ int main(void) {
 	ShVkPipeline pipeline = { 0 };
 
 	//Generated with macro definition
-	ShaderInputDescriptorStructureHandle inputs = shVkCreateShaderInputDescriptorStructures(
+	ShaderInputDescriptorStructureMap inputs = shVkCreateShaderInputDescriptorStructures(
 		core.physical_device_properties, 
 		16
 	);
@@ -104,6 +105,8 @@ int main(void) {
 			printf("%f\n", p_input->value);
 		}
 	}
+
+	ShVkReleaseShaderInputDescriptorStructureMap(&inputs);
 
 	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
 

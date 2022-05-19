@@ -7,6 +7,7 @@ extern "C" {
 #include <shvulkan/shVkPipelineData.h>
 #include <shvulkan/shVkDrawLoop.h>
 #include <shvulkan/shVkCheck.h>
+#include <shvulkan/shVkDescriptorStructureMap.h>
 
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
@@ -36,14 +37,14 @@ const char* readBinary(const char* path, uint32_t* p_size);
 typedef struct Model {
 	float model[4][4];
 } Model;
-SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(Model)
+SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(Model)
 
 
 typedef struct Light {
 	float position[4];
 	float color[4];
 } Light;
-SH_VULKAN_MAKE_DESCRIPTOR_STRUCT_UTILS(Light)
+SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(Light)
 
 
 
@@ -154,9 +155,9 @@ int main(void) {
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	ModelDescriptorStructureHandle model_handle = shVkCreateModelDescriptorStructures(core.physical_device_properties, 2);
-	for (uint32_t i = 0; i < model_handle.structure_count; i++) {
-		Model* p_model = shVkGetModelDescriptorStructure(model_handle, i, 0);
+	ModelDescriptorStructureMap model_map = shVkCreateModelDescriptorStructures(core.physical_device_properties, 2);
+	for (uint32_t i = 0; i < model_map.structure_count; i++) {
+		Model* p_model = shVkGetModelDescriptorStructure(model_map, i, 0);
 		if (i == 0) {
 			memcpy(p_model->model, model0_data, 64);
 		}
@@ -164,26 +165,24 @@ int main(void) {
 			memcpy(p_model->model, model1_data, 64);
 		}
 	}
-	shVkMapModelDecriptorStructures(&model_handle);
+	shVkMapModelDecriptorStructures(&model_map);
 
-	LightDescriptorStructureHandle light_handle = shVkCreateLightDescriptorStructures(core.physical_device_properties, 1);
+	LightDescriptorStructureMap light_map = shVkCreateLightDescriptorStructures(core.physical_device_properties, 1);
 	float light_data[8] = {
 		0.0f,  2.0f, 0.0f, 1.0f, //light position
 		0.0f, 0.45f, 0.9f, 1.0f // light color
 	};
-	Light* p_light = shVkGetLightDescriptorStructure(light_handle, 0, 0);
+	Light* p_light = shVkGetLightDescriptorStructure(light_map, 0, 0);
 	memcpy(p_light->position, light_data, 32);
-	shVkMapLightDecriptorStructures(&light_handle);
+	shVkMapLightDecriptorStructures(&light_map);
 	
 	ShVkPipeline pipeline = { 0 };
 	ShVkFixedStates fixed_states = { 0 };
 	{
 		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 
-		uint32_t light_size = shVkGetLightDescriptorStructureSize(core.physical_device_properties);
-		uint32_t model_size = shVkGetModelDescriptorStructureSize(core.physical_device_properties);
-		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, light_size, &pipeline);
-		shPipelineCreateDynamicDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_size, 2, &pipeline);
+		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, light_map.structure_size, &pipeline);
+		shPipelineCreateDynamicDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
 
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);
@@ -241,7 +240,7 @@ int main(void) {
 			shPipelineBindDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 			
 			
-			Model* p_model0 = shVkGetModelDescriptorStructure(model_handle, 0, 1);
+			Model* p_model0 = shVkGetModelDescriptorStructure(model_map, 0, 1);
 			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, &pipeline);
 			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 			
@@ -249,7 +248,7 @@ int main(void) {
 			shBindIndexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_index_buffer);
 			shDrawIndexed(core.p_graphics_commands[thread_idx].cmd_buffer, QUAD_INDEX_COUNT);
 			
-			Model* p_model1 = shVkGetModelDescriptorStructure(model_handle, 1, 1);
+			Model* p_model1 = shVkGetModelDescriptorStructure(model_map, 1, 1);
 			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model1->model, &pipeline);
 			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 			
@@ -262,6 +261,9 @@ int main(void) {
 			shFrameEnd(&core, thread_idx, frame_index);
 		}
 	}
+	
+	ShVkReleaseModelDescriptorStructureMap(&model_map);
+	ShVkReleaseModelDescriptorStructureMap(&light_map);
 
 	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
 	shPipelineClearDescriptorBufferMemory(core.device, 1, &pipeline);
