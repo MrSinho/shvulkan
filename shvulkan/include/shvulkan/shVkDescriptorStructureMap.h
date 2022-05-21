@@ -23,10 +23,7 @@ static uint32_t shVkGet ## STRUCT ## DescriptorStructureSize(const VkPhysicalDev
 		return (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
 	}\
 	else {\
-		uint32_t size = (uint32_t)sizeof(STRUCT);\
-		for (; size > (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;) {\
-			size -= (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
-		}\
+		uint32_t size = (uint32_t)sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
 		return (uint32_t)(sizeof(STRUCT)) + (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment - size;\
 	}\
 }\
