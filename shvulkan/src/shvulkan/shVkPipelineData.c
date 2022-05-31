@@ -495,6 +495,21 @@ void shPipelineBindDynamicDescriptorSet(const VkCommandBuffer cmd_buffer, const 
 	(p_pipeline)->dynamic_descriptor_buffer_offsets[descriptor_idx] += (uint32_t)p_pipeline->descriptor_buffer_infos[descriptor_idx].range;
 }
 
+void shPipelineBindDynamicDescriptorSets(const VkCommandBuffer cmd_buffer, const uint32_t first_descriptor, const uint32_t descriptor_count, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline) {
+	vkCmdBindDescriptorSets(cmd_buffer,
+		bind_point,
+		p_pipeline->pipeline_layout, 
+		first_descriptor,
+		descriptor_count,
+		&(p_pipeline)->descriptor_sets[first_descriptor],
+		1,
+		&(p_pipeline)->dynamic_descriptor_buffer_offsets[first_descriptor]
+	);
+	for (uint32_t i = 0; i < descriptor_count; i++) {
+		(p_pipeline)->dynamic_descriptor_buffer_offsets[i] += (uint32_t)p_pipeline->descriptor_buffer_infos[i].range;
+	}
+}
+
 #ifdef __cplusplus
 }
 #endif//__cplusplus

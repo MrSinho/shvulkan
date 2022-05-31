@@ -36,6 +36,7 @@ cmake -DSH_USE_VULKAN_1_0=ON ..
 ## To do
 * Multithreading
 * Textures support
+* SPIRV-Reflect integration
 
 ## Examples
 

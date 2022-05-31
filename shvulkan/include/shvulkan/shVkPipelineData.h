@@ -165,7 +165,20 @@ extern void shPipelineWriteDynamicDescriptorBufferMemory(const VkDevice device, 
 		NULL\
 	)
 
+#define shPipelineBindDescriptorSets(cmd_buffer, first_descriptor, descriptor_count, bind_point, p_pipeline)\
+	vkCmdBindDescriptorSets(cmd_buffer,\
+		bind_point,\
+		(p_pipeline)->pipeline_layout,\
+		first_descriptor,\
+		descriptor_count,\
+		&(p_pipeline)->descriptor_sets[first_descriptor],\
+		0,\
+		NULL\
+	)
+
 extern void shPipelineBindDynamicDescriptorSet(const VkCommandBuffer cmd_buffer, const uint32_t descriptor_idx, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline);
+
+extern void shPipelineBindDynamicDescriptorSets(const VkCommandBuffer cmd_buffer, const uint32_t first_descriptor, const uint32_t descriptor_count, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline);
 
 
 #ifdef __cplusplus
