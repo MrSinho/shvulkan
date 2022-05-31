@@ -178,8 +178,8 @@ int main(void) {
 	{
 		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 
-		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), &pipeline);
-		shPipelineCreateDynamicDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
+		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), &pipeline);
+		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
 
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);

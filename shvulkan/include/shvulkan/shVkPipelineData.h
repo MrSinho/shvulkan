@@ -108,9 +108,9 @@ extern void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline);
 
 
 
-extern void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkPhysicalDeviceProperties physical_device_properties, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline);
+extern void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline);
 
-extern void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkPhysicalDeviceProperties properties, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline);
+extern void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline);
 
 extern void shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, const VkPhysicalDevice physical_device, ShVkPipeline* p_pipeline);
 

@@ -59,7 +59,7 @@ int main(void) {
 		}
 		shVkMapShaderInputDecriptorStructures(&inputs);
 
-		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, &pipeline);
+		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, &pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
 		shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
 

@@ -447,13 +447,13 @@ void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
 }																
 
 
-void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkPhysicalDeviceProperties physical_device_properties, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline) {
+void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
 	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
 	p_pipeline->descriptor_count++;
 }
 
-void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkPhysicalDeviceProperties properties, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline) {
+void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBufferUsageFlagBits buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
 	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size * max_bindings, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
 	p_pipeline->descriptor_count++;
