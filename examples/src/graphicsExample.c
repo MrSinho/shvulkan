@@ -37,6 +37,7 @@ const char* readBinary(const char* path, uint32_t* p_size);
 typedef struct Model {
 	float model[4][4];
 } Model;
+//required only for dynamic descriptors
 SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(Model)
 
 
@@ -44,9 +45,6 @@ typedef struct Light {
 	float position[4];
 	float color[4];
 } Light;
-SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(Light)
-
-
 
 #define THREAD_COUNT 1
 
@@ -167,21 +165,17 @@ int main(void) {
 	}
 	shVkMapModelDecriptorStructures(&model_map);
 
-	LightDescriptorStructureMap light_map = shVkCreateLightDescriptorStructures(core.physical_device_properties, 1);
 	float light_data[8] = {
 		0.0f,  2.0f, 0.0f, 1.0f, //light position
 		0.0f, 0.45f, 0.9f, 1.0f // light color
 	};
-	Light* p_light = shVkGetLightDescriptorStructure(light_map, 0, 0);
-	memcpy(p_light->position, light_data, 32);
-	shVkMapLightDecriptorStructures(&light_map);
 	
 	ShVkPipeline pipeline = { 0 };
 	ShVkFixedStates fixed_states = { 0 };
 	{
 		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
 
-		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, light_map.structure_size, &pipeline);
+		shPipelineCreateDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(light_data), &pipeline);
 		shPipelineCreateDynamicDescriptorBuffer(core.device, core.physical_device_properties, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
 
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
@@ -236,7 +230,7 @@ int main(void) {
 
 			shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-			shPipelineWriteDescriptorBufferMemory(core.device, 0, p_light->position, &pipeline);
+			shPipelineWriteDescriptorBufferMemory(core.device, 0, light_data, &pipeline);
 			shPipelineBindDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 			
 			
@@ -263,7 +257,6 @@ int main(void) {
 	}
 	
 	shVkReleaseModelDescriptorStructureMap(&model_map);
-	shVkReleaseLightDescriptorStructureMap(&light_map);
 
 	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
 	shPipelineClearDescriptorBufferMemory(core.device, 1, &pipeline);
