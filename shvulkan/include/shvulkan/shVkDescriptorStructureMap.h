@@ -21,7 +21,13 @@ typedef struct STRUCT##DescriptorStructureMap {\
 	void*		p_##STRUCT##_map;\
 } STRUCT##DescriptorStructureMap;\
 static uint32_t shVkGet ## STRUCT ## DescriptorStructureSize(const VkPhysicalDeviceProperties physical_device_properties) {\
-	return sizeof(STRUCT);\
+	if ((uint32_t)(sizeof(STRUCT)) < (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment) {\
+		return (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
+	}\
+	else {\
+		uint32_t size = (uint32_t)sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
+		return (uint32_t)(sizeof(STRUCT)) + (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment - size;\
+	}\
 }\
 static STRUCT##DescriptorStructureMap shVkCreate ## STRUCT ## DescriptorStructures(const VkPhysicalDeviceProperties physical_device_properties, const uint32_t structure_count) {\
 	STRUCT##DescriptorStructureMap map = { structure_count };\
