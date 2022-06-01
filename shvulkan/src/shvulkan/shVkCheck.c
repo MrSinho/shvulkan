@@ -8,29 +8,29 @@ extern "C" {
 
 #include <stdio.h>
 #include <string.h>
-#ifdef _MSC_VER
-#pragma warning (disable: 6385)
-#endif//_MSC_VER
 
-int shCheckValidationLayers(const char* validation_layer) {
+uint8_t shCheckValidationLayers(const char* validation_layer) {
 	shVkAssert(validation_layer != NULL, "invalid validation layer ");
 	uint32_t available_layer_count = 0;
 	vkEnumerateInstanceLayerProperties(&available_layer_count, NULL);
 
-	VkLayerProperties* p_available_layer_properties = (VkLayerProperties*)calloc(available_layer_count, sizeof(VkLayerProperties));
-	vkEnumerateInstanceLayerProperties(&available_layer_count, p_available_layer_properties);
+    if (available_layer_count != 0) {
+        VkLayerProperties* p_available_layer_properties = (VkLayerProperties*)calloc(available_layer_count, sizeof(VkLayerProperties));
+        shVkAssert(p_available_layer_properties != NULL, "shCheckValidationLayers: invalid available layer properties memory block");
+        vkEnumerateInstanceLayerProperties(&available_layer_count, p_available_layer_properties);
 
-	if (p_available_layer_properties != NULL) {
-		puts("Installed validation layers: ");
-		for (uint32_t i = 0; i < available_layer_count; i++) {
-			puts(p_available_layer_properties[i].layerName);
-			if (strcmp(p_available_layer_properties[i].layerName, validation_layer) == 0) {
-				free(p_available_layer_properties);
-				return 1;
-			}
-		}
-	}
-	free(p_available_layer_properties);
+        if (p_available_layer_properties != NULL) {
+            //puts("Installed validation layers: ");
+            for (uint32_t i = 0; i < available_layer_count; i++) {
+                //puts(p_available_layer_properties[i].layerName);
+                if (strcmp(p_available_layer_properties[i].layerName, validation_layer) == 0) {
+                    free(p_available_layer_properties);
+                    return 1;
+                }
+            }
+        }
+        free(p_available_layer_properties);
+    }
 
 	return 0;
 }
@@ -134,14 +134,6 @@ const char* shTranslateVkResult(const VkResult vk_result) {
 }
 
 
-
-
-void shVkCheckResult(VkResult result, const char* error_msg) {
-	shVkAssert(result != VK_SUCCESS, error_msg);
-#ifndef NDEBUG
-	printf("%s, %s\n", error_msg, shTranslateVkResult(result));
-#endif//NDEBUG
-}
 
 #ifdef __cplusplus
 }

@@ -61,6 +61,10 @@ int main(void) {
 	{
 		uint32_t extension_count = 2;
 		const char** extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
+		printf("required instance extensions:\n");
+		for (uint32_t i = 0; i < extension_count; i++) {
+			printf("%s\n", extension_names[i]);
+		}
 		shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, extension_count, extension_names);
 		shVkAssertResult(
 			glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface),
