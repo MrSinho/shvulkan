@@ -103,16 +103,16 @@ const char* shTranslateVkResult(const VkResult vk_result) {
         return "VK_ERROR_NOT_PERMITTED_EXT";
     case VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT:
         return "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
-    case VK_THREAD_IDLE_KHR:
-        return "VK_THREAD_IDLE_KHR";
-    case VK_THREAD_DONE_KHR:
-        return "VK_THREAD_DONE_KHR";
-    case VK_OPERATION_DEFERRED_KHR:
-        return "VK_OPERATION_DEFERRED_KHR";
-    case VK_OPERATION_NOT_DEFERRED_KHR:
-        return "VK_OPERATION_NOT_DEFERRED_KHR";
-    case VK_PIPELINE_COMPILE_REQUIRED_EXT:
-        return "VK_PIPELINE_COMPILE_REQUIRED_EXT";
+    //case VK_THREAD_IDLE_KHR:
+    //    return "VK_THREAD_IDLE_KHR";
+    //case VK_THREAD_DONE_KHR:
+    //    return "VK_THREAD_DONE_KHR";
+    //case VK_OPERATION_DEFERRED_KHR:
+    //    return "VK_OPERATION_DEFERRED_KHR";
+    //case VK_OPERATION_NOT_DEFERRED_KHR:
+    //    return "VK_OPERATION_NOT_DEFERRED_KHR";
+    //case VK_PIPELINE_COMPILE_REQUIRED_EXT:
+    //    return "VK_PIPELINE_COMPILE_REQUIRED_EXT";
     //case VK_ERROR_OUT_OF_POOL_MEMORY_KHR:
     //    return "VK_ERROR_OUT_OF_POOL_MEMORY_KHR";
     //case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR:
