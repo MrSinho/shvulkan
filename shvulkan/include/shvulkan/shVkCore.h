@@ -79,11 +79,9 @@ typedef struct ShVkCore {
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
-extern void shGetSurfaceCapabilities(const VkPhysicalDevice pDevice, const VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* p_surface_capabilities);
-
 extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
-extern void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
+extern void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
 
 extern void shSetLogicalDevice(ShVkCore* p_core, VkQueueFlags requirements);
 
