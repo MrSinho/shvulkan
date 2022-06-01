@@ -19,17 +19,17 @@ typedef enum shImageType {
 #define SH_DEPTH_IMAGE_FORMAT		VK_FORMAT_D32_SFLOAT
 #define SH_SWAPCHAIN_IMAGE_FORMAT	VK_FORMAT_R8G8B8A8_UNORM
 
-typedef struct ShSurface {
+typedef struct ShVkSurface {
 	VkSurfaceKHR				surface;
 	uint32_t					width;
 	uint32_t					height;
 	VkSurfaceCapabilitiesKHR	surface_capabilities;
-} ShSurface;
+} ShVkSurface;
 
-typedef struct ShQueue {
+typedef struct ShVkQueue {
 	uint32_t		queue_family_index;
 	VkQueue			queue;
-} ShQueue;
+} ShVkQueue;
 
 typedef struct ShVkCommand {
 	VkCommandBuffer cmd_buffer;
@@ -46,11 +46,11 @@ typedef struct ShVkCore {
 	VkPhysicalDeviceMemoryProperties	physical_device_memory_properties;
 	VkDevice							device;
 	/*Surface*/
-	ShSurface							surface;
+	ShVkSurface							surface;
 	/*Queues*/
 	VkQueueFlags						required_queue_flags;
-	ShQueue								graphics_queue;
-	ShQueue								compute_queue;
+	ShVkQueue							graphics_queue;
+	ShVkQueue							compute_queue;
 	/*Commands*/
 	uint32_t							thread_count;
 	ShVkCommand*						p_graphics_commands;

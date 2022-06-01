@@ -298,7 +298,7 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 	*p_viewport_state = viewportStateCreateInfo;
 }
 
-void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShFixedStateFlags flags, ShVkFixedStates* p_fixed_states) {
+void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShVkFixedStateFlags  flags, ShVkFixedStates* p_fixed_states) {
 	shVkAssert(p_fixed_states != NULL, "invalid fixed states pointer ");
 	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
 	
