@@ -50,11 +50,6 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 	);
 }
 
-void shGetSurfaceCapabilities(const VkPhysicalDevice pDevice, const VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* p_surface_capabilities) {
-	shVkAssert(p_surface_capabilities != NULL, "invalid surface capabilities pointer ");
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pDevice, surface, p_surface_capabilities);
-}
-
 void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	shVkAssert(p_core != NULL, "invalid arguments ");
 	p_core->required_queue_flags = requirements;
@@ -171,7 +166,7 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	vkGetPhysicalDeviceMemoryProperties(p_core->physical_device, &p_core->physical_device_memory_properties);
 }
 
-void shSetQueueInfo(const uint32_t queueFamilyIndex, const float* priority, VkDeviceQueueCreateInfo * p_queue_info) {
+void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo * p_queue_info) {
 	shVkAssert(p_queue_info != NULL, "invalid queue info pointer");
 	VkDeviceQueueCreateInfo queue_create_info = {
 		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,	//sType;
