@@ -51,4 +51,4 @@ mingw-get install gcc mingw32-make gdb
 ```
 
 ```bash $shci call$
-cd _shvulkan && mkdir build && cd build && cmake -G"MinGW Makefiles" .. && mingw32-make
+cd _shvulkan && mkdir build && cd build && cmake -G"MinGW Makefiles" -DSH_VULKAN_BUILD_EXAMPLES=ON .. && mingw32-make
