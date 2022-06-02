@@ -25,11 +25,11 @@ extern "C" {
 
 
 
-extern void shCreateBuffer(const VkDevice device, const uint32_t bufferSize, VkBufferUsageFlagBits usage_flags, VkBuffer* p_buffer);
+extern void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer);
 
-extern void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t typeFlags, uint32_t *p_memory_type_index);
+extern void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t *p_memory_type_index);
 
-extern void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const uint32_t type_flags, VkDeviceMemory* p_memory);
+extern void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory* p_memory);
 
 #define shBindMemory(device, vk_buffer, memory)\
 	shVkAssertResult(\
@@ -72,8 +72,8 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 #define shAllocateIndexBufferMemory(device, physical_device, index_buffer, p_index_buffer_memory)\
 	shAllocateMemory(device, physical_device, index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_index_buffer_memory)
 
-#define shBindIndexBufferMemory(device, idnex_buffer, idnex_buffer_memory)\
-	shBindMemory(device, idnex_buffer, idnex_buffer_memory)
+#define shBindIndexBufferMemory(device, index_buffer, index_buffer_memory)\
+	shBindMemory(device, index_buffer, index_buffer_memory)
 
 #define shWriteIndexBufferMemory(device, index_buffer_memory, size, p_indices)\
 	shWriteMemory(device, index_buffer_memory, 0, size, (void*)p_indices)

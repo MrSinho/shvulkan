@@ -12,7 +12,7 @@ extern "C" {
 #pragma warning (disable: 6001 4700 6387)
 #endif//_MSC_VER
 
-void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlagBits usage_flags, VkBuffer* p_buffer) {
+void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer) {
 	shVkAssert(p_buffer != NULL, "invalid arguments ");
 	VkBufferCreateInfo buffer_create_info = {
 		VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,	//sType;
@@ -31,15 +31,15 @@ void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFla
 	);
 }
 
-void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const uint32_t type_flags, VkDeviceMemory *p_memory) {
+void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory *p_memory) {
 	shVkAssert(p_memory != NULL, "invalid device memory pointer ");
 	uint32_t memory_type_index = 0;
-	shGetMemoryType(device, physical_device, type_flags, &memory_type_index);
+	shGetMemoryType(device, physical_device, property_flags, &memory_type_index);
 
 	VkMemoryRequirements memory_requirements;
 	vkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
 
-	VkMemoryAllocateInfo memoryAllocateInfo = {
+	VkMemoryAllocateInfo memory_allocate_info = {
 		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,	//sType;
 		NULL,									//pNext;
 		memory_requirements.size,				//allocationSize;
@@ -47,20 +47,20 @@ void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_dev
 	};
 
 	shVkAssertResult(
-		vkAllocateMemory(device, &memoryAllocateInfo, NULL, p_memory),
+		vkAllocateMemory(device, &memory_allocate_info, NULL, p_memory),
 		"error allocating memory"
 	);
 }
 
-void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t typeFlags, uint32_t* p_memory_type_index) {
+void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t* p_memory_type_index) {
 	shVkAssert(p_memory_type_index != NULL, "invalid memory type index pointer");
-	VkPhysicalDeviceMemoryProperties memoryProperties;
-	vkGetPhysicalDeviceMemoryProperties(physical_device, &memoryProperties);
+	VkPhysicalDeviceMemoryProperties memory_properties;
+	vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
-	for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++) {
-		
-		if (memoryProperties.memoryTypes[i].propertyFlags & (1 << i) && 
-			(memoryProperties.memoryTypes[i].propertyFlags & typeFlags) == typeFlags) {
+	for (uint32_t i = 0; i < memory_properties.memoryTypeCount; i++) {
+
+		if (memory_properties.memoryTypes[i].propertyFlags & (1 << i) &&
+			(memory_properties.memoryTypes[i].propertyFlags & property_flags) == property_flags) {
 			*p_memory_type_index = i;
 			return;
 		}

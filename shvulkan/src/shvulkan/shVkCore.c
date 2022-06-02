@@ -57,8 +57,10 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	uint32_t pDeviceCount = 0;
 	vkEnumeratePhysicalDevices(p_core->instance, &pDeviceCount, NULL);
 
-	VkPhysicalDevice *pDevices = (VkPhysicalDevice*)malloc(pDeviceCount*sizeof(VkPhysicalDevice));
-	vkEnumeratePhysicalDevices(p_core->instance, &pDeviceCount, pDevices);
+	VkPhysicalDevice* physical_devices = (VkPhysicalDevice*)calloc(pDeviceCount, sizeof(VkPhysicalDevice));
+	shVkAssert(physical_devices != NULL, "invalid physical devices pointer");
+
+	vkEnumeratePhysicalDevices(p_core->instance, &pDeviceCount, physical_devices);
 	
 	if (pDeviceCount == 0) {
 		shVkAssert(VK_ERROR_UNKNOWN, 
@@ -66,42 +68,47 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 		);
 	}
 
-	uint32_t* graphicsQueueFamilyIndices = (uint32_t*)malloc(pDeviceCount * sizeof(uint32_t));
-	uint32_t* surfaceQueueFamilyIndices  = (uint32_t*)malloc(pDeviceCount * sizeof(uint32_t));
+	uint32_t* graphics_queue_family_indices = (uint32_t*)calloc(pDeviceCount, sizeof(uint32_t));
+	shVkAssert(graphics_queue_family_indices != NULL, "invalid graphics queue family indices pointer");
+
+	uint32_t* surface_queue_family_indices = (uint32_t*)calloc(pDeviceCount, sizeof(uint32_t));
+	shVkAssert(surface_queue_family_indices != NULL, "invalid surface queue family indices pointer");
+
 	uint32_t suitableDeviceCount = 0;
 
 	for (uint32_t i = 0; i < pDeviceCount; i++) { //DEVICE LOOP
 
-		uint32_t queueFamilyPropertyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(pDevices[i], &queueFamilyPropertyCount, NULL);
-		VkQueueFamilyProperties* pQueueFamilyProperties = (VkQueueFamilyProperties*)malloc(queueFamilyPropertyCount * sizeof(VkQueueFamilyProperties));
-		vkGetPhysicalDeviceQueueFamilyProperties(pDevices[i], &queueFamilyPropertyCount, pQueueFamilyProperties);
-		
+		uint32_t queue_family_property_count = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(physical_devices[i], &queue_family_property_count, NULL);
+		VkQueueFamilyProperties* p_queue_family_properties = (VkQueueFamilyProperties*)calloc(queue_family_property_count, sizeof(VkQueueFamilyProperties));
+		shVkAssert(p_queue_family_properties != NULL, "invalid queue family properties pointer");
+		vkGetPhysicalDeviceQueueFamilyProperties(physical_devices[i], &queue_family_property_count, p_queue_family_properties);
+
 		VkBool32 surfaceSupport = 0;
 
-		for (uint32_t j = 0; j < queueFamilyPropertyCount; j++) {
+		for (uint32_t j = 0; j < queue_family_property_count; j++) {
 			if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
 				shVkAssert(p_core->surface.width != 0 && p_core->surface.height != 0, "invalid surface parameters ");
 				if (!surfaceSupport) {
 					shVkAssert(p_core->surface.surface != NULL, "invalid surface ");
-					vkGetPhysicalDeviceSurfaceSupportKHR(pDevices[i], j, p_core->surface.surface, &surfaceSupport);
+					vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], j, p_core->surface.surface, &surfaceSupport);
 					if (surfaceSupport) {
-						surfaceQueueFamilyIndices[i] = j;
+						surface_queue_family_indices[i] = j;
 					}
 				}
-				if (pQueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-					graphicsQueueFamilyIndices[i] = j;
+				if (p_queue_family_properties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+					graphics_queue_family_indices[i] = j;
 				}
-				if (pQueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT && surfaceSupport) {
+				if (p_queue_family_properties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT && surfaceSupport) {
 					suitableDeviceCount++;
 				}
 			}
-			else if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT && pQueueFamilyProperties[j].queueFlags & VK_QUEUE_COMPUTE_BIT) {
+			else if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT && p_queue_family_properties[j].queueFlags & VK_QUEUE_COMPUTE_BIT) {
 				suitableDeviceCount++;
 				break;
 			}
 		}
-		free(pQueueFamilyProperties);
+		free(p_queue_family_properties);
 	}
 
 	if (suitableDeviceCount == 0) {
@@ -116,25 +123,25 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 
 		scores[i] = 0;
 
-		VkPhysicalDeviceProperties pDeviceProperties;
-		vkGetPhysicalDeviceProperties(pDevices[i], &pDeviceProperties);
+		VkPhysicalDeviceProperties physical_device_properties;
+		vkGetPhysicalDeviceProperties(physical_devices[i], &physical_device_properties);
 
 		VkPhysicalDeviceFeatures deviceFeatures;
-		vkGetPhysicalDeviceFeatures(pDevices[i], &deviceFeatures);
-		
+		vkGetPhysicalDeviceFeatures(physical_devices[i], &deviceFeatures);
+
 		if (p_core->required_queue_flags & VK_QUEUE_COMPUTE_BIT) {
-			scores[i] += pDeviceProperties.limits.maxMemoryAllocationCount;
-			scores[i] += pDeviceProperties.limits.maxComputeSharedMemorySize;
-			scores[i] += pDeviceProperties.limits.maxComputeWorkGroupInvocations;
+			scores[i] += physical_device_properties.limits.maxMemoryAllocationCount;
+			scores[i] += physical_device_properties.limits.maxComputeSharedMemorySize;
+			scores[i] += physical_device_properties.limits.maxComputeWorkGroupInvocations;
 		}
 		if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
-			scores[i] += pDeviceProperties.limits.maxMemoryAllocationCount;
-			scores[i] += pDeviceProperties.limits.maxVertexInputAttributes;
-			scores[i] += pDeviceProperties.limits.maxVertexInputBindings;
-			scores[i] += pDeviceProperties.limits.maxVertexInputAttributeOffset;
-			scores[i] += pDeviceProperties.limits.maxVertexInputBindingStride;
-			scores[i] += pDeviceProperties.limits.maxVertexOutputComponents;
-			scores[i] += pDeviceProperties.limits.maxComputeWorkGroupInvocations;
+			scores[i] += physical_device_properties.limits.maxMemoryAllocationCount;
+			scores[i] += physical_device_properties.limits.maxVertexInputAttributes;
+			scores[i] += physical_device_properties.limits.maxVertexInputBindings;
+			scores[i] += physical_device_properties.limits.maxVertexInputAttributeOffset;
+			scores[i] += physical_device_properties.limits.maxVertexInputBindingStride;
+			scores[i] += physical_device_properties.limits.maxVertexOutputComponents;
+			scores[i] += physical_device_properties.limits.maxComputeWorkGroupInvocations;
 		}
 
 	}
@@ -142,24 +149,24 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	if (suitableDeviceCount > 1) {
 		for (uint32_t i = 1; i < suitableDeviceCount; i++) {
 			if (scores[i] > scores[i - 1]) {
-				p_core->physical_device = pDevices[i];
-				p_core->graphics_queue.queue_family_index = graphicsQueueFamilyIndices[i];
+				p_core->physical_device = physical_devices[i];
+				p_core->graphics_queue.queue_family_index = graphics_queue_family_indices[i];
 			}
 			else {
-				p_core->physical_device = pDevices[i - 1 ];
-				p_core->graphics_queue.queue_family_index = graphicsQueueFamilyIndices[i - 1];
+				p_core->physical_device = physical_devices[i - 1];
+				p_core->graphics_queue.queue_family_index = graphics_queue_family_indices[i - 1];
 			}
 		}
 	}
 	else {
-		p_core->physical_device = pDevices[0];
-		p_core->graphics_queue.queue_family_index = graphicsQueueFamilyIndices[0];
+		p_core->physical_device = physical_devices[0];
+		p_core->graphics_queue.queue_family_index = graphics_queue_family_indices[0];
 	}
-	
+
 	free(scores);
-	free(graphicsQueueFamilyIndices);
-	free(surfaceQueueFamilyIndices);
-	free(pDevices);
+	free(graphics_queue_family_indices);
+	free(surface_queue_family_indices);
+	free(physical_devices);
 
 	vkGetPhysicalDeviceProperties(p_core->physical_device, &p_core->physical_device_properties);
 	vkGetPhysicalDeviceFeatures(p_core->physical_device, &p_core->physical_device_features);
@@ -172,7 +179,7 @@ void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, Vk
 		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,	//sType;
 		NULL,										//pNext;
 		0,											//flags;
-		queueFamilyIndex,							//queueFamilyIndex;
+		queue_family_index,							//queueFamilyIndex;
 		1,											//queueCount;
 		priority,									//pQueuePriorities;
 	};
@@ -297,10 +304,11 @@ void shGetSwapchainImages(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, NULL);
 	p_core->p_swapchain_images = (VkImage*)malloc(p_core->swapchain_image_count * sizeof(VkImage));
+	shVkAssert(p_core->p_swapchain_images != NULL, "invalid swapchain images pointer");
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, p_core->p_swapchain_images);
 }
 
-void shCreateImageView(ShVkCore* p_core, const VkImage image, const shImageType type, VkImageView* p_image_view) {
+void shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	shVkAssert(p_image_view != NULL, "invalid image view pointer");
 	VkImageViewCreateInfo imageViewCreateInfo = {
@@ -528,7 +536,7 @@ void shSetSyncObjects(ShVkCore* p_core) {
 
 	p_core->p_render_semaphores = calloc(p_core->thread_count, sizeof(VkSemaphore));
 	
-if (p_core->p_graphics_commands != NULL) {
+	if (p_core->p_graphics_commands != NULL) {
 		for (uint32_t thread = 0; thread < p_core->thread_count; thread++) {
 			shVkAssertResult(
 				vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->p_graphics_commands[thread].fence),
@@ -564,6 +572,10 @@ void shSwapchainRelease(ShVkCore* p_core) {
 		vkDestroyImageView(p_core->device, p_core->p_swapchain_image_views[i], NULL);
 	}
 	vkDestroySwapchainKHR(p_core->device, p_core->swapchain, NULL);
+	p_core->swapchain_image_count = 0;
+	free(p_core->p_frame_buffers);
+	free(p_core->p_swapchain_image_views);
+	free(p_core->p_swapchain_images);
 }
 
 void shDepthBufferRelease(ShVkCore* p_core) {
@@ -576,12 +588,6 @@ void shDepthBufferRelease(ShVkCore* p_core) {
 void shSurfaceRelease(ShVkCore* p_core) {
 	shVkAssert(p_core != NULL, "invalid core pointer ");
 	vkDeviceWaitIdle(p_core->device);
-
-	p_core->swapchain_image_count = 0;
-	free(p_core->p_frame_buffers);
-	free(p_core->p_swapchain_image_views);
-	free(p_core->p_swapchain_images);
-
 	vkDestroySurfaceKHR(p_core->instance, p_core->surface.surface, NULL);
 }
 
@@ -656,7 +662,7 @@ void shBeginCommandBuffer(const VkCommandBuffer cmd_buffer) {
 		NULL,
 		0,
 		NULL
-};
+	};
 	vkBeginCommandBuffer(cmd_buffer, &command_buffer_begin_info);
 }
 

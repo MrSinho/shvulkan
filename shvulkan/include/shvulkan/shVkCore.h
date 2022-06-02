@@ -11,10 +11,10 @@ extern "C" {
 #include "shvulkan/shVkVersion.h"
 #include "shvulkan/shVkCheck.h"
 
-typedef enum shImageType {
+typedef enum ShVkImageType {
 	SH_SWAPCHAIN_IMAGE = 0b001,
 	SH_DEPTH_IMAGE = 0b010
-} shImageType;
+} ShVkImageType;
 
 #define SH_DEPTH_IMAGE_FORMAT		VK_FORMAT_D32_SFLOAT
 #define SH_SWAPCHAIN_IMAGE_FORMAT	VK_FORMAT_R8G8B8A8_UNORM
@@ -89,7 +89,7 @@ extern void shCreateSwapchain(ShVkCore* p_core);
 
 extern void shGetSwapchainImages(ShVkCore* p_core);
 
-extern void shCreateImageView(ShVkCore* p_core, const VkImage image, const shImageType type, VkImageView* p_image_view);
+extern void shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view);
 
 extern void shCreateSwapchainImageViews(ShVkCore* p_core);
 

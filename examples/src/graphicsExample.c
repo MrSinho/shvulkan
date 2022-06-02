@@ -74,13 +74,13 @@ int main(void) {
 		core.surface.height = height;
 		shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
 		shSetLogicalDevice(&core, SH_VK_CORE_GRAPHICS);
-		shGetGraphicsQueue(&core);
 		shInitSwapchainData(&core);
 		shInitDepthData(&core);
 		shCreateRenderPass(&core);
 		shSetFramebuffers(&core);
 		shCreateGraphicsCommandBuffers(&core, THREAD_COUNT);
 		shSetSyncObjects(&core);
+		shGetGraphicsQueue(&core);
 	}
 
 
