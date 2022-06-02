@@ -41,7 +41,7 @@ void shDescriptorSetLayout(VkDevice device, const uint32_t descriptor_idx, const
 
 void shCreateDescriptorPool(VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool) {
 	shVkAssert(p_descriptor_pool != NULL, "invalid descriptor pool pointer");
-	VkDescriptorPoolSize descriptorPoolSize = {
+	VkDescriptorPoolSize descriptor_pool_size = {
 		descriptor_type,
 		1									//descriptorCount;
 	};
@@ -52,7 +52,7 @@ void shCreateDescriptorPool(VkDevice device, const uint32_t descriptor_idx, cons
 		0,												//flags;
 		1,												//maxSets;
 		1,												//poolSizeCount;
-		&descriptorPoolSize								//pPoolSizes;
+		&descriptor_pool_size							//pPoolSizes;
 	};
 
 	shVkAssertResult(
@@ -94,14 +94,14 @@ void shAllocateDescriptorSet(VkDevice device, const uint32_t descriptor_idx, con
 	*p_write_descriptor_set = write_descriptor_set;
 }
 
-void shSetPushConstants(const VkShaderStageFlags shaderStageFlags, const uint32_t offset, const uint32_t size, ShVkPipeline* p_pipeline) {
+void shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer ");
 	p_pipeline->push_constant_range.offset		= offset;
 	p_pipeline->push_constant_range.size		= size;
-	p_pipeline->push_constant_range.stageFlags = shaderStageFlags;
+	p_pipeline->push_constant_range.stageFlags = shader_stage_flags;
 }
 
-void shCreateDescriptorBuffer(VkDevice device, VkBufferUsageFlagBits usage, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_size, VkDescriptorBufferInfo* p_buffer_info, VkBuffer* p_buffer) {
+void shCreateDescriptorBuffer(VkDevice device, VkBufferUsageFlags usage, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_size, VkDescriptorBufferInfo* p_buffer_info, VkBuffer* p_buffer) {
 	shCreateBuffer(device, max_size, usage, p_buffer);
 	VkDescriptorBufferInfo buffer_info = {
 		*p_buffer,	//buffer;
