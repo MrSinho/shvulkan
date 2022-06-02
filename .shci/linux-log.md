@@ -1,7 +1,7 @@
 # shvulkan
 ![linux_badge](linux-status.svg)
 ## [Linux/Unix build logs:](https://github.com/MrSinho/ShCI)
-  `Build ran for 11.08s`
+  `Build ran for 8.18s`
 ```bash $shci call$
 apt install -y wget gcc cmake make gdb
 Reading package lists...
@@ -27,23 +27,23 @@ sudo apt install -y mesa-vulkan-drivers
 sudo apt install -y vulkan-utils
 
 
-Hit:1 http://archive.canonical.com/ubuntu focal InRelease
-Hit:2 http://packages.microsoft.com/repos/code stable InRelease
-Hit:3 https://packages.microsoft.com/repos/edge stable InRelease
-Hit:4 http://security.ubuntu.com/ubuntu focal-security InRelease
+Hit:1 http://packages.microsoft.com/repos/code stable InRelease
+Hit:2 http://security.ubuntu.com/ubuntu focal-security InRelease
+Hit:3 http://archive.canonical.com/ubuntu focal InRelease
+Hit:4 https://packages.microsoft.com/repos/edge stable InRelease
 Get:5 http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease [18,1 kB]
-Ign:6 http://packages.linuxmint.com uma InRelease
-Hit:7 http://archive.ubuntu.com/ubuntu focal InRelease
+Hit:6 http://archive.ubuntu.com/ubuntu focal InRelease
+Ign:7 http://packages.linuxmint.com uma InRelease
 Get:8 http://ppa.launchpad.net/oibaf/graphics-drivers/ubuntu focal InRelease [23,9 kB]
-Hit:9 http://packages.linuxmint.com uma Release
-Hit:10 http://archive.ubuntu.com/ubuntu focal-updates InRelease
+Hit:9 http://archive.ubuntu.com/ubuntu focal-updates InRelease
+Hit:10 http://packages.linuxmint.com uma Release
 Hit:11 http://archive.ubuntu.com/ubuntu focal-backports InRelease
 Err:5 http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease
   The following signatures couldn't be verified because the public key is not available: NO_PUBKEY EFC71127F425E228
 Err:8 http://ppa.launchpad.net/oibaf/graphics-drivers/ubuntu focal InRelease
   The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 957D2708A03A4626
 Reading package lists...
-Executing: /tmp/apt-key-gpghome.urGxpBCxx2/gpg.1.sh --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 5ABCE68FF4633EA42E219156957D2708A03A4626
+Executing: /tmp/apt-key-gpghome.WSVFaWDgT3/gpg.1.sh --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 5ABCE68FF4633EA42E219156957D2708A03A4626
 You are about to add the following PPA:
  PLEASE READ: don't email me to report bugs, unless you are sure it's a packaging bug. Not only is email not a good tool for tracking bugs, it also excludes anybody else from tracking or working on the issue. Please read the section "Debugging and reporting problems" below.
 
@@ -132,9 +132,9 @@ Some people asked me if I can accept donations to support this work. I don't, bu
  More info: https://launchpad.net/~oibaf/+archive/ubuntu/graphics-drivers
 Hit:1 http://packages.microsoft.com/repos/code stable InRelease
 Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease
-Hit:3 http://security.ubuntu.com/ubuntu focal-security InRelease
+Hit:3 http://archive.canonical.com/ubuntu focal InRelease
 Hit:4 http://archive.ubuntu.com/ubuntu focal-updates InRelease
-Hit:5 http://archive.canonical.com/ubuntu focal InRelease
+Hit:5 http://security.ubuntu.com/ubuntu focal-security InRelease
 Hit:6 http://archive.ubuntu.com/ubuntu focal-backports InRelease
 Hit:7 https://packages.microsoft.com/repos/edge stable InRelease
 Get:8 http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease [18,1 kB]
@@ -204,39 +204,39 @@ cd _shvulkan && mkdir build && cd build && cmake -DSH_VULKAN_BUILD_EXAMPLES=ON .
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/oem/Desktop/shci-implementation/bin/_shvulkan/build
-Scanning dependencies of target shvulkan
-[  2%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkCore.c.o
-[  5%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkMemoryInfo.c.o
-[  8%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkPipelineData.c.o
-[ 11%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkCheck.c.o
-[ 14%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkDrawLoop.c.o
-[ 17%] Linking C static library ../bin/libshvulkan.a
-[ 17%] Built target shvulkan
 Scanning dependencies of target glfw
-[ 20%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/context.c.o
-[ 23%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/init.c.o
-[ 26%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/input.c.o
-[ 29%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/monitor.c.o
-[ 32%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/platform.c.o
-[ 35%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/vulkan.c.o
-[ 38%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/window.c.o
-[ 41%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/egl_context.c.o
-[ 44%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.o
-[ 47%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_init.c.o
-[ 50%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_monitor.c.o
-[ 52%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_window.c.o
-[ 55%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_joystick.c.o
-[ 58%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/posix_module.c.o
-[ 61%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/posix_time.c.o
-[ 64%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/posix_thread.c.o
-[ 67%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o
-[ 70%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/x11_monitor.c.o
-[ 73%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/x11_window.c.o
-[ 76%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/xkb_unicode.c.o
-[ 79%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/glx_context.c.o
-[ 82%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/linux_joystick.c.o
-[ 85%] Linking C static library libglfw3.a
-[ 85%] Built target glfw
+[  2%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/context.c.o
+[  5%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/init.c.o
+[  8%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/input.c.o
+[ 11%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/monitor.c.o
+[ 14%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/platform.c.o
+[ 17%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/vulkan.c.o
+[ 20%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/window.c.o
+[ 23%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/egl_context.c.o
+[ 26%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.o
+[ 29%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_init.c.o
+[ 32%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_monitor.c.o
+[ 35%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_window.c.o
+[ 38%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/null_joystick.c.o
+[ 41%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/posix_module.c.o
+[ 44%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/posix_time.c.o
+[ 47%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/posix_thread.c.o
+[ 50%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o
+[ 52%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/x11_monitor.c.o
+[ 55%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/x11_window.c.o
+[ 58%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/xkb_unicode.c.o
+[ 61%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/glx_context.c.o
+[ 64%] Building C object examples/external/glfw/src/CMakeFiles/glfw.dir/linux_joystick.c.o
+[ 67%] Linking C static library libglfw3.a
+[ 67%] Built target glfw
+Scanning dependencies of target shvulkan
+[ 70%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkCore.c.o
+[ 73%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkMemoryInfo.c.o
+[ 76%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkPipelineData.c.o
+[ 79%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkCheck.c.o
+[ 82%] Building C object CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVkDrawLoop.c.o
+[ 85%] Linking C static library ../bin/libshvulkan.a
+[ 85%] Built target shvulkan
 Scanning dependencies of target shvulkan-compute-example
 [ 88%] Building C object CMakeFiles/shvulkan-compute-example.dir/examples/src/computeExample.c.o
 [ 91%] Linking C executable ../bin/shvulkan-compute-example
