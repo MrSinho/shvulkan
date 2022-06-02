@@ -3,8 +3,8 @@
 
 ## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI)
 
-[![linux_badge](.ShCI/linux-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI/linux-log.md)
-[![windows_badge](.ShCI/windows-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI/windows-log.md)
+[![linux_badge](.shci/linux-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI/linux-log.md)
+[![windows_badge](.shci/windows-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI/windows-log.md)
 
 ## Build guide
 
