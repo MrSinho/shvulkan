@@ -55,6 +55,6 @@ cmake -DSH_USE_VULKAN_1_1=ON ..
 
 If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw`](https://github.com/glfw/glfw) target will be generated as a static library.
 
-[top](#gaia-universe-model-library-walkthrough)</button>
+[top](#shvulkan)
  
 ---
