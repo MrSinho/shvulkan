@@ -12,18 +12,11 @@
 
 # [Library walkthrough](https://mrsinho.github.io/docs/shvulkan/library-walkthrough)
 
-
-# shvulkan library walkthrough
-
-<button class="btn">[back to docs](./index)</button>
-
 Setup
 * [Clone and build](#clone-and-build)
 
 Tutorial
-* [CMake targets](#cmake-targes)
-* [Graphics example](#graphics-example)
-* [Compute example](#compute-example)
+* [CMake targets](#cmake-targets)
 
 ---
 
@@ -62,6 +55,6 @@ cmake -DSH_USE_VULKAN_1_1=ON ..
 
 If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw`](https://github.com/glfw/glfw) target will be generated as a static library.
 
-<button class="btn">[top](#gaia-universe-model-library-walkthrough)</button>
+[top](#gaia-universe-model-library-walkthrough)</button>
  
 ---
