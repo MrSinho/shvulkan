@@ -10,42 +10,58 @@
 
 `shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t invasive like a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with efficient graphics without writing thousands of lines of code.
 
-## Build guide
+# [Library walkthrough](https://mrsinho.github.io/docs/shvulkan/library-walkthrough)
 
+
+# shvulkan library walkthrough
+
+<button class="btn">[back to docs](./index)</button>
+
+Setup
+* [Clone and build](#clone-and-build)
+
+Tutorial
+* [CMake targets](#cmake-targes)
+* [Graphics example](#graphics-example)
+* [Compute example](#compute-example)
+
+---
+
+## Clone and Build
+
+Open the terminal and run the following commands:
 ```bash
-git clone https://github.com/MrSinho/shvulkan
+git clone --recursive https://github.com/MrSinho/shvulkan.git
 cd shvulkan
-mkdir build 
+mkdir build
 cd build
-cmake ..
+cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..
+cmake --build .
 ```
+
+If you are having some trouble with building the targets and compiling the code, check the [Linux](https://github.com/MrSinho/shvulkan/blob/main/.shci/linux-log.md) and [Windows](https://github.com/MrSinho/shvulkan/blob/main/.shci/windows-log.md) build [logs](https://github.com/MrSinho/shvulkan/blob/main/.shci).
 
 ### Vulkan version
 > Vulkan 1.3 updates are coming soon
 
-If your machine does not support Vulkan 1.2 you can set the cmake options `SH_USE_VULKAN_1_0` or `SH_USE_VULKAN_1_1` as true:
+If you haven't install Vulkan 1.2 you can set the cmake options `SH_USE_VULKAN_1_0` or `SH_USE_VULKAN_1_1` as true:
 ```bash
 cmake -DSH_USE_VULKAN_1_0=ON ..
+cmake -DSH_USE_VULKAN_1_1=ON ..
 ```
 
-## Features
-* Vulkan instance and validation layers setup
-* Physical device selection and logical device creation
-* Graphics and compute queues, graphics and compute command buffers
-* Depth buffer support with single setup call
-* Automatic support for `VK_LAYER_KRHONOS_validation` `VK_EXT_memory_budget`, `VK_KHR_swapchain`
-* Graphics and compute pipeline support, with examples
-* Easier static and dynamic descriptor sets creation
+---
 
-## To do
-* Multithreading
-* Textures support
-* SPIRV-Reflect integration
+## CMake targets
 
-## Examples
+| CMake target                                           | type       |
+|--------------------------------------------------------|------------|
+| [shvulkan](../ShVulkan/index)                       	 | library    |
+| [shvulkan-graphics-example](#graphics-example)         | executable |
+| [shvulkan-compute-example](#compute-example)           | executable |
 
-The [examples](https://github.com/MrSinho/ShVulkan/blob/main/examples/src) can be built by setting on the `SH_VULKAN_BUILD_EXAMPLES` cmake option. The example summarizes almost all the available features of the library, such as setting up the prerequisites, writing buffers, push constants, static and dynamic uniform buffers, creating graphics pipelines and rendering.
+If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw`](https://github.com/glfw/glfw) target will be generated as a static library.
 
-### More concrete examples
-* [SH-Engine](https://github.com/MrSinho/SH-Engine)
-* [Gaia_Universe_Model](https://github.com/MrSinho/Gaia_Universe_Model)
+<button class="btn">[top](#gaia-universe-model-library-walkthrough)</button>
+ 
+---
