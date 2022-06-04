@@ -17,9 +17,9 @@ void shFrameReset(ShVkCore* p_core, const uint32_t thread_idx) {
 	vkResetCommandBuffer(p_core->p_graphics_commands[thread_idx].cmd_buffer, 0);
 }
 
-void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapchain_image_index) {
-	shVkAssert(p_swapchain_image_index != NULL, "invalid pointer to swapchain image index");
-	vkAcquireNextImageKHR(p_core->device, p_core->swapchain, UINT64_MAX , p_core->p_render_semaphores[thread_idx], 0, p_swapchain_image_index);
+void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapchain_image_idx) {
+	shVkAssert(p_swapchain_image_idx != NULL, "invalid pointer to swapchain image index");
+	vkAcquireNextImageKHR(p_core->device, p_core->swapchain, UINT64_MAX, p_core->p_render_semaphores[thread_idx], 0, p_swapchain_image_idx);
 
 	VkCommandBufferBeginInfo cmdBufferBeginInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,	//sType;
@@ -35,7 +35,7 @@ void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapc
 		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,		//sType;
 		NULL,											//pNext;
 		p_core->render_pass,								//renderPass;
-		p_core->p_frame_buffers[*p_swapchain_image_index],	//framebuffer;
+		p_core->p_frame_buffers[*p_swapchain_image_idx],	//framebuffer;
 		{												//
 			{0, 0},										//
 			{p_core->surface.width, p_core->surface.height}	//
@@ -52,7 +52,7 @@ void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapc
 	vkCmdBeginRenderPass(p_core->p_graphics_commands[thread_idx].cmd_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void shFrameEnd(ShVkCore* p_core, const uint32_t thread_idx, const uint32_t swapchain_image_index) {
+void shFrameEnd(ShVkCore* p_core, const uint32_t thread_idx, const uint32_t swapchain_image_idx) {
 
 	vkCmdEndRenderPass(p_core->p_graphics_commands[thread_idx].cmd_buffer);
 	vkEndCommandBuffer(p_core->p_graphics_commands[thread_idx].cmd_buffer);
@@ -80,7 +80,7 @@ void shFrameEnd(ShVkCore* p_core, const uint32_t thread_idx, const uint32_t swap
 		&p_core->p_render_semaphores[thread_idx], 			//pWaitSemaphores;
 		1,									//swapchainCount;
 		&p_core->swapchain,					//pSwapchains;
-		&swapchain_image_index,				//pImageIndices;
+		&swapchain_image_idx,				//pImageIndices;
 		NULL								//pResults;
 	};
 

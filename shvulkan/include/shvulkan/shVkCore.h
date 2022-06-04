@@ -83,7 +83,7 @@ extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirem
 
 extern void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
 
-extern void shSetLogicalDevice(ShVkCore* p_core, VkQueueFlags requirements);
+extern void shSetLogicalDevice(ShVkCore* p_core);
 
 extern void shCreateSwapchain(ShVkCore* p_core);
 

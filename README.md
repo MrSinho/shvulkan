@@ -1,5 +1,5 @@
 
-# ShVulkan
+# shvulkan
 
 ## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI)
 

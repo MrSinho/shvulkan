@@ -38,7 +38,7 @@ int main(void) {
 	{
 		shCreateInstance(&core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
 		shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
-		shSetLogicalDevice(&core, SH_VK_CORE_COMPUTE);
+		shSetLogicalDevice(&core);
 		shGetComputeQueue(&core);
 		shCreateComputeCommandBuffers(&core, 1);
 		shSetSyncObjects(&core);

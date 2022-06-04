@@ -73,7 +73,7 @@ int main(void) {
 		core.surface.width = width;
 		core.surface.height = height;
 		shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
-		shSetLogicalDevice(&core, SH_VK_CORE_GRAPHICS);
+		shSetLogicalDevice(&core);
 		shInitSwapchainData(&core);
 		shInitDepthData(&core);
 		shCreateRenderPass(&core);
