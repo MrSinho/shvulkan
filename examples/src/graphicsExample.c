@@ -180,7 +180,7 @@ int main(void) {
 	ShVkPipeline pipeline = { 0 };
 	ShVkFixedStates fixed_states = { 0 };
 	{
-		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline);
+		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline.push_constant_range);
 
 		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), &pipeline);
 		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);

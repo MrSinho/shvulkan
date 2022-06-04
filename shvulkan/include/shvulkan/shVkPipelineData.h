@@ -82,23 +82,23 @@ extern void shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_bind
 
 extern void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, const VkBool32 primitive_restart_enable, VkPipelineInputAssemblyStateCreateInfo* p_input_assembly);
 
-extern void shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, ShVkPipeline* p_pipeline);
+extern void shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, VkPushConstantRange* p_constant_range);
 
 extern void shCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags usage, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_size, VkDescriptorBufferInfo* p_buffer_info, VkBuffer* p_buffer);
 
-extern void shCreateDescriptorPool(VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool);
+extern void shDescriptorSetLayout(const VkDevice device, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shaderStageFlags, VkDescriptorSetLayoutBinding* p_binding, VkDescriptorSetLayout* p_descriptor_set_layout);
 
-extern void shDescriptorSetLayout(const VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shaderStageFlags, VkDescriptorSetLayoutBinding* p_binding, VkDescriptorSetLayout* p_descriptor_set_layout);
+extern void shCreateDescriptorPool(VkDevice device, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool);
 
-extern void shAllocateDescriptorSet(VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, VkDescriptorType descriptor_type, VkDescriptorPool descriptor_pool, VkDescriptorSetLayout* p_descriptor_set_layout, VkDescriptorSet* p_descriptor_set, VkDescriptorBufferInfo* p_buffer_info, VkWriteDescriptorSet* p_write_descriptor_set);
+extern void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescriptorType descriptor_type, VkDescriptorSetLayout* p_descriptor_set_layout, VkDescriptorPool descriptor_pool, VkDescriptorSet* p_descriptor_set, VkDescriptorBufferInfo* p_buffer_info, VkWriteDescriptorSet* p_write_descriptor_set);
 
 extern void shCreateShaderModule(const VkDevice device, const uint32_t size, const char* code, VkShaderModule* p_shader_module);
 
-extern void shCreateShaderStage(const VkDevice device, const VkShaderModule shader_module, const VkShaderStageFlagBits shader_stage_flag, VkPipelineShaderStageCreateInfo* p_shader_stage);
+extern void shCreateShaderStage(const VkDevice device, const VkShaderModule shader_module, const VkShaderStageFlags shader_stage_flag, VkPipelineShaderStageCreateInfo* p_shader_stage);
 
 
 
-extern void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fStates, ShVkPipeline* p_pipeline);
+extern void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fixed_states, ShVkPipeline* p_pipeline);
 
 extern void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline);
 
@@ -117,10 +117,10 @@ extern void shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, con
 extern void shPipelineDescriptorSetLayout(const VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shader_stage, ShVkPipeline* p_pipeline);
 
 #define shPipelineCreateDescriptorPool(device, descriptor_idx, p_pipeline)\
-		shCreateDescriptorPool(device, descriptor_idx, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].binding, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].descriptorType, &(p_pipeline)->descriptor_pools[descriptor_idx])\
+		shCreateDescriptorPool(device, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].descriptorType, &(p_pipeline)->descriptor_pools[descriptor_idx])\
 
 #define shPipelineAllocateDescriptorSet(device, descriptor_idx, p_pipeline)\
-	shAllocateDescriptorSet(device, descriptor_idx, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].binding, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].descriptorType, (p_pipeline)->descriptor_pools[descriptor_idx], &(p_pipeline)->descriptor_set_layouts[descriptor_idx], &(p_pipeline)->descriptor_sets[descriptor_idx], &(p_pipeline)->descriptor_buffer_infos[descriptor_idx], &(p_pipeline)->write_descriptor_sets[descriptor_idx])\
+	shAllocateDescriptorSet(device, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].binding, (p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].descriptorType, &(p_pipeline)->descriptor_set_layouts[descriptor_idx], (p_pipeline)->descriptor_pools[descriptor_idx], &(p_pipeline)->descriptor_sets[descriptor_idx], &(p_pipeline)->descriptor_buffer_infos[descriptor_idx], &(p_pipeline)->write_descriptor_sets[descriptor_idx])\
 
 extern void shPipelineCreateShaderStage(const VkDevice device, VkShaderStageFlagBits shader_stage_flag, ShVkPipeline* p_pipeline);
 

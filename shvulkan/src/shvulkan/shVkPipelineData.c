@@ -12,7 +12,7 @@ extern "C" {
 #pragma warning (disable: 6386)
 #endif//_MSC_VER
 
-void shDescriptorSetLayout(VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shaderStageFlags, VkDescriptorSetLayoutBinding* p_binding, VkDescriptorSetLayout* p_descriptor_set_layout) {
+void shDescriptorSetLayout(VkDevice device, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shaderStageFlags, VkDescriptorSetLayoutBinding* p_binding, VkDescriptorSetLayout* p_descriptor_set_layout) {
 	shVkAssert(p_binding != NULL, "invalid binding pointer");
 	shVkAssert(p_descriptor_set_layout != NULL, "invalid descriptor set layout pointer");
 	VkDescriptorSetLayoutBinding descriptor_set_layout_binding = {
@@ -39,7 +39,7 @@ void shDescriptorSetLayout(VkDevice device, const uint32_t descriptor_idx, const
 	);
 }
 
-void shCreateDescriptorPool(VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool) {
+void shCreateDescriptorPool(VkDevice device, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool) {
 	shVkAssert(p_descriptor_pool != NULL, "invalid descriptor pool pointer");
 	VkDescriptorPoolSize descriptor_pool_size = {
 		descriptor_type,
@@ -61,7 +61,7 @@ void shCreateDescriptorPool(VkDevice device, const uint32_t descriptor_idx, cons
 	);
 }
 
-void shAllocateDescriptorSet(VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, VkDescriptorType descriptor_type, VkDescriptorPool descriptor_pool, VkDescriptorSetLayout* p_descriptor_set_layout, VkDescriptorSet* p_descriptor_set, VkDescriptorBufferInfo* p_buffer_info, VkWriteDescriptorSet* p_write_descriptor_set) {
+void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescriptorType descriptor_type, VkDescriptorSetLayout* p_descriptor_set_layout, VkDescriptorPool descriptor_pool, VkDescriptorSet* p_descriptor_set, VkDescriptorBufferInfo* p_buffer_info, VkWriteDescriptorSet* p_write_descriptor_set) {
 	shVkAssert(p_descriptor_set_layout != NULL, "invalid descriptor set layout pointer");
 	shVkAssert(p_buffer_info != NULL, "invalid descriptor buffer info pointer");
 	shVkAssert(p_descriptor_set != NULL, "invalid descriptor set pointer");
@@ -94,11 +94,11 @@ void shAllocateDescriptorSet(VkDevice device, const uint32_t descriptor_idx, con
 	*p_write_descriptor_set = write_descriptor_set;
 }
 
-void shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer ");
-	p_pipeline->push_constant_range.offset		= offset;
-	p_pipeline->push_constant_range.size		= size;
-	p_pipeline->push_constant_range.stageFlags = shader_stage_flags;
+void shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, VkPushConstantRange* p_constant_range) {
+	shVkAssert(p_constant_range != NULL, "invalid pipeline pointer ");
+	p_constant_range->offset		= offset;
+	p_constant_range->size			= size;
+	p_constant_range->stageFlags	= shader_stage_flags;
 }
 
 void shCreateDescriptorBuffer(VkDevice device, VkBufferUsageFlags usage, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_size, VkDescriptorBufferInfo* p_buffer_info, VkBuffer* p_buffer) {
@@ -138,7 +138,7 @@ void shCreateShaderModule(const VkDevice device, const uint32_t size, const char
 	);
 }
 
-void shCreateShaderStage(const VkDevice device, const VkShaderModule shader_module, const VkShaderStageFlagBits shader_stage_flag, VkPipelineShaderStageCreateInfo* p_shader_stage) {
+void shCreateShaderStage(const VkDevice device, const VkShaderModule shader_module, const VkShaderStageFlags shader_stage_flag, VkPipelineShaderStageCreateInfo* p_shader_stage) {
 	shVkAssert(p_shader_stage != NULL, "invalid shader stage pointer");
 	VkPipelineShaderStageCreateInfo shader_stage_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,	//sType;
@@ -323,17 +323,17 @@ void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint3
 	shSetViewport(surface_width, surface_height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
 }
 
-void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fStates, ShVkPipeline* p_pipeline) {
+void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fixed_states, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid graphics pipeline pointer");
 
 	VkPipelineLayoutCreateInfo mainPipelineLayoutCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,								//sType;
 		NULL,																		//pNext;
 		0,																			//flags;
-		p_pipeline->descriptor_count,													//setLayoutCount;
+		p_pipeline->descriptor_count,												//setLayoutCount;
 		p_pipeline->descriptor_set_layouts,											//pSetLayouts;
 		0,																			//pushConstantRangeCount;
-		NULL,																		//pPushConstantRanges;
+		NULL																		//pPushConstantRanges;
 	};
 
 	if (p_pipeline->push_constant_range.size != 0) {
@@ -367,14 +367,14 @@ void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const Sh
 		0,													//flags;
 		p_pipeline->shader_module_count,					//stageCount;
 		p_pipeline->shader_stages,							//pStages;
-		&fStates.vertex_input_state_info,					//pVertexInputState;
-		&fStates.input_assembly,							//pInputAssemblyState;
+		&fixed_states.vertex_input_state_info,				//pVertexInputState;
+		&fixed_states.input_assembly,						//pInputAssemblyState;
 		NULL,												//pTessellationState;
-		&fStates.viewport_state,							//pViewportState;
-		&fStates.rasterizer,								//pRasterizationState;
-		&fStates.multisample_state_info,					//pMultisampleState;
+		&fixed_states.viewport_state,						//pViewportState;
+		&fixed_states.rasterizer,							//pRasterizationState;
+		&fixed_states.multisample_state_info,				//pMultisampleState;
 		&depthStencilStateCreateInfo ,						//pDepthStencilState;
-		&fStates.color_blend_state,							//pColorBlendState;
+		&fixed_states.color_blend_state,					//pColorBlendState;
 		NULL,												//pDynamicState;
 		p_pipeline->pipeline_layout,						//layout;
 		render_pass,										//renderPass;
@@ -467,7 +467,7 @@ void shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, const VkPh
 
 void shPipelineDescriptorSetLayout(const VkDevice device, const uint32_t descriptor_idx, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shader_stage, ShVkPipeline* p_pipeline) {
 	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
-	shDescriptorSetLayout(device, descriptor_idx, binding, descriptor_type, shader_stage, &(p_pipeline)->descriptor_set_layout_bindings[descriptor_idx], &(p_pipeline)->descriptor_set_layouts[descriptor_idx]);
+	shDescriptorSetLayout(device, binding, descriptor_type, shader_stage, &(p_pipeline)->descriptor_set_layout_bindings[descriptor_idx], &(p_pipeline)->descriptor_set_layouts[descriptor_idx]);
 }
 
 void shPipelineCreateShaderStage(const VkDevice device, VkShaderStageFlagBits shader_stage_flag, ShVkPipeline* p_pipeline) {
