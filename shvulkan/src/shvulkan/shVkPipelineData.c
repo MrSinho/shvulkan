@@ -75,7 +75,7 @@ void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescript
 		(VkDescriptorSetLayout*)p_descriptor_set_layout				//pSetLayouts;
 	};
 	shVkAssertResult(
-	vkAllocateDescriptorSets(device, &descriptor_set_allocate_info, p_descriptor_set),
+		vkAllocateDescriptorSets(device, &descriptor_set_allocate_info, p_descriptor_set),
 		"error allocating descriptor set"
 	);
 
