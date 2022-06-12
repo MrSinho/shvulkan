@@ -12,6 +12,15 @@ extern "C" {
 #include <stdlib.h>
 
 
+static uint32_t shGetDescriptorSize(ShVkCore* p_core, uint32_t _size) {
+	if (_size < (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment) {
+		return (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment;
+	}
+	else {
+		uint32_t size = _size % (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment;
+		return (uint32_t)(_size) + (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment - size;
+	}
+}
 
 #define SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(STRUCT)\
 typedef struct STRUCT##DescriptorStructureMap {\
