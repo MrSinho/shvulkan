@@ -202,13 +202,16 @@ int main(void) {
 
 		uint32_t vertex_shader_size = 0;
 		uint32_t fragment_shader_size = 0;
-		const char* vertex_code = readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
-		const char* fragment_code = readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
+		char* vertex_code = (char*)readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
+		char* fragment_code = (char*)readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
 		shPipelineCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline);
 		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
 
 		shPipelineCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline);
 		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+		
+		free(vertex_code);
+		free(fragment_code);
 
 		shSetVertexInputAttribute(0, SH_VEC3_SIGNED_FLOAT, 0, 12, &fixed_states);
 		shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT, 12, 12, &fixed_states);
