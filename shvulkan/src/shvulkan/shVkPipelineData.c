@@ -74,10 +74,10 @@ void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescript
 		1,															//descriptorSetCount;
 		(VkDescriptorSetLayout*)p_descriptor_set_layout				//pSetLayouts;
 	};
-	shVkAssertResult(
-		vkAllocateDescriptorSets(device, &descriptor_set_allocate_info, p_descriptor_set),
-		"error allocating descriptor set"
-	);
+	//shVkAssertResult(
+	vkAllocateDescriptorSets(device, &descriptor_set_allocate_info, p_descriptor_set);// ,
+	//	"error allocating descriptor set"
+	//);
 
 	VkWriteDescriptorSet write_descriptor_set = {
 		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,	//sType;
