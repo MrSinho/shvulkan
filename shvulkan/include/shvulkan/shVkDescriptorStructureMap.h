@@ -5,6 +5,7 @@
 extern "C" {
 #endif//__cplusplus
 
+#include "shvulkan/shVkCore.h"
 #include "shvulkan/shVkMemoryInfo.h"
 #include "shvulkan/shVkCheck.h"
 
@@ -18,7 +19,7 @@ static uint32_t shGetDescriptorSize(ShVkCore* p_core, uint32_t _size) {
 	}
 	else {
 		uint32_t size = _size % (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment;
-		return (uint32_t)(_size) + (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment - size;
+		return (size == 0) ? _size : ((uint32_t)(_size) + (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment - size);
 	}
 }
 
@@ -35,7 +36,7 @@ static uint32_t shVkGet ## STRUCT ## DescriptorStructureSize(const VkPhysicalDev
 	}\
 	else {\
 		uint32_t size = (uint32_t)sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
-		return (uint32_t)(sizeof(STRUCT)) + (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment - size;\
+		return (size == 0) ? (uint32_t)sizeof(STRUCT) : ((uint32_t)(sizeof(STRUCT)) + (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment - size);\
 	}\
 }\
 static STRUCT##DescriptorStructureMap shVkCreate ## STRUCT ## DescriptorStructures(const VkPhysicalDeviceProperties physical_device_properties, const uint32_t structure_count) {\
