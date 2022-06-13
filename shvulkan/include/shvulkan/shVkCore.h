@@ -5,6 +5,17 @@
 extern "C" {
 #endif//__cplusplus
 
+#ifdef _WIN32
+
+#define VK_USE_PLATFORM_WIN32_KHR
+#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_win32_surface" }
+
+#elif defined __linux__
+#define VK_USE_PLATFORM_XLIB_KHR
+#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xcb_surface" }//not always true, but in most cases
+
+#endif//_WIN32
+
 #include <vulkan/vulkan.h>
 #include <stdint.h>
 
@@ -18,6 +29,7 @@ typedef enum ShVkImageType {
 
 #define SH_DEPTH_IMAGE_FORMAT		VK_FORMAT_D32_SFLOAT
 #define SH_SWAPCHAIN_IMAGE_FORMAT	VK_FORMAT_R8G8B8A8_UNORM
+
 
 typedef struct ShVkSurface {
 	VkSurfaceKHR				surface;
@@ -78,6 +90,8 @@ typedef struct ShVkCore {
 #define SH_VK_CORE_COMPUTE VK_QUEUE_COMPUTE_BIT
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
+
+extern void shCreateWindowSurface(ShVkCore* p_core, void* window_handle);
 
 extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 

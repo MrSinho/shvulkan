@@ -50,6 +50,23 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 	);
 }
 
+void shCreateWindowSurface(ShVkCore* p_core, void* window_handle) {
+#ifdef _WIN32
+	VkWin32SurfaceCreateInfoKHR surface_create_info = {
+		VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,	// sType
+		NULL,												// pNext
+		0,													// flags
+		(HINSTANCE)GetModuleHandle(NULL),					// hinstance;
+		(HWND)window_handle									// hwnd;
+	};
+	vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface);
+#elif defined __linux__
+#define VK_USE_PLATFORM_XLIB_KHR
+#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xcb_surface" }//not always true, but in most cases
+
+#endif//_WIN32
+}
+
 void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	shVkAssert(p_core != NULL, "invalid arguments ");
 	p_core->required_queue_flags = requirements;

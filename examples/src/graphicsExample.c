@@ -12,6 +12,10 @@ extern "C" {
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#ifdef _WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#endif//_WIN32
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,17 +63,13 @@ int main(void) {
 	const uint32_t height = 480;
 	GLFWwindow* window = createWindow(width, height, application_name);
 	{
-		uint32_t extension_count = 2;
-		const char** extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
-		printf("required instance extensions:\n");
-		for (uint32_t i = 0; i < extension_count; i++) {
-			printf("%s\n", extension_names[i]);
-		}
-		shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, extension_count, extension_names);
-		shVkAssertResult(
-			glfwCreateWindowSurface(core.instance, window, NULL, &core.surface.surface),
-			"error creating window surface"
-		);
+		const char* instance_extensions[2] = SH_VK_SURFACE_INSTANCE_EXTENSIONS;
+		shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, 2, instance_extensions);
+#ifdef _WIN32
+		shCreateWindowSurface(&core, glfwGetWin32Window(window));
+#elif defined __linux__
+		shCreateWindowSurface(&core, )
+#endif//_WIN32
 		core.surface.width = width;
 		core.surface.height = height;
 		shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
