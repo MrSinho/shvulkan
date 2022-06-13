@@ -72,8 +72,7 @@ int main(void) {
 #ifdef _WIN32
 		shCreateWindowSurface(&core, NULL, (void*)glfwGetWin32Window(window));
 #elif defined __linux__
-		Window x11_window = glfwGetX11Window(window);
-		shCreateWindowSurface(&core, (void*)XOpenDisplay(NULL), &x11_window);
+		shCreateWindowSurface(&core, (void*)XOpenDisplay(NULL), (void*)glfwGetX11Window(window));
 		//printf("Window surface: %p", &core.surface.surface);
 #endif//_WIN32
 		core.surface.width = width;

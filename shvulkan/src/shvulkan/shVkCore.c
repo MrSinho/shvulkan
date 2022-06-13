@@ -69,7 +69,7 @@ void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* window_
 		NULL,											//pNext
 		0,												//flags
 		window_process,				 					//dpy
-		(Window)(*(Window*)window_handle)				//window
+		(Window)window_handle							//window
 	};
 	shVkAssertResult(
 		vkCreateXlibSurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
