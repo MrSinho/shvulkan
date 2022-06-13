@@ -50,7 +50,7 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 	);
 }
 
-void shCreateWindowSurface(ShVkCore* p_core, void* window_handle) {
+void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* window_handle) {
 #ifdef _WIN32
 	VkWin32SurfaceCreateInfoKHR surface_create_info = {
 		VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,	// sType
@@ -59,10 +59,22 @@ void shCreateWindowSurface(ShVkCore* p_core, void* window_handle) {
 		(HINSTANCE)GetModuleHandle(NULL),					// hinstance;
 		(HWND)window_handle									// hwnd;
 	};
-	vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface);
+	shVkAssertResult(
+		vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
+		"error creating win32 surface"
+	);
 #elif defined __linux__
-#define VK_USE_PLATFORM_XLIB_KHR
-
+	VkXlibSurfaceCreateInfoKHR surface_create_info = {
+		VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR, //sType
+		NULL,											//pNext
+		0,												//flags
+		window_process,				 					//dpy
+		(Window)(*(Window*)window_handle)				//window
+	};
+	shVkAssertResult(
+		vkCreateXlibSurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
+		"error creating xlib surface"
+	);
 #endif//_WIN32
 }
 

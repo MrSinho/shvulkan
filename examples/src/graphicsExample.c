@@ -14,8 +14,12 @@ extern "C" {
 #include <GLFW/glfw3.h>
 #ifdef _WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
+#include <windows.h>
+#elif defined __linux__
+#define GLFW_EXPOSE_NATIVE_X11
+#include <X11/Xlib.h>
 #endif//_WIN32
+#include <GLFW/glfw3native.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,9 +70,11 @@ int main(void) {
 		const char* instance_extensions[2] = SH_VK_SURFACE_INSTANCE_EXTENSIONS;
 		shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, 2, instance_extensions);
 #ifdef _WIN32
-		shCreateWindowSurface(&core, glfwGetWin32Window(window));
+		shCreateWindowSurface(&core, NULL, (void*)glfwGetWin32Window(window));
 #elif defined __linux__
-		shCreateWindowSurface(&core, )
+		Window x11_window = glfwGetX11Window(window);
+		shCreateWindowSurface(&core, (void*)XOpenDisplay(NULL), &x11_window);
+		//printf("Window surface: %p", &core.surface.surface);
 #endif//_WIN32
 		core.surface.width = width;
 		core.surface.height = height;

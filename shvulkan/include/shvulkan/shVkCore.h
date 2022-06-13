@@ -12,7 +12,7 @@ extern "C" {
 
 #elif defined __linux__
 #define VK_USE_PLATFORM_XLIB_KHR
-#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xcb_surface" }//not always true, but in most cases
+#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xlib_surface" }//not always true, but in most cases
 
 #endif//_WIN32
 
@@ -91,7 +91,7 @@ typedef struct ShVkCore {
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
-extern void shCreateWindowSurface(ShVkCore* p_core, void* window_handle);
+extern void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* window_handle);
 
 extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
