@@ -50,14 +50,14 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 	);
 }
 
-void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* window_handle) {
+void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* p_window_handle) {
 #ifdef _WIN32
 	VkWin32SurfaceCreateInfoKHR surface_create_info = {
 		VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,	// sType
 		NULL,												// pNext
 		0,													// flags
 		(HINSTANCE)GetModuleHandle(NULL),					// hinstance;
-		(HWND)window_handle									// hwnd;
+		(HWND)(*(HWND*)p_window_handle)						// hwnd;
 	};
 	shVkAssertResult(
 		vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
@@ -69,7 +69,7 @@ void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* window_
 		NULL,											//pNext
 		0,												//flags
 		window_process,				 					//dpy
-		(Window)window_handle							//window
+		(Window)(*(Window*)p_window_handle)				//window
 	};
 	shVkAssertResult(
 		vkCreateXlibSurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
@@ -264,25 +264,25 @@ void shCreateSwapchain(ShVkCore* p_core) {
 
 	p_core->swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
 	VkSwapchainCreateInfoKHR swapchain_create_info = {
-		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,				//sType;
-		NULL,														//pNext;
-		0,															//flags;
-		p_core->surface.surface,									//surface;
-		p_core->surface.surface_capabilities.minImageCount,			//minImageCount;
-		p_core->swapchain_image_format,								//imageFormat;
-		VK_COLORSPACE_SRGB_NONLINEAR_KHR,							//imageColorSpace;
+		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,							//sType;
+		NULL,																	//pNext;
+		0,																		//flags;
+		p_core->surface.surface,												//surface;
+		p_core->surface.surface_capabilities.minImageCount,						//minImageCount;
+		p_core->swapchain_image_format,											//imageFormat;
+		VK_COLORSPACE_SRGB_NONLINEAR_KHR,										//imageColorSpace;
 		(VkExtent2D) { p_core->surface.surface_capabilities.currentExtent.width,
-		p_core->surface.surface_capabilities.currentExtent.height},	//imageExtent;
-		1,															//imageArrayLayers;
-		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,						//imageUsage;
-		VK_SHARING_MODE_EXCLUSIVE,									//imageSharingMode;
-		0,															//queueFamilyIndexCount;
-		NULL,														//pQueueFamilyIndices;
-		p_core->surface.surface_capabilities.currentTransform,		//preTransform;
-		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,							//compositeAlpha;
-		VK_PRESENT_MODE_FIFO_KHR,									//presentMode;
-		1,															//clipped;
-		0,															//oldSwapchain;
+		p_core->surface.surface_capabilities.currentExtent.height},				//imageExtent;
+		1,																		//imageArrayLayers;
+		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,									//imageUsage;
+		VK_SHARING_MODE_EXCLUSIVE,												//imageSharingMode;
+		0,																		//queueFamilyIndexCount;
+		NULL,																	//pQueueFamilyIndices;
+		p_core->surface.surface_capabilities.currentTransform,					//preTransform;
+		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,										//compositeAlpha;
+		VK_PRESENT_MODE_FIFO_KHR,												//presentMode;
+		1,																		//clipped;
+		0,																		//oldSwapchain;
 	};
 
 	{

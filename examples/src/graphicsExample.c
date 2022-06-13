@@ -70,9 +70,11 @@ int main(void) {
 		const char* instance_extensions[2] = SH_VK_SURFACE_INSTANCE_EXTENSIONS;
 		shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, 2, instance_extensions);
 #ifdef _WIN32
-		shCreateWindowSurface(&core, NULL, (void*)glfwGetWin32Window(window));
+		HWND win32_window = glfwGetWin32Window(window);
+		shCreateWindowSurface(&core, NULL, (void*)&win32_window);
 #elif defined __linux__
-		shCreateWindowSurface(&core, (void*)XOpenDisplay(NULL), (void*)glfwGetX11Window(window));
+		Window xlib_window = glfwGetX11Window(window);
+		shCreateWindowSurface(&core, (void*)XOpenDisplay(NULL), &xlib_window);
 		//printf("Window surface: %p", &core.surface.surface);
 #endif//_WIN32
 		core.surface.width = width;

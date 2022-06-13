@@ -91,7 +91,7 @@ typedef struct ShVkCore {
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
-extern void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* window_handle);
+extern void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* p_window_handle);
 
 extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
