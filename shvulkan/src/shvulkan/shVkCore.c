@@ -62,7 +62,6 @@ void shCreateWindowSurface(ShVkCore* p_core, void* window_handle) {
 	vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface);
 #elif defined __linux__
 #define VK_USE_PLATFORM_XLIB_KHR
-#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xcb_surface" }//not always true, but in most cases
 
 #endif//_WIN32
 }
