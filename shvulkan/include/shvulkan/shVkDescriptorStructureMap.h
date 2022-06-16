@@ -13,14 +13,9 @@ extern "C" {
 #include <stdlib.h>
 
 
-static uint32_t shGetDescriptorSize(ShVkCore* p_core, uint32_t _size) {
-	if (_size < (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment) {
-		return (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment;
-	}
-	else {
-		uint32_t size = _size % (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment;
-		return (size == 0) ? _size : ((uint32_t)(_size) + (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment - size);
-	}
+static uint32_t shGetDescriptorSize(ShVkCore* p_core, uint32_t size) {
+	return (size % (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment == 0) ? size :
+		size + (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment - (size % (uint32_t)p_core->physical_device_properties.limits.minUniformBufferOffsetAlignment);
 }
 
 #define SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(STRUCT)\
@@ -31,13 +26,8 @@ typedef struct STRUCT##DescriptorStructureMap {\
 	void*		p_##STRUCT##_map;\
 } STRUCT##DescriptorStructureMap;\
 static uint32_t shVkGet ## STRUCT ## DescriptorStructureSize(const VkPhysicalDeviceProperties physical_device_properties) {\
-	if ((uint32_t)(sizeof(STRUCT)) < (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment) {\
-		return (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
-	}\
-	else {\
-		uint32_t size = (uint32_t)sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment;\
-		return (size == 0) ? (uint32_t)sizeof(STRUCT) : ((uint32_t)(sizeof(STRUCT)) + (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment - size);\
-	}\
+	return ((uint32_t)sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment == 0) ? (uint32_t)sizeof(STRUCT) :\
+		((uint32_t)sizeof(STRUCT) + (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment) - ((uint32_t)sizeof(STRUCT) % (uint32_t)physical_device_properties.limits.minUniformBufferOffsetAlignment);\
 }\
 static STRUCT##DescriptorStructureMap shVkCreate ## STRUCT ## DescriptorStructures(const VkPhysicalDeviceProperties physical_device_properties, const uint32_t structure_count) {\
 	STRUCT##DescriptorStructureMap map = { structure_count };\
