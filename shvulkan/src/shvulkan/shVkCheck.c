@@ -10,17 +10,17 @@ extern "C" {
 #include <string.h>
 
 uint8_t shCheckValidationLayers(const char* validation_layer) {
-	shVkAssert(validation_layer != NULL, "invalid validation layer ");
+	shVkError(validation_layer == NULL, "invalid validation layer");
 	uint32_t available_layer_count = 0;
 	vkEnumerateInstanceLayerProperties(&available_layer_count, NULL);
 
     if (available_layer_count != 0) {
         VkLayerProperties* p_available_layer_properties = (VkLayerProperties*)calloc(available_layer_count, sizeof(VkLayerProperties));
-        shVkAssert(p_available_layer_properties != NULL, "shCheckValidationLayers: invalid available layer properties memory block");
+        shVkError(p_available_layer_properties == NULL, "shCheckValidationLayers: invalid available layer properties memory block");
         vkEnumerateInstanceLayerProperties(&available_layer_count, p_available_layer_properties);
 
         if (p_available_layer_properties != NULL) {
-            //puts("Installed validation layers: ");
+            //puts("Installed validation layers:");
             for (uint32_t i = 0; i < available_layer_count; i++) {
                 //puts(p_available_layer_properties[i].layerName);
                 if (strcmp(p_available_layer_properties[i].layerName, validation_layer) == 0) {

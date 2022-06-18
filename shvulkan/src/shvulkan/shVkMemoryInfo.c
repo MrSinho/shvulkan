@@ -8,12 +8,10 @@ extern "C" {
 #include <stdlib.h>
 #include <memory.h>
 
-#ifdef _MSC_VER
-#pragma warning (disable: 6001 4700 6387)
-#endif//_MSC_VER
+
 
 void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer) {
-	shVkAssert(p_buffer != NULL, "invalid arguments ");
+	shVkError(p_buffer == NULL, "invalid arguments");
 	VkBufferCreateInfo buffer_create_info = {
 		VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,	//sType;
 		NULL,									//pNext;
@@ -25,14 +23,14 @@ void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFla
 		NULL									//pQueueFamilyIndices;
 	};
 
-	shVkAssertResult(
+	shVkResultError(
 		vkCreateBuffer(device, &buffer_create_info, NULL, p_buffer),
 		"error creating buffer"
 	);
 }
 
 void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory *p_memory) {
-	shVkAssert(p_memory != NULL, "invalid device memory pointer ");
+	shVkError(p_memory == NULL, "invalid device memory pointer");
 	uint32_t memory_type_index = 0;
 	shGetMemoryType(device, physical_device, property_flags, &memory_type_index);
 
@@ -46,14 +44,14 @@ void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_dev
 		memory_type_index						//memoryTypeIndex;
 	};
 
-	shVkAssertResult(
+	shVkResultError(
 		vkAllocateMemory(device, &memory_allocate_info, NULL, p_memory),
 		"error allocating memory"
 	);
 }
 
 void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t* p_memory_type_index) {
-	shVkAssert(p_memory_type_index != NULL, "invalid memory type index pointer");
+	shVkError(p_memory_type_index == NULL, "invalid memory type index pointer");
 	VkPhysicalDeviceMemoryProperties memory_properties;
 	vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
@@ -66,15 +64,15 @@ void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_devi
 		}
 
 	}
-	shVkAssert(VK_ERROR_UNKNOWN, 
+	shVkError(VK_ERROR_UNKNOWN,
 		"cannot find suitable memory type for the given buffer"
 	);
 }
 
 void shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data) {
-	shVkAssert(p_data != NULL, "invalid memory buffer");
+	shVkError(p_data == NULL, "invalid memory buffer");
 	void* data;
-	shVkAssertResult(
+	shVkResultError(
 		vkMapMemory(device, memory, offset, data_size, 0, &data),
 		"error mapping memory"
 	);
@@ -83,9 +81,9 @@ void shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint
 }
 
 void shWriteMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void* p_data) {
-	shVkAssert(p_data != NULL, "invalid memory buffer");
+	shVkError(p_data == NULL, "invalid memory buffer");
 	void* data;
-	shVkAssertResult(
+	shVkResultError(
 		vkMapMemory(device, memory, offset, data_size, 0, &data),
 		"error mapping memory"
 	);
@@ -120,7 +118,7 @@ void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device
 		0,										//queueFamilyIndexCount;
 		NULL									//pQueueFamilyIndices;
 	};
-	shVkAssertResult(vkCreateImage(device, &image_create_info, NULL, p_image),
+	shVkResultError(vkCreateImage(device, &image_create_info, NULL, p_image),
 		"error creating image "
 	);
 
@@ -137,7 +135,7 @@ void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device
 		memory_type_index
 	};
 
-	shVkAssertResult(vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
+	shVkResultError(vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
 		"error allocating image memory "
 	);
 

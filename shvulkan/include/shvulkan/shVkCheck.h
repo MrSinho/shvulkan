@@ -9,22 +9,28 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdio.h>
-#include <assert.h>
 
 extern uint8_t shCheckValidationLayers(const char* validation_layer);
 
 extern const char* shTranslateVkResult(const VkResult vk_result);
 
-#define shVkAssert(condition, error_msg)\
-	assert((int)(condition) &&\
-	"shvulkan error: " &&\
-	(const char*)(error_msg))
+#define shVkError(condition, error_msg)\
+	if ((int)(condition)) {\
+		printf("shvulkan error: %s\n", (const char*)(error_msg));\
+		exit(-1);\
+	}
 
-#define shVkAssertResult(result, error_msg)\
+static uint8_t shVkWarning(int condition, const char* msg) {
+	if (!(int)(condition)) { printf("shvulkan warning: %s\n", msg); return 0; }
+	return 1;
+}
+
+#define shVkResultError(result, error_msg)\
 	if ((VkResult)(result) != VK_SUCCESS) {\
 		printf("shvulkan error: %s, %s\n", error_msg, shTranslateVkResult((VkResult)(result)));\
-		assert((VkResult)(result) == VK_SUCCESS);\
-	}\
+		exit(-1);\
+	}
+
 
 
 #ifdef __cplusplus

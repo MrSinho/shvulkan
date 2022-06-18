@@ -38,10 +38,6 @@ GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char
 
 const char* readBinary(const char* path, uint32_t* p_size);
 
-#ifdef _MSC_VER
-#pragma warning(disable: 6385 6386)
-#endif//_MSC_VER
-
 #ifndef alignas
 #include "../../external/stdalign.in.h"
 #endif//alignas
@@ -61,39 +57,41 @@ typedef struct Light {
 
 int main(void) {
 
-	ShVkCore core = { 0 };
+	ShVkCore* p_core = shAllocateShVkCore();
 	const char* application_name = "shvulkan example";
 	const uint32_t width = 720;
 	const uint32_t height = 480;
 	GLFWwindow* window = createWindow(width, height, application_name);
 	{
-		const char* instance_extensions[2] = SH_VK_SURFACE_INSTANCE_EXTENSIONS;
-		shCreateInstance(&core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, 2, instance_extensions);
-#ifdef _WIN32
-		HWND win32_window = glfwGetWin32Window(window);
-		shCreateWindowSurface(&core, NULL, (void*)&win32_window);
-#elif defined __linux__
-		Window xlib_window = glfwGetX11Window(window);
-		shCreateWindowSurface(&core, (void*)XOpenDisplay(NULL), &xlib_window);
-		//printf("Window surface: %p", &core.surface.surface);
-#endif//_WIN32
-		core.surface.width = width;
-		core.surface.height = height;
-		shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
-		shSetLogicalDevice(&core);
-		shInitSwapchainData(&core);
-		shInitDepthData(&core);
-		shCreateRenderPass(&core);
-		shSetFramebuffers(&core);
-		shCreateGraphicsCommandBuffers(&core, THREAD_COUNT);
-		shSetSyncObjects(&core);
-		shGetGraphicsQueue(&core);
+		uint32_t instance_extension_count = 0;
+		const char** pp_instance_extensions = glfwGetRequiredInstanceExtensions(&instance_extension_count);
+		shCreateInstance(p_core, application_name, "shvulkan engine", VALIDATION_LAYERS_ENABLED, instance_extension_count, pp_instance_extensions);
+//#ifdef _WIN32
+//		HWND win32_window = glfwGetWin32Window(window);
+//		shCreateWindowSurface(p_core, width, height, NULL, (void*)&win32_window);
+//#elif defined __linux__
+//		Window xlib_window = glfwGetX11Window(window);
+//		shCreateWindowSurface(p_core, (void*)XOpenDisplay(NULL), &xlib_window);
+//		//printf("Window surface: %p", &p_core->surface.surface);
+//#endif//WIN32
+		glfwCreateWindowSurface(p_core->instance, window, NULL, &p_core->surface.surface);
+		p_core->surface.width = width;
+		p_core->surface.height = height;
+
+		shSelectPhysicalDevice(p_core, SH_VK_CORE_GRAPHICS);
+		shSetLogicalDevice(p_core);
+		shInitSwapchainData(p_core);
+		shInitDepthData(p_core);
+		shCreateRenderPass(p_core);
+		shSetFramebuffers(p_core);
+		shCreateGraphicsCommandBuffers(p_core, THREAD_COUNT);
+		shSetSyncObjects(p_core);
+		shGetGraphicsQueue(p_core);
 	}
 
 
-
-	VkBuffer triangle_vertex_buffer;
-	VkDeviceMemory triangle_vertex_buffer_memory; 
+	VkBuffer triangle_vertex_buffer = NULL;
+	VkDeviceMemory triangle_vertex_buffer_memory = NULL; 
 	#define TRIANGLE_VERTEX_COUNT 24
 	float triangle[TRIANGLE_VERTEX_COUNT] = {
 			-1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -101,10 +99,10 @@ int main(void) {
 			 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 	};
 	{
-		shCreateVertexBuffer(core.device, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
-		shAllocateVertexBufferMemory(core.device, core.physical_device, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
-		shBindVertexBufferMemory(core.device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
-		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+		shCreateVertexBuffer(p_core->device, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
+		shAllocateVertexBufferMemory(p_core->device, p_core->physical_device, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
+		shBindVertexBufferMemory(p_core->device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
+		shWriteVertexBufferMemory(p_core->device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
 	}
 
 
@@ -124,17 +122,17 @@ int main(void) {
 	VkBuffer quad_vertex_buffer, quad_index_buffer;
 	VkDeviceMemory quad_vertex_buffer_memory, quad_index_buffer_memory;
 	{
-		shCreateVertexBuffer(core.device, QUAD_VERTEX_COUNT * 4, &quad_vertex_buffer);
-		shCreateIndexBuffer(core.device, QUAD_INDEX_COUNT * 4, &quad_index_buffer);
+		shCreateVertexBuffer(p_core->device, QUAD_VERTEX_COUNT * 4, &quad_vertex_buffer);
+		shCreateIndexBuffer(p_core->device, QUAD_INDEX_COUNT * 4, &quad_index_buffer);
 
-		shAllocateVertexBufferMemory(core.device, core.physical_device, quad_vertex_buffer, &quad_vertex_buffer_memory);
-		shAllocateIndexBufferMemory(core.device, core.physical_device, quad_index_buffer, &quad_index_buffer_memory);
+		shAllocateVertexBufferMemory(p_core->device, p_core->physical_device, quad_vertex_buffer, &quad_vertex_buffer_memory);
+		shAllocateIndexBufferMemory(p_core->device, p_core->physical_device, quad_index_buffer, &quad_index_buffer_memory);
 
-		shBindVertexBufferMemory(core.device, quad_vertex_buffer, quad_vertex_buffer_memory);
-		shBindIndexBufferMemory(core.device, quad_index_buffer, quad_index_buffer_memory);
+		shBindVertexBufferMemory(p_core->device, quad_vertex_buffer, quad_vertex_buffer_memory);
+		shBindIndexBufferMemory(p_core->device, quad_index_buffer, quad_index_buffer_memory);
 
-		shWriteVertexBufferMemory(core.device, quad_vertex_buffer_memory, QUAD_VERTEX_COUNT * 4, quad);
-		shWriteIndexBufferMemory(core.device, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
+		shWriteVertexBufferMemory(p_core->device, quad_vertex_buffer_memory, QUAD_VERTEX_COUNT * 4, quad);
+		shWriteIndexBufferMemory(p_core->device, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
 	}
 	
 	float projection[4][4] = {
@@ -167,7 +165,7 @@ int main(void) {
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	ModelDescriptorStructureMap model_map = shVkCreateModelDescriptorStructures(core.physical_device_properties, 2);
+	ModelDescriptorStructureMap model_map = shVkCreateModelDescriptorStructures(p_core->physical_device_properties, 2);
 	for (uint32_t i = 0; i < model_map.structure_count; i++) {
 		Model* p_model = shVkGetModelDescriptorStructure(model_map, i, 0);
 		if (i == 0) {
@@ -184,38 +182,38 @@ int main(void) {
 		{ 0.0f, 0.45f, 0.9f, 1.0f }	 //light color
 	};
 
-	ShVkPipeline pipeline = { 0 };
+	ShVkPipeline* p_pipeline = shAllocateShVkPipeline();
 	ShVkFixedStates fixed_states = { 0 };
 	{
-		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline.push_constant_range);
+		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &p_pipeline->push_constant_range);
 
-		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), &pipeline);
-		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
+		shPipelineCreateDescriptorBuffer(p_core->device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), p_pipeline);
+		shPipelineCreateDynamicDescriptorBuffer(p_core->device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, p_pipeline);
 
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);
+		shPipelineAllocateDescriptorBufferMemory(p_core->device, p_core->physical_device, 0, p_pipeline);
+		shPipelineAllocateDescriptorBufferMemory(p_core->device, p_core->physical_device, 1, p_pipeline);
 
-		shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
-		shPipelineBindDescriptorBufferMemory(core.device, 1, &pipeline);
+		shPipelineBindDescriptorBufferMemory(p_core->device, 0, p_pipeline);
+		shPipelineBindDescriptorBufferMemory(p_core->device, 1, p_pipeline);
 
-		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
-		shPipelineDescriptorSetLayout(core.device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+		shPipelineDescriptorSetLayout(p_core->device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
+		shPipelineDescriptorSetLayout(p_core->device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
 
-		shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
-		shPipelineCreateDescriptorPool(core.device, 1, &pipeline);
+		shPipelineCreateDescriptorPool(p_core->device, 0, p_pipeline);
+		shPipelineCreateDescriptorPool(p_core->device, 1, p_pipeline);
 
-		shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
-		shPipelineAllocateDescriptorSet(core.device, 1, &pipeline);
+		shPipelineAllocateDescriptorSet(p_core->device, 0, p_pipeline);
+		shPipelineAllocateDescriptorSet(p_core->device, 1, p_pipeline);
 
 		uint32_t vertex_shader_size = 0;
 		uint32_t fragment_shader_size = 0;
 		char* vertex_code = (char*)readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
 		char* fragment_code = (char*)readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
-		shPipelineCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline);
-		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
+		shPipelineCreateShaderModule(p_core->device, vertex_shader_size, vertex_code, p_pipeline);
+		shPipelineCreateShaderStage(p_core->device, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
 
-		shPipelineCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline);
-		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+		shPipelineCreateShaderModule(p_core->device, fragment_shader_size, fragment_code, p_pipeline);
+		shPipelineCreateShaderStage(p_core->device, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
 		
 		free(vertex_code);
 		free(fragment_code);
@@ -224,12 +222,12 @@ int main(void) {
 		shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT, 12, 12, &fixed_states);
 		shSetVertexInputAttribute(2, SH_VEC2_SIGNED_FLOAT, 24, 8, &fixed_states);
 
-		shSetFixedStates(core.device, core.surface.width, core.surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
-		shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, &pipeline);
+		shSetFixedStates(p_core->device, p_core->surface.width, p_core->surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
+		shSetupGraphicsPipeline(p_core->device, p_core->render_pass, fixed_states, p_pipeline);
 	}
 
 	uint32_t available_vram, process_used_vram = 0;
-	shGetMemoryBudgetProperties(core.physical_device, &available_vram, &process_used_vram, NULL);
+	shGetMemoryBudgetProperties(p_core->physical_device, &available_vram, &process_used_vram, NULL);
 
 	uint32_t frame_index = 0;
 
@@ -237,54 +235,55 @@ int main(void) {
 		glfwPollEvents();
 
 		for (uint32_t thread_idx = 0; thread_idx < THREAD_COUNT; thread_idx++) {
-			shFrameReset(&core, thread_idx);
+			shFrameReset(p_core, thread_idx);
 
-			shFrameBegin(&core, thread_idx, &frame_index);
+			shFrameBegin(p_core, thread_idx, &frame_index);
 
-			shBindPipeline(core.p_graphics_commands[thread_idx].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+			shBindPipeline(p_core->p_graphics_commands[thread_idx].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 
-			shPipelinePushConstants(core.p_graphics_commands[thread_idx].cmd_buffer, push_constants_data, &pipeline);
+			shPipelinePushConstants(p_core->p_graphics_commands[thread_idx].cmd_buffer, push_constants_data, p_pipeline);
 
-			shPipelineUpdateDescriptorSets(core.device, &pipeline);
+			shPipelineUpdateDescriptorSets(p_core->device, p_pipeline);
 
-			shPipelineWriteDescriptorBufferMemory(core.device, 0, &light, &pipeline);
-			shPipelineBindDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+			shPipelineWriteDescriptorBufferMemory(p_core->device, 0, &light, p_pipeline);
+			shPipelineBindDescriptorSet(p_core->p_graphics_commands[thread_idx].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 			
 			
 			Model* p_model0 = shVkGetModelDescriptorStructure(model_map, 0, 1);
-			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, &pipeline);
-			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+			shPipelineWriteDynamicDescriptorBufferMemory(p_core->device, 1, p_model0->model, p_pipeline);
+			shPipelineBindDynamicDescriptorSet(p_core->p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 			
-			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_vertex_buffer);
-			shBindIndexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_index_buffer);
-			shDrawIndexed(core.p_graphics_commands[thread_idx].cmd_buffer, QUAD_INDEX_COUNT);
+			shBindVertexBuffer(p_core->p_graphics_commands[thread_idx].cmd_buffer, &quad_vertex_buffer);
+			shBindIndexBuffer(p_core->p_graphics_commands[thread_idx].cmd_buffer, &quad_index_buffer);
+			shDrawIndexed(p_core->p_graphics_commands[thread_idx].cmd_buffer, QUAD_INDEX_COUNT);
 			
 			Model* p_model1 = shVkGetModelDescriptorStructure(model_map, 1, 1);
-			shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model1->model, &pipeline);
-			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+			shPipelineWriteDynamicDescriptorBufferMemory(p_core->device, 1, p_model1->model, p_pipeline);
+			shPipelineBindDynamicDescriptorSet(p_core->p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 			
 			triangle[9] = (float)sin(glfwGetTime());
-			shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
-			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &triangle_vertex_buffer);
-			shDraw(core.p_graphics_commands[thread_idx].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
+			shWriteVertexBufferMemory(p_core->device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+			shBindVertexBuffer(p_core->p_graphics_commands[thread_idx].cmd_buffer, &triangle_vertex_buffer);
+			shDraw(p_core->p_graphics_commands[thread_idx].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
-			shEndPipeline(&pipeline);
-			shFrameEnd(&core, thread_idx, frame_index);
+			shEndPipeline(p_pipeline);
+			shFrameEnd(p_core, thread_idx, frame_index);
 		}
 	}
-	
+	glfwTerminate();
+
 	shVkReleaseModelDescriptorStructureMap(&model_map);
 
-	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
-	shPipelineClearDescriptorBufferMemory(core.device, 1, &pipeline);
+	shPipelineClearDescriptorBufferMemory(p_core->device, 0, p_pipeline);
+	shPipelineClearDescriptorBufferMemory(p_core->device, 1, p_pipeline);
 	
-	shPipelineRelease(core.device, &pipeline);
+	shPipelineRelease(p_core->device, &p_pipeline);
 
-	shClearVertexBufferMemory(core.device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
-	shClearVertexBufferMemory(core.device, quad_vertex_buffer, quad_vertex_buffer_memory);
-	shClearIndexBufferMemory(core.device, quad_index_buffer, quad_index_buffer_memory);
+	shClearVertexBufferMemory(p_core->device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
+	shClearVertexBufferMemory(p_core->device, quad_vertex_buffer, quad_vertex_buffer_memory);
+	shClearIndexBufferMemory(p_core->device, quad_index_buffer, quad_index_buffer_memory);
 
-	shVulkanRelease(&core);
+	shVulkanRelease(&p_core);
 
 	return 0;
 }
@@ -292,8 +291,8 @@ int main(void) {
 
 
 GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title) {
-	assert(glfwInit());
-	assert(glfwVulkanSupported() != GLFW_FALSE);
+	shVkError(!glfwInit(), "error initializing glfw");
+	shVkError(glfwVulkanSupported() == GLFW_FALSE, "vulkan not supported by glfw");
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	return glfwCreateWindow(width, height, title, NULL, NULL);

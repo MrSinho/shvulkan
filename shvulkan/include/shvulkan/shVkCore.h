@@ -5,6 +5,7 @@
 extern "C" {
 #endif//__cplusplus
 
+#if 0
 #ifdef _WIN32
 
 #define VK_USE_PLATFORM_WIN32_KHR
@@ -15,9 +16,11 @@ extern "C" {
 #define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xlib_surface" }//not always true, but in most cases
 
 #endif//_WIN32
+#endif//0
 
 #include <vulkan/vulkan.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "shvulkan/shVkVersion.h"
 #include "shvulkan/shVkCheck.h"
@@ -83,7 +86,18 @@ typedef struct ShVkCore {
 	VkSemaphore*						p_render_semaphores;
 } ShVkCore;
 
+static ShVkCore* shAllocateShVkCore() {
+	ShVkCore* p_core = (ShVkCore*)calloc(1, sizeof(ShVkCore));
+	shVkError(p_core == NULL, "invalid core memory");
+	return p_core;
+}
 
+static void shFreeVkCore(ShVkCore** pp_core) {
+	shVkError(pp_core == NULL, "invalid core memory");
+	shVkError(*pp_core == NULL, "invalid core memory");
+	free(*pp_core);
+	*pp_core = NULL;
+}
 
 #define SH_VK_CORE_GRAPHICS VK_QUEUE_GRAPHICS_BIT
 
@@ -91,7 +105,9 @@ typedef struct ShVkCore {
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
-extern void shCreateWindowSurface(ShVkCore* p_core, void* window_process, void* p_window_handle);
+#if 0
+extern void shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, void* window_process, void* p_window_handle);
+#endif//0
 
 extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
@@ -131,7 +147,7 @@ extern void shRenderPassRelease(ShVkCore* p_core);
 
 extern void shInstanceRelease(ShVkCore* p_core);
 
-extern void shVulkanRelease(ShVkCore* p_core);
+extern void shVulkanRelease(ShVkCore** pp_core);
 
 
 

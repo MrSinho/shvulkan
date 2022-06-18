@@ -8,13 +8,11 @@ extern "C" {
 
 #include <stdlib.h>
 
-#ifdef _MSC_VER
-#pragma warning (disable: 6386)
-#endif//_MSC_VER
+
 
 void shDescriptorSetLayout(VkDevice device, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shaderStageFlags, VkDescriptorSetLayoutBinding* p_binding, VkDescriptorSetLayout* p_descriptor_set_layout) {
-	shVkAssert(p_binding != NULL, "invalid binding pointer");
-	shVkAssert(p_descriptor_set_layout != NULL, "invalid descriptor set layout pointer");
+	shVkError(p_binding == NULL, "invalid binding pointer");
+	shVkError(p_descriptor_set_layout == NULL, "invalid descriptor set layout pointer");
 	VkDescriptorSetLayoutBinding descriptor_set_layout_binding = {
 		binding,																					//binding;
 		//p_pipeline->dynamic_uniforms[descriptor_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//descriptorType;
@@ -33,14 +31,14 @@ void shDescriptorSetLayout(VkDevice device, const uint32_t binding, const VkDesc
 		p_binding												//pBindings;
 	};
 	
-	shVkAssertResult(
+	shVkResultError(
 		vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, NULL, p_descriptor_set_layout),
 		"error creating descriptor set layout"
 	);
 }
 
 void shCreateDescriptorPool(VkDevice device, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool) {
-	shVkAssert(p_descriptor_pool != NULL, "invalid descriptor pool pointer");
+	shVkError(p_descriptor_pool == NULL, "invalid descriptor pool pointer");
 	VkDescriptorPoolSize descriptor_pool_size = {
 		descriptor_type,
 		1									//descriptorCount;
@@ -55,17 +53,17 @@ void shCreateDescriptorPool(VkDevice device, const VkDescriptorType descriptor_t
 		&descriptor_pool_size							//pPoolSizes;
 	};
 
-	shVkAssertResult(
+	shVkResultError(
 		vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, NULL, p_descriptor_pool),
 		"error creating descriptor pool"
 	);
 }
 
 void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescriptorType descriptor_type, VkDescriptorSetLayout* p_descriptor_set_layout, VkDescriptorPool descriptor_pool, VkDescriptorSet* p_descriptor_set, VkDescriptorBufferInfo* p_buffer_info, VkWriteDescriptorSet* p_write_descriptor_set) {
-	shVkAssert(p_descriptor_set_layout != NULL, "invalid descriptor set layout pointer");
-	shVkAssert(p_buffer_info != NULL, "invalid descriptor buffer info pointer");
-	shVkAssert(p_descriptor_set != NULL, "invalid descriptor set pointer");
-	shVkAssert(p_write_descriptor_set != NULL, "invalid write descriptor set pointer");
+	shVkError(p_descriptor_set_layout == NULL, "invalid descriptor set layout pointer");
+	shVkError(p_buffer_info == NULL, "invalid descriptor buffer info pointer");
+	shVkError(p_descriptor_set == NULL, "invalid descriptor set pointer");
+	shVkError(p_write_descriptor_set == NULL, "invalid write descriptor set pointer");
 	
 	VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,				//sType;
@@ -74,7 +72,7 @@ void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescript
 		1,															//descriptorSetCount;
 		(VkDescriptorSetLayout*)p_descriptor_set_layout				//pSetLayouts;
 	};
-	shVkAssertResult(
+	shVkResultError(
 		vkAllocateDescriptorSets(device, &descriptor_set_allocate_info, p_descriptor_set),
 		"error allocating descriptor set"
 	);
@@ -95,7 +93,7 @@ void shAllocateDescriptorSet(VkDevice device, const uint32_t binding, VkDescript
 }
 
 void shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, VkPushConstantRange* p_constant_range) {
-	shVkAssert(p_constant_range != NULL, "invalid pipeline pointer ");
+	shVkError(p_constant_range == NULL, "invalid pipeline pointer");
 	p_constant_range->offset		= offset;
 	p_constant_range->size			= size;
 	p_constant_range->stageFlags	= shader_stage_flags;
@@ -122,8 +120,8 @@ void shCreateDescriptorBuffer(VkDevice device, VkBufferUsageFlags usage, const u
 //}
 
 void shCreateShaderModule(const VkDevice device, const uint32_t size, const char* code, VkShaderModule* p_shader_module) {
-	shVkAssert(code != NULL, "invalid shader module code");
-	shVkAssert(p_shader_module != NULL, "invalid shader module pointer");
+	shVkError(code == NULL, "invalid shader module code");
+	shVkError(p_shader_module == NULL, "invalid shader module pointer");
 	VkShaderModuleCreateInfo shaderModuleCreateInfo = {
 		VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,	//sType;
 		NULL,											//pNext;
@@ -132,14 +130,14 @@ void shCreateShaderModule(const VkDevice device, const uint32_t size, const char
 		(const uint32_t*)(code)							//pCode;
 	};
 
-	shVkAssertResult(
+	shVkResultError(
 		vkCreateShaderModule(device, &shaderModuleCreateInfo, NULL, p_shader_module),
 		"error creating shader module"
 	);
 }
 
 void shCreateShaderStage(const VkDevice device, const VkShaderModule shader_module, const VkShaderStageFlags shader_stage_flag, VkPipelineShaderStageCreateInfo* p_shader_stage) {
-	shVkAssert(p_shader_stage != NULL, "invalid shader stage pointer");
+	shVkError(p_shader_stage == NULL, "invalid shader stage pointer");
 	VkPipelineShaderStageCreateInfo shader_stage_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,	//sType;
 		NULL,													//pNext;
@@ -154,7 +152,7 @@ void shCreateShaderStage(const VkDevice device, const VkShaderModule shader_modu
 }
 
 void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states) {
-	shVkAssert(p_fixed_states != NULL, "invalid fixed states pointer ");
+	shVkError(p_fixed_states == NULL, "invalid fixed states pointer");
 	VkVertexInputAttributeDescription vertex_input_attribute = {
 		location,
 		0,
@@ -167,9 +165,9 @@ void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const u
 }
 
 void shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
-	shVkAssert(p_vertex_binding != NULL, "invalid vertex input binding description pointer ");
-	shVkAssert(p_vertex_input_attributes != NULL, "invalid vertex input attribute description pointer ");
-	shVkAssert(p_vertex_input_state != NULL, "invalid vertex input state info pointer ");
+	shVkError(p_vertex_binding == NULL, "invalid vertex input binding description pointer");
+	shVkError(p_vertex_input_attributes == NULL, "invalid vertex input attribute description pointer");
+	shVkError(p_vertex_input_state == NULL, "invalid vertex input state info pointer");
 
 	p_vertex_binding->binding = 0;
 	p_vertex_binding->inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -187,7 +185,7 @@ void shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, ui
 }
 
 void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, const VkBool32 primitive_restart_enable, VkPipelineInputAssemblyStateCreateInfo* p_input_assembly) {
-	shVkAssert(p_input_assembly != NULL, "invalid input assembly state info pointer ");
+	shVkError(p_input_assembly == NULL, "invalid input assembly state info pointer");
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,	//sType;
 		NULL,															//pNext;
@@ -199,7 +197,7 @@ void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, const V
 }
 
 void shCreateRasterizer(VkPipelineRasterizationStateCreateInfo * p_rasterizer) {
-	shVkAssert(p_rasterizer != NULL, "invalid rasterizer pointer ");
+	shVkError(p_rasterizer == NULL, "invalid rasterizer pointer");
 	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,	//sType;
 		NULL,														//pNext;
@@ -220,7 +218,7 @@ void shCreateRasterizer(VkPipelineRasterizationStateCreateInfo * p_rasterizer) {
 }
 
 void shSetMultisampleState(VkPipelineMultisampleStateCreateInfo * p_multisample_state) {
-	shVkAssert(p_multisample_state != NULL, "invalid multisample state info pointer ");
+	shVkError(p_multisample_state == NULL, "invalid multisample state info pointer");
 	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,	//sType;
 		NULL,														//pNext;
@@ -236,8 +234,8 @@ void shSetMultisampleState(VkPipelineMultisampleStateCreateInfo * p_multisample_
 }
 
 void shColorBlendSettings(VkPipelineColorBlendAttachmentState *p_color_blend_attachment, VkPipelineColorBlendStateCreateInfo* p_color_blend_state) {
-	shVkAssert(p_color_blend_attachment != NULL, "invalid color blend attachment state pointer ");
-	shVkAssert(p_color_blend_state != NULL, "invalid color blend attachment state info pointer ");
+	shVkError(p_color_blend_attachment == NULL, "invalid color blend attachment state pointer");
+	shVkError(p_color_blend_state == NULL, "invalid color blend attachment state info pointer");
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {
 		VK_FALSE,							//blendEnable;
 		0.0f,								//srcColorBlendFactor;
@@ -267,9 +265,9 @@ void shColorBlendSettings(VkPipelineColorBlendAttachmentState *p_color_blend_att
 }
 
 void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_viewport, VkRect2D* p_scissors, VkPipelineViewportStateCreateInfo* p_viewport_state) {
-	shVkAssert(p_viewport != NULL, "invalid viewport pointer ");
-	shVkAssert(p_scissors != NULL, "invalid scissors pointer ");
-	shVkAssert(p_viewport_state != NULL, "invalid viewport state pointer ");
+	shVkError(p_viewport == NULL, "invalid viewport pointer");
+	shVkError(p_scissors == NULL, "invalid scissors pointer");
+	shVkError(p_viewport_state == NULL, "invalid viewport state pointer");
 	VkViewport viewport = {
 		0.0f,					//x; 
 		0.0f,					//y;
@@ -299,7 +297,7 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 }
 
 void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShVkFixedStateFlags  flags, ShVkFixedStates* p_fixed_states) {
-	shVkAssert(p_fixed_states != NULL, "invalid fixed states pointer ");
+	shVkError(p_fixed_states == NULL, "invalid fixed states pointer");
 	shSetVertexInputState(&p_fixed_states->vertex_binding_description, p_fixed_states->vertex_input_attribute_description_count, p_fixed_states->vertex_input_attributes, &p_fixed_states->vertex_input_state_info);
 	
 	shCreateInputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE, &p_fixed_states->input_assembly);
@@ -324,7 +322,7 @@ void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint3
 }
 
 void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const ShVkFixedStates fixed_states, ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid graphics pipeline pointer");
+	shVkError(p_pipeline == NULL, "invalid graphics pipeline pointer");
 
 	VkPipelineLayoutCreateInfo mainPipelineLayoutCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,								//sType;
@@ -341,7 +339,7 @@ void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const Sh
 		mainPipelineLayoutCreateInfo.pPushConstantRanges = &p_pipeline->push_constant_range;
 	}
 	
-	shVkAssertResult(
+	shVkResultError(
 		vkCreatePipelineLayout(device, &mainPipelineLayoutCreateInfo, NULL, &p_pipeline->pipeline_layout),
 		"error creating main pipeline layout"
 	);
@@ -383,14 +381,14 @@ void shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass, const Sh
 		0													//basePipelineIndex;
 	};
 
-	shVkAssertResult(
+	shVkResultError(
 		vkCreateGraphicsPipelines(device, 0, 1, &graphicsPipelineCreateInfo, NULL, &p_pipeline->pipeline),
 		"error creating graphics pipeline"
 	);
 }
 
 void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid compute pipeline pointer");
+	shVkError(p_pipeline == NULL, "invalid compute pipeline pointer");
 
 	VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -407,7 +405,7 @@ void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline) {
 		pipeline_layout_create_info.pPushConstantRanges = &p_pipeline->push_constant_range;
 	}
 
-	shVkAssertResult(
+	shVkResultError(
 		vkCreatePipelineLayout(device, &pipeline_layout_create_info, NULL, &p_pipeline->pipeline_layout),
 		"error creating pipeline layout"
 	);
@@ -420,19 +418,21 @@ void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline) {
 		p_pipeline->pipeline_layout,
 	};
 
-	shVkAssertResult(
+	shVkResultError(
 		vkCreateComputePipelines(device, 0, 1, &pipeline_create_info, NULL, &p_pipeline->pipeline),
 		"error creating pipeline layout"
 	);
 }
 
 void shEndPipeline(ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid graphics pipeline pointer ");
-	memset(p_pipeline->dynamic_descriptor_buffer_offsets, 0, 32 * 4);
+	shVkError(p_pipeline == NULL, "invalid graphics pipeline pointer");
+	memset(p_pipeline->dynamic_descriptor_buffer_offsets, 0, sizeof(p_pipeline->dynamic_descriptor_buffer_offsets));
 }
 
-void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid graphics pipeline pointer ");
+void shPipelineRelease(VkDevice device, ShVkPipeline** pp_pipeline) {
+	shVkError(pp_pipeline == NULL, "invalid pipeline memory");
+	ShVkPipeline* p_pipeline = *pp_pipeline;
+	shVkError(pp_pipeline == NULL, "invalid pipeline memory");
 	vkDeviceWaitIdle(device);
 	for (uint32_t i = 0; i < p_pipeline->descriptor_count; i++) {
 		if (p_pipeline->descriptor_sets[i] != NULL) {
@@ -444,17 +444,18 @@ void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
 	vkDestroyPipeline(device, p_pipeline->pipeline, NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[0], NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[1], NULL);
+	shFreeVkPipeline(pp_pipeline);
 }																
 
 
 void shPipelineCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
+	shVkError(p_pipeline == NULL, "invalid pipeline pointer");
 	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
 	p_pipeline->descriptor_count++;
 }
 
 void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline) {
-	shVkAssert(p_pipeline != NULL, "invalid pipeline pointer");
+	shVkError(p_pipeline == NULL, "invalid pipeline pointer");
 	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size * max_bindings, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
 	p_pipeline->descriptor_count++;
 }

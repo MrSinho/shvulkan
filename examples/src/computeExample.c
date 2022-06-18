@@ -19,11 +19,9 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
+
 const char* readBinary(const char* path, uint32_t* p_size);
 
-#ifdef _MSC_VER
-#pragma warning(disable: 6385 6386)
-#endif//_MSC_VER
 
 typedef struct ShaderInput {
 	float value;
@@ -34,22 +32,22 @@ SH_VULKAN_GENERATE_DESCRIPTOR_STRUCTURE_MAP(ShaderInput)
 
 int main(void) {
 
-	ShVkCore core = { 0 };
+	ShVkCore* p_core = shAllocateShVkCore();
 	{
-		shCreateInstance(&core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
-		shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
-		shSetLogicalDevice(&core);
-		shGetComputeQueue(&core);
-		shCreateComputeCommandBuffers(&core, 1);
-		shSetSyncObjects(&core);
+		shCreateInstance(p_core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
+		shSelectPhysicalDevice(p_core, SH_VK_CORE_COMPUTE);
+		shSetLogicalDevice(p_core);
+		shGetComputeQueue(p_core);
+		shCreateComputeCommandBuffers(p_core, 1);
+		shSetSyncObjects(p_core);
 	}
 	
 
-	ShVkPipeline pipeline = { 0 };
+	ShVkPipeline* p_pipeline = shAllocateShVkPipeline();
 
 	//Generated with macro definition
 	ShaderInputDescriptorStructureMap inputs = shVkCreateShaderInputDescriptorStructures(
-		core.physical_device_properties, 
+		p_core->physical_device_properties, 
 		16
 	);
 	{
@@ -59,45 +57,45 @@ int main(void) {
 		}
 		shVkMapShaderInputDecriptorStructures(&inputs);
 
-		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, &pipeline);
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
-		shPipelineBindDescriptorBufferMemory(core.device, 0, &pipeline);
+		shPipelineCreateDescriptorBuffer(p_core->device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, p_pipeline);
+		shPipelineAllocateDescriptorBufferMemory(p_core->device, p_core->physical_device, 0, p_pipeline);
+		shPipelineBindDescriptorBufferMemory(p_core->device, 0, p_pipeline);
 
-		shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
-		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
-		shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
+		shPipelineCreateDescriptorPool(p_core->device, 0, p_pipeline);
+		shPipelineDescriptorSetLayout(p_core->device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline);
+		shPipelineAllocateDescriptorSet(p_core->device, 0, p_pipeline);
 
 		uint32_t shader_size = 0;
 		const char* shader_code = readBinary("../examples/shaders/bin/power.comp.spv", &shader_size);
-		shPipelineCreateShaderModule(core.device, shader_size, shader_code, &pipeline);
-		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_COMPUTE_BIT, &pipeline);
+		shPipelineCreateShaderModule(p_core->device, shader_size, shader_code, p_pipeline);
+		shPipelineCreateShaderStage(p_core->device, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline);
 
-		shSetupComputePipeline(core.device, &pipeline);
+		shSetupComputePipeline(p_core->device, p_pipeline);
 	}
 
 
 	{/*OPERATIONS HERE*/
-		shResetCommandBuffer(core.p_compute_commands[0].cmd_buffer);
-		shResetFence(core.device, &core.p_compute_commands[0].fence);
+		shResetCommandBuffer(p_core->p_compute_commands[0].cmd_buffer);
+		shResetFence(p_core->device, &p_core->p_compute_commands[0].fence);
 
-		shBeginCommandBuffer(core.p_compute_commands[0].cmd_buffer);
+		shBeginCommandBuffer(p_core->p_compute_commands[0].cmd_buffer);
 
-		shBindPipeline(core.p_compute_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+		shBindPipeline(p_core->p_compute_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, p_pipeline);
 
-		shPipelineUpdateDescriptorSets(core.device, &pipeline);
+		shPipelineUpdateDescriptorSets(p_core->device, p_pipeline);
 
-		shPipelineWriteDescriptorBufferMemory(core.device, 0, inputs.p_ShaderInput_map, &pipeline);
-		shPipelineBindDescriptorSet(core.p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+		shPipelineWriteDescriptorBufferMemory(p_core->device, 0, inputs.p_ShaderInput_map, p_pipeline);
+		shPipelineBindDescriptorSet(p_core->p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, p_pipeline);
 
-		shCmdDispatch(core.p_compute_commands[0].cmd_buffer, 64, 1, 1);
+		shCmdDispatch(p_core->p_compute_commands[0].cmd_buffer, 64, 1, 1);
 
-		shEndCommandBuffer(core.p_compute_commands[0].cmd_buffer);
+		shEndCommandBuffer(p_core->p_compute_commands[0].cmd_buffer);
 
-		shQueueSubmit(&core.p_compute_commands[0].cmd_buffer, core.compute_queue.queue, core.p_compute_commands[0].fence);
+		shQueueSubmit(&p_core->p_compute_commands[0].cmd_buffer, p_core->compute_queue.queue, p_core->p_compute_commands[0].fence);
 
-		shWaitForFence(core.device, &core.p_compute_commands[0].fence);
+		shWaitForFence(p_core->device, &p_core->p_compute_commands[0].fence);
 
-		shReadMemory(core.device, pipeline.descriptor_buffers_memory[0], 0, 64 * sizeof(float), inputs.p_ShaderInput_map);
+		shReadMemory(p_core->device, p_pipeline->descriptor_buffers_memory[0], 0, 64 * sizeof(float), inputs.p_ShaderInput_map);
 		
 		printf("Compute shader output values:\n");
 		for (uint32_t i = 0; i < inputs.structure_count; i++) {
@@ -108,11 +106,11 @@ int main(void) {
 
 	shVkReleaseShaderInputDescriptorStructureMap(&inputs);
 
-	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
+	shPipelineClearDescriptorBufferMemory(p_core->device, 0, p_pipeline);
 
-	shPipelineRelease(core.device, &pipeline);
+	shPipelineRelease(p_core->device, &p_pipeline);
 
-	shVulkanRelease(&core);
+	shVulkanRelease(&p_core);
 
 	return 0;
 }

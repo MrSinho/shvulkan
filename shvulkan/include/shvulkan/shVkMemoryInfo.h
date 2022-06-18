@@ -32,7 +32,7 @@ extern void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physic
 extern void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory* p_memory);
 
 #define shBindMemory(device, vk_buffer, memory)\
-	shVkAssertResult(\
+	shVkResultError(\
 		vkBindBufferMemory(device, vk_buffer, memory, 0),\
 		"error binding buffer memory "\
 	)

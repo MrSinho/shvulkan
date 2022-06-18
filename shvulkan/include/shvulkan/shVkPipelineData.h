@@ -6,6 +6,9 @@ extern "C" {
 #endif//__cplusplus
 
 #include <vulkan/vulkan.h>
+#include <shvulkan/shVkCheck.h>
+
+#include <stdlib.h>
 
 typedef enum ShVkFixedStateFlags  {
 	SH_FIXED_STATES_POLYGON_MODE_WIREFRAME				= 0b000000001,
@@ -65,6 +68,18 @@ typedef struct ShVkPipeline {
 #define SH_DYNAMIC_UNIFORM_BUFFER 1
 
 
+static ShVkPipeline* shAllocateShVkPipeline() {
+	ShVkPipeline* p_pipeline = (ShVkPipeline*)calloc(1, sizeof(ShVkPipeline));
+	shVkError(p_pipeline == NULL, "invalid pipeline memory");
+	return p_pipeline;
+}
+
+static void shFreeVkPipeline(ShVkPipeline** pp_pipeline) {
+	shVkError(pp_pipeline == NULL, "invalid pipeline memory");
+	free(*pp_pipeline);
+	*pp_pipeline = NULL;
+}
+
 
 extern void shCreateRasterizer(VkPipelineRasterizationStateCreateInfo* p_rasterizer);
 
@@ -104,7 +119,7 @@ extern void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline);
 
 extern void shEndPipeline(ShVkPipeline* p_pipeline);
 
-extern void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline);
+extern void shPipelineRelease(VkDevice device, ShVkPipeline** pp_pipeline);
 
 
 
