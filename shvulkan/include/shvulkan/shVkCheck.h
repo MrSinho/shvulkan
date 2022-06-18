@@ -21,8 +21,8 @@ extern const char* shTranslateVkResult(const VkResult vk_result);
 	}
 
 static uint8_t shVkWarning(int condition, const char* msg) {
-	if ((int)(condition)) { printf("shvulkan warning: %s\n", msg); return 0; }
-	return 1;
+	if ((int)(condition)) { printf("shvulkan warning: %s\n", msg); return 1; }
+	return 0;
 }
 
 #define shVkResultError(result, error_msg)\
