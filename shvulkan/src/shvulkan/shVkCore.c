@@ -266,99 +266,71 @@ void shCreateSwapchain(ShVkCore* p_core) {
 
 	p_core->swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
 
-	VkSwapchainCreateInfoKHR swapchain_create_info = { 0 };
-	if (shVkWarning(
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_core->physical_device, p_core->surface.surface, &p_core->surface.surface_capabilities) != VK_SUCCESS, 
+	shVkError(
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_core->physical_device, p_core->surface.surface, &p_core->surface.surface_capabilities) != VK_SUCCESS,
 		"failed accessing surface capabilities"
-		)) {
-		
-		VkSwapchainCreateInfoKHR _swapchain_create_info = {
-			VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,							//sType;
-			NULL,																	//pNext;
-			0,																		//flags;
-			p_core->surface.surface,												//surface;
-			1,																		//minImageCount;
-			p_core->swapchain_image_format,											//imageFormat;
-			VK_COLORSPACE_SRGB_NONLINEAR_KHR,										//imageColorSpace;
-			(VkExtent2D) { p_core->surface.width,
-			p_core->surface.height},												//imageExtent;
-			1,																		//imageArrayLayers;
-			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,									//imageUsage;
-			VK_SHARING_MODE_EXCLUSIVE,												//imageSharingMode;
-			0,																		//queueFamilyIndexCount;
-			NULL,																	//pQueueFamilyIndices;
-			VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,									//preTransform;
-			VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,										//compositeAlpha;
-			VK_PRESENT_MODE_FIFO_KHR,												//presentMode;
-			1,																		//clipped;
-			0,																		//oldSwapchain;
-		};
+	);
 
-		swapchain_create_info = _swapchain_create_info;
+		VkSwapchainCreateInfoKHR swapchain_create_info = {
+		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,							//sType;
+		NULL,																	//pNext;
+		0,																		//flags;
+		p_core->surface.surface,												//surface;
+		p_core->surface.surface_capabilities.minImageCount,						//minImageCount;
+		p_core->swapchain_image_format,											//imageFormat;
+		VK_COLORSPACE_SRGB_NONLINEAR_KHR,										//imageColorSpace;
+		(VkExtent2D) { p_core->surface.surface_capabilities.currentExtent.width,
+		p_core->surface.surface_capabilities.currentExtent.height},				//imageExtent;
+		1,																		//imageArrayLayers;
+		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,									//imageUsage;
+		VK_SHARING_MODE_EXCLUSIVE,												//imageSharingMode;
+		0,																		//queueFamilyIndexCount;
+		NULL,																	//pQueueFamilyIndices;
+		p_core->surface.surface_capabilities.currentTransform,					//preTransform;
+		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,										//compositeAlpha;
+		VK_PRESENT_MODE_FIFO_KHR,												//presentMode;
+		1,																		//clipped;
+		0,																		//oldSwapchain;
+	};
+
+	{
+		uint32_t format_count = 0;
+		shVkResultError(
+			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, NULL),
+			"error getting surface available format count"
+		);
+		VkSurfaceFormatKHR* p_formats = calloc(format_count, sizeof(VkSurfaceFormatKHR));
+		shVkError(p_formats == NULL, "invalid surface formats pointer");
+		shVkResultError(
+			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, p_formats),
+			"error getting surface available formats"
+		);
+		uint8_t format_found = 0;
+		for (uint32_t i = 0; i < format_count; i++) {
+			if (p_formats[i].format == SH_SWAPCHAIN_IMAGE_FORMAT) {
+				format_found++;
+				swapchain_create_info.imageColorSpace = p_formats[i].colorSpace;
+				break;
+			}
+		}
+		if (!format_found) {
+			p_core->swapchain_image_format = p_formats[0].format;
+			swapchain_create_info.imageFormat = p_core->swapchain_image_format;
+			swapchain_create_info.imageColorSpace = p_formats[0].colorSpace;
+		}
 	}
-	else {
-			VkSwapchainCreateInfoKHR _swapchain_create_info = {
-			VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,							//sType;
-			NULL,																	//pNext;
-			0,																		//flags;
-			p_core->surface.surface,												//surface;
-			p_core->surface.surface_capabilities.minImageCount,						//minImageCount;
-			p_core->swapchain_image_format,											//imageFormat;
-			VK_COLORSPACE_SRGB_NONLINEAR_KHR,										//imageColorSpace;
-			(VkExtent2D) { p_core->surface.surface_capabilities.currentExtent.width,
-			p_core->surface.surface_capabilities.currentExtent.height},				//imageExtent;
-			1,																		//imageArrayLayers;
-			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,									//imageUsage;
-			VK_SHARING_MODE_EXCLUSIVE,												//imageSharingMode;
-			0,																		//queueFamilyIndexCount;
-			NULL,																	//pQueueFamilyIndices;
-			p_core->surface.surface_capabilities.currentTransform,					//preTransform;
-			VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,										//compositeAlpha;
-			VK_PRESENT_MODE_FIFO_KHR,												//presentMode;
-			1,																		//clipped;
-			0,																		//oldSwapchain;
-		};
 
-		{
-			uint32_t format_count = 0;
-			shVkResultError(
-				vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, NULL),
-				"error getting surface available format count"
-			);
-			VkSurfaceFormatKHR* p_formats = calloc(format_count, sizeof(VkSurfaceFormatKHR));
-			shVkError(p_formats == NULL, "invalid surface formats pointer");
-			shVkResultError(
-				vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, p_formats),
-				"error getting surface available formats"
-			);
-			uint8_t format_found = 0;
-			for (uint32_t i = 0; i < format_count; i++) {
-				if (p_formats[i].format == SH_SWAPCHAIN_IMAGE_FORMAT) {
-					format_found++;
-					swapchain_create_info.imageColorSpace = p_formats[i].colorSpace;
-					break;
-				}
-			}
-			if (!format_found) {
-				p_core->swapchain_image_format = p_formats[0].format;
-				swapchain_create_info.imageFormat = p_core->swapchain_image_format;
-				swapchain_create_info.imageColorSpace = p_formats[0].colorSpace;
-			}
-		}
-
-		VkCompositeAlphaFlagBitsKHR composite_alpha_flags[4] = {
-		    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-		    VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
-		    VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
-		    VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
-		};
-		for (uint32_t i = 0; i < 4; i++) {
-		    if (p_core->surface.surface_capabilities.supportedCompositeAlpha & composite_alpha_flags[i]) {
-				swapchain_create_info.compositeAlpha = composite_alpha_flags[i];
-		        break;
-		    }
-		}
-		swapchain_create_info = _swapchain_create_info;
+	VkCompositeAlphaFlagBitsKHR composite_alpha_flags[4] = {
+	    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+	    VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
+	    VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
+	    VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+	};
+	for (uint32_t i = 0; i < 4; i++) {
+	    if (p_core->surface.surface_capabilities.supportedCompositeAlpha & composite_alpha_flags[i]) {
+			swapchain_create_info.compositeAlpha = composite_alpha_flags[i];
+	        break;
+	    }
 	}
 
 	shVkResultError(
@@ -698,10 +670,8 @@ void shInstanceRelease(ShVkCore* p_core) {
 	vkDestroyInstance(p_core->instance, NULL);
 }
 
-void shVulkanRelease(ShVkCore** pp_core) {
-	shVkError(pp_core == NULL, "invalid core memory");
-	ShVkCore* p_core = *pp_core;
-	shVkError(pp_core == NULL, "invalid core memory");
+void shVulkanRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core memory");
 	vkDeviceWaitIdle(p_core->device);
 	if (p_core->swapchain != VK_NULL_HANDLE) { 
 		shSwapchainRelease(p_core); 
@@ -722,7 +692,7 @@ void shVulkanRelease(ShVkCore** pp_core) {
 	if (p_core->instance != VK_NULL_HANDLE) {
 		shInstanceRelease(p_core); 
 	}
-	shFreeVkCore(pp_core);
+	//shFreeVkCore(pp_core);
 }
 
 

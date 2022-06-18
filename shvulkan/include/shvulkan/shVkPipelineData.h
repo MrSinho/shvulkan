@@ -119,7 +119,7 @@ extern void shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline);
 
 extern void shEndPipeline(ShVkPipeline* p_pipeline);
 
-extern void shPipelineRelease(VkDevice device, ShVkPipeline** pp_pipeline);
+extern void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline);
 
 
 

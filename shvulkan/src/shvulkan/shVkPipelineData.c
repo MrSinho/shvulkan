@@ -429,10 +429,8 @@ void shEndPipeline(ShVkPipeline* p_pipeline) {
 	memset(p_pipeline->dynamic_descriptor_buffer_offsets, 0, sizeof(p_pipeline->dynamic_descriptor_buffer_offsets));
 }
 
-void shPipelineRelease(VkDevice device, ShVkPipeline** pp_pipeline) {
-	shVkError(pp_pipeline == NULL, "invalid pipeline memory");
-	ShVkPipeline* p_pipeline = *pp_pipeline;
-	shVkError(pp_pipeline == NULL, "invalid pipeline memory");
+void shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory");
 	vkDeviceWaitIdle(device);
 	for (uint32_t i = 0; i < p_pipeline->descriptor_count; i++) {
 		if (p_pipeline->descriptor_sets[i] != NULL) {
@@ -444,7 +442,7 @@ void shPipelineRelease(VkDevice device, ShVkPipeline** pp_pipeline) {
 	vkDestroyPipeline(device, p_pipeline->pipeline, NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[0], NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[1], NULL);
-	shFreeVkPipeline(pp_pipeline);
+	//shFreeVkPipeline(pp_pipeline);
 }																
 
 

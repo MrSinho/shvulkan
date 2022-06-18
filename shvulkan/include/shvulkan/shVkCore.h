@@ -147,7 +147,7 @@ extern void shRenderPassRelease(ShVkCore* p_core);
 
 extern void shInstanceRelease(ShVkCore* p_core);
 
-extern void shVulkanRelease(ShVkCore** pp_core);
+extern void shVulkanRelease(ShVkCore* p_core);
 
 
 
