@@ -12,14 +12,6 @@ extern "C" {
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#ifdef _WIN32
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <windows.h>
-#elif defined __linux__
-#define GLFW_EXPOSE_NATIVE_X11
-#include <X11/Xlib.h>
-#endif//_WIN32
-#include <GLFW/glfw3native.h>
 
 #include <stdio.h>
 #include <stdlib.h>
