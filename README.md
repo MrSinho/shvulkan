@@ -1,7 +1,7 @@
 
 # shvulkan
 
-## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.ShCI)
+## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.shci)
 
 [![linux_badge](.shci/linux-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/linux-log.md)
 [![windows_badge](.shci/windows-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/windows-log.md)
