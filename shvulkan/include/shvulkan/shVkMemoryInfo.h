@@ -55,11 +55,11 @@ extern void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, 
 #define shAllocateVertexBufferMemory(device, physical_device, vertex_buffer, p_vertex_buffer_memory)\
 	shAllocateMemory(device, physical_device, vertex_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_vertex_buffer_memory)
 
-#define shBindVertexBufferMemory(device, vertex_buffer, vertex_buffer_memory)\
-	shBindMemory(device, vertex_buffer, 0, vertex_buffer_memory)
+#define shBindVertexBufferMemory(device, vertex_buffer, offset, vertex_buffer_memory)\
+	shBindMemory(device, vertex_buffer, offset, vertex_buffer_memory)
 
-#define shWriteVertexBufferMemory(device, vertex_buffer_memory, size, p_vertices)\
-	shWriteMemory(device, vertex_buffer_memory, 0, size, (void*)p_vertices)
+#define shWriteVertexBufferMemory(device, vertex_buffer_memory, offset, size, p_vertices)\
+	shWriteMemory(device, vertex_buffer_memory, offset, size, (void*)p_vertices)
 
 static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_vertex_buffer) {
 	const VkDeviceSize offset = 0;
@@ -72,14 +72,14 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 #define shAllocateIndexBufferMemory(device, physical_device, index_buffer, p_index_buffer_memory)\
 	shAllocateMemory(device, physical_device, index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_index_buffer_memory)
 
-#define shBindIndexBufferMemory(device, index_buffer, index_buffer_memory)\
-	shBindMemory(device, index_buffer, 0, index_buffer_memory)
+#define shBindIndexBufferMemory(device, index_buffer, offset, index_buffer_memory)\
+	shBindMemory(device, index_buffer, offset, index_buffer_memory)
 
-#define shWriteIndexBufferMemory(device, index_buffer_memory, size, p_indices)\
-	shWriteMemory(device, index_buffer_memory, 0, size, (void*)p_indices)
+#define shWriteIndexBufferMemory(device, index_buffer_memory, offset, size, p_indices)\
+	shWriteMemory(device, index_buffer_memory, offset, size, (void*)p_indices)
 
-#define shBindIndexBuffer(graphics_cmd_buffer, p_index_buffer)\
-	vkCmdBindIndexBuffer(graphics_cmd_buffer, *p_index_buffer, 0, VK_INDEX_TYPE_UINT32)
+#define shBindIndexBuffer(graphics_cmd_buffer, offset, p_index_buffer)\
+	vkCmdBindIndexBuffer(graphics_cmd_buffer, *p_index_buffer, offset, VK_INDEX_TYPE_UINT32)
 
 #define shClearVertexBufferMemory(device, vertex_buffer, vertex_buffer_memory)\
 	shClearBufferMemory(device, vertex_buffer, vertex_buffer_memory)
@@ -90,8 +90,8 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 #define shPipelineAllocateDescriptorBufferMemory(device, physical_device, descriptor_idx, p_pipeline)\
 	shAllocateMemory(device, physical_device, (p_pipeline)->descriptor_buffers[descriptor_idx], VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &(p_pipeline)->descriptor_buffers_memory[descriptor_idx])
 
-#define shPipelineBindDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
-	shBindMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], 0, (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
+#define shPipelineBindDescriptorBufferMemory(device, descriptor_idx, offset, p_pipeline)\
+	shBindMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], offset, (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
 
 #define shPipelineClearDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
 	shClearBufferMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
