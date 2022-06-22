@@ -34,7 +34,7 @@ extern void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physi
 #define shBindMemory(device, vk_buffer, offset, memory)\
 	shVkResultError(\
 		vkBindBufferMemory(device, vk_buffer, memory, offset),\
-		"error binding buffer memory "\
+		"error binding buffer memory", return\
 	)
 
 extern void shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data);

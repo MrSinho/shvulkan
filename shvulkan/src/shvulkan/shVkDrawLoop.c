@@ -18,7 +18,7 @@ void shFrameReset(ShVkCore* p_core, const uint32_t thread_idx) {
 }
 
 void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapchain_image_idx) {
-	shVkError(p_swapchain_image_idx == NULL, "invalid pointer to swapchain image index");
+	shVkError(p_swapchain_image_idx == NULL, "invalid pointer to swapchain image index", return);
 	vkAcquireNextImageKHR(p_core->device, p_core->swapchain, UINT64_MAX, p_core->p_render_semaphores[thread_idx], 0, p_swapchain_image_idx);
 
 	VkCommandBufferBeginInfo cmdBufferBeginInfo = {

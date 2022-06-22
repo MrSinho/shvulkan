@@ -88,13 +88,13 @@ typedef struct ShVkCore {
 
 static ShVkCore* shAllocateShVkCore() {
 	ShVkCore* p_core = (ShVkCore*)calloc(1, sizeof(ShVkCore));
-	shVkError(p_core == NULL, "invalid core memory");
+	shVkError(p_core == NULL, "invalid core memory", return NULL);
 	return p_core;
 }
 
 static void shFreeVkCore(ShVkCore** pp_core) {
-	shVkError(pp_core == NULL, "invalid core memory");
-	shVkError(*pp_core == NULL, "invalid core memory");
+	shVkError(pp_core == NULL, "invalid core memory", return);
+	shVkError(*pp_core == NULL, "invalid core memory", return);
 	free(*pp_core);
 	*pp_core = NULL;
 }

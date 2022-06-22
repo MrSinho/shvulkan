@@ -14,10 +14,10 @@ extern uint8_t shCheckValidationLayers(const char* validation_layer);
 
 extern const char* shTranslateVkResult(const VkResult vk_result);
 
-#define shVkError(condition, error_msg)\
+#define shVkError(condition, error_msg, failure_expression)\
 	if ((int)(condition)) {\
 		printf("shvulkan error: %s\n", (const char*)(error_msg));\
-		exit(-1);\
+		failure_expression;\
 	}
 
 static uint8_t shVkWarning(int condition, const char* msg) {
@@ -25,7 +25,7 @@ static uint8_t shVkWarning(int condition, const char* msg) {
 	return 0;
 }
 
-#define shVkResultError(result, error_msg)\
+#define shVkResultError(result, error_msg, failure_expression)\
 	if ((VkResult)(result) != VK_SUCCESS) {\
 		printf("shvulkan error: %s, %s\n", error_msg, shTranslateVkResult((VkResult)(result)));\
 		exit(-1);\

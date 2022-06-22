@@ -70,12 +70,12 @@ typedef struct ShVkPipeline {
 
 static ShVkPipeline* shAllocateShVkPipeline() {
 	ShVkPipeline* p_pipeline = (ShVkPipeline*)calloc(1, sizeof(ShVkPipeline));
-	shVkError(p_pipeline == NULL, "invalid pipeline memory");
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return NULL);
 	return p_pipeline;
 }
 
 static void shFreeVkPipeline(ShVkPipeline** pp_pipeline) {
-	shVkError(pp_pipeline == NULL, "invalid pipeline memory");
+	shVkError(pp_pipeline == NULL, "invalid pipeline memory", return);
 	free(*pp_pipeline);
 	*pp_pipeline = NULL;
 }
