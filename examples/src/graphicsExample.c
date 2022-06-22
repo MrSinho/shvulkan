@@ -93,8 +93,8 @@ int main(void) {
 	{
 		shCreateVertexBuffer(core.device, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
 		shAllocateVertexBufferMemory(core.device, core.physical_device, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
-		shBindVertexBufferMemory(core.device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
-		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+		shBindVertexBufferMemory(core.device, triangle_vertex_buffer, 0, triangle_vertex_buffer_memory);
+		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, TRIANGLE_VERTEX_COUNT * 4, triangle);
 	}
 
 
@@ -120,11 +120,11 @@ int main(void) {
 		shAllocateVertexBufferMemory(core.device, core.physical_device, quad_vertex_buffer, &quad_vertex_buffer_memory);
 		shAllocateIndexBufferMemory(core.device, core.physical_device, quad_index_buffer, &quad_index_buffer_memory);
 
-		shBindVertexBufferMemory(core.device, quad_vertex_buffer, quad_vertex_buffer_memory);
-		shBindIndexBufferMemory(core.device, quad_index_buffer, quad_index_buffer_memory);
+		shBindVertexBufferMemory(core.device, quad_vertex_buffer, 0, quad_vertex_buffer_memory);
+		shBindIndexBufferMemory(core.device, quad_index_buffer, 0, quad_index_buffer_memory);
 
-		shWriteVertexBufferMemory(core.device, quad_vertex_buffer_memory, QUAD_VERTEX_COUNT * 4, quad);
-		shWriteIndexBufferMemory(core.device, quad_index_buffer_memory, QUAD_INDEX_COUNT * 4, indices);
+		shWriteVertexBufferMemory(core.device, quad_vertex_buffer_memory, 0, QUAD_VERTEX_COUNT * 4, quad);
+		shWriteIndexBufferMemory(core.device, quad_index_buffer_memory, 0, QUAD_INDEX_COUNT * 4, indices);
 	}
 	
 	float projection[4][4] = {
@@ -185,8 +185,8 @@ int main(void) {
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, p_pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, p_pipeline);
 
-		shPipelineBindDescriptorBufferMemory(core.device, 0, p_pipeline);
-		shPipelineBindDescriptorBufferMemory(core.device, 1, p_pipeline);
+		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, p_pipeline);
+		shPipelineBindDescriptorBufferMemory(core.device, 1, 0, p_pipeline);
 
 		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
 		shPipelineDescriptorSetLayout(core.device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
@@ -246,7 +246,7 @@ int main(void) {
 			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 			
 			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_vertex_buffer);
-			shBindIndexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &quad_index_buffer);
+			shBindIndexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, 0, &quad_index_buffer);
 			shDrawIndexed(core.p_graphics_commands[thread_idx].cmd_buffer, QUAD_INDEX_COUNT);
 			
 			Model* p_model1 = shVkGetModelDescriptorStructure(model_map, 1, 1);
@@ -254,7 +254,7 @@ int main(void) {
 			shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[thread_idx].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 			
 			triangle[9] = (float)sin(glfwGetTime());
-			shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, TRIANGLE_VERTEX_COUNT * 4, triangle);
+			shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, TRIANGLE_VERTEX_COUNT * 4, triangle);
 			shBindVertexBuffer(core.p_graphics_commands[thread_idx].cmd_buffer, &triangle_vertex_buffer);
 			shDraw(core.p_graphics_commands[thread_idx].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
