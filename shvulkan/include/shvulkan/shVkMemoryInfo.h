@@ -31,9 +31,9 @@ extern void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physic
 
 extern void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory* p_memory);
 
-#define shBindMemory(device, vk_buffer, memory)\
+#define shBindMemory(device, vk_buffer, offset, memory)\
 	shVkResultError(\
-		vkBindBufferMemory(device, vk_buffer, memory, 0),\
+		vkBindBufferMemory(device, vk_buffer, memory, offset),\
 		"error binding buffer memory "\
 	)
 
@@ -56,7 +56,7 @@ extern void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, 
 	shAllocateMemory(device, physical_device, vertex_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_vertex_buffer_memory)
 
 #define shBindVertexBufferMemory(device, vertex_buffer, vertex_buffer_memory)\
-	shBindMemory(device, vertex_buffer, vertex_buffer_memory)
+	shBindMemory(device, vertex_buffer, 0, vertex_buffer_memory)
 
 #define shWriteVertexBufferMemory(device, vertex_buffer_memory, size, p_vertices)\
 	shWriteMemory(device, vertex_buffer_memory, 0, size, (void*)p_vertices)
@@ -73,7 +73,7 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 	shAllocateMemory(device, physical_device, index_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_index_buffer_memory)
 
 #define shBindIndexBufferMemory(device, index_buffer, index_buffer_memory)\
-	shBindMemory(device, index_buffer, index_buffer_memory)
+	shBindMemory(device, index_buffer, 0, index_buffer_memory)
 
 #define shWriteIndexBufferMemory(device, index_buffer_memory, size, p_indices)\
 	shWriteMemory(device, index_buffer_memory, 0, size, (void*)p_indices)
@@ -91,7 +91,7 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 	shAllocateMemory(device, physical_device, (p_pipeline)->descriptor_buffers[descriptor_idx], VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &(p_pipeline)->descriptor_buffers_memory[descriptor_idx])
 
 #define shPipelineBindDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
-	shBindMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
+	shBindMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], 0, (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
 
 #define shPipelineClearDescriptorBufferMemory(device, descriptor_idx, p_pipeline)\
 	shClearBufferMemory(device, (p_pipeline)->descriptor_buffers[descriptor_idx], (p_pipeline)->descriptor_buffers_memory[descriptor_idx])
