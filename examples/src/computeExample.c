@@ -59,7 +59,7 @@ int main(void) {
 
 		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, p_pipeline);
 		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, p_pipeline);
-		shPipelineBindDescriptorBufferMemory(core.device, 0, p_pipeline);
+		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, p_pipeline);
 
 		shPipelineCreateDescriptorPool(core.device, 0, p_pipeline);
 		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline);
