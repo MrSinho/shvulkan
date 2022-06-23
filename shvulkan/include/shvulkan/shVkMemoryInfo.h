@@ -66,6 +66,11 @@ static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_
 	vkCmdBindVertexBuffers(graphics_cmd_buffer, 0, 1, p_vertex_buffer, &offset);
 }
 
+static void shBindVertexBuffers(VkCommandBuffer graphics_cmd_buffer, const uint32_t first_buff, const uint32_t buff_count, VkBuffer* p_vertex_buffer) {
+	const VkDeviceSize offset = 0;
+	vkCmdBindVertexBuffers(graphics_cmd_buffer, first_buff, buff_count, p_vertex_buffer, &offset);
+}
+
 #define shCreateIndexBuffer(device, size, p_index_buffer)\
 	shCreateBuffer(device, size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, p_index_buffer)
 
