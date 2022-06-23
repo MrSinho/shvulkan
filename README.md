@@ -8,7 +8,7 @@
 
 # [Online documentation](https://mrsinho.github.io/docs/shvulkan/index)
 
-`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t invasive like a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with efficient graphics without writing thousands of lines of code.
+`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t as invasive as a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with efficient graphics without writing thousands of lines of code.
 
 # [Library walkthrough](https://mrsinho.github.io/docs/shvulkan/library-walkthrough)
 
