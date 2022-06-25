@@ -61,16 +61,13 @@ extern void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, 
 #define shWriteVertexBufferMemory(device, vertex_buffer_memory, offset, size, p_vertices)\
 	shWriteMemory(device, vertex_buffer_memory, offset, size, (void*)p_vertices)
 
-static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, VkBuffer* p_vertex_buffer) {
+static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t binding, VkBuffer* p_vertex_buffer) {
 	const VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(graphics_cmd_buffer, 0, 1, p_vertex_buffer, &offset);
+	vkCmdBindVertexBuffers(graphics_cmd_buffer, binding, 1, p_vertex_buffer, &offset);
 }
 
-static void shBindVertexBuffers(VkCommandBuffer graphics_cmd_buffer, const uint32_t first_buff, const uint32_t buff_count, VkBuffer* p_vertex_buffer) {
-	VkDeviceSize offsets[512];
-	memset(offsets, 0, sizeof(offsets));
-	vkCmdBindVertexBuffers(graphics_cmd_buffer, first_buff, buff_count, p_vertex_buffer, offsets);
-}
+#define shBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffers, p_offsets)\
+	vkCmdBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffer, p_offsets)
 
 #define shCreateIndexBuffer(device, size, p_index_buffer)\
 	shCreateBuffer(device, size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, p_index_buffer)

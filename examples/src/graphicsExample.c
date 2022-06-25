@@ -214,7 +214,7 @@ int main(void) {
 		shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT, 12, 12, &fixed_states);
 		shSetVertexInputAttribute(2, SH_VEC2_SIGNED_FLOAT, 24, 8, &fixed_states);
 
-		shFixedStatesSetVertexInputState(VK_VERTEX_INPUT_RATE_VERTEX, &fixed_states);
+		shFixedStatesSetVertexInputState(VK_VERTEX_INPUT_RATE_VERTEX, 0, &fixed_states);
 
 		shSetFixedStates(core.device, core.surface.width, core.surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
 		shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, p_pipeline);
@@ -246,7 +246,7 @@ int main(void) {
 		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, p_pipeline);
 		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 		
-		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, &quad_vertex_buffer);
+		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &quad_vertex_buffer);
 		shBindIndexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &quad_index_buffer);
 		shDrawIndexed(core.p_graphics_commands[0].cmd_buffer, QUAD_INDEX_COUNT);
 		
@@ -256,7 +256,7 @@ int main(void) {
 		
 		triangle[9] = (float)sin(glfwGetTime());
 		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, TRIANGLE_VERTEX_COUNT * 4, triangle);
-		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, &triangle_vertex_buffer);
+		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &triangle_vertex_buffer);
 		shDraw(core.p_graphics_commands[0].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
 		shEndPipeline(p_pipeline);

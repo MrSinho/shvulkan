@@ -164,12 +164,12 @@ void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const u
 	p_fixed_states->vertex_input_attribute_description_count++;
 }
 
-void shSetVertexInputState(const VkVertexInputRate input_rate, VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
+void shSetVertexInputState(const VkVertexInputRate input_rate, const uint32_t binding, VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
 	shVkError(p_vertex_binding == NULL, "invalid vertex input binding description pointer", return);
 	shVkError(p_vertex_input_attributes == NULL, "invalid vertex input attribute description pointer", return);
 	shVkError(p_vertex_input_state == NULL, "invalid vertex input state info pointer", return);
 
-	p_vertex_binding->binding = 0;
+	p_vertex_binding->binding = binding;
 	p_vertex_binding->inputRate = input_rate;
 
 	VkPipelineVertexInputStateCreateInfo vertexInput = {
