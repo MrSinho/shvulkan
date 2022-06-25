@@ -214,7 +214,8 @@ int main(void) {
 		shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT, 12, 12, &fixed_states);
 		shSetVertexInputAttribute(2, SH_VEC2_SIGNED_FLOAT, 24, 8, &fixed_states);
 
-		shFixedStatesSetVertexInputState(VK_VERTEX_INPUT_RATE_VERTEX, 0, &fixed_states);
+		shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_VERTEX, 0, &fixed_states);
+		shFixedStatesSetVertexInputState(&fixed_states);
 
 		shSetFixedStates(core.device, core.surface.width, core.surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
 		shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, p_pipeline);
