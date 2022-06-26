@@ -174,38 +174,38 @@ int main(void) {
 		{ 0.0f, 0.45f, 0.9f, 1.0f }	 //light color
 	};
 
-	ShVkPipeline* p_pipeline = shAllocateShVkPipeline();
+	ShVkPipeline pipeline = { 0 };
 	ShVkFixedStates fixed_states = { 0 };
 	{
-		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &p_pipeline->push_constant_range);
+		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline.push_constant_range);
 
-		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), p_pipeline);
-		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, p_pipeline);
+		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), &pipeline);
+		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
 
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, p_pipeline);
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, p_pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);
 
-		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, p_pipeline);
-		shPipelineBindDescriptorBufferMemory(core.device, 1, 0, p_pipeline);
+		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, &pipeline);
+		shPipelineBindDescriptorBufferMemory(core.device, 1, 0, &pipeline);
 
-		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
-		shPipelineDescriptorSetLayout(core.device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
+		shPipelineDescriptorSetLayout(core.device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
+		shPipelineDescriptorSetLayout(core.device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
 
-		shPipelineCreateDescriptorPool(core.device, 0, p_pipeline);
-		shPipelineCreateDescriptorPool(core.device, 1, p_pipeline);
+		shPipelineCreateDescriptorPool(core.device, 0, &pipeline);
+		shPipelineCreateDescriptorPool(core.device, 1, &pipeline);
 
-		shPipelineAllocateDescriptorSet(core.device, 0, p_pipeline);
-		shPipelineAllocateDescriptorSet(core.device, 1, p_pipeline);
+		shPipelineAllocateDescriptorSet(core.device, 0, &pipeline);
+		shPipelineAllocateDescriptorSet(core.device, 1, &pipeline);
 
 		uint32_t vertex_shader_size = 0;
 		uint32_t fragment_shader_size = 0;
 		char* vertex_code = (char*)readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
 		char* fragment_code = (char*)readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
-		shPipelineCreateShaderModule(core.device, vertex_shader_size, vertex_code, p_pipeline);
-		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
+		shPipelineCreateShaderModule(core.device, vertex_shader_size, vertex_code, &pipeline);
+		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_VERTEX_BIT, &pipeline);
 
-		shPipelineCreateShaderModule(core.device, fragment_shader_size, fragment_code, p_pipeline);
-		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
+		shPipelineCreateShaderModule(core.device, fragment_shader_size, fragment_code, &pipeline);
+		shPipelineCreateShaderStage(core.device, VK_SHADER_STAGE_FRAGMENT_BIT, &pipeline);
 		
 		free(vertex_code);
 		free(fragment_code);
@@ -217,8 +217,8 @@ int main(void) {
 		shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_VERTEX, 0, &fixed_states);
 		shFixedStatesSetVertexInputState(&fixed_states);
 
-		shSetFixedStates(core.device, core.surface.width, core.surface.height, SH_FIXED_STATES_POLYGON_MODE_FACE | SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, &fixed_states);
-		shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, p_pipeline);
+		shSetFixedStates(core.device, core.surface.width, core.surface.height, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_POLYGON_MODE_FILL, &fixed_states);
+		shSetupGraphicsPipeline(core.device, core.render_pass, fixed_states, &pipeline);
 	}
 
 	uint32_t available_vram, process_used_vram = 0;
@@ -233,44 +233,44 @@ int main(void) {
 
 		shFrameBegin(&core, 0, &frame_index);
 
-		shBindPipeline(core.p_graphics_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
+		shBindPipeline(core.p_graphics_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
-		shPipelinePushConstants(core.p_graphics_commands[0].cmd_buffer, push_constants_data, p_pipeline);
+		shPipelinePushConstants(core.p_graphics_commands[0].cmd_buffer, push_constants_data, &pipeline);
 
-		shPipelineUpdateDescriptorSets(core.device, p_pipeline);
+		shPipelineUpdateDescriptorSets(core.device, &pipeline);
 
-		shPipelineWriteDescriptorBufferMemory(core.device, 0, &light, p_pipeline);
-		shPipelineBindDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
+		shPipelineWriteDescriptorBufferMemory(core.device, 0, &light, &pipeline);
+		shPipelineBindDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
 		
 		Model* p_model0 = shVkGetModelDescriptorStructure(model_map, 0, 1);
-		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, p_pipeline);
-		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
+		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, &pipeline);
+		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
 		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &quad_vertex_buffer);
 		shBindIndexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &quad_index_buffer);
 		shDrawIndexed(core.p_graphics_commands[0].cmd_buffer, QUAD_INDEX_COUNT);
 		
 		Model* p_model1 = shVkGetModelDescriptorStructure(model_map, 1, 1);
-		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model1->model, p_pipeline);
-		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
+		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model1->model, &pipeline);
+		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
 		triangle[9] = (float)sin(glfwGetTime());
 		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, TRIANGLE_VERTEX_COUNT * 4, triangle);
 		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &triangle_vertex_buffer);
 		shDraw(core.p_graphics_commands[0].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
-		shEndPipeline(p_pipeline);
+		shEndPipeline(&pipeline);
 		shFrameEnd(&core, 0, frame_index);
 	}
 	glfwTerminate();
 
 	shVkReleaseModelDescriptorStructureMap(&model_map);
 
-	shPipelineClearDescriptorBufferMemory(core.device, 0, p_pipeline);
-	shPipelineClearDescriptorBufferMemory(core.device, 1, p_pipeline);
+	shPipelineClearDescriptorBufferMemory(core.device, 0, &pipeline);
+	shPipelineClearDescriptorBufferMemory(core.device, 1, &pipeline);
 	
-	shPipelineRelease(core.device, p_pipeline);
+	shPipelineRelease(core.device, &pipeline);
 
 	shClearVertexBufferMemory(core.device, triangle_vertex_buffer, triangle_vertex_buffer_memory);
 	shClearVertexBufferMemory(core.device, quad_vertex_buffer, quad_vertex_buffer_memory);
