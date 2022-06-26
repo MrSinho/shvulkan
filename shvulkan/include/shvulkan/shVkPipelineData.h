@@ -10,14 +10,7 @@ extern "C" {
 
 #include <stdlib.h>
 
-typedef enum ShVkFixedStateFlags  {
-	SH_FIXED_STATES_POLYGON_MODE_WIREFRAME				= 0b000000001,
-	SH_FIXED_STATES_POLYGON_MODE_FACE					= 0b000000010,
-	SH_FIXED_STATES_POLYGON_MODE_POINTS					= 0b000000100,
-	SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST	= 0b000001000,
-	SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_LINE_LIST		= 0b000010000,
-	SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_POINT_LIST		= 0b000100000,
-} ShVkFixedStateFlags;
+
 
 typedef struct ShVkFixedStates {
 	/*Shader inputs*/
@@ -37,8 +30,6 @@ typedef struct ShVkFixedStates {
 	VkPipelineColorBlendStateCreateInfo		color_blend_state;
 	/**/
 	VkPipelineMultisampleStateCreateInfo	multisample_state_info;
-	/**/
-	ShVkFixedStateFlags 					fixed_state_flags;
 } ShVkFixedStates;
 
 typedef struct ShVkPipeline {
@@ -81,7 +72,7 @@ static void shFreeVkPipeline(ShVkPipeline** pp_pipeline) {
 }
 
 
-extern void shCreateRasterizer(VkPipelineRasterizationStateCreateInfo* p_rasterizer);
+extern void shCreateRasterizer(VkPolygonMode polygon_mode, VkPipelineRasterizationStateCreateInfo* p_rasterizer);
 
 extern void shSetMultisampleState(VkPipelineMultisampleStateCreateInfo* p_multisample_state);
 
@@ -89,7 +80,7 @@ extern void shColorBlendSettings(VkPipelineColorBlendAttachmentState* p_color_bl
 
 extern void shSetViewport(const uint32_t width, const uint32_t height, VkViewport *p_viewport, VkRect2D* p_scissors, VkPipelineViewportStateCreateInfo* p_viewport_state);
 
-extern void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShVkFixedStateFlags  flags, ShVkFixedStates* p_fixed_states);
+extern void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states);
 
 extern void shSetVertexInputAttribute(const uint32_t location, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states);
 

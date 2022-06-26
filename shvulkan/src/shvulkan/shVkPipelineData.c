@@ -200,7 +200,7 @@ void shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, const V
 	*p_input_assembly = inputAssemblyStateCreateInfo;
 }
 
-void shCreateRasterizer(VkPipelineRasterizationStateCreateInfo * p_rasterizer) {
+void shCreateRasterizer(VkPolygonMode polygon_mode, VkPipelineRasterizationStateCreateInfo* p_rasterizer) {
 	shVkError(p_rasterizer == NULL, "invalid rasterizer pointer", return);
 	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,	//sType;
@@ -208,7 +208,7 @@ void shCreateRasterizer(VkPipelineRasterizationStateCreateInfo * p_rasterizer) {
 		0,															//flags;
 		VK_FALSE,													//depthClampEnable;
 		VK_FALSE,													//rasterizerDiscardEnable;
-		VK_POLYGON_MODE_FILL,										//polygonMode;
+		polygon_mode,												//polygonMode;
 		VK_CULL_MODE_BACK_BIT,										//cullMode
 		VK_FRONT_FACE_CLOCKWISE,									//frontFace
 		VK_FALSE,													//depthBiasEnable 
@@ -300,24 +300,12 @@ void shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p_vi
 	*p_viewport_state = viewportStateCreateInfo;
 }
 
-void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, ShVkFixedStateFlags  flags, ShVkFixedStates* p_fixed_states) {
+void shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states) {
 	shVkError(p_fixed_states == NULL, "invalid fixed states pointer", return);
 	
-	shCreateInputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE, &p_fixed_states->input_assembly);
-	if (flags & SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_LINE_LIST) {
-		p_fixed_states->input_assembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-	}
-	if (flags & SH_FIXED_STATES_PRIMITIVE_TOPOLOGY_POINT_LIST) {
-		p_fixed_states->input_assembly.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-	}
+	shCreateInputAssembly(primitive, VK_FALSE, &p_fixed_states->input_assembly);
 
-	shCreateRasterizer(&p_fixed_states->rasterizer);
-	if (flags & SH_FIXED_STATES_POLYGON_MODE_WIREFRAME) {
-		p_fixed_states->rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
-	}
-	if (flags & SH_FIXED_STATES_POLYGON_MODE_POINTS) {
-		p_fixed_states->rasterizer.polygonMode = VK_POLYGON_MODE_POINT;
-	}
+	shCreateRasterizer(polygon_mode, &p_fixed_states->rasterizer);
 
 	shSetMultisampleState(&p_fixed_states->multisample_state_info);
 	shColorBlendSettings(&p_fixed_states->color_blend_attachment, &p_fixed_states->color_blend_state);
