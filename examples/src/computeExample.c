@@ -35,7 +35,7 @@ int main(void) {
 	ShVkCore core = { 0 };
 	{
 		shCreateInstance(&core, "shvulkan compute example", "shvulkan engine", VALIDATION_LAYERS_ENABLED, 0, NULL);
-		shSelectPhysicalDevice(&core, SH_VK_CORE_COMPUTE);
+		shSelectPhysicalDevice(&core, VK_QUEUE_COMPUTE_BIT);
 		shSetLogicalDevice(&core);
 		shGetComputeQueue(&core);
 		shCreateComputeCommandBuffers(&core, 1);
@@ -58,7 +58,7 @@ int main(void) {
 		shVkMapShaderInputDecriptorStructures(&inputs);
 
 		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, p_pipeline);
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, p_pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, p_pipeline);
 		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, p_pipeline);
 
 		shPipelineCreateDescriptorPool(core.device, 0, p_pipeline);

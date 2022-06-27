@@ -35,7 +35,6 @@ extern void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* 
 #define shDrawIndexedInstances(graphics_cmd_buffer, index_count, instance_count)\
 	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, instance_count, 0, 0, 0)
 
-
 extern void shFrameEnd(ShVkCore* p_core, const uint32_t thread_idx, const uint32_t swapchain_image_idx);
 
 #ifdef __cplusplus

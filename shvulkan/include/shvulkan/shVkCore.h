@@ -99,9 +99,7 @@ static void shFreeVkCore(ShVkCore** pp_core) {
 	*pp_core = NULL;
 }
 
-#define SH_VK_CORE_GRAPHICS VK_QUEUE_GRAPHICS_BIT
 
-#define SH_VK_CORE_COMPUTE VK_QUEUE_COMPUTE_BIT
 
 extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
@@ -160,10 +158,10 @@ extern void shVulkanRelease(ShVkCore* p_core);
 #define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
 
 #define shCreateGraphicsCommandBuffers(p_core, thread_count)\
-	shCreateCommandData(p_core, VK_QUEUE_GRAPHICS_BIT, thread_count, &(p_core)->p_graphics_commands)\
+	shCreateCommandData(p_core, VK_QUEUE_GRAPHICS_BIT, thread_count, &(p_core)->p_graphics_commands)
 
 #define shCreateComputeCommandBuffers(p_core, thread_count)\
-	shCreateCommandData(p_core, VK_QUEUE_COMPUTE_BIT, thread_count, &(p_core)->p_compute_commands)\
+	shCreateCommandData(p_core, VK_QUEUE_COMPUTE_BIT, thread_count, &(p_core)->p_compute_commands)
 
 #define shResetCommandBuffer(cmd_buffer) vkResetCommandBuffer(cmd_buffer, 0)
 

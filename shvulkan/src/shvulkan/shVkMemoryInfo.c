@@ -50,6 +50,16 @@ void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_dev
 	);
 }
 
+void shCopyBuffer(VkCommandBuffer transfer_cmd_buffer, VkBuffer src_buffer, const uint32_t src_offset, const uint32_t dst_offset, const uint32_t size, VkBuffer dst_buffer) {
+	VkBufferCopy region = {
+		src_offset,
+		dst_offset,
+		size
+	};
+	vkCmdCopyBuffer(transfer_cmd_buffer, src_buffer, dst_buffer, 1, &region);
+
+}
+
 void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t* p_memory_type_index) {
 	shVkError(p_memory_type_index == NULL, "invalid memory type index pointer", return);
 	VkPhysicalDeviceMemoryProperties memory_properties;

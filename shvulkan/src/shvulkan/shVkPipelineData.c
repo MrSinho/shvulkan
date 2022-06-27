@@ -449,9 +449,9 @@ void shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBuff
 	p_pipeline->descriptor_count++;
 }
 
-void shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, const VkPhysicalDevice physical_device, ShVkPipeline* p_pipeline) {
+void shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, const VkPhysicalDevice physical_device, VkMemoryPropertyFlags flags, ShVkPipeline* p_pipeline) {
 	for (uint32_t descriptor_idx = 0; descriptor_idx < p_pipeline->descriptor_count; descriptor_idx++) {
-		shPipelineAllocateDescriptorBufferMemory(device, physical_device, descriptor_idx, p_pipeline);
+		shPipelineAllocateDescriptorBufferMemory(device, physical_device, flags, descriptor_idx, p_pipeline);
 	}
 }
 

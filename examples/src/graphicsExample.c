@@ -70,7 +70,7 @@ int main(void) {
 		core.surface.width = width;
 		core.surface.height = height;
 
-		shSelectPhysicalDevice(&core, SH_VK_CORE_GRAPHICS);
+		shSelectPhysicalDevice(&core, VK_QUEUE_GRAPHICS_BIT);
 		shSetLogicalDevice(&core);
 		shInitSwapchainData(&core);
 		shInitDepthData(&core);
@@ -91,10 +91,11 @@ int main(void) {
 			 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 	};
 	{
-		shCreateVertexBuffer(core.device, TRIANGLE_VERTEX_COUNT * 4, &triangle_vertex_buffer);
-		shAllocateVertexBufferMemory(core.device, core.physical_device, triangle_vertex_buffer, &triangle_vertex_buffer_memory);
+		const uint32_t buffer_size = TRIANGLE_VERTEX_COUNT * 4;
+		shCreateVertexBuffer(core.device, buffer_size, 0, &triangle_vertex_buffer);
+		shAllocateVertexBufferMemory(core.device, core.physical_device, triangle_vertex_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &triangle_vertex_buffer_memory);
+		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, buffer_size, triangle);
 		shBindVertexBufferMemory(core.device, triangle_vertex_buffer, 0, triangle_vertex_buffer_memory);
-		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, TRIANGLE_VERTEX_COUNT * 4, triangle);
 	}
 
 
@@ -114,17 +115,53 @@ int main(void) {
 	VkBuffer quad_vertex_buffer, quad_index_buffer;
 	VkDeviceMemory quad_vertex_buffer_memory, quad_index_buffer_memory;
 	{
-		shCreateVertexBuffer(core.device, QUAD_VERTEX_COUNT * 4, &quad_vertex_buffer);
-		shCreateIndexBuffer(core.device, QUAD_INDEX_COUNT * 4, &quad_index_buffer);
+		VkBuffer vertex_staging_buffer = NULL;
+		VkBuffer index_staging_buffer = NULL;
+		VkDeviceMemory vertex_staging_buffer_memory = NULL;
+		VkDeviceMemory index_staging_buffer_memory = NULL;
+		VkCommandBuffer cmd_buffer = core.p_graphics_commands[0].cmd_buffer;
+		{
+			uint32_t buffer_size = QUAD_VERTEX_COUNT * 4;
 
-		shAllocateVertexBufferMemory(core.device, core.physical_device, quad_vertex_buffer, &quad_vertex_buffer_memory);
-		shAllocateIndexBufferMemory(core.device, core.physical_device, quad_index_buffer, &quad_index_buffer_memory);
+			shCreateBuffer(core.device, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, &vertex_staging_buffer);
+			shAllocateMemory(core.device, core.physical_device, vertex_staging_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &vertex_staging_buffer_memory);
+			shWriteMemory(core.device, vertex_staging_buffer_memory, 0, buffer_size, quad);
+			shBindMemory(core.device, vertex_staging_buffer, 0, vertex_staging_buffer_memory);
 
-		shBindVertexBufferMemory(core.device, quad_vertex_buffer, 0, quad_vertex_buffer_memory);
-		shBindIndexBufferMemory(core.device, quad_index_buffer, 0, quad_index_buffer_memory);
+			shCreateVertexBuffer(core.device, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT, &quad_vertex_buffer);
+			shAllocateVertexBufferMemory(core.device, core.physical_device, quad_vertex_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &quad_vertex_buffer_memory);
+			shBindVertexBufferMemory(core.device, quad_vertex_buffer, 0, quad_vertex_buffer_memory);
+		}
+		
+		{
+			uint32_t buffer_size = QUAD_INDEX_COUNT * 4;
 
-		shWriteVertexBufferMemory(core.device, quad_vertex_buffer_memory, 0, QUAD_VERTEX_COUNT * 4, quad);
-		shWriteIndexBufferMemory(core.device, quad_index_buffer_memory, 0, QUAD_INDEX_COUNT * 4, indices);
+			shCreateBuffer(core.device, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, &index_staging_buffer);
+			shAllocateMemory(core.device, core.physical_device, index_staging_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &index_staging_buffer_memory);
+			shWriteMemory(core.device, index_staging_buffer_memory, 0, buffer_size, indices);
+			shBindMemory(core.device, index_staging_buffer, 0, index_staging_buffer_memory);
+
+			shCreateIndexBuffer(core.device, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT, &quad_index_buffer);
+			shAllocateIndexBufferMemory(core.device, core.physical_device, quad_index_buffer, &quad_index_buffer_memory);
+			shBindIndexBufferMemory(core.device, quad_index_buffer, 0, quad_index_buffer_memory);
+		}
+
+		{
+			shResetFence(core.device, &core.p_graphics_commands[0].fence);
+
+			shBeginCommandBuffer(cmd_buffer);
+			shCopyBuffer(cmd_buffer, vertex_staging_buffer, 0, 0, QUAD_VERTEX_COUNT * 4, quad_vertex_buffer);
+			shCopyBuffer(cmd_buffer, index_staging_buffer, 0, 0, QUAD_INDEX_COUNT * 4, quad_index_buffer);
+			shEndCommandBuffer(cmd_buffer);
+
+			shQueueSubmit(&cmd_buffer, core.graphics_queue.queue, core.p_graphics_commands[0].fence);
+			shWaitForFence(core.device, &core.p_graphics_commands[0].fence);
+
+			shClearBufferMemory(core.device, vertex_staging_buffer, vertex_staging_buffer_memory);
+			shClearBufferMemory(core.device, index_staging_buffer, index_staging_buffer_memory);
+		}
+		
+
 	}
 	
 	float projection[4][4] = {
@@ -177,13 +214,15 @@ int main(void) {
 	ShVkPipeline pipeline = { 0 };
 	ShVkFixedStates fixed_states = { 0 };
 	{
+		uint32_t memory_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+
 		shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &pipeline.push_constant_range);
 
 		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0, sizeof(Light), &pipeline);
 		shPipelineCreateDynamicDescriptorBuffer(core.device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 1, model_map.structure_size, 2, &pipeline);
 
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 0, &pipeline);
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, 1, &pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, memory_flags, 0, &pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, memory_flags, 1, &pipeline);
 
 		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, &pipeline);
 		shPipelineBindDescriptorBufferMemory(core.device, 1, 0, &pipeline);

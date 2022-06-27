@@ -243,8 +243,8 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		queues_info,																				//pQueueCreateInfos;
 		0, 																							//enabledLayerCount;
 		NULL,																						//ppEnabledLayerNames;
-		p_core->required_queue_flags == SH_VK_CORE_COMPUTE ? 1 : 2,									//enabledExtensionCount;
-		p_core->required_queue_flags == SH_VK_CORE_COMPUTE ? &extension_names[1] : extension_names,	//ppEnabledExtensionNames;
+		p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? 1 : 2,									//enabledExtensionCount;
+		p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? &extension_names[1] : extension_names,	//ppEnabledExtensionNames;
 		NULL																						//pEnabledFeatures;
 	};
 	
