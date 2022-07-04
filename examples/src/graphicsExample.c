@@ -154,7 +154,7 @@ int main(void) {
 			shCopyBuffer(cmd_buffer, index_staging_buffer, 0, 0, QUAD_INDEX_COUNT * 4, quad_index_buffer);
 			shEndCommandBuffer(cmd_buffer);
 
-			shQueueSubmit(&cmd_buffer, core.graphics_queue.queue, core.p_graphics_commands[0].fence);
+			shQueueSubmit(1, &cmd_buffer, core.graphics_queue.queue, core.p_graphics_commands[0].fence);
 			shWaitForFence(core.device, &core.p_graphics_commands[0].fence);
 
 			shClearBufferMemory(core.device, vertex_staging_buffer, vertex_staging_buffer_memory);

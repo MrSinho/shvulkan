@@ -58,7 +58,7 @@ int main(void) {
 		shVkMapShaderInputDecriptorStructures(&inputs);
 
 		shPipelineCreateDescriptorBuffer(core.device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0, inputs.structure_size * inputs.structure_count, p_pipeline);
-		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, p_pipeline);
+		shPipelineAllocateDescriptorBufferMemory(core.device, core.physical_device, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, p_pipeline);
 		shPipelineBindDescriptorBufferMemory(core.device, 0, 0, p_pipeline);
 
 		shPipelineCreateDescriptorPool(core.device, 0, p_pipeline);
@@ -91,7 +91,7 @@ int main(void) {
 
 		shEndCommandBuffer(core.p_compute_commands[0].cmd_buffer);
 
-		shQueueSubmit(&core.p_compute_commands[0].cmd_buffer, core.compute_queue.queue, core.p_compute_commands[0].fence);
+		shQueueSubmit(1, &core.p_compute_commands[0].cmd_buffer, core.compute_queue.queue, core.p_compute_commands[0].fence);
 
 		shWaitForFence(core.device, &core.p_compute_commands[0].fence);
 

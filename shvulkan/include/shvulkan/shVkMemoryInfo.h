@@ -9,6 +9,8 @@ extern "C" {
 #include <vulkan/vulkan.h>
 #include <memory.h>
 
+#include "shvulkan/shVkCheck.h"
+
 #define SH_VEC1_SIGNED_FLOAT		VK_FORMAT_R32_SFLOAT
 #define SH_VEC2_SIGNED_FLOAT		VK_FORMAT_R32G32_SFLOAT
 #define SH_VEC3_SIGNED_FLOAT		VK_FORMAT_R32G32B32_SFLOAT
@@ -25,29 +27,25 @@ extern "C" {
 
 
 
-extern void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer);
+extern uint8_t shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer);
 
-extern void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t *p_memory_type_index);
+extern uint8_t shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t *p_memory_type_index);
 
-extern void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory* p_memory);
+extern uint8_t shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory* p_memory);
 
-extern void shCopyBuffer(VkCommandBuffer transfer_cmd_buffer, VkBuffer src_buffer, const uint32_t src_offset, const uint32_t dst_offset, const uint32_t size, VkBuffer dst_buffer);
+extern uint8_t shCopyBuffer(VkCommandBuffer transfer_cmd_buffer, VkBuffer src_buffer, const uint32_t src_offset, const uint32_t dst_offset, const uint32_t size, VkBuffer dst_buffer);
 
-#define shBindMemory(device, vk_buffer, offset, memory)\
-	shVkResultError(\
-		vkBindBufferMemory(device, vk_buffer, memory, offset),\
-		"error binding buffer memory", return\
-	)
+extern uint8_t shBindMemory(const VkDevice device, VkBuffer buffer, const uint32_t offset, const VkDeviceMemory buffer_memory);
 
-extern void shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data);
+extern uint8_t shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data);
 
-extern void shWriteMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void* p_data);
+extern uint8_t shWriteMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void* p_data);
 
-extern void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory);
+extern uint8_t shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory);
 
-extern void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
+extern uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
 
-extern void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties);
+extern uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties);
 
 
 
@@ -63,9 +61,14 @@ extern void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, 
 #define shWriteVertexBufferMemory(device, vertex_buffer_memory, offset, size, p_vertices)\
 	shWriteMemory(device, vertex_buffer_memory, offset, size, (void*)p_vertices)
 
-static void shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t binding, VkBuffer* p_vertex_buffer) {
+static uint8_t shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t binding, VkBuffer* p_vertex_buffer) {
+	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer", return 0);
+	shVkError(p_vertex_buffer == NULL, "invalid vertex buffer pointer", return 0);
+
 	const VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(graphics_cmd_buffer, binding, 1, p_vertex_buffer, &offset);
+
+	return 1;
 }
 
 #define shBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffers, p_offsets)\

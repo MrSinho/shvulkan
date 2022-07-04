@@ -10,8 +10,8 @@ extern "C" {
 
 
 
-void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer) {
-	shVkError(p_buffer == NULL, "invalid arguments", return);
+uint8_t shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFlags usage_flags, VkBuffer* p_buffer) {
+	shVkError(p_buffer == NULL, "invalid arguments", return 0);
 	VkBufferCreateInfo buffer_create_info = {
 		VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,	//sType;
 		NULL,									//pNext;
@@ -25,12 +25,19 @@ void shCreateBuffer(const VkDevice device, const uint32_t size, VkBufferUsageFla
 
 	shVkResultError(
 		vkCreateBuffer(device, &buffer_create_info, NULL, p_buffer),
-		"error creating buffer", return
+		"error creating buffer", 
+		return 0
 	);
+
+	return 1;
 }
 
-void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory *p_memory) {
-	shVkError(p_memory == NULL, "invalid device memory pointer", return);
+uint8_t shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkBuffer buffer, const VkMemoryPropertyFlags property_flags, VkDeviceMemory *p_memory) {
+	shVkError(device			== NULL, "invalid device handle",			return 0);
+	shVkError(physical_device	== NULL, "invalid physical device memory",	return 0);
+	shVkError(buffer			== NULL, "invalid buffer pointer",			return 0);
+	shVkError(p_memory			== NULL, "invalid device memory pointer",	return 0);
+
 	uint32_t memory_type_index = 0;
 	shGetMemoryType(device, physical_device, property_flags, &memory_type_index);
 
@@ -46,11 +53,18 @@ void shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_dev
 
 	shVkResultError(
 		vkAllocateMemory(device, &memory_allocate_info, NULL, p_memory),
-		"error allocating memory", return
+		"error allocating memory", 
+		return 0
 	);
+
+	return 1;
 }
 
-void shCopyBuffer(VkCommandBuffer transfer_cmd_buffer, VkBuffer src_buffer, const uint32_t src_offset, const uint32_t dst_offset, const uint32_t size, VkBuffer dst_buffer) {
+uint8_t shCopyBuffer(VkCommandBuffer transfer_cmd_buffer, VkBuffer src_buffer, const uint32_t src_offset, const uint32_t dst_offset, const uint32_t size, VkBuffer dst_buffer) {
+	shVkError(transfer_cmd_buffer == NULL, "invalid command buffer", return 0);
+	shVkError(src_buffer == NULL, "invalid source buffer", return 0);
+	shVkError(dst_buffer == NULL, "invalid destination buffer", return 0);
+
 	VkBufferCopy region = {
 		src_offset,
 		dst_offset,
@@ -58,10 +72,24 @@ void shCopyBuffer(VkCommandBuffer transfer_cmd_buffer, VkBuffer src_buffer, cons
 	};
 	vkCmdCopyBuffer(transfer_cmd_buffer, src_buffer, dst_buffer, 1, &region);
 
+	return 1;
 }
 
-void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t* p_memory_type_index) {
-	shVkError(p_memory_type_index == NULL, "invalid memory type index pointer", return);
+uint8_t shBindMemory(const VkDevice device, VkBuffer buffer, const uint32_t offset, const VkDeviceMemory buffer_memory) {
+	shVkError(device == NULL,			"invalid device handle", return 0);
+	shVkError(buffer == NULL,			"invalid buffer handle", return 0);
+	shVkError(buffer_memory == NULL,	"invalid buffer memory", return 0);
+	
+	shVkResultError(
+		vkBindBufferMemory(device, buffer, buffer_memory, offset),
+		"error binding buffer memory", return 0
+	)
+
+	return 1;
+}
+
+uint8_t shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_device, const VkMemoryPropertyFlags property_flags, uint32_t* p_memory_type_index) {
+	shVkError(p_memory_type_index == NULL, "invalid memory type index pointer", return 0);
 	VkPhysicalDeviceMemoryProperties memory_properties;
 	vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
@@ -70,44 +98,68 @@ void shGetMemoryType(const VkDevice device, const VkPhysicalDevice physical_devi
 		if (memory_properties.memoryTypes[i].propertyFlags & (1 << i) &&
 			(memory_properties.memoryTypes[i].propertyFlags & property_flags) == property_flags) {
 			*p_memory_type_index = i;
-			return;
+			return 1;
 		}
 
 	}
-	shVkError(VK_ERROR_UNKNOWN,
-		"cannot find suitable memory type for the given buffer", return
+	shVkError(
+		0,
+		"cannot find suitable memory type for the given buffer", 
+		return 0
 	);
+
+	return 0;
 }
 
-void shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data) {
-	shVkError(p_data == NULL, "invalid memory buffer", return);
+uint8_t shReadMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, void* p_data) {
+	shVkError(p_data == NULL, "invalid memory buffer", return 0);
 	void* data;
 	shVkResultError(
 		vkMapMemory(device, memory, offset, data_size, 0, &data),
-		"error mapping memory", return
+		"error mapping memory", return 0
 	);
 	memcpy(p_data, data, (size_t)data_size);
 	vkUnmapMemory(device, memory);
+
+	return 1;
 }
 
-void shWriteMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void* p_data) {
-	shVkError(p_data == NULL, "invalid memory buffer", return);
+uint8_t shWriteMemory(const VkDevice device, const VkDeviceMemory memory, const uint32_t offset, const uint32_t data_size, const void* p_data) {
+	shVkError(p_data == NULL, "invalid memory buffer", return 0);
 	void* data;
 	shVkResultError(
 		vkMapMemory(device, memory, offset, data_size, 0, &data),
-		"error mapping memory", return
+		"error mapping memory", return 0
 	);
 	memcpy(data, p_data, (size_t)data_size);
 	vkUnmapMemory(device, memory);
+
+	return 1;
 }
 
-void shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory) {
-	vkDeviceWaitIdle(device);
+uint8_t shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory) {
+	shVkError(device == NULL, "invalid device handle", return 0);
+	shVkError(buffer == NULL, "invalid buffer memory", return 0);
+	shVkError(memory == NULL, "invalid device memory", return 0);
+
+	shVkResultError(
+		vkDeviceWaitIdle(device),
+		"failed waiting device idle",
+		return 0
+	);
 	vkDestroyBuffer(device, buffer, NULL);
 	vkFreeMemory(device, memory, NULL);
+
+	return 1;
 }
 
-void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory) {
+uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory) {
+	shVkError(device == NULL, "invalid device memory", return 0);
+	shVkError(physical_device == NULL, "invalid physical device ", return 0);
+	shVkError(p_image == NULL, "invalid image pointer", return 0);
+	shVkError(p_image_memory == NULL, "invalid image memory pointer", return 0);
+
+
 	VkExtent3D image_extent = {
 		width, height, 1
 	};
@@ -128,15 +180,21 @@ void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device
 		0,										//queueFamilyIndexCount;
 		NULL									//pQueueFamilyIndices;
 	};
-	shVkResultError(vkCreateImage(device, &image_create_info, NULL, p_image),
-		"error creating image", return
+	shVkResultError(
+		vkCreateImage(device, &image_create_info, NULL, p_image),
+		"error creating image", 
+		return 0
 	);
 
 	VkMemoryRequirements memory_requirements;
 	vkGetImageMemoryRequirements(device, *p_image, &memory_requirements);
 
 	uint32_t memory_type_index = 0;
-	shGetMemoryType(device, physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index);
+	shVkError(
+		shGetMemoryType(device, physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index) == 0,
+		"failed detecting memory type",
+		return 0
+	);
 
 	VkMemoryAllocateInfo memory_allocate_info = {
 		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -145,14 +203,18 @@ void shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device
 		memory_type_index
 	};
 
-	shVkResultError(vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
-		"error allocating image memory", return
+	shVkResultError(
+		vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
+		"error allocating image memory", 
+		return 0
 	);
 
 	vkBindImageMemory(device, *p_image, *p_image_memory, 0);
+
+	return 1;
 }
 
-void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties) {
+uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties) {
 
 	VkPhysicalDeviceMemoryBudgetPropertiesEXT memory_budget_properties = {
 		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
@@ -176,6 +238,8 @@ void shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_
 	(p_memory_budget != NULL) && (*p_memory_budget = memory_budget);
 	(p_process_used_memory != NULL ) && (*p_process_used_memory = process_used_memory);
 	(p_memory_budget_properties != NULL) && memcpy(p_memory_budget_properties, &memory_budget_properties, sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT));
+
+	return 1;
 }
 
 #ifdef __cplusplus

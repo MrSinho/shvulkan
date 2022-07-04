@@ -92,60 +92,61 @@ static ShVkCore* shAllocateShVkCore() {
 	return p_core;
 }
 
-static void shFreeVkCore(ShVkCore** pp_core) {
-	shVkError(pp_core == NULL, "invalid core memory", return);
-	shVkError(*pp_core == NULL, "invalid core memory", return);
+static uint8_t shFreeVkCore(ShVkCore** pp_core) {
+	shVkError(pp_core == NULL, "invalid core memory", return 0);
+	shVkError(*pp_core == NULL, "invalid core memory", return 0);
 	free(*pp_core);
 	*pp_core = NULL;
+	return 1;
 }
 
 
 
-extern void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
+extern uint8_t shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
 #if 0
-extern void shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, void* window_process, void* p_window_handle);
+extern uint8_t shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, uint8_t* window_process, uint8_t* p_window_handle);
 #endif//0
 
-extern void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
+extern uint8_t shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
-extern void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
+extern uint8_t shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
 
-extern void shSetLogicalDevice(ShVkCore* p_core);
+extern uint8_t shSetLogicalDevice(ShVkCore* p_core);
 
-extern void shCreateSwapchain(ShVkCore* p_core);
+extern uint8_t shCreateSwapchain(ShVkCore* p_core);
 
-extern void shGetSwapchainImages(ShVkCore* p_core);
+extern uint8_t shGetSwapchainImages(ShVkCore* p_core);
 
-extern void shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view);
+extern uint8_t shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view);
 
-extern void shCreateSwapchainImageViews(ShVkCore* p_core);
+extern uint8_t shCreateSwapchainImageViews(ShVkCore* p_core);
 
-extern void shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommandPool* p_cmd_pool);
+extern uint8_t shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommandPool* p_cmd_pool);
 
-extern void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCommandBuffer* p_cmd_buffer);
+extern uint8_t shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCommandBuffer* p_cmd_buffer);
 
-extern void shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const uint32_t thread_count, ShVkCommand** pp_command);
+extern uint8_t shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const uint32_t thread_count, ShVkCommand** pp_command);
 
-extern void shCreateRenderPass(ShVkCore* p_core);
+extern uint8_t shCreateRenderPass(ShVkCore* p_core);
 
-extern void shSetFramebuffers(ShVkCore* p_core);
+extern uint8_t shSetFramebuffers(ShVkCore* p_core);
 
-extern void shSetSyncObjects(ShVkCore* p_core);
+extern uint8_t shSetSyncObjects(ShVkCore* p_core);
 
-extern void shSwapchainRelease(ShVkCore* p_core);
+extern uint8_t shSwapchainRelease(ShVkCore* p_core);
 
-extern void shDepthBufferRelease(ShVkCore* p_core);
+extern uint8_t shDepthBufferRelease(ShVkCore* p_core);
 
-extern void shSurfaceRelease(ShVkCore* p_core);
+extern uint8_t shSurfaceRelease(ShVkCore* p_core);
 
-extern void shCmdRelease(ShVkCore* p_core);
+extern uint8_t shCmdRelease(ShVkCore* p_core);
 
-extern void shRenderPassRelease(ShVkCore* p_core);
+extern uint8_t shRenderPassRelease(ShVkCore* p_core);
 
-extern void shInstanceRelease(ShVkCore* p_core);
+extern uint8_t shInstanceRelease(ShVkCore* p_core);
 
-extern void shVulkanRelease(ShVkCore* p_core);
+extern uint8_t shVulkanRelease(ShVkCore* p_core);
 
 
 
@@ -169,11 +170,11 @@ extern void shVulkanRelease(ShVkCore* p_core);
 
 #define shResetFence(device, p_fence) vkResetFences(device, 1, p_fence);
 
-extern void shBeginCommandBuffer(const VkCommandBuffer cmd_buffer);
+extern uint8_t shBeginCommandBuffer(const VkCommandBuffer cmd_buffer);
 
 #define shCmdDispatch(cmd_buffer, group_count_x, group_count_y, group_count_z) vkCmdDispatch(cmd_buffer, group_count_x, group_count_y, group_count_z)
 
-extern void shQueueSubmit(VkCommandBuffer* cmd_buffer, const VkQueue queue, VkFence fence);
+extern uint8_t shQueueSubmit(const uint32_t cmd_buffer_count, VkCommandBuffer* p_cmd_buffers, const VkQueue queue, VkFence fence);
 
 #define shWaitForFences(device, fence_count, p_fences) vkWaitForFences(device, fence_count, p_fences, VK_TRUE, 100000000000)
 

@@ -10,8 +10,8 @@ extern "C" {
 
 
 
-void shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	VkApplicationInfo application_info = {
 		VK_STRUCTURE_TYPE_APPLICATION_INFO,	//sType;
 		NULL,								//pNext;
@@ -44,12 +44,14 @@ void shCreateInstance(ShVkCore* p_core, const char* application_name, const char
 	
 	shVkResultError(
 		vkCreateInstance(&instance_create_info, VK_NULL_HANDLE, &p_core->instance),
-		"error creating vkinstance", return
+		"error creating vkinstance", return 0
 	);
+
+	return 1;
 }
 
 #if 0
-void shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, void* window_process, void* p_window_handle) {
+uint8_t shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, uint8_t* window_process, uint8_t* p_window_handle) {
 #ifdef _WIN32
 	VkWin32SurfaceCreateInfoKHR surface_create_info = {
 		VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,	// sType
@@ -60,7 +62,7 @@ void shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_
 	};
 	shVkResultError(
 		vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
-		"error creating win32 surface", return
+		"error creating win32 surface", return 0
 	);
 #elif defined __linux__
 	VkXlibSurfaceCreateInfoKHR surface_create_info = {
@@ -72,7 +74,7 @@ void shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_
 	};
 	shVkResultError(
 		vkCreateXlibSurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
-		"error creating xlib surface", return
+		"error creating xlib surface", return 0
 	);
 #endif//_WIN32
 	p_core->surface.width = width;
@@ -80,27 +82,27 @@ void shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_
 }
 #endif//0
 
-void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
-	shVkError(p_core == NULL, "invalid arguments", return);
+uint8_t shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
+	shVkError(p_core == NULL, "invalid arguments", return 0);
 	p_core->required_queue_flags = requirements;
 
 	uint32_t physical_device_count = 0;
 	vkEnumeratePhysicalDevices(p_core->instance, &physical_device_count, NULL);
 
 	VkPhysicalDevice* physical_devices = (VkPhysicalDevice*)calloc(physical_device_count, sizeof(VkPhysicalDevice));
-	shVkError(physical_devices == NULL, "invalid physical devices pointer", return);
+	shVkError(physical_devices == NULL, "invalid physical devices pointer", return 0);
 
 	vkEnumeratePhysicalDevices(p_core->instance, &physical_device_count, physical_devices);
 	
 	if (physical_device_count == 0) {
-		shVkError(VK_ERROR_UNKNOWN, "no Vulkan compatible gpu has been found", return);
+		shVkError(VK_ERROR_UNKNOWN, "no Vulkan compatible gpu has been found", return 0);
 	}
 
 	uint32_t* graphics_queue_family_indices = (uint32_t*)calloc(physical_device_count, sizeof(uint32_t));
-	shVkError(graphics_queue_family_indices == NULL, "invalid graphics queue family indices pointer", return);
+	shVkError(graphics_queue_family_indices == NULL, "invalid graphics queue family indices pointer", return 0);
 
 	uint32_t* surface_queue_family_indices = (uint32_t*)calloc(physical_device_count, sizeof(uint32_t));
-	shVkError(surface_queue_family_indices == NULL, "invalid surface queue family indices pointer", return);
+	shVkError(surface_queue_family_indices == NULL, "invalid surface queue family indices pointer", return 0);
 
 	uint32_t suitable_device_count = 0;
 
@@ -109,16 +111,16 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 		uint32_t queue_family_property_count = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(physical_devices[i], &queue_family_property_count, NULL);
 		VkQueueFamilyProperties* p_queue_family_properties = (VkQueueFamilyProperties*)calloc(queue_family_property_count, sizeof(VkQueueFamilyProperties));
-		shVkError(p_queue_family_properties == NULL, "invalid queue family properties pointer", return);
+		shVkError(p_queue_family_properties == NULL, "invalid queue family properties pointer", return 0);
 		vkGetPhysicalDeviceQueueFamilyProperties(physical_devices[i], &queue_family_property_count, p_queue_family_properties);
 
 		VkBool32 surfaceSupport = 0;
 
 		for (uint32_t j = 0; j < queue_family_property_count; j++) {
 			if (p_core->required_queue_flags & VK_QUEUE_GRAPHICS_BIT) {
-				shVkError(p_core->surface.width == 0 && p_core->surface.height == 0, "invalid surface parameters", return);
+				shVkError(p_core->surface.width == 0 && p_core->surface.height == 0, "invalid surface parameters", return 0);
 				if (!surfaceSupport) {
-					shVkError(p_core->surface.surface == NULL, "invalid surface", return);
+					shVkError(p_core->surface.surface == NULL, "invalid surface", return 0);
 					vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], j, p_core->surface.surface, &surfaceSupport);
 					if (surfaceSupport) {
 						surface_queue_family_indices[i] = j;
@@ -140,11 +142,11 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	}
 
 	if (suitable_device_count == 0) {
-		shVkError(VK_ERROR_UNKNOWN, "no suitable GPU has been found", return);
+		shVkError(VK_ERROR_UNKNOWN, "no suitable GPU has been found", return 0);
 	}
 
 	uint32_t* scores = calloc(suitable_device_count, sizeof(uint32_t));
-	shVkError(scores == NULL, "invalid scores pointer", return);
+	shVkError(scores == NULL, "invalid scores pointer", return 0);
 	for (uint32_t i = 0; i < suitable_device_count; i++) {
 		if (i >= physical_device_count) {
 			break;
@@ -202,10 +204,11 @@ void shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	vkGetPhysicalDeviceProperties(p_core->physical_device, &p_core->physical_device_properties);
 	vkGetPhysicalDeviceFeatures(p_core->physical_device, &p_core->physical_device_features);
 	vkGetPhysicalDeviceMemoryProperties(p_core->physical_device, &p_core->physical_device_memory_properties);
+	return 1;
 }
 
-void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo * p_queue_info) {
-	shVkError(p_queue_info == NULL, "invalid queue info pointer", return);
+uint8_t shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo * p_queue_info) {
+	shVkError(p_queue_info == NULL, "invalid queue info pointer", return 0);
 	VkDeviceQueueCreateInfo queue_create_info = {
 		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,	//sType;
 		NULL,										//pNext;
@@ -215,10 +218,11 @@ void shSetQueueInfo(const uint32_t queue_family_index, const float* priority, Vk
 		priority,									//pQueuePriorities;
 	};
 	*p_queue_info = queue_create_info;
+	return 1;
 }
 
-void shSetLogicalDevice(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shSetLogicalDevice(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	const float queue_priority = 1.0f;
 	uint32_t queue_info_count = 0;
 	VkDeviceQueueCreateInfo queues_info[2] = { 0 };
@@ -252,19 +256,20 @@ void shSetLogicalDevice(ShVkCore* p_core) {
 		deviceCreateInfo.enabledExtensionCount--;
 		shVkResultError(
 			vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device), 
-			"error creating logical device", return
+			"error creating logical device", return 0
 		);
 	}
+	return 1;
 }
 
-void shCreateSwapchain(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shCreateSwapchain(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 
 	p_core->swapchain_image_format = SH_SWAPCHAIN_IMAGE_FORMAT;
 
 	shVkError(
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_core->physical_device, p_core->surface.surface, &p_core->surface.surface_capabilities) != VK_SUCCESS,
-		"failed accessing surface capabilities", return
+		"failed accessing surface capabilities", return 0
 	);
 
 		VkSwapchainCreateInfoKHR swapchain_create_info = {
@@ -293,13 +298,13 @@ void shCreateSwapchain(ShVkCore* p_core) {
 		uint32_t format_count = 0;
 		shVkResultError(
 			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, NULL),
-			"error getting surface available format count", return
+			"error getting surface available format count", return 0
 		);
 		VkSurfaceFormatKHR* p_formats = calloc(format_count, sizeof(VkSurfaceFormatKHR));
-		shVkError(p_formats == NULL, "invalid surface formats pointer", return);
+		shVkError(p_formats == NULL, "invalid surface formats pointer", return 0);
 		shVkResultError(
 			vkGetPhysicalDeviceSurfaceFormatsKHR(p_core->physical_device, p_core->surface.surface, &format_count, p_formats),
-			"error getting surface available formats", return
+			"error getting surface available formats", return 0
 		);
 		uint8_t format_found = 0;
 		for (uint32_t i = 0; i < format_count; i++) {
@@ -331,22 +336,24 @@ void shCreateSwapchain(ShVkCore* p_core) {
 
 	shVkResultError(
 		vkCreateSwapchainKHR(p_core->device, &swapchain_create_info, NULL, &p_core->swapchain),
-		"error creating swapchain", return
+		"error creating swapchain", return 0
 	);
 	
+	return 1;
 }
 
-void shGetSwapchainImages(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shGetSwapchainImages(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, NULL);
 	p_core->p_swapchain_images = (VkImage*)malloc(p_core->swapchain_image_count * sizeof(VkImage));
-	shVkError(p_core->p_swapchain_images == NULL, "invalid swapchain images pointer", return);
+	shVkError(p_core->p_swapchain_images == NULL, "invalid swapchain images pointer", return 0);
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, p_core->p_swapchain_images);
+	return 1;
 }
 
-void shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
-	shVkError(p_image_view == NULL, "invalid image view pointer", return);
+uint8_t shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
+	shVkError(p_image_view == NULL, "invalid image view pointer", return 0);
 	VkImageViewCreateInfo imageViewCreateInfo = {
 			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,	//sType;
 			NULL,										//pNext;
@@ -372,21 +379,23 @@ void shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageTyp
 	imageViewCreateInfo.subresourceRange.layerCount = 1;							//layerCount;
 	shVkResultError(
 		vkCreateImageView(p_core->device, &imageViewCreateInfo, NULL, p_image_view),
-		"error creating image view", return
+		"error creating image view", return 0
 	);
+	return 1;
 }
 
-void shCreateSwapchainImageViews(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shCreateSwapchainImageViews(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	p_core->p_swapchain_image_views = (VkImageView*)malloc(p_core->swapchain_image_count * sizeof(VkImageView));
-	shVkError(p_core->p_swapchain_image_views == NULL, "invalid swapchain image views pointer", return);
+	shVkError(p_core->p_swapchain_image_views == NULL, "invalid swapchain image views pointer", return 0);
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
 		shCreateImageView(p_core, p_core->p_swapchain_images[i], SH_SWAPCHAIN_IMAGE, &p_core->p_swapchain_image_views[i]);
 	}
+	return 1;
 }
 
-void shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommandPool* p_cmd_pool) {
-	shVkError(p_cmd_pool == NULL, "invalid command pool pointer", return);
+uint8_t shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommandPool* p_cmd_pool) {
+	shVkError(p_cmd_pool == NULL, "invalid command pool pointer", return 0);
 	VkCommandPoolCreateInfo cmdPoolCreateInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,			//sType;
 		NULL,												//pNext;
@@ -396,12 +405,13 @@ void shCreateCmdPool(const VkDevice device, uint32_t queueFamilyIndex, VkCommand
 	
 	shVkResultError(
 		vkCreateCommandPool(device, &cmdPoolCreateInfo, NULL, p_cmd_pool), 
-		"error creating command pool", return
+		"error creating command pool", return 0
 	);
+	return 1;
 }
 
-void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCommandBuffer* p_cmd_buffer) {
-	shVkError(p_cmd_buffer == NULL, "invalid command buffer pointer", return);
+uint8_t shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCommandBuffer* p_cmd_buffer) {
+	shVkError(p_cmd_buffer == NULL, "invalid command buffer pointer", return 0);
 	VkCommandBufferAllocateInfo cmdBufferAllocateInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,	//sType;
 		NULL,											//pNext;
@@ -412,16 +422,17 @@ void shCreateCmdBuffer(const VkDevice device, const VkCommandPool cmdPool, VkCom
 
 	shVkResultError(
 		vkAllocateCommandBuffers(device, &cmdBufferAllocateInfo, p_cmd_buffer), 
-		"error creating command buffer", return
+		"error creating command buffer", return 0
 	);
+	return 1;
 }
 
-void shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const uint32_t thread_count, ShVkCommand** pp_commands) {
-	shVkError(thread_count == 0, "invalid thread count", return);
+uint8_t shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const uint32_t thread_count, ShVkCommand** pp_commands) {
+	shVkError(thread_count == 0, "invalid thread count", return 0);
 
 	*pp_commands = calloc(thread_count, sizeof(ShVkCommand));
 	ShVkCommand* p_commands = *pp_commands;
-	shVkError(p_commands == NULL, "invalid commands pointer", return);
+	shVkError(p_commands == NULL, "invalid commands pointer", return 0);
 
 	for (uint32_t thread = 0; thread < thread_count; thread++) {
 		if (usage == VK_QUEUE_GRAPHICS_BIT) {
@@ -433,10 +444,11 @@ void shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const ui
 		shCreateCmdBuffer((p_core)->device, p_commands[thread].cmd_pool, &p_commands[thread].cmd_buffer);
 	}
 	p_core->thread_count = thread_count;
+	return 1;
 }
 
-void shCreateRenderPass(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shCreateRenderPass(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	VkAttachmentDescription colorAttachmentDescription = {
 		0,									//flags;
 		p_core->swapchain_image_format,		//format;
@@ -520,12 +532,13 @@ void shCreateRenderPass(ShVkCore* p_core) {
 
 	shVkResultError(
 		vkCreateRenderPass(p_core->device, &renderPassCreateInfo, NULL, &p_core->render_pass),
-		"error creating render pass", return
+		"error creating render pass", return 0
 	);
+	return 1;
 }
 
-void shSetFramebuffers(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shSetFramebuffers(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	VkFramebufferCreateInfo framebufferCreateInfo = {
 		VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,	//sType;
 		NULL,										//pNext;
@@ -539,7 +552,7 @@ void shSetFramebuffers(ShVkCore* p_core) {
 	};
 
 	p_core->p_frame_buffers = (VkFramebuffer*)malloc(p_core->swapchain_image_count * sizeof(VkFramebuffer));
-	shVkError(p_core->p_frame_buffers == NULL, "invalid frame buffers pointer", return);
+	shVkError(p_core->p_frame_buffers == NULL, "invalid frame buffers pointer", return 0);
 
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
 		VkImageView attachments[2] = {
@@ -551,13 +564,14 @@ void shSetFramebuffers(ShVkCore* p_core) {
 		framebufferCreateInfo.pAttachments = attachments;
 		shVkResultError(
 			vkCreateFramebuffer(p_core->device, &framebufferCreateInfo, NULL, &p_core->p_frame_buffers[i]),
-			"error creating framebuffer", return
+			"error creating framebuffer", return 0
 		);
 	}
+	return 1;
 }
 
-void shSetSyncObjects(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shSetSyncObjects(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	VkFenceCreateInfo fence_create_info = {
 		VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,	//sType;
 		NULL,									//pNext;
@@ -576,13 +590,13 @@ void shSetSyncObjects(ShVkCore* p_core) {
 		for (uint32_t thread = 0; thread < p_core->thread_count; thread++) {
 			shVkResultError(
 				vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->p_graphics_commands[thread].fence),
-				"error creating fence", return
+				"error creating fence", return 0
 			);
 			
-			shVkError(p_core->p_render_semaphores == NULL, "invalid render semaphores pointer", return);
+			shVkError(p_core->p_render_semaphores == NULL, "invalid render semaphores pointer", return 0);
 			shVkResultError(
 				vkCreateSemaphore(p_core->device, &semaphore_create_info, NULL, &p_core->p_render_semaphores[thread]),
-				"error creating render semaphore", return
+				"error creating render semaphore", return 0
 			);
 		}
 	}
@@ -592,15 +606,15 @@ void shSetSyncObjects(ShVkCore* p_core) {
 		for (uint32_t thread = 0; thread < p_core->thread_count; thread++) {
 			shVkResultError(
 				vkCreateFence(p_core->device, &fence_create_info, NULL, &p_core->p_compute_commands[thread].fence),
-				"error creating fence", return
+				"error creating fence", return 0
 			);
 		}
 	}
-	
+	return 1;
 }
 
-void shSwapchainRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shSwapchainRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDeviceWaitIdle(p_core->device);
 
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
@@ -612,23 +626,26 @@ void shSwapchainRelease(ShVkCore* p_core) {
 	free(p_core->p_frame_buffers);
 	free(p_core->p_swapchain_image_views);
 	free(p_core->p_swapchain_images);
+	return 1;
 }
 
-void shDepthBufferRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shDepthBufferRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDestroyImageView(p_core->device, p_core->depth_image_view, NULL);
 	vkDestroyImage(p_core->device, p_core->depth_image, NULL);
 	vkFreeMemory(p_core->device, p_core->depth_image_memory, NULL);
+	return 1;
 }
 
-void shSurfaceRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shSurfaceRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDeviceWaitIdle(p_core->device);
 	vkDestroySurfaceKHR(p_core->instance, p_core->surface.surface, NULL);
+	return 1;
 }
 
-void shCmdRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shCmdRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDeviceWaitIdle(p_core->device);
 
 	if (p_core->p_graphics_commands != NULL) {
@@ -647,27 +664,31 @@ void shCmdRelease(ShVkCore* p_core) {
 			vkDestroyCommandPool(p_core->device, p_core->p_compute_commands[thread_idx].cmd_pool, NULL);
 		}
 	}
+	return 1;
 }
 
-void shRenderPassRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shRenderPassRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDeviceWaitIdle(p_core->device);
 	vkDestroyRenderPass(p_core->device, p_core->render_pass, NULL);
+	return 1;
 }
 
-void shDeviceRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shDeviceRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDeviceWaitIdle(p_core->device);
 	vkDestroyDevice(p_core->device, NULL);
+	return 1;
 }
 
-void shInstanceRelease(ShVkCore* p_core) {	
-	shVkError(p_core == NULL, "invalid core pointer", return);
+uint8_t shInstanceRelease(ShVkCore* p_core) {	
+	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDestroyInstance(p_core->instance, NULL);
+	return 1;
 }
 
-void shVulkanRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core memory", return);
+uint8_t shVulkanRelease(ShVkCore* p_core) {
+	shVkError(p_core == NULL, "invalid core memory", return 0);
 	vkDeviceWaitIdle(p_core->device);
 	if (p_core->swapchain != VK_NULL_HANDLE) { 
 		shSwapchainRelease(p_core); 
@@ -689,31 +710,48 @@ void shVulkanRelease(ShVkCore* p_core) {
 		shInstanceRelease(p_core); 
 	}
 	//shFreeVkCore(pp_core);
+	return 1;
 }
 
 
 
-void shBeginCommandBuffer(const VkCommandBuffer cmd_buffer) {
+uint8_t shBeginCommandBuffer(const VkCommandBuffer cmd_buffer) {
+	shVkError(cmd_buffer == NULL, "invalid command buffer", return 0);
 	VkCommandBufferBeginInfo command_buffer_begin_info = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		NULL,
 		0,
 		NULL
 	};
-	vkBeginCommandBuffer(cmd_buffer, &command_buffer_begin_info);
+	shVkResultError(
+		vkBeginCommandBuffer(cmd_buffer, &command_buffer_begin_info),
+		"failed recording command buffer",
+		return 0
+	)
+	return 1;
 }
 
-void shQueueSubmit(VkCommandBuffer* cmd_buffer, const VkQueue queue, VkFence fence) {
+uint8_t shQueueSubmit(const uint32_t cmd_buffer_count, VkCommandBuffer* p_cmd_buffers, const VkQueue queue, VkFence fence) {
+	shVkError(p_cmd_buffers == NULL,	"invalid command buffers memory",	return 0);
+	shVkError(queue == NULL,			"invalid queue",					return 0);
+	shVkError(fence == NULL,			"invalid fence",					return 0);
+
 	VkSubmitInfo submit_info = {
 			VK_STRUCTURE_TYPE_SUBMIT_INFO,
 			NULL,
 			0,
 			NULL,
 			NULL,
-			1,
-			cmd_buffer
+			cmd_buffer_count,
+			p_cmd_buffers
 	};
-	vkQueueSubmit(queue, 1, &submit_info, fence);
+	shVkResultError(
+		vkQueueSubmit(queue, 1, &submit_info, fence),
+		"failed submitting to queue",
+		return 0
+	);
+
+	return 1;
 }
 
 #ifdef __cplusplus
