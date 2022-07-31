@@ -286,7 +286,7 @@ int main(void) {
 		shPipelineWriteDynamicDescriptorBufferMemory(core.device, 1, p_model0->model, &pipeline);
 		shPipelineBindDynamicDescriptorSet(core.p_graphics_commands[0].cmd_buffer, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
-		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &quad_vertex_buffer);
+		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, 0, &quad_vertex_buffer);
 		shBindIndexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &quad_index_buffer);
 		shDrawIndexed(core.p_graphics_commands[0].cmd_buffer, QUAD_INDEX_COUNT);
 		
@@ -296,7 +296,7 @@ int main(void) {
 		
 		triangle[9] = (float)sin(glfwGetTime());
 		shWriteVertexBufferMemory(core.device, triangle_vertex_buffer_memory, 0, TRIANGLE_VERTEX_COUNT * 4, triangle);
-		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, &triangle_vertex_buffer);
+		shBindVertexBuffer(core.p_graphics_commands[0].cmd_buffer, 0, 0, &triangle_vertex_buffer);
 		shDraw(core.p_graphics_commands[0].cmd_buffer, TRIANGLE_VERTEX_COUNT / (fixed_states.vertex_binding_description.stride / 4));
 
 		shEndPipeline(&pipeline);
