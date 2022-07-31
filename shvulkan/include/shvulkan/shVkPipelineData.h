@@ -115,6 +115,7 @@ extern uint8_t shEndPipeline(ShVkPipeline* p_pipeline);
 
 extern uint8_t shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline);
 
+extern uint8_t shFixedStatesRelease(ShVkFixedStates* p_fixed_states);
 
 #define shFixedStatesSetVertexInputRate(input_rate, binding, p_fixed_states)\
 	shSetVertexInputRate(input_rate, binding, &(p_fixed_states)->vertex_binding_description)
