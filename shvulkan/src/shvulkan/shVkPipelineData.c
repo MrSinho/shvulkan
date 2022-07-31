@@ -483,9 +483,16 @@ uint8_t shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[0], NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[1], NULL);
 	//shFreeVkPipeline(pp_pipeline);
+	memset(p_pipeline, 0, sizeof(ShVkPipeline));
 
 	return 1;
 }																
+
+uint8_t shFixedStatesRelease(ShVkFixedStates* p_fixed_states) {
+	shVkError(p_fixed_states == NULL, "invalid fixed states memory", return 0);
+	memset(p_fixed_states, 0, sizeof(ShVkFixedStates));
+	return 1;
+}
 
 uint8_t shPipelineLinkDescriptorBuffer(const uint32_t descriptor_idx, VkBuffer buffer, const uint32_t offset, const uint32_t size, ShVkPipeline* p_pipeline) {
 	shVkError(p_pipeline == NULL, "invalid pipeline pointer", return 0);
