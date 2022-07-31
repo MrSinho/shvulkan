@@ -21,7 +21,7 @@ typedef struct ShVkFixedStates ShVkFixedStates;
 
 extern void shFrameReset(ShVkCore* p_core, uint32_t thread_idx);
 
-extern void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapchain_image_idx);
+extern void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, VkClearColorValue clear_color, uint32_t* p_swapchain_image_idx);
 
 #define shDraw(graphics_cmd_buffer, vertex_count_div_stride)\
 	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, 1, 0, 0)

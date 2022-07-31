@@ -17,7 +17,7 @@ void shFrameReset(ShVkCore* p_core, const uint32_t thread_idx) {
 	vkResetCommandBuffer(p_core->p_graphics_commands[thread_idx].cmd_buffer, 0);
 }
 
-void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapchain_image_idx) {
+void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, VkClearColorValue clear_color, uint32_t* p_swapchain_image_idx) {
 	shVkError(p_swapchain_image_idx == NULL, "invalid pointer to swapchain image index", return);
 	vkAcquireNextImageKHR(p_core->device, p_core->swapchain, UINT64_MAX, p_core->p_render_semaphores[thread_idx], 0, p_swapchain_image_idx);
 
@@ -29,7 +29,7 @@ void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, uint32_t* p_swapc
 	};
 
 	VkClearValue clear_values[2] = { 0 };
-	clear_values[0].color = (VkClearColorValue){ 0.0f, 0.0f, 0.0f };
+	clear_values[0].color = clear_color;
 	clear_values[1].depthStencil = (VkClearDepthStencilValue){ 1.0f, 0 };
 	VkRenderPassBeginInfo renderPassBeginInfo = {
 		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,		//sType;

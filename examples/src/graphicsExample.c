@@ -270,7 +270,12 @@ int main(void) {
 
 		shFrameReset(&core, 0);
 
-		shFrameBegin(&core, 0, &frame_index);
+		shFrameBegin(
+			&core, 
+			0, 
+			(VkClearColorValue){ { 0.1f, 0.1f , 0.1f, 1.0f } }, 
+			&frame_index
+		);
 
 		shBindPipeline(core.p_graphics_commands[0].cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 
