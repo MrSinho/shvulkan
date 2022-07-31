@@ -61,12 +61,12 @@ extern uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_devic
 #define shWriteVertexBufferMemory(device, vertex_buffer_memory, offset, size, p_vertices)\
 	shWriteMemory(device, vertex_buffer_memory, offset, size, (void*)p_vertices)
 
-static uint8_t shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t binding, VkBuffer* p_vertex_buffer) {
+static uint8_t shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t binding, const uint32_t offset, VkBuffer* p_vertex_buffer) {
 	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer", return 0);
 	shVkError(p_vertex_buffer == NULL, "invalid vertex buffer pointer", return 0);
 
-	const VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(graphics_cmd_buffer, binding, 1, p_vertex_buffer, &offset);
+	const VkDeviceSize _offset = (VkDeviceSize)offset;
+	vkCmdBindVertexBuffers(graphics_cmd_buffer, binding, 1, p_vertex_buffer, &_offset);
 
 	return 1;
 }
