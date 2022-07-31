@@ -150,6 +150,10 @@ extern uint8_t shVulkanRelease(ShVkCore* p_core);
 
 
 
+#define shWaitDeviceIdle(device)\
+	vkDeviceWaitIdle((VkDevice)device);
+
+
 #define shGetGraphicsQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->graphics_queue.queue_family_index, 0, &(p_core)->graphics_queue.queue)
 
 #define shGetComputeQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->compute_queue.queue_family_index, 0, &(p_core)->compute_queue.queue)
