@@ -6,6 +6,11 @@
 [![linux_badge](.shci/linux-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/linux-log.md)
 [![windows_badge](.shci/windows-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/windows-log.md)
 
+Programs that use shvulkan:
+* [shengine](https://github.com/mrsinho/shengine)
+* [shgui](https://github.com/mrsinho/shgui)
+* [gaia-universe-model](https://github.com/mrsinho/gaia-universe-model)
+
 # [Online documentation](https://mrsinho.github.io/docs/shvulkan/index)
 
 `shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t as invasive as a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with efficient graphics without writing thousands of lines of code.
