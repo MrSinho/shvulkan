@@ -84,7 +84,7 @@ int main(void) {
 
 		shPipelineUpdateDescriptorSets(core.device, p_pipeline);
 
-		shPipelineWriteDescriptorBufferMemory(core.device, 0, inputs.p_ShaderInput_map, p_pipeline);
+		shPipelineWriteDescriptorBufferMemory(core.device, 0, 0, 0, inputs.p_ShaderInput_map, p_pipeline);
 		shPipelineBindDescriptorSet(core.p_compute_commands[0].cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, p_pipeline);
 
 		shCmdDispatch(core.p_compute_commands[0].cmd_buffer, 64, 1, 1);

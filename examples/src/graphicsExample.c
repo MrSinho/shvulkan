@@ -286,7 +286,7 @@ int main(void) {
 
 		shPipelineUpdateDescriptorSets(device, &pipeline);
 
-		shPipelineWriteDescriptorBufferMemory(device, 0, &light, &pipeline);
+		shPipelineWriteDescriptorBufferMemory(device, 0, 0, 0, &light, &pipeline);
 		shPipelineBindDescriptorSet(cmd_buffer, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
 		
 		

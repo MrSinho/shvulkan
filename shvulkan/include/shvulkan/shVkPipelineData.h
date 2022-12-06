@@ -161,11 +161,11 @@ extern uint8_t shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, 
 
 extern uint8_t shPipelineCreateShaderStage(const VkDevice device, VkShaderStageFlags shader_stage_flag, ShVkPipeline* p_pipeline);
 
-#define shPipelineWriteDescriptorBufferMemory(device, descriptor_idx, p_descriptor_buffer_data, p_pipeline)\
+#define shPipelineWriteDescriptorBufferMemory(device, descriptor_idx, offset, size, p_descriptor_buffer_data, p_pipeline)\
 	shWriteMemory(device,\
 		(p_pipeline)->descriptor_buffers_memory[descriptor_idx],\
-		0,\
-		(uint32_t)(p_pipeline)->descriptor_buffer_infos[descriptor_idx].range,\
+		offset,\
+		(size == 0) ? (uint32_t)(p_pipeline)->descriptor_buffer_infos[descriptor_idx].range : size,\
 		p_descriptor_buffer_data\
 	)
 
