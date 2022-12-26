@@ -214,7 +214,7 @@ uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_dev
 	return 1;
 }
 
-uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint32_t* p_memory_budget, uint32_t* p_process_used_memory, VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties) {
+uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, ShMemoryBudgetProperties* p_memory_budget_properties) {
 
 	VkPhysicalDeviceMemoryBudgetPropertiesEXT memory_budget_properties = {
 		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
@@ -235,8 +235,6 @@ uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, uint
 		process_used_memory += (uint32_t)memory_budget_properties.heapUsage[i];
 	}
 	
-	(p_memory_budget != NULL) && (*p_memory_budget = memory_budget);
-	(p_process_used_memory != NULL ) && (*p_process_used_memory = process_used_memory);
 	(p_memory_budget_properties != NULL) && memcpy(p_memory_budget_properties, &memory_budget_properties, sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT));
 
 	return 1;

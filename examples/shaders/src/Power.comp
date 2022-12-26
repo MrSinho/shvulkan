@@ -1,20 +1,29 @@
 #version 450
 
-layout (local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+#define INVOCATION_X_COUNT 16
+#define INVOCATION_Y_COUNT 4
+#define INVOCATION_Z_COUNT 1
 
-layout(std140, binding = 0) buffer buf {
-   vec4 values[];
+//
+//TOTAL OF 16 * 4 * 1 PARALLEL COMPUTATION UNITS/INVOCATIONS = 64
+//64 is multiple of 32 and 64, which leads to performance
+//improvements to Nvidia and AMD cards
+//
+layout (
+    local_size_x = INVOCATION_X_COUNT, 
+    local_size_y = INVOCATION_Y_COUNT, 
+    local_size_z = INVOCATION_Z_COUNT
+) in;
+
+layout(std430, set = 0, binding = 0) buffer buf {
+   float values[];
 };
 
 void main() {
-    //stop unused threads 
-    //if(gl_GlobalInvocationID.x >= 64) {
-    //  return;
-    //}
 
-    // store the rendered mandelbrot set into a storage buffer:
+    //the invocation id is the computational unit index
+    uint input_id = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y;
 
-    vec4 src = values[gl_GlobalInvocationID.x];
-    
-    values[gl_GlobalInvocationID.x] = vec4(pow(src.x, 2), pow(src.y, 2), pow(src.z, 2), pow(src.w, 2));
+    float src = values[input_id];    
+    values[input_id] = pow(src, 2);
 }

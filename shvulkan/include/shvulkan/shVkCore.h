@@ -172,7 +172,7 @@ extern uint8_t shVulkanRelease(ShVkCore* p_core);
 
 #define shResetFences(device, fence_count, p_fences) vkResetFences(device, fence_count, p_fences);
 
-#define shResetFence(device, p_fence) vkResetFences(device, 1, p_fence);
+#define shResetFence(device, fence) vkResetFences(device, 1, &fence);
 
 extern uint8_t shBeginCommandBuffer(const VkCommandBuffer cmd_buffer);
 
@@ -182,7 +182,7 @@ extern uint8_t shQueueSubmit(const uint32_t cmd_buffer_count, VkCommandBuffer* p
 
 #define shWaitForFences(device, fence_count, p_fences) vkWaitForFences(device, fence_count, p_fences, VK_TRUE, 100000000000)
 
-#define shWaitForFence(device, p_fence) vkWaitForFences(device, 1, p_fence, VK_TRUE, 100000000000)
+#define shWaitForFence(device, fence) vkWaitForFences(device, 1, &fence, VK_TRUE, 100000000000)
 
 #define shEndCommandBuffer(cmd_buffer) vkEndCommandBuffer(cmd_buffer)
 

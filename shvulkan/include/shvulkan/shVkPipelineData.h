@@ -41,15 +41,12 @@ typedef struct ShVkPipeline {
 	VkPushConstantRange					push_constant_range;
 	/*Descriptors*/
 	uint32_t							descriptor_count;
-	VkBuffer							descriptor_buffers[32];
-	VkDeviceMemory						descriptor_buffers_memory[32];
 	VkDescriptorSetLayout				descriptor_set_layouts[32];
 	VkDescriptorSet						descriptor_sets[32];
 	VkWriteDescriptorSet				write_descriptor_sets[32];
 	VkDescriptorSetLayoutBinding		descriptor_set_layout_bindings[32];
 	VkDescriptorBufferInfo				descriptor_buffer_infos[32];
 	VkDescriptorPool					descriptor_pools[32];
-	uint32_t							dynamic_descriptor_buffer_offsets[32];
 	/*Pipeline*/
 	VkPipelineLayout					pipeline_layout;
 	VkPipeline							pipeline;
@@ -93,8 +90,6 @@ extern uint8_t shCreateInputAssembly(const VkPrimitiveTopology primitive_topolog
 
 extern uint8_t shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const uint32_t offset, const uint32_t size, VkPushConstantRange* p_constant_range);
 
-extern uint8_t shCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags usage, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_size, VkDescriptorBufferInfo* p_buffer_info, VkBuffer* p_buffer);
-
 extern uint8_t shDescriptorSetLayout(const VkDevice device, const uint32_t binding, const VkDescriptorType descriptor_type, const VkShaderStageFlags shaderStageFlags, VkDescriptorSetLayoutBinding* p_binding, VkDescriptorSetLayout* p_descriptor_set_layout);
 
 extern uint8_t shCreateDescriptorPool(VkDevice device, const VkDescriptorType descriptor_type, VkDescriptorPool* p_descriptor_pool);
@@ -111,7 +106,8 @@ extern uint8_t shSetupGraphicsPipeline(VkDevice device, VkRenderPass render_pass
 
 extern uint8_t shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline);
 
-extern uint8_t shEndPipeline(ShVkPipeline* p_pipeline);
+#define shEndPipeline(p_pipeline)\
+	//nothing happens
 
 extern uint8_t shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline);
 
@@ -123,59 +119,41 @@ extern uint8_t shFixedStatesRelease(ShVkFixedStates* p_fixed_states);
 #define shFixedStatesSetVertexInputState(p_fixed_states)\
 	shSetVertexInputState(&(p_fixed_states)->vertex_binding_description, (p_fixed_states)->vertex_input_attribute_description_count, (p_fixed_states)->vertex_input_attributes, &(p_fixed_states)->vertex_input_state_info)
 
-extern uint8_t shPipelineCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline);
+#define shPipelineSetDescriptorCount(count, p_pipeline)\
+	(p_pipeline)->descriptor_count = (count);
 
-extern uint8_t shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline);
+extern uint8_t shPipelineSetDescriptorBufferInfo(const uint32_t set, VkBuffer buffer, const uint32_t buffer_offset, const uint32_t structure_range, ShVkPipeline* p_pipeline);
 
-extern uint8_t shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, const VkPhysicalDevice physical_device, VkMemoryPropertyFlags flags, ShVkPipeline* p_pipeline);
-
-
-#define shPipelineDescriptorSetLayout(device, descriptor_idx, binding, descriptor_type, shader_stage, p_pipeline)\
+#define shPipelineDescriptorSetLayout(device, set, binding, descriptor_type, shader_stage, p_pipeline)\
 	shDescriptorSetLayout(device,\
 		binding,\
 		descriptor_type,\
 		shader_stage,\
-		&(p_pipeline)->descriptor_set_layout_bindings[descriptor_idx],\
-		&(p_pipeline)->descriptor_set_layouts[descriptor_idx]\
+		&(p_pipeline)->descriptor_set_layout_bindings[set],\
+		&(p_pipeline)->descriptor_set_layouts[set]\
 	)
 
-#define shPipelineCreateDescriptorPool(device, descriptor_idx, p_pipeline)\
+#define shPipelineCreateDescriptorPool(device, set, p_pipeline)\
 		shCreateDescriptorPool(device,\
-			(p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].descriptorType,\
-			&(p_pipeline)->descriptor_pools[descriptor_idx]\
+			(p_pipeline)->descriptor_set_layout_bindings[set].descriptorType,\
+			&(p_pipeline)->descriptor_pools[set]\
 		)
 
-#define shPipelineAllocateDescriptorSet(device, descriptor_idx, p_pipeline)\
+#define shPipelineAllocateDescriptorSet(device, set, p_pipeline)\
 	shAllocateDescriptorSet(device,\
-		(p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].binding,\
-		(p_pipeline)->descriptor_set_layout_bindings[descriptor_idx].descriptorType,\
-		&(p_pipeline)->descriptor_set_layouts[descriptor_idx],\
-		(p_pipeline)->descriptor_pools[descriptor_idx],\
-		&(p_pipeline)->descriptor_sets[descriptor_idx],\
-		&(p_pipeline)->descriptor_buffer_infos[descriptor_idx],\
-		&(p_pipeline)->write_descriptor_sets[descriptor_idx]\
+		(p_pipeline)->descriptor_set_layout_bindings[set].binding,\
+		(p_pipeline)->descriptor_set_layout_bindings[set].descriptorType,\
+		&(p_pipeline)->descriptor_set_layouts[set],\
+		(p_pipeline)->descriptor_pools[set],\
+		&(p_pipeline)->descriptor_sets[set],\
+		&(p_pipeline)->descriptor_buffer_infos[set],\
+		&(p_pipeline)->write_descriptor_sets[set]\
 	)
 
 #define shPipelineCreateShaderModule(device, size, code, p_pipeline)\
 	shCreateShaderModule(device, size, code, &(p_pipeline)->shader_modules[(p_pipeline)->shader_module_count])
 
 extern uint8_t shPipelineCreateShaderStage(const VkDevice device, VkShaderStageFlags shader_stage_flag, ShVkPipeline* p_pipeline);
-
-#define shPipelineWriteDescriptorBufferMemory(device, descriptor_idx, offset, size, p_descriptor_buffer_data, p_pipeline)\
-	shWriteMemory(device,\
-		(p_pipeline)->descriptor_buffers_memory[descriptor_idx],\
-		offset,\
-		(size == 0) ? (uint32_t)(p_pipeline)->descriptor_buffer_infos[descriptor_idx].range : size,\
-		p_descriptor_buffer_data\
-	)
-
-#define shPipelineWriteDynamicDescriptorBufferMemory(device, descriptor_idx, p_descriptor_buffer_data, p_pipeline)\
-	shWriteMemory(device,\
-		(p_pipeline)->descriptor_buffers_memory[descriptor_idx],\
-		(p_pipeline)->dynamic_descriptor_buffer_offsets[descriptor_idx],\
-		(uint32_t)(p_pipeline)->descriptor_buffer_infos[descriptor_idx].range,\
-		p_descriptor_buffer_data\
-	)
 
 #define shPipelinePushConstants(cmd_buffer, p_push_constant_data, p_pipeline)\
 	vkCmdPushConstants(cmd_buffer,\
@@ -215,20 +193,16 @@ extern uint8_t shPipelineCreateShaderStage(const VkDevice device, VkShaderStageF
 		NULL\
 	)
 
-#define shPipelineBindDescriptorSets(cmd_buffer, first_descriptor, descriptor_count, bind_point, p_pipeline)\
+#define shPipelineBindDescriptorSets(cmd_buffer, first_descriptor, descriptor_count, bind_point, dynamic_descriptors_count, p_dynamic_offsets, p_pipeline)\
 	vkCmdBindDescriptorSets(cmd_buffer,\
 		bind_point,\
 		(p_pipeline)->pipeline_layout,\
 		first_descriptor,\
 		descriptor_count,\
 		&(p_pipeline)->descriptor_sets[first_descriptor],\
-		0,\
-		NULL\
+		dynamic_descriptors_count,\
+		p_dynamic_offsets\
 	)
-
-extern uint8_t shPipelineBindDynamicDescriptorSet(const VkCommandBuffer cmd_buffer, const uint32_t descriptor_idx, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline);
-
-extern uint8_t shPipelineBindDynamicDescriptorSets(const VkCommandBuffer cmd_buffer, const uint32_t first_descriptor, const uint32_t descriptor_count, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline);
 
 
 #ifdef __cplusplus

@@ -14,9 +14,8 @@ uint8_t shDescriptorSetLayout(VkDevice device, const uint32_t binding, const VkD
 	shVkError(p_binding == NULL, "invalid binding pointer", return 0);
 	shVkError(p_descriptor_set_layout == NULL, "invalid descriptor set layout pointer", return 0);
 	VkDescriptorSetLayoutBinding descriptor_set_layout_binding = {
-		binding,																					//binding;
-		//p_pipeline->dynamic_uniforms[descriptor_idx] ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//descriptorType;
-		descriptor_type,
+		binding,																				//binding;
+		descriptor_type,																		//descriptorType
 		1,																						//descriptorCount;
 		shaderStageFlags,																		//stageFlags;
 		NULL																					//pImmutableSamplers;
@@ -106,39 +105,6 @@ uint8_t shSetPushConstants(const VkShaderStageFlags shader_stage_flags, const ui
 
 	return 1;
 }
-
-uint8_t shCreateDescriptorBuffer(VkDevice device, VkBufferUsageFlags usage, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_size, VkDescriptorBufferInfo* p_buffer_info, VkBuffer* p_buffer) {
-	shVkError(device		== NULL, "invalid device handle",		return 0);
-	shVkError(p_buffer_info == NULL, "invalid buffer info memory",	return 0);
-	shVkError(p_buffer		== NULL, "invalid buffer pointer",		return 0)
-
-	shVkError(
-		shCreateBuffer(device, max_size, usage, p_buffer) == 0,
-		"failed creating descriptor buffer",
-		return 0
-	);
-
-	VkDescriptorBufferInfo buffer_info = {
-		*p_buffer,	//buffer;
-		0,			//offset;
-		size,		//range;
-	};
-	*p_buffer_info = buffer_info;
-
-	return 1;
-}
-
-//uint8_t shGraphicsAllocateDescriptorUniformBuffers(VkDevice device, VkPhysicalDevice physical_device, ShVkPipeline* p_pipeline) {
-//	for (uint8_t i = 0; i < p_pipeline->descriptor_count; i++) {
-//		shAllocateMemory(device, physical_device,
-//			(p_pipeline)->descriptor_buffers[i],
-//			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-//			&(p_pipeline)->descriptor_buffers_memory[i]
-//		);
-//	}
-//
-//    return 1;
-//}
 
 uint8_t shCreateShaderModule(const VkDevice device, const uint32_t size, const char* code, VkShaderModule* p_shader_module) {
 	shVkError(code == NULL, "invalid shader module code", return 0);
@@ -462,13 +428,6 @@ uint8_t shSetupComputePipeline(VkDevice device, ShVkPipeline* p_pipeline) {
     return 1;
 }
 
-uint8_t shEndPipeline(ShVkPipeline* p_pipeline) {
-	shVkError(p_pipeline == NULL, "invalid graphics pipeline pointer", return 0);
-	memset(p_pipeline->dynamic_descriptor_buffer_offsets, 0, sizeof(p_pipeline->dynamic_descriptor_buffer_offsets));
-
-    return 1;
-}
-
 uint8_t shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
 	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
 	vkDeviceWaitIdle(device);
@@ -482,7 +441,6 @@ uint8_t shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline) {
 	vkDestroyPipeline(device, p_pipeline->pipeline, NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[0], NULL);
 	vkDestroyShaderModule(device, p_pipeline->shader_modules[1], NULL);
-	//shFreeVkPipeline(pp_pipeline);
 	memset(p_pipeline, 0, sizeof(ShVkPipeline));
 
 	return 1;
@@ -494,48 +452,20 @@ uint8_t shFixedStatesRelease(ShVkFixedStates* p_fixed_states) {
 	return 1;
 }
 
-uint8_t shPipelineLinkDescriptorBuffer(const uint32_t descriptor_idx, VkBuffer buffer, const uint32_t offset, const uint32_t size, ShVkPipeline* p_pipeline) {
-	shVkError(p_pipeline == NULL, "invalid pipeline pointer", return 0);
-	shVkError(buffer == NULL, "invalid buffer pointer", return 0);
+uint8_t shPipelineSetDescriptorBufferInfo(const uint32_t set, VkBuffer buffer, const uint32_t buffer_offset, const uint32_t structure_range, ShVkPipeline* p_pipeline) {
+	shVkError(p_pipeline == NULL,   "invalid pipeline memory", return 0);
+	shVkError(buffer == NULL,       "invalid buffer pointer",  return 0);
+	shVkError(structure_range == 0, "invalid buffer size",     return 0);
+
 	VkDescriptorBufferInfo buffer_info = {
-		buffer,	//buffer;
-		offset,	//offset;
-		size,	//range;
+		buffer,            //buffer;
+		buffer_offset,     //offset;
+		structure_range,   //range;
 	};
-	p_pipeline->descriptor_buffer_infos[descriptor_idx] = buffer_info;
-	p_pipeline->descriptor_count++;
 
-    return 1;
-}
+	p_pipeline->descriptor_buffer_infos[set] = buffer_info;
 
-uint8_t shPipelineCreateDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, ShVkPipeline* p_pipeline) {
-	shVkError(device == NULL, "invalid device handle", return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
-	p_pipeline->descriptor_count++;
-
-	return 0;
-}
-
-uint8_t shPipelineCreateDynamicDescriptorBuffer(const VkDevice device, const VkBufferUsageFlags buffer_usage_flag, const uint32_t descriptor_idx, const uint32_t size, const uint32_t max_bindings, ShVkPipeline* p_pipeline) {
-	shVkError(device == NULL, "invalid device handle", return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-	shCreateDescriptorBuffer(device, buffer_usage_flag, descriptor_idx, size, size * max_bindings, &p_pipeline->descriptor_buffer_infos[descriptor_idx], &p_pipeline->descriptor_buffers[descriptor_idx]);
-	p_pipeline->descriptor_count++;
-
-	return 0;
-}
-
-uint8_t shPipelineAllocateDescriptorBuffersMemory(const VkDevice device, const VkPhysicalDevice physical_device, VkMemoryPropertyFlags flags, ShVkPipeline* p_pipeline) {
-	shVkError(device == NULL, "invalid device handle", return 0);
-	shVkError(physical_device == NULL, "invalid physical device device", return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	for (uint32_t descriptor_idx = 0; descriptor_idx < p_pipeline->descriptor_count; descriptor_idx++) {
-		shPipelineAllocateDescriptorBufferMemory(device, physical_device, flags, descriptor_idx, p_pipeline);
-	}
-
-	return 0;
+	return 1;
 }
 
 uint8_t shPipelineCreateShaderStage(const VkDevice device, VkShaderStageFlags shader_stage_flag, ShVkPipeline* p_pipeline) {
@@ -545,35 +475,7 @@ uint8_t shPipelineCreateShaderStage(const VkDevice device, VkShaderStageFlags sh
     return 1;
 }
 
-uint8_t shPipelineBindDynamicDescriptorSet(const VkCommandBuffer cmd_buffer, const uint32_t descriptor_idx, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline) {
-	vkCmdBindDescriptorSets(cmd_buffer,
-		bind_point,
-		p_pipeline->pipeline_layout, descriptor_idx, 1,
-		&(p_pipeline)->descriptor_sets[descriptor_idx],
-		1,
-		&(p_pipeline)->dynamic_descriptor_buffer_offsets[descriptor_idx]
-	);
-	(p_pipeline)->dynamic_descriptor_buffer_offsets[descriptor_idx] += (uint32_t)p_pipeline->descriptor_buffer_infos[descriptor_idx].range;
 
-    return 1;
-}
-
-uint8_t shPipelineBindDynamicDescriptorSets(const VkCommandBuffer cmd_buffer, const uint32_t first_descriptor, const uint32_t descriptor_count, const VkPipelineBindPoint bind_point, ShVkPipeline* p_pipeline) {
-	vkCmdBindDescriptorSets(cmd_buffer,
-		bind_point,
-		p_pipeline->pipeline_layout, 
-		first_descriptor,
-		descriptor_count,
-		&(p_pipeline)->descriptor_sets[first_descriptor],
-		2,
-		&(p_pipeline)->dynamic_descriptor_buffer_offsets[first_descriptor]
-	);
-	for (uint32_t i = 0; i < descriptor_count; i++) {
-		(p_pipeline)->dynamic_descriptor_buffer_offsets[i] += (uint32_t)p_pipeline->descriptor_buffer_infos[i].range;
-	}
-
-	return 1;
-}
 
 #ifdef __cplusplus
 }

@@ -19,23 +19,28 @@ typedef struct ShVkFixedStates ShVkFixedStates;
 
 
 
-extern void shFrameReset(ShVkCore* p_core, uint32_t thread_idx);
+extern void shAcquireNextImage(ShVkCore* p_core, VkSemaphore semaphore, uint32_t* p_swapchain_image_idx);
 
-extern void shFrameBegin(ShVkCore* p_core, const uint32_t thread_idx, VkClearColorValue clear_color, uint32_t* p_swapchain_image_idx);
+extern void shBeginRenderPass(ShVkCore* p_core, VkCommandBuffer cmd_buffer, VkClearColorValue clear_color, uint32_t swapchain_image_idx);
 
-#define shDraw(graphics_cmd_buffer, vertex_count_div_stride)\
-	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, 1, 0, 0)
+#define shEndRenderPass(cmd_buffer)\
+	vkCmdEndRenderPass(cmd_buffer)
 
-#define shDrawIndexed(graphics_cmd_buffer, index_count)\
-	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, 1, 0, 0, 0)
+#define shDraw(graphics_cmd_buffer, vertex_count_div_stride, first_vertex)\
+	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, 1, first_vertex, 0)
 
-#define shDrawInstances(graphics_cmd_buffer, vertex_count_div_stride, instance_count)\
-	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, instance_count, 0, 0)
+#define shDrawIndexed(graphics_cmd_buffer, index_count, vertex_offset, first_index)\
+	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, 1, first_index, vertex_offset, 0)//vertex offset in bytes
 
-#define shDrawIndexedInstances(graphics_cmd_buffer, index_count, instance_count)\
-	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, instance_count, 0, 0, 0)
 
-extern void shFrameEnd(ShVkCore* p_core, const uint32_t thread_idx, const uint32_t swapchain_image_idx);
+#define shDrawInstances        vkCmdDraw
+#define shDrawIndexedInstances vkCmdDrawIndexed
+
+void shGraphicsQueueSubmit(ShVkCore* p_core, VkCommandBuffer cmd_buffer, VkSemaphore semaphore, VkFence fence);
+
+void shPresentImage(ShVkCore* p_core, VkSemaphore semaphore, const uint32_t swapchain_image_idx);
+
+
 
 #ifdef __cplusplus
 }
