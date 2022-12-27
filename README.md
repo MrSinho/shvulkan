@@ -1,6 +1,6 @@
 # shvulkan
 
-`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t as invasive as a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with efficient graphics without writing thousands of lines of code.
+`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t as invasive as a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with graphics efficiently without writing thousands of lines of code.
 
 ---
 
@@ -21,7 +21,8 @@
 # Index
 * [Clone and build](#clone-and-build)
 * [CMake targets](#cmake-targets)
-* [Graphics example](#graphics-example)
+* [Graphics example overview](#graphics-example-overview)
+* [Compute example overview](#compute-example-overview)
 
 ---
 
@@ -63,9 +64,13 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ---
 
-## Graphics example
+## [Graphics example overview](examples/src/graphicsExample.c)
 
-![](examples/diagrams/shvulkan%20graphics.drawio.svg)
+[![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
+
+## [Compute example overview](examples/src/computeExample.c)
+
+
 
 [top](#shvulkan)
  
