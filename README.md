@@ -39,6 +39,8 @@ cmake --build .
 
 If you are having some trouble with building the targets and compiling the code, check the [Linux](https://github.com/MrSinho/shvulkan/blob/main/.shci/linux-log.md) and [Windows](https://github.com/MrSinho/shvulkan/blob/main/.shci/windows-log.md) build [logs](https://github.com/MrSinho/shvulkan/blob/main/.shci).
 
+[top](#shvulkan)
+
 ---
 
 ### Vulkan version
@@ -49,6 +51,8 @@ If you haven't installed Vulkan 1.2 you can set the cmake options `SH_USE_VULKAN
 cmake -DSH_USE_VULKAN_1_0=ON ..
 cmake -DSH_USE_VULKAN_1_1=ON ..
 ```
+
+[top](#shvulkan)
 
 ---
 
@@ -62,11 +66,17 @@ cmake -DSH_USE_VULKAN_1_1=ON ..
 
 If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw`](https://github.com/glfw/glfw) target will be generated as a static library.
 
+[top](#shvulkan)
+
 ---
 
 ## [Graphics example overview](examples/src/graphicsExample.c)
 
 [![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
+
+[top](#shvulkan)
+
+---
 
 ## [Compute example overview](examples/src/computeExample.c)
 
