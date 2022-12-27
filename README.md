@@ -70,7 +70,7 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ## [Compute example overview](examples/src/computeExample.c)
 
-
+[![](examples/diagrams/shvulkan%20compute.drawio.svg)](examples/diagrams/shvulkan%20compute.drawio.svg)
 
 [top](#shvulkan)
  
