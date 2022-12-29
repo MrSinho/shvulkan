@@ -98,20 +98,24 @@ const char* shTranslateVkResult(const VkResult vk_result) {
         return "VK_INCOMPLETE";
     case VK_NOT_READY:
         return "VK_NOT_READY";
+#if 0//not supported by legacy distributions
     case VK_OPERATION_DEFERRED_KHR:
         return "VK_OPERATION_DEFERRED_KHR";
     case VK_OPERATION_NOT_DEFERRED_KHR:
         return "VK_OPERATION_NOT_DEFERRED_KHR";
     case VK_PIPELINE_COMPILE_REQUIRED_EXT:
         return "VK_PIPELINE_COMPILE_REQUIRED_EXT";
+#endif//0
     case VK_SUBOPTIMAL_KHR:
         return "VK_SUBOPTIMAL_KHR";
     case VK_SUCCESS:
         return "VK_SUCCESS";
+#if 0//not supported by legacy distributions
     case VK_THREAD_DONE_KHR:
         return "VK_THREAD_DONE_KHR";
     case VK_THREAD_IDLE_KHR:
         return "VK_THREAD_IDLE_KHR";
+#endif//0
     case VK_TIMEOUT:
         return "VK_TIMEOUT";
     default:
