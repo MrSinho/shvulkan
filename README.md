@@ -1,6 +1,6 @@
 # shvulkan
 
-`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C. Vulkan is known for not being beginner friendly, and many operations may become repetitive if you have multiple projects, and that is where shvulkan becomes useful. It isn’t as invasive as a graphics engine (for that take a look at shengine) but it may become a key tool if you want to work with graphics efficiently without writing thousands of lines of code.
+`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.
 
 ---
 
@@ -72,9 +72,37 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ## [Graphics example overview](examples/src/graphicsExample.c)
 
-This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls to a graphics queue and synchronize data between host and graphics card.
+This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls (with indexing and without indexing, with instancing and without instancing) to a graphics queue and synchronize data between host and graphics card. The following diagram briefly shows what happens in this example program: 
 
 [![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
+
+Renderdoc stats:
+
+The first draw call will require some quad vertices, of which raw coordinates are displayed on the 1st picture below, which are going to be combined with two `per instance` model matrices located on an instance buffer, which was bound with and offset of 0 bytes, and produce different vertex positions (see `gl_PerVertex_var.gl_Position`):
+
+quad input vertex positions:
+![](examples/capture/quads%20in.PNG)
+1st quad instance input matrix and output fragment positions:
+![](examples/capture/1st%20quad%20inout.PNG)
+![](examples/capture/1st%20quad%20out.PNG)
+2nd quad instance input matrix and output fragment position:
+![](examples/capture/2nd%20quad%20inout.PNG)
+![](examples/capture/2nd%20quad%20out.PNG)
+
+Through the renderpass, after setting up the color of each fragment using the fragment shader, the first draw call will produce the following framebuffers on the swapchain:
+![](examples/capture/1st%20draw%20call.PNG)
+
+The second draw call requires three triangle vertices, where raw coordinates are shown on the first picture below, which are going to be combined with the last raw matrix on the instance buffer, that was bound with an offset of 128 bytes, and return the following vertex positions (see `gl_PerVertex_var.gl_Position`):
+
+triangle input vertex positions: 
+![](examples/capture/triangle%20in.PNG)
+triangle input matrix and output fragment positions:
+![](examples/capture/triangle%20inout.PNG)
+![](examples/capture/triangle%20out.PNG)
+
+Through the renderpass, the second draw call will produce the following framebuffers on the swapchain:
+
+![](examples/capture/2nd%20draw%20call.PNG)
 
 [top](#shvulkan)
 
@@ -82,9 +110,9 @@ This example demonstrates how to setup a vulkan environment, allocate, write and
 
 ## [Compute example overview](examples/src/computeExample.c)
 
-[![](examples/diagrams/shvulkan%20compute.drawio.svg)](examples/diagrams/shvulkan%20compute.drawio.svg)
+The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the shader will take 64 decimal numbers as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue synchronize data between host and graphics card and read the output values. The following diagram briefly shows what happens in this example program:
 
-The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the shader will take some floats as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue synchronize data between host and graphics card and read the output values.
+[![](examples/diagrams/shvulkan%20compute.drawio.svg)](examples/diagrams/shvulkan%20compute.drawio.svg)
 
 [top](#shvulkan)
  
