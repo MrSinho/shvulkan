@@ -72,6 +72,8 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ## [Graphics example overview](examples/src/graphicsExample.c)
 
+This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls to a graphics queue and synchronize data between host and graphics card.
+
 [![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
 
 [top](#shvulkan)
@@ -81,6 +83,8 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 ## [Compute example overview](examples/src/computeExample.c)
 
 [![](examples/diagrams/shvulkan%20compute.drawio.svg)](examples/diagrams/shvulkan%20compute.drawio.svg)
+
+The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the shader will take some floats as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue synchronize data between host and graphics card and read the output values.
 
 [top](#shvulkan)
  
