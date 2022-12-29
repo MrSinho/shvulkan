@@ -108,7 +108,7 @@ Through the renderpass, the second draw call will produce the following framebuf
 
 ## [Compute example overview](examples/src/computeExample.c)
 
-The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the shader will take 64 decimal numbers as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue, synchronize data between host and graphics card and read the output values. The following diagram briefly shows what happens in this example program:
+The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the program takes 64 decimal numbers as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue, synchronize data between host and graphics card and read the output values. The following diagram briefly shows what happens in this example program:
 
 [![](examples/diagrams/shvulkan%20compute.drawio.svg)](examples/diagrams/shvulkan%20compute.drawio.svg)
 
