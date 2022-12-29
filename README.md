@@ -90,7 +90,7 @@ triangle input matrix and output fragment positions:
 ![](examples/capture/triangle%20inout.PNG)
 ![](examples/capture/triangle%20out.PNG)
 
-Through the renderpass, the second draw call will produce the following framebuffers on the swapchain:
+Through the renderpass, the second draw call will produce the following framebuffers on the swapchain (as you can see, all the fragments are located at the same `z` distance from the origin):
 
 ![](examples/capture/2nd%20draw%20call.PNG)
 
