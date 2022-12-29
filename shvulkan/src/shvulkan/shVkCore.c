@@ -238,8 +238,8 @@ uint8_t shSetLogicalDevice(ShVkCore* p_core) {
 		NULL,                                                         //ppEnabledLayerNames;
 		p_core->device_extension_count,                               //enabledExtensionCount;
 		p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? 
-			&extension_names[1] :               
-			&extension_names[0],                                      //ppEnabledExtensionNames;
+			(const char* const*)&extension_names[1] :               
+			(const char* const*)&extension_names[0],                  //ppEnabledExtensionNames;
 		NULL                                                          //pEnabledFeatures;
 	};
 	
