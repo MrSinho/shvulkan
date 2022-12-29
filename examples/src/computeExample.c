@@ -77,8 +77,10 @@ int main(void) {
 	//
 	//INPUTS FOR SHADER
 	//
+	printf("Compute shader inputs:\n");
 	for (uint32_t i = 0; i < INPUT_COUNT; i++) {
 		inputs[i] = (float)(i);
+		printf("%f\n", inputs[i]);
 	}
 	
 	
@@ -128,6 +130,7 @@ int main(void) {
 	//
 	shPipelineBindDescriptorSet(cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
 
+	printf("\nSquaring the numbers...\n\n");
 	//
 	//DISPATCH DATA TO WORK GROUPS
 	//
