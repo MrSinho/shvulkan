@@ -340,56 +340,6 @@ void initializeVulkan(GLFWwindow** p_window, ShVkCore* p_core) {
 	shGetGraphicsQueue(p_core);
 }
 
-void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t width, uint32_t height, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline) {
-	assert(p_pipeline != NULL && p_fixed_states != NULL);
-
-	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &p_pipeline->push_constant_range);
-	
-	shPipelineSetDescriptorCount(1, p_pipeline);
-
-	//
-	//WHERE THE DESCRIPTOR DATA IS LOCATED INSIDE THE DESCRIPTOR BUFFER
-	//
-	shPipelineSetDescriptorBufferInfo(0, descriptors_buffer, 0, sizeof(light), p_pipeline);
-
-	shPipelineDescriptorSetLayout(device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
-
-	shPipelineCreateDescriptorPool(device, 0, p_pipeline);
-	
-	shPipelineAllocateDescriptorSet(device, 0, p_pipeline);
-	
-	uint32_t vertex_shader_size = 0;
-	uint32_t fragment_shader_size = 0;
-	char* vertex_code = (char*)readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
-	char* fragment_code = (char*)readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
-	shPipelineCreateShaderModule(device, vertex_shader_size, vertex_code, p_pipeline);
-	shPipelineCreateShaderStage(device, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
-	
-	shPipelineCreateShaderModule(device, fragment_shader_size, fragment_code, p_pipeline);
-	shPipelineCreateShaderStage(device, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
-	
-	free(vertex_code);
-	free(fragment_code);
-	
-	shSetVertexInputAttribute(0, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 0, 12, p_fixed_states);
-	shSetVertexInputAttribute(1, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 12, 12, p_fixed_states);
-	shSetVertexInputAttribute(2, PER_VERTEX_BINDING, SH_VEC2_SIGNED_FLOAT, 24, 8, p_fixed_states);
-	
-	//since it's a matrix, although it's not specified in the shader, it will consume multpiple input locations
-	shSetVertexInputAttribute(3, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 0, 16, p_fixed_states);
-	shSetVertexInputAttribute(4, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 16, 16, p_fixed_states);
-	shSetVertexInputAttribute(5, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 32, 16, p_fixed_states);
-	shSetVertexInputAttribute(6, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 48, 16, p_fixed_states);
-
-	shFixedStatesSetBindingCount(2, p_fixed_states);
-	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_VERTEX, PER_VERTEX_BINDING, p_fixed_states);
-	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_INSTANCE, PER_INSTANCE_BINDING, p_fixed_states);
-	shFixedStatesSetVertexInputState(p_fixed_states);
-	
-	shSetFixedStates(device, width, height, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_POLYGON_MODE_FILL, p_fixed_states);
-	shSetupGraphicsPipeline(device, render_pass, *p_fixed_states, p_pipeline);
-}
-
 void writeMemory(
 	ShVkCore*       p_core,
 	VkBuffer*       p_staging_buffer,
@@ -485,20 +435,61 @@ void writeMemory(
 	shWaitForFence(device, fence);
 }
 
+void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t width, uint32_t height, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline) {
+	assert(p_pipeline != NULL && p_fixed_states != NULL);
 
-GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title) {
-	shVkError(!glfwInit(), "error initializing glfw", return NULL);
-	shVkError(glfwVulkanSupported() == GLFW_FALSE, "vulkan not supported by glfw", return NULL);
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-	return glfwCreateWindow(width, height, title, NULL, NULL);
+	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &p_pipeline->push_constant_range);
+
+	shPipelineSetDescriptorCount(1, p_pipeline);
+
+	//
+	//WHERE THE DESCRIPTOR DATA IS LOCATED INSIDE THE DESCRIPTOR BUFFER
+	//
+	shPipelineSetDescriptorBufferInfo(0, descriptors_buffer, 0, sizeof(light), p_pipeline);
+
+	shPipelineDescriptorSetLayout(device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
+
+	shPipelineCreateDescriptorPool(device, 0, p_pipeline);
+
+	shPipelineAllocateDescriptorSet(device, 0, p_pipeline);
+
+	uint32_t vertex_shader_size = 0;
+	uint32_t fragment_shader_size = 0;
+	char* vertex_code = (char*)readBinary("../examples/shaders/bin/mesh.vert.spv", &vertex_shader_size);
+	char* fragment_code = (char*)readBinary("../examples/shaders/bin/mesh.frag.spv", &fragment_shader_size);
+	shPipelineCreateShaderModule(device, vertex_shader_size, vertex_code, p_pipeline);
+	shPipelineCreateShaderStage(device, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
+
+	shPipelineCreateShaderModule(device, fragment_shader_size, fragment_code, p_pipeline);
+	shPipelineCreateShaderStage(device, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
+
+	free(vertex_code);
+	free(fragment_code);
+
+	shSetVertexInputAttribute(0, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 0, 12, p_fixed_states);
+	shSetVertexInputAttribute(1, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 12, 12, p_fixed_states);
+	shSetVertexInputAttribute(2, PER_VERTEX_BINDING, SH_VEC2_SIGNED_FLOAT, 24, 8, p_fixed_states);
+
+	//since it's a matrix, although it's not specified in the shader, it will consume multpiple input locations
+	shSetVertexInputAttribute(3, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 0, 16, p_fixed_states);
+	shSetVertexInputAttribute(4, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 16, 16, p_fixed_states);
+	shSetVertexInputAttribute(5, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 32, 16, p_fixed_states);
+	shSetVertexInputAttribute(6, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 48, 16, p_fixed_states);
+
+	shFixedStatesSetBindingCount(2, p_fixed_states);
+	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_VERTEX, PER_VERTEX_BINDING, p_fixed_states);
+	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_INSTANCE, PER_INSTANCE_BINDING, p_fixed_states);
+	shFixedStatesSetVertexInputState(p_fixed_states);
+
+	shSetFixedStates(device, width, height, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_POLYGON_MODE_FILL, p_fixed_states);
+	shSetupGraphicsPipeline(device, render_pass, *p_fixed_states, p_pipeline);
 }
 
 void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fixed_states, VkBuffer descriptors_buffer, ShVkPipeline* p_pipeline) {
-	uint32_t width  = 0;
+	uint32_t width = 0;
 	uint32_t height = 0;
 
-	VkDevice device                  = p_core->device;
+	VkDevice device = p_core->device;
 	VkPhysicalDevice physical_device = p_core->physical_device;
 
 	glfwGetWindowSize(window, &width, &height);
@@ -512,29 +503,42 @@ void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fi
 		glfwCreateWindowSurface(p_core->instance, window, NULL, &p_core->surface.surface);
 		p_core->surface.width = width;
 		p_core->surface.height = height;
+		
+		//just for legacy implementations
+		shGetPhysicalDeviceSurfaceSupport(p_core, p_core->graphics_queue);
+
 		shInitSwapchainData(p_core);
 		shInitDepthData(p_core);
 		shSetFramebuffers(p_core);
 
-		//just for legacy implementations
-		shGetPhysicalDeviceSurfaceSupport(p_core, p_core->graphics_queue);
-
+		
 
 		shPipelineRelease(device, p_pipeline);
 		shFixedStatesRelease(p_fixed_states);
 
 		setupPipeline(
-			device, 
-			physical_device, 
-			width, 
-			height, 
+			device,
+			physical_device,
+			width,
+			height,
 			descriptors_buffer,
-			p_core->render_pass, 
-			p_fixed_states, 
+			p_core->render_pass,
+			p_fixed_states,
 			p_pipeline
 		);
 	}
 }
+
+
+GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char* title) {
+	shVkError(!glfwInit(), "error initializing glfw", return NULL);
+	shVkError(glfwVulkanSupported() == GLFW_FALSE, "vulkan not supported by glfw", return NULL);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+	return glfwCreateWindow(width, height, title, NULL, NULL);
+}
+
+
 
 
 #ifdef _MSC_VER
