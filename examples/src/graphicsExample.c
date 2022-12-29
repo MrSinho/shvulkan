@@ -368,12 +368,7 @@ void writeMemory(
 	uint32_t quad_indices_offset      = instance_models_offset   + sizeof(models);
 	uint32_t light_offset             = quad_indices_offset      + sizeof(indices);
 	
-	uint32_t staging_size             = quad_vertices_offset     + 
-	                                    triangle_vertices_offset + 
-	                                    instance_models_offset   + 
-	                                    quad_indices_offset      + 
-	                                    light_offset             + 
-	                                    sizeof(light)            ;
+	uint32_t staging_size             = light_offset + sizeof(light);
 
 	//
 	//WRITE ALL DATA TO STAGING BUFFER
