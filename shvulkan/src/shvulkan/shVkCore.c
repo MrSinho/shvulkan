@@ -50,38 +50,6 @@ uint8_t shCreateInstance(ShVkCore* p_core, const char* application_name, const c
 	return 1;
 }
 
-#if 0
-uint8_t shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, uint8_t* window_process, uint8_t* p_window_handle) {
-#ifdef _WIN32
-	VkWin32SurfaceCreateInfoKHR surface_create_info = {
-		VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,	// sType
-		NULL,												// pNext
-		0,													// flags
-		(HINSTANCE)GetModuleHandle(NULL),					// hinstance;
-		(HWND)(*(HWND*)p_window_handle)						// hwnd;
-	};
-	shVkResultError(
-		vkCreateWin32SurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
-		"error creating win32 surface", return 0
-	);
-#elif defined __linux__
-	VkXlibSurfaceCreateInfoKHR surface_create_info = {
-		VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR, //sType
-		NULL,											//pNext
-		0,												//flags
-		window_process,				 					//dpy
-		(Window)(*(Window*)p_window_handle)				//window
-	};
-	shVkResultError(
-		vkCreateXlibSurfaceKHR(p_core->instance, &surface_create_info, NULL, &p_core->surface.surface),
-		"error creating xlib surface", return 0
-	);
-#endif//_WIN32
-	p_core->surface.width = width;
-	p_core->surface.height = height;
-}
-#endif//0
-
 uint8_t shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements) {
 	shVkError(p_core == NULL, "invalid arguments", return 0);
 	p_core->required_queue_flags = requirements;
@@ -221,6 +189,18 @@ uint8_t shSetQueueInfo(const uint32_t queue_family_index, const float* priority,
 	return 1;
 }
 
+uint8_t shGetPhysicalDeviceSurfaceSupport(ShVkCore* p_core, ShVkQueue queue) {
+	shVkError(p_core == NULL, "invalid core memory", return 0);
+	VkBool32 supported = 0;
+	vkGetPhysicalDeviceSurfaceSupportKHR(
+		p_core->physical_device,
+		queue.queue_family_index,
+		p_core->surface.surface,
+		&supported
+	);
+	return (uint8_t)supported;
+}
+
 uint8_t shSetLogicalDevice(ShVkCore* p_core) {
 	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	const float queue_priority = 1.0f;
@@ -238,18 +218,29 @@ uint8_t shSetLogicalDevice(ShVkCore* p_core) {
 		}
 	}
 	
-	const char* extension_names[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME };
+	const char swapchain_extension_name[VK_MAX_EXTENSION_NAME_SIZE]     = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	const char memory_budget_extension_name[VK_MAX_EXTENSION_NAME_SIZE] = { VK_EXT_MEMORY_BUDGET_EXTENSION_NAME };
+
+	memcpy(p_core->extension_names[0], swapchain_extension_name, VK_MAX_EXTENSION_NAME_SIZE);
+	memcpy(p_core->extension_names[1], memory_budget_extension_name, VK_MAX_EXTENSION_NAME_SIZE);
+
+	char* extension_names[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME };
+
+	p_core->device_extension_count = p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? 1 : 2;
+
 	VkDeviceCreateInfo deviceCreateInfo = {
-		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,														//sType;
-		NULL,																						//pNext;
-		0,																							//flags;
-		queue_info_count,																			//queueCreateInfoCount;
-		queues_info,																				//pQueueCreateInfos;
-		0, 																							//enabledLayerCount;
-		NULL,																						//ppEnabledLayerNames;
-		p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? 1 : 2,									//enabledExtensionCount;
-		p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? &extension_names[1] : extension_names,	//ppEnabledExtensionNames;
-		NULL																						//pEnabledFeatures;
+		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,                         //sType;
+		NULL,                                                         //pNext;
+		0,                                                            //flags;
+		queue_info_count,                                             //queueCreateInfoCount;
+		queues_info,                                                  //pQueueCreateInfos;
+		0,                                                            //enabledLayerCount;
+		NULL,                                                         //ppEnabledLayerNames;
+		p_core->device_extension_count,                               //enabledExtensionCount;
+		p_core->required_queue_flags == VK_QUEUE_COMPUTE_BIT ? 
+			&extension_names[1] :               
+			&extension_names[0],                                      //ppEnabledExtensionNames;
+		NULL                                                          //pEnabledFeatures;
 	};
 	
 	if(vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device) != VK_SUCCESS) {

@@ -142,16 +142,16 @@ uint8_t shCreateShaderStage(const VkDevice device, const VkShaderModule shader_m
     return 1;
 }
 
-uint8_t shSetVertexInputAttribute(const uint32_t location, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states) {
+uint8_t shSetVertexInputAttribute(const uint32_t location, const uint32_t binding, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states) {
 	shVkError(p_fixed_states == NULL, "invalid fixed states pointer", return 0);
 	VkVertexInputAttributeDescription vertex_input_attribute = {
 		location,
-		0,
+		binding,
 		format,
 		offset
 	};
 	p_fixed_states->vertex_input_attributes[location] = vertex_input_attribute;
-	p_fixed_states->vertex_binding_description.stride += size;
+	p_fixed_states->vertex_binding_descriptions[binding].stride += size;
 	p_fixed_states->vertex_input_attribute_description_count++;
 
     return 1;
@@ -166,17 +166,17 @@ uint8_t shSetVertexInputRate(const VkVertexInputRate input_rate, const uint32_t 
     return 1;
 }
 
-uint8_t shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
-	shVkError(p_vertex_binding == NULL, "invalid vertex input binding description pointer", return 0);
-	shVkError(p_vertex_input_attributes == NULL, "invalid vertex input attribute description pointer", return 0);
-	shVkError(p_vertex_input_state == NULL, "invalid vertex input state info pointer", return 0);
+uint8_t shSetVertexInputState(const uint32_t binding_count, VkVertexInputBindingDescription* p_vertex_bindings, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state) {
+	shVkError(p_vertex_bindings == NULL, "invalid vertex input binding descriptions memory", return 0);
+	shVkError(p_vertex_input_attributes == NULL, "invalid vertex input attribute descriptions memory", return 0);
+	shVkError(p_vertex_input_state == NULL, "invalid vertex input state info memory", return 0);
 
 	VkPipelineVertexInputStateCreateInfo vertexInput = {
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,//sType;
 		NULL,									//pNext;
 		0,										//flags;
-		1,										//vertexBindingDescriptionCount;
-		p_vertex_binding,						//pVertexBindingDescriptions;
+		binding_count,							//vertexBindingDescriptionCount;
+		p_vertex_bindings,						//pVertexBindingDescriptions;
 		vertex_input_attribute_count,			//vertexAttributeDescriptionCount;
 		p_vertex_input_attributes,				//pVertexAttributeDescriptions;
 	};
@@ -452,15 +452,15 @@ uint8_t shFixedStatesRelease(ShVkFixedStates* p_fixed_states) {
 	return 1;
 }
 
-uint8_t shPipelineSetDescriptorBufferInfo(const uint32_t set, VkBuffer buffer, const uint32_t buffer_offset, const uint32_t structure_range, ShVkPipeline* p_pipeline) {
+uint8_t shPipelineSetDescriptorBufferInfo(const uint32_t set, VkBuffer buffer, const uint32_t buffer_offset, const uint32_t set_range, ShVkPipeline* p_pipeline) {
 	shVkError(p_pipeline == NULL,   "invalid pipeline memory", return 0);
 	shVkError(buffer == NULL,       "invalid buffer pointer",  return 0);
-	shVkError(structure_range == 0, "invalid buffer size",     return 0);
+	shVkError(set_range == 0,       "invalid set size",         return 0);
 
 	VkDescriptorBufferInfo buffer_info = {
 		buffer,            //buffer;
 		buffer_offset,     //offset;
-		structure_range,   //range;
+		set_range,         //range;
 	};
 
 	p_pipeline->descriptor_buffer_infos[set] = buffer_info;

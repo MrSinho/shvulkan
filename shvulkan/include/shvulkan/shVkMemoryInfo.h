@@ -14,22 +14,27 @@ extern "C" {
 #define SH_VEC1_SIGNED_FLOAT		VK_FORMAT_R32_SFLOAT
 #define SH_VEC2_SIGNED_FLOAT		VK_FORMAT_R32G32_SFLOAT
 #define SH_VEC3_SIGNED_FLOAT		VK_FORMAT_R32G32B32_SFLOAT
+#define SH_VEC4_SIGNED_FLOAT		VK_FORMAT_R32G32B32A32_SFLOAT
 
 #define SH_VEC1_SIGNED_DOUBLE		VK_FORMAT_R64_SFLOAT
 #define SH_VEC2_SIGNED_DOUBLE		VK_FORMAT_R64G64_SFLOAT
 #define SH_VEC3_SIGNED_DOUBLE		VK_FORMAT_R64G64B64_SFLOAT
+#define SH_VEC4_SIGNED_DOUBLE		VK_FORMAT_R64G64B64A64_SFLOAT
 
 #define SH_VEC1_SIGNED_INT			VK_FORMAT_R32_SINT
 #define SH_VEC2_SIGNED_INT			VK_FORMAT_R32G32_SINT
 #define SH_VEC3_SIGNED_INT			VK_FORMAT_R32G32B32_SINT
+#define SH_VEC4_SIGNED_INT			VK_FORMAT_R32G32B32A32_SINT
 
 #define SH_VEC1_UNSIGNED_INT		VK_FORMAT_R32_UINT
 #define SH_VEC2_UNSIGNED_INT		VK_FORMAT_R32G32_UINT
 #define SH_VEC3_UNSIGNED_INT		VK_FORMAT_R32G32B32_UINT
+#define SH_VEC4_UNSIGNED_INT		VK_FORMAT_R32G32B32A32_UINT
 
 #define SH_VEC1_UNSIGNED_LONG		VK_FORMAT_R64_UINT
 #define SH_VEC2_UNSIGNED_LONG		VK_FORMAT_R64G64_UINT
 #define SH_VEC3_UNSIGNED_LONG		VK_FORMAT_R64G64B64_UINT
+#define SH_VEC4_UNSIGNED_LONG		VK_FORMAT_R64G64B64A64_UINT
 
 
 
@@ -59,21 +64,11 @@ extern uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_devic
 
 
 
-static uint8_t shBindVertexBuffer(VkCommandBuffer graphics_cmd_buffer, const uint32_t binding, const uint32_t offset, VkBuffer* p_vertex_buffer) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer", return 0);
-	shVkError(p_vertex_buffer == NULL, "invalid vertex buffer pointer", return 0);
-
-	const VkDeviceSize _offset = (VkDeviceSize)offset;
-	vkCmdBindVertexBuffers(graphics_cmd_buffer, binding, 1, p_vertex_buffer, &_offset);
-
-	return 1;
-}
-
 #define shBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffers, p_offsets)\
-	vkCmdBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffer, p_offsets)
+	vkCmdBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffers, p_offsets)
 
 #define shBindIndexBuffer(graphics_cmd_buffer, offset, p_index_buffer)\
-	vkCmdBindIndexBuffer(graphics_cmd_buffer, *p_index_buffer, offset, VK_INDEX_TYPE_UINT32)
+	vkCmdBindIndexBuffer(graphics_cmd_buffer, *(p_index_buffer), offset, VK_INDEX_TYPE_UINT32)
 
 
 

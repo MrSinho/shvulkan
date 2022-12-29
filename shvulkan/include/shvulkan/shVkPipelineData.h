@@ -14,7 +14,8 @@ extern "C" {
 
 typedef struct ShVkFixedStates {
 	/*Shader inputs*/
-	VkVertexInputBindingDescription			vertex_binding_description;
+	uint32_t                                vertex_binding_count;
+	VkVertexInputBindingDescription			vertex_binding_descriptions[32];
 	uint32_t								vertex_input_attribute_description_count;
 	VkVertexInputAttributeDescription		vertex_input_attributes[32];
 	VkPipelineVertexInputStateCreateInfo	vertex_input_state_info;
@@ -80,11 +81,11 @@ extern uint8_t shSetViewport(const uint32_t width, const uint32_t height, VkView
 
 extern uint8_t shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states);
 
-extern uint8_t shSetVertexInputAttribute(const uint32_t location, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states);
+extern uint8_t shSetVertexInputAttribute(const uint32_t location, const uint32_t binding, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states);
 
 extern uint8_t shSetVertexInputRate(const VkVertexInputRate input_rate, const uint32_t binding, VkVertexInputBindingDescription* p_vertex_binding);
 
-extern uint8_t shSetVertexInputState(VkVertexInputBindingDescription* p_vertex_binding, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state);
+extern uint8_t shSetVertexInputState(const uint32_t binding_count, VkVertexInputBindingDescription* p_vertex_bindings, uint32_t vertex_input_attribute_count, VkVertexInputAttributeDescription* p_vertex_input_attributes, VkPipelineVertexInputStateCreateInfo* p_vertex_input_state);
 
 extern uint8_t shCreateInputAssembly(const VkPrimitiveTopology primitive_topology, const VkBool32 primitive_restart_enable, VkPipelineInputAssemblyStateCreateInfo* p_input_assembly);
 
@@ -113,11 +114,14 @@ extern uint8_t shPipelineRelease(VkDevice device, ShVkPipeline* p_pipeline);
 
 extern uint8_t shFixedStatesRelease(ShVkFixedStates* p_fixed_states);
 
+#define shFixedStatesSetBindingCount(binding_count, p_fixed_states)\
+	(p_fixed_states)->vertex_binding_count = binding_count
+
 #define shFixedStatesSetVertexInputRate(input_rate, binding, p_fixed_states)\
-	shSetVertexInputRate(input_rate, binding, &(p_fixed_states)->vertex_binding_description)
+	shSetVertexInputRate(input_rate, binding, &(p_fixed_states)->vertex_binding_descriptions[binding])
 
 #define shFixedStatesSetVertexInputState(p_fixed_states)\
-	shSetVertexInputState(&(p_fixed_states)->vertex_binding_description, (p_fixed_states)->vertex_input_attribute_description_count, (p_fixed_states)->vertex_input_attributes, &(p_fixed_states)->vertex_input_state_info)
+	shSetVertexInputState((p_fixed_states)->vertex_binding_count, (p_fixed_states)->vertex_binding_descriptions, (p_fixed_states)->vertex_input_attribute_description_count, (p_fixed_states)->vertex_input_attributes, &(p_fixed_states)->vertex_input_state_info)
 
 #define shPipelineSetDescriptorCount(count, p_pipeline)\
 	(p_pipeline)->descriptor_count = (count);

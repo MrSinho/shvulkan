@@ -5,18 +5,7 @@
 extern "C" {
 #endif//__cplusplus
 
-#if 0
-#ifdef _WIN32
 
-#define VK_USE_PLATFORM_WIN32_KHR
-#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_win32_surface" }
-
-#elif defined __linux__
-#define VK_USE_PLATFORM_XLIB_KHR
-#define SH_VK_SURFACE_INSTANCE_EXTENSIONS { "VK_KHR_surface", "VK_KHR_xlib_surface" }//not always true, but in most cases
-
-#endif//_WIN32
-#endif//0
 
 #include <vulkan/vulkan.h>
 #include <stdint.h>
@@ -60,6 +49,9 @@ typedef struct ShVkCore {
 	VkPhysicalDeviceFeatures			physical_device_features;
 	VkPhysicalDeviceMemoryProperties	physical_device_memory_properties;
 	VkDevice							device;
+	/*Extensions*/
+	uint32_t                            device_extension_count;
+	char                                extension_names[2][VK_MAX_EXTENSION_NAME_SIZE];
 	/*Surface*/
 	ShVkSurface							surface;
 	/*Queues*/
@@ -104,13 +96,11 @@ static uint8_t shFreeVkCore(ShVkCore** pp_core) {
 
 extern uint8_t shCreateInstance(ShVkCore* p_core, const char* application_name, const char* engine_name, const uint8_t enable_validation_layers, const uint32_t extension_count, const char** extension_names);
 
-#if 0
-extern uint8_t shCreateWindowSurface(ShVkCore* p_core, const uint32_t width, const uint32_t height, uint8_t* window_process, uint8_t* p_window_handle);
-#endif//0
-
 extern uint8_t shSelectPhysicalDevice(ShVkCore* p_core, const VkQueueFlags requirements);
 
 extern uint8_t shSetQueueInfo(const uint32_t queue_family_index, const float* priority, VkDeviceQueueCreateInfo* p_queue_info);
+
+extern uint8_t shGetPhysicalDeviceSurfaceSupport(ShVkCore* p_core, ShVkQueue queue);
 
 extern uint8_t shSetLogicalDevice(ShVkCore* p_core);
 

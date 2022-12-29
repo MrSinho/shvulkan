@@ -39,7 +39,7 @@ void initializeVulkan(GLFWwindow** p_window, ShVkCore* p_core);
 
 void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t width, uint32_t height, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline);
 
-void writeMemory(ShVkCore* p_core, VkBuffer* p_staging_buffer, VkDeviceMemory* p_staging_memory, VkBuffer* p_vertex_buffer, VkDeviceMemory* p_vertex_memory, VkBuffer* p_index_buffer, VkDeviceMemory* p_index_memory, VkBuffer* p_descriptors_buffer, VkDeviceMemory* p_descriptors_memory);
+void writeMemory(ShVkCore* p_core, VkBuffer* p_staging_buffer, VkDeviceMemory* p_staging_memory, VkBuffer* p_vertex_buffer, VkDeviceMemory* p_vertex_memory, VkBuffer* p_instance_buffer, VkDeviceMemory* p_instance_memory, VkBuffer* p_index_buffer, VkDeviceMemory* p_index_memory, VkBuffer* p_descriptors_buffer, VkDeviceMemory* p_descriptors_memory);
 
 void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fixed_states, VkBuffer descriptors_buffer, ShVkPipeline* p_pipeline);
 
@@ -53,21 +53,12 @@ const char* readBinary(const char* path, uint32_t* p_size);
 
 
 
-typedef float Model[16];
-
-
-typedef struct Light {
-	alignas(16) float position[4];
-	alignas(16) float color[4];
-} Light;
-
-
-
 #define QUAD_VERTEX_COUNT 32
 #define QUAD_INDEX_COUNT 6
 #define TRIANGLE_VERTEX_COUNT 24
 
-
+#define PER_VERTEX_BINDING 0
+#define PER_INSTANCE_BINDING 1
 
 //
 //DEFAULT GLOBAL VARIABLES
@@ -87,21 +78,25 @@ uint32_t indices[QUAD_INDEX_COUNT] = {
 	0, 1, 2,
 	2, 3, 0
 };
-Light light = {
-	{ 0.0f,  2.0f, 0.0f, 1.0f }, //light position
-	{ 0.0f, 0.45f, 0.9f, 1.0f }	 //light color
+float light[8] = {
+	0.0f,  2.0f, 0.0f, 1.0f, //position
+	0.0f, 0.45f, 0.9f, 1.0f	 //color
 };
-float model0[16] = {
-	1.5f, 0.0f, 0.0f, 0.0f,
+float models[48] = {
+	0.2f, 0.0f, 0.0f, 0.0f,//model 0
 	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f
-};
-float model1[16] = {
-	1.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.2f, 0.0f,
+   -0.6f,-0.2f, 0.0f, 1.0f,
+
+	0.2f, 0.0f, 0.0f, 0.0f,//model 1
 	0.0f, 1.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.2f, 0.0f,
+    0.6f,-0.2f, 0.0f, 1.0f,
+
+	0.6f, 0.0f, 0.0f, 0.0f,//model 2
+	0.0f, 0.5f, 0.0f, 0.0f,
 	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f
+    0.0f, 0.4f, 0.0f, 1.0f
 };
 float projection_view[32] = {
 	1.0f, 0.0f, 0.0f, 0.0f,
@@ -114,6 +109,8 @@ float projection_view[32] = {
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 1.0f
 };
+
+
 
 int main(void) {
 
@@ -131,17 +128,20 @@ int main(void) {
 
 
 	//
-	//GET AVAILABLE MEMORY
+	//GET AVAILABLE MEMORY, if extension is supported
 	//
-	ShMemoryBudgetProperties memory_budget = { 0 };
-	shGetMemoryBudgetProperties(
-		core.physical_device, 
-		&memory_budget
-	);
-	uint32_t memory_type_index = 0;
-	shGetMemoryType(core.device, core.physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index);
-	printf("Available device local vram: %u bytes\n", (uint32_t)memory_budget.heapBudget[memory_type_index]);
+	if (core.device_extension_count == 2) {//first extension is VK_KHR_swapchain
+		ShMemoryBudgetProperties memory_budget = { 0 };
+		shGetMemoryBudgetProperties(
+			core.physical_device,
+			&memory_budget
+		);
+		uint32_t memory_type_index = 0;
+		shGetMemoryType(core.device, core.physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index);
+		printf("Available device local vram: %u bytes\n", (uint32_t)memory_budget.heapBudget[memory_type_index]);
 
+	}
+	
 
 	//
 	//ALLOCATE AND WRITE MEMORY
@@ -150,14 +150,16 @@ int main(void) {
 	VkDeviceMemory staging_memory     = NULL;
 
 	VkBuffer       vertex_buffer      = NULL;
+	VkBuffer       instance_buffer    = NULL;
 	VkBuffer       index_buffer       = NULL;
-	VkBuffer       descriptors_buffer = NULL;
+	VkBuffer       descriptor_buffer  = NULL;
 
 	VkDeviceMemory vertex_memory      = NULL;
+	VkDeviceMemory instance_memory    = NULL;
 	VkDeviceMemory index_memory       = NULL;
-	VkDeviceMemory descriptors_memory = NULL;
+	VkDeviceMemory descriptor_memory  = NULL;
 
-	writeMemory(&core, &staging_buffer, &staging_memory, &vertex_buffer, &vertex_memory, &index_buffer, &index_memory, &descriptors_buffer, &descriptors_memory);
+	writeMemory(&core, &staging_buffer, &staging_memory, &vertex_buffer, &vertex_memory, &instance_buffer, &instance_memory, &index_buffer, &index_memory, &descriptor_buffer, &descriptor_memory);
 
 
 	//
@@ -170,7 +172,7 @@ int main(void) {
 		core.physical_device, 
 		core.surface.width,
 		core.surface.height,
-		descriptors_buffer,
+		descriptor_buffer,
 		core.render_pass,
 		&fixed_states,
 		&pipeline
@@ -201,7 +203,7 @@ int main(void) {
 		//
 		//MAKE WINDOW RESIZABLE
 		//
-		checkWindowSize(window, &core, &fixed_states, descriptors_buffer, &pipeline);
+		checkWindowSize(window, &core, &fixed_states, descriptor_buffer, &pipeline);
 
 		//
 		//RESET FENCE STATE AND RECORD COMMAND BUFFER
@@ -231,7 +233,9 @@ int main(void) {
 		//
 		//BIND BUFFERS
 		//
-		shBindVertexBuffer(cmd_buffer, 0, 0, &vertex_buffer);
+		VkDeviceSize vertex_offset = 0;
+		shBindVertexBuffers(cmd_buffer, PER_VERTEX_BINDING, 1, &vertex_buffer, &vertex_offset);
+		shBindVertexBuffers(cmd_buffer, PER_INSTANCE_BINDING, 1, &instance_buffer, &vertex_offset);
 		shBindIndexBuffer(cmd_buffer, 0, &index_buffer);
 
 		//
@@ -252,24 +256,19 @@ int main(void) {
 		//
 		//FIRST BINDING OF MODEL MATRIX WITH OFFSET OF 0 BYTES
 		//
-		uint32_t dynamic_descriptor_offset = 0;
-		shPipelineBindDescriptorSets(cmd_buffer, 0, 2, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, &dynamic_descriptor_offset, &pipeline);//bind static and dynamic descriptor
+		shPipelineBindDescriptorSets(cmd_buffer, 0, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, &pipeline);
 
 		//
 		//DRAW QUAD, STARTING FROM OFFSET 0 OF VERTEX AND INDEX BUFFER
 		//
-		shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 0, 0);
+		shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 0, 0, 2, 0);
 		
 		//
-		//SECOND BINDING OF MODEL MATRIX WITH OFFSET OF 64 BYTES
+		//DIFFERENT GEOMETRY, NEW DRAW CALL
 		//
-		dynamic_descriptor_offset = 64;
-		shPipelineBindDescriptorSets(cmd_buffer, 1, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, 1, &dynamic_descriptor_offset, &pipeline);
-
-		//
-		//DRAW TRIANGLE, 3 VERTICES STARTING WITH VERTEX 4 COMING FROM THE VERTEX BUFFER 
-		//
-		shDraw(cmd_buffer, 3, 4);
+		vertex_offset = 128;//skip to third model matrix
+		shBindVertexBuffers(cmd_buffer, PER_INSTANCE_BINDING, 1, &instance_buffer, &vertex_offset);
+		shDraw(cmd_buffer, 3, 4, 1, 0);
 
 		//
 		//END RENDERPASS AND COMMAND BUFFER
@@ -298,8 +297,9 @@ int main(void) {
 	//CLEAR BUFFERS
 	//
 	shClearBufferMemory(device, vertex_buffer, vertex_memory);
+	shClearBufferMemory(device, instance_buffer, instance_memory);
 	shClearBufferMemory(device, index_buffer, index_memory);
-	shClearBufferMemory(device, descriptors_buffer, descriptors_memory);
+	shClearBufferMemory(device, descriptor_buffer, descriptor_memory);
 	shClearBufferMemory(device, staging_buffer, staging_memory);
 
 	//
@@ -345,22 +345,18 @@ void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t w
 
 	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &p_pipeline->push_constant_range);
 	
-	shPipelineSetDescriptorCount(2, p_pipeline);
+	shPipelineSetDescriptorCount(1, p_pipeline);
 
 	//
 	//WHERE THE DESCRIPTOR DATA IS LOCATED INSIDE THE DESCRIPTOR BUFFER
 	//
-	shPipelineSetDescriptorBufferInfo(0, descriptors_buffer, 0, sizeof(Light), p_pipeline);
-	shPipelineSetDescriptorBufferInfo(1, descriptors_buffer, sizeof(Light), sizeof(Model), p_pipeline);// 2 bindings
+	shPipelineSetDescriptorBufferInfo(0, descriptors_buffer, 0, sizeof(light), p_pipeline);
 
 	shPipelineDescriptorSetLayout(device, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, p_pipeline);
-	shPipelineDescriptorSetLayout(device, 1, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT, p_pipeline);
-	
+
 	shPipelineCreateDescriptorPool(device, 0, p_pipeline);
-	shPipelineCreateDescriptorPool(device, 1, p_pipeline);
 	
 	shPipelineAllocateDescriptorSet(device, 0, p_pipeline);
-	shPipelineAllocateDescriptorSet(device, 1, p_pipeline);
 	
 	uint32_t vertex_shader_size = 0;
 	uint32_t fragment_shader_size = 0;
@@ -375,11 +371,19 @@ void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t w
 	free(vertex_code);
 	free(fragment_code);
 	
-	shSetVertexInputAttribute(0, SH_VEC3_SIGNED_FLOAT, 0, 12, p_fixed_states);
-	shSetVertexInputAttribute(1, SH_VEC3_SIGNED_FLOAT, 12, 12, p_fixed_states);
-	shSetVertexInputAttribute(2, SH_VEC2_SIGNED_FLOAT, 24, 8, p_fixed_states);
+	shSetVertexInputAttribute(0, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 0, 12, p_fixed_states);
+	shSetVertexInputAttribute(1, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 12, 12, p_fixed_states);
+	shSetVertexInputAttribute(2, PER_VERTEX_BINDING, SH_VEC2_SIGNED_FLOAT, 24, 8, p_fixed_states);
 	
-	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_VERTEX, 0, p_fixed_states);
+	//since it's a matrix, although it's not specified in the shader, it will consume multpiple input locations
+	shSetVertexInputAttribute(3, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 0, 16, p_fixed_states);
+	shSetVertexInputAttribute(4, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 16, 16, p_fixed_states);
+	shSetVertexInputAttribute(5, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 32, 16, p_fixed_states);
+	shSetVertexInputAttribute(6, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 48, 16, p_fixed_states);
+
+	shFixedStatesSetBindingCount(2, p_fixed_states);
+	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_VERTEX, PER_VERTEX_BINDING, p_fixed_states);
+	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_INSTANCE, PER_INSTANCE_BINDING, p_fixed_states);
 	shFixedStatesSetVertexInputState(p_fixed_states);
 	
 	shSetFixedStates(device, width, height, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_POLYGON_MODE_FILL, p_fixed_states);
@@ -392,9 +396,11 @@ void writeMemory(
 	VkDeviceMemory* p_staging_memory,
 	VkBuffer*       p_vertex_buffer, 
 	VkDeviceMemory* p_vertex_memory, 
+	VkBuffer*       p_instance_buffer,
+	VkDeviceMemory* p_instance_memory,
 	VkBuffer*       p_index_buffer, 
 	VkDeviceMemory* p_index_memory, 
-	VkBuffer*       p_descriptors_buffer, 
+	VkBuffer*       p_descriptor_buffer,
 	VkDeviceMemory* p_descriptors_memory
 ) {
 
@@ -405,7 +411,19 @@ void writeMemory(
 	VkPhysicalDevice physical_device = p_core->physical_device;
 	VkCommandBuffer  cmd_buffer      = p_core->p_graphics_commands[0].cmd_buffer;
 	VkFence  fence                   = p_core->p_graphics_commands[0].fence;
-	uint32_t staging_size            = sizeof(quad) + sizeof(triangle) + sizeof(indices) + sizeof(Light) + sizeof(Model) * 2;
+	
+	uint32_t quad_vertices_offset     = 0;
+	uint32_t triangle_vertices_offset = quad_vertices_offset     + sizeof(quad);
+	uint32_t instance_models_offset   = triangle_vertices_offset + sizeof(triangle);
+	uint32_t quad_indices_offset      = instance_models_offset   + sizeof(models);
+	uint32_t light_offset             = quad_indices_offset      + sizeof(indices);
+	
+	uint32_t staging_size             = quad_vertices_offset     + 
+	                                    triangle_vertices_offset + 
+	                                    instance_models_offset   + 
+	                                    quad_indices_offset      + 
+	                                    light_offset             + 
+	                                    sizeof(light)            ;
 
 	//
 	//WRITE ALL DATA TO STAGING BUFFER
@@ -423,47 +441,12 @@ void writeMemory(
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
 		p_staging_memory
 	);
-	shWriteMemory(device, 
-		*p_staging_memory, 
-		0, 
-		sizeof(quad), 
-		quad
-	);
-	shWriteMemory(
-		device,
-		*p_staging_memory,
-		sizeof(quad),
-		sizeof(triangle),
-		triangle
-	);
-	shWriteMemory(
-		device, 
-		*p_staging_memory, 
-		sizeof(quad) + sizeof(triangle),
-		sizeof(indices), 
-		indices
-	);
-	shWriteMemory(
-		device,
-		*p_staging_memory,
-		sizeof(quad) + sizeof(triangle) + sizeof(indices),
-		sizeof(Light),
-		&light
-	);
-	shWriteMemory(
-		device,
-		*p_staging_memory,
-		sizeof(quad) + sizeof(triangle) + sizeof(indices) + sizeof(Light),
-		sizeof(Model),
-		model0
-	);
-	shWriteMemory(
-		device,
-		*p_staging_memory,
-		sizeof(quad) + sizeof(triangle) + sizeof(indices) + sizeof(Light) + sizeof(Model),
-		sizeof(Model),
-		model1
-	);
+	shWriteMemory(device, *p_staging_memory, quad_vertices_offset,     sizeof(quad),     quad    );
+	shWriteMemory(device, *p_staging_memory, triangle_vertices_offset, sizeof(triangle), triangle);
+	shWriteMemory(device, *p_staging_memory, quad_indices_offset,      sizeof(indices),  indices );
+	shWriteMemory(device, *p_staging_memory, instance_models_offset,   sizeof(models),   models  );
+	shWriteMemory(device, *p_staging_memory, instance_models_offset,   sizeof(models),   models  );
+	shWriteMemory(device, *p_staging_memory, light_offset,             sizeof(light),    light   );
 
 	shBindMemory(device, *p_staging_buffer, 0, *p_staging_memory);
 
@@ -475,22 +458,27 @@ void writeMemory(
 	shAllocateMemory(device, physical_device, *p_vertex_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_vertex_memory);
 	shBindMemory(device, *p_vertex_buffer, 0, *p_vertex_memory);
 
+	shCreateBuffer(device, sizeof(models), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, p_instance_buffer);
+	shAllocateMemory(device, physical_device, *p_instance_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_instance_memory);
+	shBindMemory(device, *p_instance_buffer, 0, *p_instance_memory);
+
 	shCreateBuffer(device, sizeof(indices), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, p_index_buffer);
 	shAllocateMemory(device, physical_device, *p_index_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_index_memory);
 	shBindMemory(device, *p_index_buffer, 0, *p_index_memory);
 
-	shCreateBuffer(device, sizeof(light) + sizeof(Model) * 2, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, p_descriptors_buffer);
-	shAllocateMemory(device, physical_device, *p_descriptors_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_descriptors_memory);
-	shBindMemory(device, *p_descriptors_buffer, 0, *p_descriptors_memory);
+	shCreateBuffer(device, sizeof(light), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, p_descriptor_buffer);
+	shAllocateMemory(device, physical_device, *p_descriptor_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_descriptors_memory);
+	shBindMemory(device, *p_descriptor_buffer, 0, *p_descriptors_memory);
 
 	//
 	//COPY STAGING BUFFER TO DEVICE LOCAL MEMORY
 	//
 	shResetFence(device, fence);
 	shBeginCommandBuffer(cmd_buffer);
-	shCopyBuffer(cmd_buffer, *p_staging_buffer, 0, 0, sizeof(quad) + sizeof(triangle), *p_vertex_buffer);
-	shCopyBuffer(cmd_buffer, *p_staging_buffer, sizeof(quad) + sizeof(triangle), 0, sizeof(indices), *p_index_buffer);
-	shCopyBuffer(cmd_buffer, *p_staging_buffer, sizeof(quad) + sizeof(triangle) + sizeof(indices), 0, sizeof(light) + sizeof(Model) * 2, *p_descriptors_buffer);
+	shCopyBuffer(cmd_buffer, *p_staging_buffer, quad_vertices_offset,   0, sizeof(quad) + sizeof(triangle), *p_vertex_buffer);
+	shCopyBuffer(cmd_buffer, *p_staging_buffer, instance_models_offset, 0, sizeof(models),                  *p_instance_buffer);
+	shCopyBuffer(cmd_buffer, *p_staging_buffer, quad_indices_offset,    0, sizeof(indices),                 *p_index_buffer);
+	shCopyBuffer(cmd_buffer, *p_staging_buffer, light_offset,           0, sizeof(light),                   *p_descriptor_buffer);
 	shEndCommandBuffer(cmd_buffer);
 
 	shQueueSubmit(1, &cmd_buffer, p_core->graphics_queue.queue, fence);
@@ -527,6 +515,10 @@ void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fi
 		shInitSwapchainData(p_core);
 		shInitDepthData(p_core);
 		shSetFramebuffers(p_core);
+
+		//just for legacy implementations
+		shGetPhysicalDeviceSurfaceSupport(p_core, p_core->graphics_queue);
+
 
 		shPipelineRelease(device, p_pipeline);
 		shFixedStatesRelease(p_fixed_states);

@@ -26,15 +26,11 @@ extern void shBeginRenderPass(ShVkCore* p_core, VkCommandBuffer cmd_buffer, VkCl
 #define shEndRenderPass(cmd_buffer)\
 	vkCmdEndRenderPass(cmd_buffer)
 
-#define shDraw(graphics_cmd_buffer, vertex_count_div_stride, first_vertex)\
-	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, 1, first_vertex, 0)
+#define shDraw(graphics_cmd_buffer, vertex_count_div_stride, first_vertex, instance_count, first_instance)\
+	vkCmdDraw(graphics_cmd_buffer, vertex_count_div_stride, instance_count, first_vertex, first_instance)
 
-#define shDrawIndexed(graphics_cmd_buffer, index_count, vertex_offset, first_index)\
-	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, 1, first_index, vertex_offset, 0)//vertex offset in bytes
-
-
-#define shDrawInstances        vkCmdDraw
-#define shDrawIndexedInstances vkCmdDrawIndexed
+#define shDrawIndexed(graphics_cmd_buffer, index_count, vertex_offset, first_index, instance_count, first_instance)\
+	vkCmdDrawIndexed(graphics_cmd_buffer, index_count, instance_count, first_index, vertex_offset, first_instance)//vertex offset in bytes
 
 void shGraphicsQueueSubmit(ShVkCore* p_core, VkCommandBuffer cmd_buffer, VkSemaphore semaphore, VkFence fence);
 

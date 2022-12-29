@@ -2,7 +2,7 @@
 layout (location = 0) in vec4 frag_position;
 layout (location = 0) out vec4 frag_color;
 
-layout (set = 0, binding = 0) uniform uniformBuffer {
+layout (std140, set = 0, binding = 0) uniform uniformBuffer {
 	vec4 light_position;
 	vec4 light_color;
 } ubo;
