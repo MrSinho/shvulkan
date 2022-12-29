@@ -76,9 +76,7 @@ This example demonstrates how to setup a vulkan environment, allocate, write and
 
 [![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
 
-Renderdoc stats:
-
-The first draw call will require some quad vertices, of which raw coordinates are displayed on the 1st picture below, which are going to be combined with two `per instance` model matrices located on an instance buffer, which was bound with and offset of 0 bytes, and produce different vertex positions (see `gl_PerVertex_var.gl_Position`):
+The first draw call will require some quad vertices, which are going to be combined with two `per instance` model matrices located on an instance buffer, which was bound with and offset of 0 bytes, and produce different vertex positions (see `gl_PerVertex_var.gl_Position`):
 
 quad input vertex positions:
 ![](examples/capture/quads%20in.PNG)
@@ -92,7 +90,7 @@ quad input vertex positions:
 Through the renderpass, after setting up the color of each fragment using the fragment shader, the first draw call will produce the following framebuffers on the swapchain:
 ![](examples/capture/1st%20draw%20call.PNG)
 
-The second draw call requires three triangle vertices, where raw coordinates are shown on the first picture below, which are going to be combined with the last raw matrix on the instance buffer, that was bound with an offset of 128 bytes, and return the following vertex positions (see `gl_PerVertex_var.gl_Position`):
+The second draw call requires three triangle vertices, which are going to be combined with the last raw matrix on the instance buffer, that was bound with an offset of 128 bytes, and return the following vertex positions (see `gl_PerVertex_var.gl_Position`):
 
 triangle input vertex positions: 
 ![](examples/capture/triangle%20in.PNG)
@@ -110,7 +108,7 @@ Through the renderpass, the second draw call will produce the following framebuf
 
 ## [Compute example overview](examples/src/computeExample.c)
 
-The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the shader will take 64 decimal numbers as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue synchronize data between host and graphics card and read the output values. The following diagram briefly shows what happens in this example program:
+The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the shader will take 64 decimal numbers as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue, synchronize data between host and graphics card and read the output values. The following diagram briefly shows what happens in this example program:
 
 [![](examples/diagrams/shvulkan%20compute.drawio.svg)](examples/diagrams/shvulkan%20compute.drawio.svg)
 
