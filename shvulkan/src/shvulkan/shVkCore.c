@@ -244,6 +244,7 @@ uint8_t shSetLogicalDevice(ShVkCore* p_core) {
 	};
 	
 	if(vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device) != VK_SUCCESS) {
+		p_core->device_extension_count--;
 		deviceCreateInfo.enabledExtensionCount--;
 		shVkResultError(
 			vkCreateDevice(p_core->physical_device, &deviceCreateInfo, NULL, &p_core->device), 
