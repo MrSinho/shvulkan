@@ -10,14 +10,6 @@
 
 ---
 
-## Programs that use shvulkan:
-* [shengine](https://github.com/mrsinho/shengine)
-* [shgui](https://github.com/mrsinho/shgui)
-* [gaia-universe-model](https://github.com/mrsinho/gaia-universe-model)
-* many more are coming!
-
----
-
 # Index
 * [Clone and build](#clone-and-build)
 * [CMake targets](#cmake-targets)
