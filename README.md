@@ -79,7 +79,7 @@ quad input vertex positions:
 ![](examples/capture/2nd%20quad%20inout.PNG)
 ![](examples/capture/2nd%20quad%20out.PNG)
 
-Through the renderpass, after setting up the color of each fragment using the fragment shader, the first draw call will produce the following framebuffers on the swapchain:
+Through the renderpass, the first draw call will produce the following framebuffers on the swapchain (the fragment color is calculated by determining the distance between the fragment position and the light source, which properties were defined on the descriptor set 0):
 ![](examples/capture/1st%20draw%20call.PNG)
 
 The second draw call requires three triangle vertices, which are going to be combined with the last raw matrix on the instance buffer, that was bound with an offset of 128 bytes, and return the following vertex positions (see `gl_PerVertex_var.gl_Position`):
@@ -93,6 +93,14 @@ triangle input matrix and output fragment positions:
 Through the renderpass, the second draw call will produce the following framebuffers on the swapchain:
 
 ![](examples/capture/2nd%20draw%20call.PNG)
+
+### What could the graphics example be improved with
+
+* multiple frames in flight
+* textures and images
+* capture screenshots 
+* process and submit new swapchain images
+* multisampling
 
 [top](#shvulkan)
 
