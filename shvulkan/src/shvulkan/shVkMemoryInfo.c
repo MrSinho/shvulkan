@@ -186,7 +186,7 @@ uint8_t shCreateImage(const VkDevice device, VkImageType type, uint32_t x, uint3
 	return 1;
 }
 
-uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkImage image, VkDeviceMemory* p_image_memory) {
+uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkImage image, VkMemoryPropertyFlags memory_property_flags, VkDeviceMemory* p_image_memory) {
 	shVkError(physical_device == NULL, "invalid physical device ", return 0);
 	shVkError(p_image_memory == NULL, "invalid image memory", return 0);
 	shVkError(image == NULL, "invalid image", return 0);
@@ -197,7 +197,7 @@ uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice phys
 
 	uint32_t memory_type_index = 0;
 	shVkError(
-		shGetMemoryType(device, physical_device, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory_type_index) == 0,
+		shGetMemoryType(device, physical_device, memory_property_flags, &memory_type_index) == 0,
 		"failed detecting memory type",
 		return 0
 	);

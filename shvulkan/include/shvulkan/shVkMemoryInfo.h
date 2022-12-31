@@ -56,7 +56,7 @@ extern uint8_t shClearBufferMemory(const VkDevice device, const VkBuffer buffer,
 
 extern uint8_t shCreateImage(const VkDevice device, VkImageType type, uint32_t x, uint32_t y, uint32_t z, VkFormat format, uint32_t mip_levels, VkSampleCountFlagBits sample_count, VkImageUsageFlags usage, VkImage* p_image);
 
-extern uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkImage image, VkDeviceMemory* p_image_memory);
+extern uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkImage image, VkMemoryPropertyFlags memory_property_flags, VkDeviceMemory* p_image_memory);
 
 extern uint8_t shBindImageMemory(const VkDevice device, const VkImage image, const uint32_t offset, const VkDeviceMemory image_memory);
 

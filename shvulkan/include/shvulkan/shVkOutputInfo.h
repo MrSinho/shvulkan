@@ -19,7 +19,7 @@ extern "C" {
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,\
 		&(p_core)->output_image\
 	) &&\
-	shAllocateImageMemory((p_core)->device, (p_core)->physical_device, (p_core)->output_image, &(p_core)->output_memory) &&\
+	shAllocateImageMemory((p_core)->device, (p_core)->physical_device, (p_core)->output_image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &(p_core)->output_memory) &&\
 	shBindImageMemory((p_core)->device, (p_core)->output_image, 0, (p_core)->output_memory) &&\
 	shCreateImageView(p_core,\
 		(p_core)->output_image,\

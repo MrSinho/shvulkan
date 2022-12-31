@@ -22,7 +22,7 @@ extern "C" {
 	)
 
 #define shAllocateDepthMemory(p_core)\
-	shAllocateImageMemory((p_core)->device, (p_core)->physical_device, (p_core)->depth_image, &(p_core)->depth_image_memory)
+	shAllocateImageMemory((p_core)->device, (p_core)->physical_device, (p_core)->depth_image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &(p_core)->depth_image_memory)
 
 #define shBindDepthMemory(p_core)\
 	shBindImageMemory((p_core)->device, (p_core)->depth_image, 0, (p_core)->depth_image_memory)

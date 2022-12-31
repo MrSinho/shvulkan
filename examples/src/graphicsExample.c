@@ -463,8 +463,8 @@ void setupPipeline(VkDevice device, uint32_t width, uint32_t height, uint32_t sa
 	free(fragment_code);
 
 	shSetVertexInputAttribute(0, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 0, 12, p_fixed_states);
-	shSetVertexInputAttribute(1, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 12, 12, p_fixed_states);
-	shSetVertexInputAttribute(2, PER_VERTEX_BINDING, SH_VEC2_SIGNED_FLOAT, 24, 8, p_fixed_states);
+	shSetVertexInputAttribute(1, PER_VERTEX_BINDING, SH_VEC3_SIGNED_FLOAT, 12, 12, p_fixed_states); //actually these attributes are just for demonstrating
+	shSetVertexInputAttribute(2, PER_VERTEX_BINDING, SH_VEC2_SIGNED_FLOAT, 24, 8, p_fixed_states);	//actually these attributes are just for demonstrating
 
 	//since it's a matrix, although it's not specified in the shader, it will consume multpiple input locations
 	shSetVertexInputAttribute(3, PER_INSTANCE_BINDING, SH_VEC4_SIGNED_FLOAT, 0, 16, p_fixed_states);
