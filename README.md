@@ -99,7 +99,7 @@ Through the renderpass, the second draw call will produce the following framebuf
 ### What could the graphics example be improved with
 
 * multiple frames in flight
-* textures and images
+* textures
 * process and submit new swapchain images
 * offline rendering
 
