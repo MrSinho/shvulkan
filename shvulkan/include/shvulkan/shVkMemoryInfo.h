@@ -54,11 +54,16 @@ extern uint8_t shWriteMemory(const VkDevice device, const VkDeviceMemory memory,
 
 extern uint8_t shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const VkDeviceMemory memory);
 
-extern uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory);
+extern uint8_t shCreateImage(const VkDevice device, VkImageType type, uint32_t x, uint32_t y, uint32_t z, VkFormat format, uint32_t mip_levels, VkSampleCountFlagBits sample_count, VkImageUsageFlags usage, VkImage* p_image);
+
+extern uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkImage image, VkDeviceMemory* p_image_memory);
+
+extern uint8_t shBindImageMemory(const VkDevice device, const VkImage image, const uint32_t offset, const VkDeviceMemory image_memory);
+
+extern uint8_t shClearImageMemory(const VkDevice device, const VkImage image, const VkDeviceMemory image_memory);
 
 
 typedef struct VkPhysicalDeviceMemoryBudgetPropertiesEXT ShMemoryBudgetProperties;
-
 
 extern uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, ShMemoryBudgetProperties* p_memory_budget_properties);
 
@@ -69,16 +74,6 @@ extern uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_devic
 
 #define shBindIndexBuffer(graphics_cmd_buffer, offset, p_index_buffer)\
 	vkCmdBindIndexBuffer(graphics_cmd_buffer, *(p_index_buffer), offset, VK_INDEX_TYPE_UINT32)
-
-
-
-#define SH_DEPTH_IMAGE_FORMAT VK_FORMAT_D32_SFLOAT
-
-#define shCreateDepthImage(p_core)\
-	shCreateImage((p_core)->device, (p_core)->physical_device, (p_core)->surface.width, (p_core)->surface.height, SH_DEPTH_IMAGE_FORMAT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, &(p_core)->depth_image, &(p_core)->depth_image_memory)
-
-#define shInitDepthData(p_core)\
-	shCreateDepthImage(p_core); shCreateDepthImageView(p_core)
 
 
 

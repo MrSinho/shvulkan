@@ -222,13 +222,13 @@ uint8_t shCreateRasterizer(VkPolygonMode polygon_mode, VkPipelineRasterizationSt
     return 1;
 }
 
-uint8_t shSetMultisampleState(VkPipelineMultisampleStateCreateInfo * p_multisample_state) {
+uint8_t shSetMultisampleState(VkSampleCountFlagBits sample_count, VkPipelineMultisampleStateCreateInfo * p_multisample_state) {
 	shVkError(p_multisample_state == NULL, "invalid multisample state info pointer", return 0);
 	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,	//sType;
 		NULL,														//pNext;
 		0,															//flags;
-		VK_SAMPLE_COUNT_1_BIT,										//rasterizationSamples;
+		sample_count,												//rasterizationSamples;
 		VK_FALSE,													//sampleShadingEnable;
 		1.0f,														//minSampleShading;
 		NULL,														//pSampleMask;
@@ -307,14 +307,14 @@ uint8_t shSetViewport(const uint32_t width, const uint32_t height, VkViewport* p
     return 1;
 }
 
-uint8_t shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states) {
+uint8_t shSetFixedStates(VkDevice device, const uint32_t sample_count, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states) {
 	shVkError(p_fixed_states == NULL, "invalid fixed states pointer", return 0);
 	
 	shCreateInputAssembly(primitive, VK_FALSE, &p_fixed_states->input_assembly);
 
 	shCreateRasterizer(polygon_mode, &p_fixed_states->rasterizer);
 
-	shSetMultisampleState(&p_fixed_states->multisample_state_info);
+	shSetMultisampleState((VkSampleCountFlagBits)sample_count, &p_fixed_states->multisample_state_info);
 	shColorBlendSettings(&p_fixed_states->color_blend_attachment, &p_fixed_states->color_blend_state);
 	shSetViewport(surface_width, surface_height, &p_fixed_states->viewport, &p_fixed_states->scissor, &p_fixed_states->viewport_state);
 

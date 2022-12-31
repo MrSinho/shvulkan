@@ -41,7 +41,7 @@ uint8_t shAllocateMemory(const VkDevice device, const VkPhysicalDevice physical_
 	uint32_t memory_type_index = 0;
 	shGetMemoryType(device, physical_device, property_flags, &memory_type_index);
 
-	VkMemoryRequirements memory_requirements;
+	VkMemoryRequirements memory_requirements = { 0 };
 	vkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
 
 	VkMemoryAllocateInfo memory_allocate_info = {
@@ -153,27 +153,24 @@ uint8_t shClearBufferMemory(const VkDevice device, const VkBuffer buffer, const 
 	return 1;
 }
 
-uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_device, const uint32_t width, const uint32_t height, VkFormat format, VkImageUsageFlags usage, VkImage* p_image, VkDeviceMemory* p_image_memory) {
+uint8_t shCreateImage(const VkDevice device, VkImageType type, uint32_t x, uint32_t y, uint32_t z, VkFormat format, uint32_t mip_levels, VkSampleCountFlagBits sample_count, VkImageUsageFlags usage, VkImage* p_image) {
 	shVkError(device == NULL, "invalid device memory", return 0);
-	shVkError(physical_device == NULL, "invalid physical device ", return 0);
-	shVkError(p_image == NULL, "invalid image pointer", return 0);
-	shVkError(p_image_memory == NULL, "invalid image memory pointer", return 0);
-
+	shVkError(p_image == NULL, "invalid image memory", return 0);
 
 	VkExtent3D image_extent = {
-		width, height, 1
+		x, y, z
 	};
 
 	VkImageCreateInfo image_create_info = {
 		VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,	//sType;			
 		NULL,									//pNext;
 		0,										//flags;
-		VK_IMAGE_TYPE_2D,						//imageType;
+		type,									//imageType;
 		format,									//format;
 		image_extent,							//extent;
-		1,										//mipLevels;
+		mip_levels,								//mipLevels;
 		1,										//arrayLayers;
-		VK_SAMPLE_COUNT_1_BIT,					//samples;
+		sample_count,							//samples;
 		VK_IMAGE_TILING_OPTIMAL,				//tiling;
 		usage,									//usage;
 		VK_SHARING_MODE_EXCLUSIVE,				//sharingMode;
@@ -186,8 +183,17 @@ uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_dev
 		return 0
 	);
 
-	VkMemoryRequirements memory_requirements;
-	vkGetImageMemoryRequirements(device, *p_image, &memory_requirements);
+	return 1;
+}
+
+uint8_t shAllocateImageMemory(const VkDevice device, const VkPhysicalDevice physical_device, const VkImage image, VkDeviceMemory* p_image_memory) {
+	shVkError(physical_device == NULL, "invalid physical device ", return 0);
+	shVkError(p_image_memory == NULL, "invalid image memory", return 0);
+	shVkError(image == NULL, "invalid image", return 0);
+	shVkError(p_image_memory == NULL, "invalid image memory", return 0);
+
+	VkMemoryRequirements memory_requirements = { 0 };
+	vkGetImageMemoryRequirements(device, image, &memory_requirements);
 
 	uint32_t memory_type_index = 0;
 	shVkError(
@@ -205,13 +211,42 @@ uint8_t shCreateImage(const VkDevice device, const VkPhysicalDevice physical_dev
 
 	shVkResultError(
 		vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
-		"error allocating image memory", 
+		"error allocating image memory",
 		return 0
 	);
 
-	vkBindImageMemory(device, *p_image, *p_image_memory, 0);
+	return 1;
+}
+
+uint8_t shBindImageMemory(const VkDevice device, const VkImage image, const uint32_t offset, const VkDeviceMemory image_memory) {
+	shVkError(device       == NULL, "invalid device memory", return 0);
+	shVkError(image        == NULL, "invalid image",         return 0);
+	shVkError(image_memory == NULL, "invalid image memory",  return 0);
+
+	shVkResultError(
+		vkBindImageMemory(device, image, image_memory, offset),
+		"error binding image memory",
+		return 0
+	);
 
 	return 1;
+}
+
+uint8_t shClearImageMemory(const VkDevice device, const VkImage image, const VkDeviceMemory image_memory) {
+	shVkError(device == NULL, "invalid device memory", return 0);
+	shVkError(image == NULL, "invalid image", return 0);
+	shVkError(image_memory == NULL, "invalid image memory", return 0);
+
+	shVkResultError(
+		vkDeviceWaitIdle(device),
+		"failed waiting device idle",
+		return 0
+	);
+
+	vkDestroyImage(device, image, NULL);
+	vkFreeMemory(device, image_memory, NULL);
+
+	return 0;
 }
 
 uint8_t shGetMemoryBudgetProperties(const VkPhysicalDevice physical_device, ShMemoryBudgetProperties* p_memory_budget_properties) {

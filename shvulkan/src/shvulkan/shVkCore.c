@@ -334,43 +334,74 @@ uint8_t shCreateSwapchain(ShVkCore* p_core) {
 	return 1;
 }
 
+
+uint8_t shCombineMaxSamples(VkPhysicalDeviceProperties physical_device_properties, uint32_t sample_count, uint8_t combine_color_sample, uint8_t combine_depth_sample, uint32_t* p_sample_count) {
+	shVkError(p_sample_count == NULL, "invalid sample count memory", return 0);
+	shVkError(sample_count == 0, "invalid starting sample count value 0", return 0);
+
+	//fill bits, example: decimal 8 = 0b1000 ---> 0b1111 = 15
+	VkSampleCountFlags _sample_count = 0;
+	for (uint8_t i = 0; i < 32; i++) {
+		if (sample_count & (1 << i)) {
+			_sample_count |= (1 << i);
+			break;
+		}
+		_sample_count |= (1 << i);
+	}
+
+	if (combine_color_sample) {
+		_sample_count &= physical_device_properties.limits.framebufferColorSampleCounts;
+	}
+	if (combine_depth_sample) {
+		_sample_count &= physical_device_properties.limits.framebufferDepthSampleCounts;
+	}
+
+	if (_sample_count & VK_SAMPLE_COUNT_64_BIT) { (*p_sample_count) = VK_SAMPLE_COUNT_64_BIT; return 1; }
+	if (_sample_count & VK_SAMPLE_COUNT_32_BIT) { (*p_sample_count) = VK_SAMPLE_COUNT_32_BIT; return 1; }
+	if (_sample_count & VK_SAMPLE_COUNT_16_BIT) { (*p_sample_count) = VK_SAMPLE_COUNT_16_BIT; return 1; }
+	if (_sample_count & VK_SAMPLE_COUNT_8_BIT)  { (*p_sample_count) = VK_SAMPLE_COUNT_8_BIT;  return 1; }
+	if (_sample_count & VK_SAMPLE_COUNT_4_BIT)  { (*p_sample_count) = VK_SAMPLE_COUNT_4_BIT;  return 1; }
+	if (_sample_count & VK_SAMPLE_COUNT_2_BIT)  { (*p_sample_count) = VK_SAMPLE_COUNT_2_BIT;  return 1; }
+	if (_sample_count & VK_SAMPLE_COUNT_1_BIT)  { (*p_sample_count) = VK_SAMPLE_COUNT_1_BIT;  return 1; }
+
+	return 0;
+}
+
 uint8_t shGetSwapchainImages(ShVkCore* p_core) {
 	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, NULL);
-	p_core->p_swapchain_images = (VkImage*)malloc(p_core->swapchain_image_count * sizeof(VkImage));
+	p_core->p_swapchain_images = (VkImage*)calloc(p_core->swapchain_image_count, sizeof(VkImage));
 	shVkError(p_core->p_swapchain_images == NULL, "invalid swapchain images pointer", return 0);
 	vkGetSwapchainImagesKHR(p_core->device, p_core->swapchain, &p_core->swapchain_image_count, p_core->p_swapchain_images);
 	return 1;
 }
 
-uint8_t shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view) {
+uint8_t shCreateImageView(ShVkCore* p_core, const VkImage image, const VkImageViewType view_type, const VkImageAspectFlagBits image_aspect, const uint32_t mip_levels, const VkFormat format, VkImageView* p_image_view) {
 	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	shVkError(p_image_view == NULL, "invalid image view pointer", return 0);
-	VkImageViewCreateInfo imageViewCreateInfo = {
-			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,	//sType;
-			NULL,										//pNext;
-			0,											//flags;
-			image,										//image;
-			VK_IMAGE_VIEW_TYPE_2D,						//viewType;
-			0,											//format;
-			VK_COMPONENT_SWIZZLE_IDENTITY,				//components;
-			0
+
+	VkImageSubresourceRange subresource_range = {
+		image_aspect, //aspectMask
+		0,            //baseMipLevel;
+		mip_levels,   //levelCount;
+		0,            //baseArrayLayer;
+		1             //layerCount;
 	};
-	//aspectMask;
-	if (type == SH_SWAPCHAIN_IMAGE) {
-		imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;	
-		imageViewCreateInfo.format = p_core->swapchain_image_format;
-	}
-	else if (type == SH_DEPTH_IMAGE) {
-		imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		imageViewCreateInfo.format = SH_DEPTH_IMAGE_FORMAT;
-	}
-	imageViewCreateInfo.subresourceRange.baseMipLevel = 0;							//baseMipLevel;
-	imageViewCreateInfo.subresourceRange.levelCount = 1;							//levelCount;
-	imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;						//baseArrayLayer;
-	imageViewCreateInfo.subresourceRange.layerCount = 1;							//layerCount;
+	
+	VkImageViewCreateInfo image_view_create_info = {
+			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,   //sType;
+			NULL,                                       //pNext;
+			0,                                          //flags;
+			image,                                      //image;
+			view_type,                                  //viewType;
+			format,                                     //format;
+			VK_COMPONENT_SWIZZLE_IDENTITY,              //components;
+			0,                                          //subresourceRange
+	};
+	image_view_create_info.subresourceRange = subresource_range;
+
 	shVkResultError(
-		vkCreateImageView(p_core->device, &imageViewCreateInfo, NULL, p_image_view),
+		vkCreateImageView(p_core->device, &image_view_create_info, NULL, p_image_view),
 		"error creating image view", return 0
 	);
 	return 1;
@@ -381,7 +412,15 @@ uint8_t shCreateSwapchainImageViews(ShVkCore* p_core) {
 	p_core->p_swapchain_image_views = (VkImageView*)malloc(p_core->swapchain_image_count * sizeof(VkImageView));
 	shVkError(p_core->p_swapchain_image_views == NULL, "invalid swapchain image views pointer", return 0);
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
-		shCreateImageView(p_core, p_core->p_swapchain_images[i], SH_SWAPCHAIN_IMAGE, &p_core->p_swapchain_image_views[i]);
+		shCreateImageView(
+			p_core, 
+			p_core->p_swapchain_images[i], 
+			VK_IMAGE_VIEW_TYPE_2D, 
+			VK_IMAGE_ASPECT_COLOR_BIT, 
+			1,
+			p_core->swapchain_image_format, 
+			&p_core->p_swapchain_image_views[i]
+		);
 	}
 	return 1;
 }
@@ -441,27 +480,32 @@ uint8_t shCreateCommandData(ShVkCore* p_core, const VkQueueFlagBits usage, const
 
 uint8_t shCreateRenderPass(ShVkCore* p_core) {
 	shVkError(p_core == NULL, "invalid core pointer", return 0);
-	VkAttachmentDescription colorAttachmentDescription = {
-		0,									//flags;
-		p_core->swapchain_image_format,		//format;
-		VK_SAMPLE_COUNT_1_BIT,				//samples;
-		VK_ATTACHMENT_LOAD_OP_CLEAR,		//loadOp;
-		VK_ATTACHMENT_STORE_OP_STORE,		//storeOp;
-		VK_ATTACHMENT_LOAD_OP_DONT_CARE,	//stencilLoadOp;
-		VK_ATTACHMENT_STORE_OP_DONT_CARE,	//stencilStoreOp;
-		VK_IMAGE_LAYOUT_UNDEFINED,			//initialLayout;
-		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR		//finalLayout;
+
+	uint32_t sample_count = p_core->sample_count;
+
+	VkAttachmentDescription color_attachment_description = {
+		0,									      //flags;
+		p_core->swapchain_image_format,		      //format;
+		sample_count,                             //samples;
+		VK_ATTACHMENT_LOAD_OP_CLEAR,              //loadOp;
+		VK_ATTACHMENT_STORE_OP_STORE,             //storeOp;
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE,          //stencilLoadOp;
+		VK_ATTACHMENT_STORE_OP_DONT_CARE,         //stencilStoreOp;
+		VK_IMAGE_LAYOUT_UNDEFINED,                //initialLayout;
+		(p_core->sample_count < 2) ?
+		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 		  
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, //finalLayout;
 	};
 
-	VkAttachmentReference colorAttachmentReference = {
-		0,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	VkAttachmentReference color_attachment_reference = {
+		0,                                       //attachment;
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL //layout;
 	};
 
-	VkAttachmentDescription depthAttachmentDescription = {
+	VkAttachmentDescription depth_attachment_description = {
 		0,													//flags;
 		SH_DEPTH_IMAGE_FORMAT,								//format;
-		VK_SAMPLE_COUNT_1_BIT,								//samples;
+		sample_count,										//samples;
 		VK_ATTACHMENT_LOAD_OP_CLEAR,						//loadOp;
 		VK_ATTACHMENT_STORE_OP_DONT_CARE,					//storeOp;
 		VK_ATTACHMENT_LOAD_OP_DONT_CARE,					//stencilLoadOp;
@@ -470,32 +514,52 @@ uint8_t shCreateRenderPass(ShVkCore* p_core) {
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,	//finalLayout;
 	};
 
-	VkAttachmentReference depthAttachmentReference = {
+	VkAttachmentReference depth_attachment_reference = {
 		1, 													//attachment
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL	//layout
 	};
 
-	VkSubpassDescription subpassDescription = {
+	VkAttachmentDescription resolve_attachment_description = {
+		0, //flags;
+		p_core->swapchain_image_format,           //format;
+		VK_SAMPLE_COUNT_1_BIT,                    //samples;//must be 1
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE,          //loadOp;
+		VK_ATTACHMENT_STORE_OP_STORE,             //storeOp;
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE,          //stencilLoadOp;
+		VK_ATTACHMENT_STORE_OP_DONT_CARE,         //stencilStoreOp;
+		VK_IMAGE_LAYOUT_UNDEFINED,                //initialLayout;
+		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR           //finalLayout;
+	};
+
+	VkAttachmentReference resolve_attachment_reference = {
+		2,                                       //attachment
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL //layout
+	};
+
+	VkSubpassDescription subpass_description = {
 		0,									//flags;
 		VK_PIPELINE_BIND_POINT_GRAPHICS,	//pipelineBindPoint;
 		0,									//inputAttachmentCount;
 		NULL,								//pInputAttachments;
 		1,									//colorAttachmentCount;
-		&colorAttachmentReference,			//pColorAttachments;
+		&color_attachment_reference,		//pColorAttachments;
 		NULL,								//pResolveAttachments;
 		NULL,								//pDepthStencilAttachment;
 		0,									//preserveAttachmentCount;
 		NULL								//pPreserveAttachments;
 	};
 	if (p_core->depth_image_view != VK_NULL_HANDLE) {
-		subpassDescription.pDepthStencilAttachment = &depthAttachmentReference;
+		subpass_description.pDepthStencilAttachment = &depth_attachment_reference;
+	}
+	if (p_core->sample_count > 1) {
+		subpass_description.pResolveAttachments = &resolve_attachment_reference;
 	}
 
-	VkAttachmentDescription attachment_descriptions[2] = {
-		colorAttachmentDescription, depthAttachmentDescription
+	VkAttachmentDescription attachment_descriptions[3] = {
+		color_attachment_description, depth_attachment_description, resolve_attachment_description
 	};
 
-	VkSubpassDependency subpassDependency = {
+	VkSubpassDependency subpass_dependency = {
 		0,																							//srcSubpass;
 		0,																							//dstSubpass;
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,	//srcStageMask;
@@ -505,25 +569,28 @@ uint8_t shCreateRenderPass(ShVkCore* p_core) {
 		VK_DEPENDENCY_BY_REGION_BIT																	//dependencyFlags;
 	};
 
-	VkRenderPassCreateInfo renderPassCreateInfo = {
+	VkRenderPassCreateInfo renderpass_create_info = {
 		VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,	//sType;
 		NULL,										//pNext;
 		0,											//flags;
 		1,											//attachmentCount;
 		attachment_descriptions,					//pAttachments;
 		1,											//subpassCount;
-		&subpassDescription,						//pSubpasses;
+		&subpass_description,						//pSubpasses;
 		0,											//dependencyCount;
 		NULL										//pDependencies;
 	};
 	if (p_core->depth_image_view != VK_NULL_HANDLE) {
-		renderPassCreateInfo.attachmentCount = 2;
-		renderPassCreateInfo.dependencyCount = 1;
-		renderPassCreateInfo.pDependencies = &subpassDependency;
+		renderpass_create_info.attachmentCount++;
+		renderpass_create_info.dependencyCount = 1;
+		renderpass_create_info.pDependencies = &subpass_dependency;
+	}
+	if (p_core->sample_count > 1) {
+		renderpass_create_info.attachmentCount++;
 	}
 
 	shVkResultError(
-		vkCreateRenderPass(p_core->device, &renderPassCreateInfo, NULL, &p_core->render_pass),
+		vkCreateRenderPass(p_core->device, &renderpass_create_info, NULL, &p_core->render_pass),
 		"error creating render pass", return 0
 	);
 	return 1;
@@ -531,7 +598,8 @@ uint8_t shCreateRenderPass(ShVkCore* p_core) {
 
 uint8_t shSetFramebuffers(ShVkCore* p_core) {
 	shVkError(p_core == NULL, "invalid core pointer", return 0);
-	VkFramebufferCreateInfo framebufferCreateInfo = {
+
+	VkFramebufferCreateInfo framebuffer_create_info = {
 		VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,	//sType;
 		NULL,										//pNext;
 		0,											//flags;
@@ -543,22 +611,37 @@ uint8_t shSetFramebuffers(ShVkCore* p_core) {
 		1											//layers;
 	};
 
-	p_core->p_frame_buffers = (VkFramebuffer*)malloc(p_core->swapchain_image_count * sizeof(VkFramebuffer));
+	p_core->p_frame_buffers = (VkFramebuffer*)calloc(p_core->swapchain_image_count, sizeof(VkFramebuffer));
 	shVkError(p_core->p_frame_buffers == NULL, "invalid frame buffers pointer", return 0);
 
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
-		VkImageView attachments[2] = {
-			p_core->p_swapchain_image_views[i], p_core->depth_image_view 
+
+		VkImageView attachments_without_resolve[3] = {
+			p_core->p_swapchain_image_views[i], p_core->depth_image_view
 		};
+		VkImageView attachments_with_resolve[3] = {
+			p_core->output_image_view, p_core->depth_image_view, p_core->p_swapchain_image_views[i]
+		};
+		
+		framebuffer_create_info.pAttachments = attachments_without_resolve;
+
 		if (p_core->depth_image_view != VK_NULL_HANDLE) {
-			framebufferCreateInfo.attachmentCount = 2;
+			framebuffer_create_info.attachmentCount++;
 		}
-		framebufferCreateInfo.pAttachments = attachments;
+		if (p_core->output_image_view != VK_NULL_HANDLE && p_core->sample_count > 1) {
+			framebuffer_create_info.attachmentCount++;
+			framebuffer_create_info.pAttachments = attachments_with_resolve;
+		}
+
 		shVkResultError(
-			vkCreateFramebuffer(p_core->device, &framebufferCreateInfo, NULL, &p_core->p_frame_buffers[i]),
+			vkCreateFramebuffer(p_core->device, &framebuffer_create_info, NULL, &p_core->p_frame_buffers[i]),
 			"error creating framebuffer", return 0
 		);
+
+		framebuffer_create_info.attachmentCount = 1;
+
 	}
+
 	return 1;
 }
 
@@ -608,24 +691,15 @@ uint8_t shSetSyncObjects(ShVkCore* p_core) {
 uint8_t shSwapchainRelease(ShVkCore* p_core) {
 	shVkError(p_core == NULL, "invalid core pointer", return 0);
 	vkDeviceWaitIdle(p_core->device);
-
 	for (uint32_t i = 0; i < p_core->swapchain_image_count; i++) {
 		vkDestroyFramebuffer(p_core->device, p_core->p_frame_buffers[i], NULL);
-		vkDestroyImageView(p_core->device, p_core->p_swapchain_image_views[i], NULL);
+		shDestroyImageView(p_core->device, p_core->p_swapchain_image_views[i]);
 	}
 	vkDestroySwapchainKHR(p_core->device, p_core->swapchain, NULL);
 	p_core->swapchain_image_count = 0;
 	free(p_core->p_frame_buffers);
 	free(p_core->p_swapchain_image_views);
 	free(p_core->p_swapchain_images);
-	return 1;
-}
-
-uint8_t shDepthBufferRelease(ShVkCore* p_core) {
-	shVkError(p_core == NULL, "invalid core pointer", return 0);
-	vkDestroyImageView(p_core->device, p_core->depth_image_view, NULL);
-	vkDestroyImage(p_core->device, p_core->depth_image, NULL);
-	vkFreeMemory(p_core->device, p_core->depth_image_memory, NULL);
 	return 1;
 }
 
@@ -684,9 +758,6 @@ uint8_t shVulkanRelease(ShVkCore* p_core) {
 	vkDeviceWaitIdle(p_core->device);
 	if (p_core->swapchain != VK_NULL_HANDLE) { 
 		shSwapchainRelease(p_core); 
-	}
-	if (p_core->depth_image_memory != VK_NULL_HANDLE) { 
-		shDepthBufferRelease(p_core); 
 	}
 	if (p_core->surface.surface != VK_NULL_HANDLE) { 
 		shSurfaceRelease(p_core); 

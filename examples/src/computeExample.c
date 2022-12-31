@@ -154,7 +154,7 @@ int main(void) {
 	//
 	//WAIT FOR COMMAND BUFFER TO END
 	//
-	shWaitForFence(device, fence);
+	shWaitForFence(device, fence, UINT64_MAX);
 
 	
 	//
@@ -165,7 +165,7 @@ int main(void) {
 	shCopyBuffer(cmd_buffer, device_local_buffer, 0, 0, sizeof(inputs), staging_buffer);
 	shEndCommandBuffer(cmd_buffer);
 	shQueueSubmit(1, &cmd_buffer, queue, fence);
-	shWaitForFence(device, fence);
+	shWaitForFence(device, fence, UINT64_MAX);
 
 	//
 	//READ OUTPUT VALUES FROM STAGING MEMORY
@@ -244,7 +244,7 @@ void writeMemory(ShVkCore* p_core, VkBuffer* p_staging_buffer, VkDeviceMemory* p
 	shCopyBuffer(cmd_buffer, *p_staging_buffer, 0, 0, sizeof(inputs), *p_device_local_buffer);
 	shEndCommandBuffer(cmd_buffer);
 	shQueueSubmit(1, &cmd_buffer, queue, fence);
-	shWaitForFence(device, fence);
+	shWaitForFence(device, fence, UINT64_MAX);
 }
 
 void setupPipeline(VkDevice device, VkBuffer device_local_buffer, ShVkPipeline* p_pipeline) {

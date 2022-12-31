@@ -6,6 +6,8 @@
 
 ## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.shci) 
 
+All the samples were built and tested on Windows and Linux Mint.
+
 [![linux_badge](.shci/linux-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/linux-log.md) [![windows_badge](.shci/windows-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/windows-log.md)
 
 ---
@@ -64,7 +66,7 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ## [Graphics example overview](examples/src/graphicsExample.c)
 
-This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls (with indexing and without indexing, with instancing and without instancing) to a graphics queue and synchronize data between host and graphics card. The following diagram briefly shows what happens in this example program: 
+This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, enable multisampled anti aliasing, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls (with indexing and without indexing, with instancing and without instancing) to a graphics queue and synchronize data between host and graphics card. The following diagram briefly shows what happens in this example program: 
 
 [![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
 
@@ -98,9 +100,8 @@ Through the renderpass, the second draw call will produce the following framebuf
 
 * multiple frames in flight
 * textures and images
-* capture screenshots 
 * process and submit new swapchain images
-* multisampling
+* offline rendering
 
 [top](#shvulkan)
 

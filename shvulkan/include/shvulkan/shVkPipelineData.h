@@ -73,13 +73,13 @@ static uint8_t shFreeVkPipeline(ShVkPipeline** pp_pipeline) {
 
 extern uint8_t shCreateRasterizer(VkPolygonMode polygon_mode, VkPipelineRasterizationStateCreateInfo* p_rasterizer);
 
-extern uint8_t shSetMultisampleState(VkPipelineMultisampleStateCreateInfo* p_multisample_state);
+extern uint8_t shSetMultisampleState(VkSampleCountFlagBits sample_count, VkPipelineMultisampleStateCreateInfo* p_multisample_state);
 
 extern uint8_t shColorBlendSettings(VkPipelineColorBlendAttachmentState* p_color_blend_attachment, VkPipelineColorBlendStateCreateInfo* p_color_blend_state);
 
 extern uint8_t shSetViewport(const uint32_t width, const uint32_t height, VkViewport *p_viewport, VkRect2D* p_scissors, VkPipelineViewportStateCreateInfo* p_viewport_state);
 
-extern uint8_t shSetFixedStates(VkDevice device, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states);
+extern uint8_t shSetFixedStates(VkDevice device, const uint32_t sample_count, const uint32_t surface_width, const uint32_t surface_height, VkPrimitiveTopology primitive, VkPolygonMode polygon_mode, ShVkFixedStates* p_fixed_states);
 
 extern uint8_t shSetVertexInputAttribute(const uint32_t location, const uint32_t binding, VkFormat format, const uint32_t offset, const uint32_t size, ShVkFixedStates* p_fixed_states);
 

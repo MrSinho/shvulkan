@@ -9,8 +9,8 @@ extern "C" {
 #include <shvulkan/shVkPipelineData.h>
 #include <shvulkan/shVkDrawLoop.h>
 #include <shvulkan/shVkCheck.h>
-#include <shvulkan/shVkDescriptorStructureMap.h>
-
+#include <shvulkan/shVkDepthInfo.h>
+#include <shvulkan/shVkOutputInfo.h>
 
 
 #define GLFW_INCLUDE_NONE
@@ -37,7 +37,7 @@ GLFWwindow* createWindow(const uint32_t width, const uint32_t height, const char
 
 void initializeVulkan(GLFWwindow** p_window, ShVkCore* p_core);
 
-void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t width, uint32_t height, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline);
+void setupPipeline(VkDevice device, uint32_t width, uint32_t height, uint32_t sample_count, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline);
 
 void writeMemory(ShVkCore* p_core, VkBuffer* p_staging_buffer, VkDeviceMemory* p_staging_memory, VkBuffer* p_vertex_buffer, VkDeviceMemory* p_vertex_memory, VkBuffer* p_instance_buffer, VkDeviceMemory* p_instance_memory, VkBuffer* p_index_buffer, VkDeviceMemory* p_index_memory, VkBuffer* p_descriptors_buffer, VkDeviceMemory* p_descriptors_memory);
 
@@ -130,7 +130,7 @@ int main(void) {
 	//
 	//GET AVAILABLE MEMORY, if extension is supported
 	//
-	if (core.device_extension_count == 2) {//first extension is VK_KHR_swapchain
+	if (core.device_extension_count == 2) {//first extension is VK_KHR_swapchain, second extension is VK_EXT_memory_budget
 		ShMemoryBudgetProperties memory_budget = { 0 };
 		shGetMemoryBudgetProperties(
 			core.physical_device,
@@ -141,7 +141,6 @@ int main(void) {
 		printf("Available device local vram: %u bytes\n", (uint32_t)memory_budget.heapBudget[memory_type_index]);
 
 	}
-	
 
 	//
 	//ALLOCATE AND WRITE MEMORY
@@ -161,7 +160,6 @@ int main(void) {
 
 	writeMemory(&core, &staging_buffer, &staging_memory, &vertex_buffer, &vertex_memory, &instance_buffer, &instance_memory, &index_buffer, &index_memory, &descriptor_buffer, &descriptor_memory);
 
-
 	//
 	//SETUP PIPELINE
 	//
@@ -169,9 +167,9 @@ int main(void) {
 	ShVkFixedStates	fixed_states	= { 0 };
 	setupPipeline(
 		core.device, 
-		core.physical_device, 
 		core.surface.width,
 		core.surface.height,
+		core.sample_count,
 		descriptor_buffer,
 		core.render_pass,
 		&fixed_states,
@@ -191,8 +189,6 @@ int main(void) {
 	VkSemaphore         semaphore       = core.p_render_semaphores[0];
 
 	uint32_t    swapchain_image_idx     = 0;
-	
-
 
 	//
 	//MAIN LOOP
@@ -285,7 +281,7 @@ int main(void) {
 		//
 		//WAIT FOR EVERYTHING TO END
 		//
-		shWaitForFence(device, fence);
+		shWaitForFence(device, fence, UINT64_MAX);
 
 	}
 
@@ -301,6 +297,9 @@ int main(void) {
 	shClearBufferMemory(device, index_buffer, index_memory);
 	shClearBufferMemory(device, descriptor_buffer, descriptor_memory);
 	shClearBufferMemory(device, staging_buffer, staging_memory);
+
+	shClearDepthBuffer(&core);
+	shClearOutputImage(&core);
 
 	//
 	//END VULKAN
@@ -332,7 +331,9 @@ void initializeVulkan(GLFWwindow** p_window, ShVkCore* p_core) {
 	shSelectPhysicalDevice(p_core, VK_QUEUE_GRAPHICS_BIT);
 	shSetLogicalDevice(p_core);
 	shInitSwapchainData(p_core);
+	shCombineCurrentMaxSamples(p_core, 64, 1, 1);//sample count must be a power of 2 (starting from 1), if you need max available sample count, use 64
 	shInitDepthData(p_core);
+	shSetOutputImage(p_core);
 	shCreateRenderPass(p_core);
 	shSetFramebuffers(p_core);
 	shCreateGraphicsCommandBuffers(p_core, 1);
@@ -427,10 +428,10 @@ void writeMemory(
 	shEndCommandBuffer(cmd_buffer);
 
 	shQueueSubmit(1, &cmd_buffer, p_core->graphics_queue.queue, fence);
-	shWaitForFence(device, fence);
+	shWaitForFence(device, fence, UINT64_MAX);
 }
 
-void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t width, uint32_t height, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline) {
+void setupPipeline(VkDevice device, uint32_t width, uint32_t height, uint32_t sample_count, VkBuffer descriptors_buffer, VkRenderPass render_pass, ShVkFixedStates* p_fixed_states, ShVkPipeline* p_pipeline) {
 	assert(p_pipeline != NULL && p_fixed_states != NULL);
 
 	shSetPushConstants(VK_SHADER_STAGE_VERTEX_BIT, 0, 128, &p_pipeline->push_constant_range);
@@ -476,7 +477,7 @@ void setupPipeline(VkDevice device, VkPhysicalDevice physical_device, uint32_t w
 	shFixedStatesSetVertexInputRate(VK_VERTEX_INPUT_RATE_INSTANCE, PER_INSTANCE_BINDING, p_fixed_states);
 	shFixedStatesSetVertexInputState(p_fixed_states);
 
-	shSetFixedStates(device, width, height, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_POLYGON_MODE_FILL, p_fixed_states);
+	shSetFixedStates(device, sample_count, width, height, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_POLYGON_MODE_FILL, p_fixed_states);
 	shSetupGraphicsPipeline(device, render_pass, *p_fixed_states, p_pipeline);
 }
 
@@ -486,6 +487,7 @@ void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fi
 
 	VkDevice device = p_core->device;
 	VkPhysicalDevice physical_device = p_core->physical_device;
+	uint32_t sample_count = p_core->sample_count;
 
 	glfwGetWindowSize(window, &width, &height);
 	if (width != p_core->surface.width || height != p_core->surface.height) {
@@ -493,7 +495,8 @@ void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fi
 
 		shSwapchainRelease(p_core);
 		shSurfaceRelease(p_core);
-		shDepthBufferRelease(p_core);
+		shClearDepthBuffer(p_core);
+		shClearOutputImage(p_core);
 
 		glfwCreateWindowSurface(p_core->instance, window, NULL, &p_core->surface.surface);
 		p_core->surface.width = width;
@@ -504,18 +507,17 @@ void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fi
 
 		shInitSwapchainData(p_core);
 		shInitDepthData(p_core);
+		shSetOutputImage(p_core);
 		shSetFramebuffers(p_core);
-
-		
 
 		shPipelineRelease(device, p_pipeline);
 		shFixedStatesRelease(p_fixed_states);
 
 		setupPipeline(
 			device,
-			physical_device,
 			width,
 			height,
+			sample_count,
 			descriptors_buffer,
 			p_core->render_pass,
 			p_fixed_states,

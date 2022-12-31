@@ -14,10 +14,7 @@ extern "C" {
 #include "shvulkan/shVkVersion.h"
 #include "shvulkan/shVkCheck.h"
 
-typedef enum ShVkImageType {
-	SH_SWAPCHAIN_IMAGE = 0b001,
-	SH_DEPTH_IMAGE = 0b010
-} ShVkImageType;
+
 
 #define SH_DEPTH_IMAGE_FORMAT		VK_FORMAT_D32_SFLOAT
 #define SH_SWAPCHAIN_IMAGE_FORMAT	VK_FORMAT_R8G8B8A8_UNORM
@@ -73,6 +70,11 @@ typedef struct ShVkCore {
 	VkImage								depth_image;
 	VkDeviceMemory						depth_image_memory;
 	VkImageView							depth_image_view;
+	/*Color buffer*/
+	uint32_t                            sample_count;
+	VkImage                             output_image;
+	VkDeviceMemory                      output_memory;
+	VkImageView                         output_image_view;
 	/**/
 	VkRenderPass						render_pass;
 	VkSemaphore*						p_render_semaphores;
@@ -106,9 +108,11 @@ extern uint8_t shSetLogicalDevice(ShVkCore* p_core);
 
 extern uint8_t shCreateSwapchain(ShVkCore* p_core);
 
+extern uint8_t shCombineMaxSamples(VkPhysicalDeviceProperties physical_device_properties, uint32_t sample_count, uint8_t combine_color_sample, uint8_t combine_depth_sample, uint32_t* p_sample_count);
+
 extern uint8_t shGetSwapchainImages(ShVkCore* p_core);
 
-extern uint8_t shCreateImageView(ShVkCore* p_core, const VkImage image, const ShVkImageType type, VkImageView* p_image_view);
+extern uint8_t shCreateImageView(ShVkCore* p_core, const VkImage image, const VkImageViewType view_type, const VkImageAspectFlagBits image_aspect, const uint32_t mip_levels, const VkFormat format, VkImageView* p_image_view);
 
 extern uint8_t shCreateSwapchainImageViews(ShVkCore* p_core);
 
@@ -126,8 +130,6 @@ extern uint8_t shSetSyncObjects(ShVkCore* p_core);
 
 extern uint8_t shSwapchainRelease(ShVkCore* p_core);
 
-extern uint8_t shDepthBufferRelease(ShVkCore* p_core);
-
 extern uint8_t shSurfaceRelease(ShVkCore* p_core);
 
 extern uint8_t shCmdRelease(ShVkCore* p_core);
@@ -140,17 +142,36 @@ extern uint8_t shVulkanRelease(ShVkCore* p_core);
 
 
 
+#define shCombineCurrentMaxSamples(p_core, _sample_count, combine_color_sample, combine_depth_sample)\
+	shCombineMaxSamples(\
+		(p_core)->physical_device_properties,\
+		_sample_count,\
+		combine_color_sample,\
+		combine_depth_sample,\
+		&(p_core)->sample_count\
+	)
+
+
+
 #define shWaitDeviceIdle(device)\
 	vkDeviceWaitIdle((VkDevice)device);
+
 
 
 #define shGetGraphicsQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->graphics_queue.queue_family_index, 0, &(p_core)->graphics_queue.queue)
 
 #define shGetComputeQueue(p_core) vkGetDeviceQueue((p_core)->device, (p_core)->compute_queue.queue_family_index, 0, &(p_core)->compute_queue.queue)
 
+
+
 #define shInitSwapchainData(p_core) shCreateSwapchain(p_core); shGetSwapchainImages(p_core); shCreateSwapchainImageViews(p_core)
 
-#define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, SH_DEPTH_IMAGE, &(p_core)->depth_image_view)
+#define shCreateDepthImageView(p_core) shCreateImageView(p_core, (p_core)->depth_image, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT, 1, SH_DEPTH_IMAGE_FORMAT, &(p_core)->depth_image_view)
+
+#define shDestroyImageView(device, image_view)\
+	vkDestroyImageView(device, image_view, NULL)
+
+
 
 #define shCreateGraphicsCommandBuffers(p_core, thread_count)\
 	shCreateCommandData(p_core, VK_QUEUE_GRAPHICS_BIT, thread_count, &(p_core)->p_graphics_commands)
@@ -158,23 +179,35 @@ extern uint8_t shVulkanRelease(ShVkCore* p_core);
 #define shCreateComputeCommandBuffers(p_core, thread_count)\
 	shCreateCommandData(p_core, VK_QUEUE_COMPUTE_BIT, thread_count, &(p_core)->p_compute_commands)
 
+
+
 #define shResetCommandBuffer(cmd_buffer) vkResetCommandBuffer(cmd_buffer, 0)
 
 #define shResetFences(device, fence_count, p_fences) vkResetFences(device, fence_count, p_fences);
 
 #define shResetFence(device, fence) vkResetFences(device, 1, &fence);
 
+
+
 extern uint8_t shBeginCommandBuffer(const VkCommandBuffer cmd_buffer);
+
+#define shEndCommandBuffer(cmd_buffer)\
+	vkEndCommandBuffer(cmd_buffer)
+
+
 
 #define shCmdDispatch(cmd_buffer, group_count_x, group_count_y, group_count_z) vkCmdDispatch(cmd_buffer, group_count_x, group_count_y, group_count_z)
 
+
+
 extern uint8_t shQueueSubmit(const uint32_t cmd_buffer_count, VkCommandBuffer* p_cmd_buffers, const VkQueue queue, VkFence fence);
 
-#define shWaitForFences(device, fence_count, p_fences) vkWaitForFences(device, fence_count, p_fences, VK_TRUE, 100000000000)
 
-#define shWaitForFence(device, fence) vkWaitForFences(device, 1, &fence, VK_TRUE, 100000000000)
 
-#define shEndCommandBuffer(cmd_buffer) vkEndCommandBuffer(cmd_buffer)
+#define shWaitForFences(device, fence_count, p_fences, timeout) vkWaitForFences(device, fence_count, p_fences, VK_TRUE, (uint64_t)(timeout))
+
+#define shWaitForFence(device, fence, timeout) vkWaitForFences(device, 1, &fence, VK_TRUE, (uint64_t)(timeout))
+
 
 
 #ifdef __cplusplus
