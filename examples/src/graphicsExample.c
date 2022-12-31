@@ -490,7 +490,10 @@ void checkWindowSize(GLFWwindow* window, ShVkCore* p_core, ShVkFixedStates* p_fi
 	uint32_t sample_count = p_core->sample_count;
 
 	glfwGetWindowSize(window, &width, &height);
-	if (width != p_core->surface.width || height != p_core->surface.height) {
+	if (
+			(width != 0) && (height != 0) && //window is minimized
+			(width != p_core->surface.width || height != p_core->surface.height)
+		) {
 		shWaitDeviceIdle(device);
 
 		shSwapchainRelease(p_core);
