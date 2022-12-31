@@ -100,7 +100,7 @@ Through the renderpass, the second draw call will produce the following framebuf
 
 * multiple frames in flight
 * textures
-* process and submit new swapchain images
+* read swapchain image memory
 * offline rendering
 
 [top](#shvulkan)
