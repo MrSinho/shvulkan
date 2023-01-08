@@ -6,6 +6,8 @@ extern "C" {
 
 #include <shvulkan/shVkCore.h>
 #include <shvulkan/shVkMemoryInfo.h>
+#include <shvulkan/shVkPipelineData.h>
+#include <shvulkan/shVkCheck.h>
 
 
 #define GLFW_INCLUDE_NONE
@@ -16,6 +18,9 @@ extern "C" {
 #include <stdlib.h>
 #include <memory.h>
 #include <assert.h>
+
+#include <math.h>
+
 
 
 #define QUAD_VERTEX_COUNT 32
@@ -591,6 +596,92 @@ int main(void) {
 
 	return 0;
 }
+
+void writeMemory(
+	VkDevice         device,
+	VkPhysicalDevice physical_device,
+	VkCommandBuffer  transfer_cmd_buffer,
+	VkFence          fence,
+	VkQueue          transfer_queue,
+	VkBuffer*        p_staging_buffer,
+	VkDeviceMemory*  p_staging_memory,
+	VkBuffer*        p_vertex_buffer, 
+	VkDeviceMemory*  p_vertex_memory, 
+	VkBuffer*        p_instance_buffer,
+	VkDeviceMemory*  p_instance_memory,
+	VkBuffer*        p_index_buffer, 
+	VkDeviceMemory*  p_index_memory, 
+	VkBuffer*        p_descriptor_buffer,
+	VkDeviceMemory*  p_descriptors_memory
+) {
+	uint32_t quad_vertices_offset     = 0;
+	uint32_t triangle_vertices_offset = quad_vertices_offset     + sizeof(quad);
+	uint32_t instance_models_offset   = triangle_vertices_offset + sizeof(triangle);
+	uint32_t quad_indices_offset      = instance_models_offset   + sizeof(models);
+	uint32_t light_offset             = quad_indices_offset      + sizeof(indices);
+	uint32_t staging_size             = light_offset             + sizeof(light);
+
+	//
+	//WRITE ALL DATA TO STAGING BUFFER
+	//
+	shCreateBuffer(
+		device, 
+		staging_size,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+		VK_SHARING_MODE_EXCLUSIVE,
+		p_staging_buffer
+	);
+	shAllocateMemory(
+		device, 
+		physical_device, 
+		*p_staging_buffer,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+		p_staging_memory
+	);
+	shWriteMemory(device, *p_staging_memory, quad_vertices_offset,     sizeof(quad),     quad    );
+	shWriteMemory(device, *p_staging_memory, triangle_vertices_offset, sizeof(triangle), triangle);
+	shWriteMemory(device, *p_staging_memory, quad_indices_offset,      sizeof(indices),  indices );
+	shWriteMemory(device, *p_staging_memory, instance_models_offset,   sizeof(models),   models  );
+	shWriteMemory(device, *p_staging_memory, instance_models_offset,   sizeof(models),   models  );
+	shWriteMemory(device, *p_staging_memory, light_offset,             sizeof(light),    light   );
+
+	shBindMemory(device, *p_staging_buffer, 0, *p_staging_memory);
+
+
+	//
+	//SETUP DEVICE LOCAL DESTINATION BUFFERS
+	//
+	shCreateBuffer(device, sizeof(quad) + sizeof(triangle), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_SHARING_MODE_EXCLUSIVE, p_vertex_buffer);
+	shAllocateMemory(device, physical_device, *p_vertex_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_vertex_memory);
+	shBindMemory(device, *p_vertex_buffer, 0, *p_vertex_memory);
+
+	shCreateBuffer(device, sizeof(models), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_SHARING_MODE_EXCLUSIVE, p_instance_buffer);
+	shAllocateMemory(device, physical_device, *p_instance_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_instance_memory);
+	shBindMemory(device, *p_instance_buffer, 0, *p_instance_memory);
+
+	shCreateBuffer(device, sizeof(indices), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_SHARING_MODE_EXCLUSIVE, p_index_buffer);
+	shAllocateMemory(device, physical_device, *p_index_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_index_memory);
+	shBindMemory(device, *p_index_buffer, 0, *p_index_memory);
+
+	shCreateBuffer(device, sizeof(light), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_SHARING_MODE_EXCLUSIVE, p_descriptor_buffer);
+	shAllocateMemory(device, physical_device, *p_descriptor_buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_descriptors_memory);
+	shBindMemory(device, *p_descriptor_buffer, 0, *p_descriptors_memory);
+
+	//
+	//COPY STAGING BUFFER TO DEVICE LOCAL MEMORY
+	//
+	shLockFences(device, 1, &fence);
+	shBeginCommandBuffer(transfer_cmd_buffer);
+	shCopyBuffer(transfer_cmd_buffer, *p_staging_buffer, quad_vertices_offset,   0, sizeof(quad) + sizeof(triangle), *p_vertex_buffer);
+	shCopyBuffer(transfer_cmd_buffer, *p_staging_buffer, instance_models_offset, 0, sizeof(models),                  *p_instance_buffer);
+	shCopyBuffer(transfer_cmd_buffer, *p_staging_buffer, quad_indices_offset,    0, sizeof(indices),                 *p_index_buffer);
+	shCopyBuffer(transfer_cmd_buffer, *p_staging_buffer, light_offset,           0, sizeof(light),                   *p_descriptor_buffer);
+	shEndCommandBuffer(transfer_cmd_buffer);
+	shQueueSubmit(1, &transfer_cmd_buffer, transfer_queue, fence, 0, NULL, 0, 0, NULL);
+	shWaitForFences(device, 1, &fence, 1, UINT64_MAX);
+}
+
+
 
 #ifdef __cplusplus
 }

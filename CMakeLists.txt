@@ -10,11 +10,7 @@ find_package(Vulkan REQUIRED)
 function(build_shvulkan)
 set(SH_VULKAN_SRC_DIR shvulkan/src/shvulkan)
 add_library(shvulkan STATIC 
-    ${SH_VULKAN_SRC_DIR}/shVkCore.c
-    ${SH_VULKAN_SRC_DIR}/shVkMemoryInfo.c
-    ${SH_VULKAN_SRC_DIR}/shVkPipelineData.c
-    ${SH_VULKAN_SRC_DIR}/shVkCheck.c
-    ${SH_VULKAN_SRC_DIR}/shVkDrawLoop.c
+    ${SH_VULKAN_SRC_DIR}/shVulkan.c
 )
 target_include_directories(shvulkan PUBLIC 
     ${Vulkan_INCLUDE_DIRS}
@@ -28,14 +24,33 @@ endfunction()
 
 function(build_shvulkan_examples)
 add_subdirectory(examples/external/glfw)
-add_executable(shvulkan-graphics-example examples/src/graphicsExample.c)
-target_link_libraries(shvulkan-graphics-example PUBLIC shvulkan glfw)
+
+add_executable(shvulkan-clear-color examples/src/graphics/clear-color.c)
+target_link_libraries(shvulkan-clear-color PUBLIC shvulkan glfw)
+
+add_executable(shvulkan-resizable-clear-color examples/src/graphics/resizable-clear-color.c)
+target_link_libraries(shvulkan-resizable-clear-color PUBLIC shvulkan glfw)
+
+add_executable(shvulkan-scene examples/src/graphics/triangle.c)
+target_link_libraries(shvulkan-scene PUBLIC shvulkan glfw)
+
 if (UNIX)
-target_link_libraries(shvulkan-graphics-example PUBLIC X11)
+target_link_libraries(
+    shvulkan-clear-color 
+    shvulkan-resizable-clear-color 
+    shvulkan-scene
+    PUBLIC X11)
 endif(UNIX)
-add_executable(shvulkan-compute-example examples/src/computeExample.c)
-target_link_libraries(shvulkan-compute-example PUBLIC shvulkan glfw)
-set_target_properties(shvulkan-graphics-example shvulkan-compute-example PROPERTIES
+
+add_executable(shvulkan-compute-power-numbers examples/src/compute/power-numbers.c)
+target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan glfw)
+
+set_target_properties(
+    shvulkan-clear-color 
+    shvulkan-resizable-clear-color 
+    shvulkan-compute-power-numbers 
+
+    PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
     VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
 )
