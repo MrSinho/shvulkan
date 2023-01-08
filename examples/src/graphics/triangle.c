@@ -198,10 +198,15 @@ int main(void) {
 	);
 
 	shSelectPhysicalDevice(
-		//instance, surface, requirements
-		instance, surface,  VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT,
-        //               p_physical_device_properties, p_physical_device_features, p_physical_device_memory_properties
-		&physical_device, NULL, NULL, NULL
+		instance,//instance,
+		surface,//surface,
+		VK_QUEUE_GRAPHICS_BIT |
+		VK_QUEUE_COMPUTE_BIT |
+		VK_QUEUE_TRANSFER_BIT,//requirements,
+		&physical_device,//p_physical_device,
+		&physical_device_properties,//p_physical_device_properties,
+		&physical_device_features,//p_physical_device_features,
+		&physical_device_memory_properties//p_physical_device_memory_properties
 	);
 
 	uint32_t graphics_queue_families_indices[SH_MAX_STACK_QUEUE_FAMILY_COUNT] = { 0 };
