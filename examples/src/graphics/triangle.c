@@ -105,6 +105,15 @@ void releaseMemory(
 	VkDeviceMemory descriptors_memory
 );
 
+void createPipeline(
+	VkDevice      device,
+	VkRenderPass  renderpass,
+	uint32_t      width,
+	uint32_t      height,
+	VkBuffer      descriptors_buffer,
+	ShVkPipeline* p_pipeline
+);
+
 char* readBinary(
 	const char* path, 
 	uint32_t* p_size
@@ -460,200 +469,7 @@ int main(void) {
 
 	ShVkPipeline pipeline = { 0 };
 
-	uint32_t attribute_0_offset = 0;
-	uint32_t attribute_0_size   = 12;
-	uint32_t attribute_1_offset = attribute_0_offset + attribute_0_size;
-	uint32_t attribute_1_size   = 8;
-
-	shPipelineSetVertexBinding(
-		PER_VERTEX_BINDING,
-		attribute_0_size + attribute_1_size,
-		VK_VERTEX_INPUT_RATE_VERTEX,
-		&pipeline
-	);
-
-	shPipelineSetVertexAttribute(
-		0,
-		PER_VERTEX_BINDING,
-		VK_FORMAT_R32G32B32_SFLOAT,
-		attribute_0_offset,
-		&pipeline
-	);
-
-	shPipelineSetVertexAttribute(
-		1,
-		PER_VERTEX_BINDING,
-		VK_FORMAT_R32G32_SFLOAT,
-		attribute_1_offset,
-		&pipeline
-	);
-
-
-	uint32_t attribute_2_offset = 0;
-	uint32_t attribute_2_size   = 16;
-	uint32_t attribute_3_offset = attribute_2_offset + attribute_2_size;
-	uint32_t attribute_3_size   = 16;
-	uint32_t attribute_4_offset = attribute_3_offset + attribute_3_size;
-	uint32_t attribute_4_size   = 16;
-	uint32_t attribute_5_offset = attribute_4_offset + attribute_4_size;
-	uint32_t attribute_5_size   = 16;
-
-	shPipelineSetVertexBinding(
-		PER_INSTANCE_BINDING,
-		attribute_2_size + attribute_3_size + attribute_4_size + attribute_5_size,
-		VK_VERTEX_INPUT_RATE_INSTANCE,
-		&pipeline
-	);
-	
-	shPipelineSetVertexAttribute(
-		2,
-		PER_INSTANCE_BINDING,
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		attribute_2_offset,
-		&pipeline
-	);
-
-	shPipelineSetVertexAttribute(
-		3,
-		PER_INSTANCE_BINDING,
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		attribute_3_offset,
-		&pipeline
-	);
-
-	shPipelineSetVertexAttribute(
-		4,
-		PER_INSTANCE_BINDING,
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		attribute_4_offset,
-		&pipeline
-	);
-
-	shPipelineSetVertexAttribute(
-		5,
-		PER_INSTANCE_BINDING,
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		attribute_5_offset,
-		&pipeline
-	);
-
-	shPipelineSetVertexInputState(&pipeline);
-
-	shPipelineCreateInputAssembly(
-		VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-		0,
-		&pipeline
-	);
-
-	shPipelineCreateRasterizer(
-		VK_POLYGON_MODE_FILL,
-		0,
-		&pipeline
-	);
-
-	shPipelineSetMultisampleState(
-		1,
-		0.0f,
-		&pipeline
-	);
-
-	shPipelineSetViewport(
-		0, 0,
-		width, height,
-		0, 0,
-		width, height,
-		&pipeline
-	);
-
-	shPipelineColorBlendSettings(&pipeline);
-	
-	uint32_t shader_size = 0;
-	char*    shader_code = readBinary(
-		"../examples/shaders/bin/mesh.vert.spv",
-		&shader_size
-	);
-	
-	shPipelineCreateShaderModule(
-		device,
-		shader_size,
-		shader_code,
-		&pipeline
-	);
-
-	free(shader_code);
-
-	shPipelineCreateShaderStage(
-		VK_SHADER_STAGE_VERTEX_BIT,
-		&pipeline
-	);
-
-	shader_code = readBinary(
-		"../examples/shaders/bin/mesh.frag.spv",
-		&shader_size
-	);
-
-	shPipelineCreateShaderModule(
-		device,
-		shader_size,
-		shader_code,
-		&pipeline
-	);
-
-	shPipelineCreateShaderStage(
-		VK_SHADER_STAGE_FRAGMENT_BIT,
-		&pipeline
-	);
-
-	shPipelineSetPushConstants(
-		VK_SHADER_STAGE_VERTEX_BIT,
-		0,
-		sizeof(projection_view),
-		&pipeline
-	);
-
-	shPipelineCreateDescriptorSetLayout(
-		device,
-		0,
-		0,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		VK_SHADER_STAGE_FRAGMENT_BIT,
-		&pipeline
-	);
-
-	shPipelineCreateDescriptorPool(
-		device,
-		0,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		&pipeline
-	);
-
-	shPipelineSetDescriptorBufferInfo(
-		0,
-		descriptors_buffer,
-		0,
-		sizeof(light),
-		&pipeline
-	);
-
-	shPipelineAllocateDescriptorSet(
-		device,
-		0,
-		0,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		&pipeline
-	);
-
-	shPipelineCreateLayout(
-		device,
-		1,
-		&pipeline
-	);
-	
-	shSetupGraphicsPipeline(
-		device,
-		renderpass,
-		&pipeline
-	);
+	createPipeline(device, renderpass, width, height, descriptors_buffer, &pipeline);
 
 	uint32_t swapchain_image_idx = 0;
 	while (!glfwWindowShouldClose(window)) {
@@ -699,16 +515,21 @@ int main(void) {
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
-				shDestroyShaderModule  (device,  pipeline.shader_modules[0]);
-				shDestroyShaderModule  (device,  pipeline.shader_modules[1]);
-				shDestroyDescriptorPool(device,  pipeline.descriptor_pools[0]);
-				shDestroyDescriptorPool(device,  pipeline.descriptor_pools[1]);
-				shDestroyPipelineLayout(device,  pipeline.pipeline_layout);
-				shDestroyPipeline      (device, pipeline.pipeline);
+				shPipelineDestroyShaderModules       (device, 0, 2, &pipeline);
+				shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
+				shPipelineDestroyDescriptorPools     (device,  0, 1, &pipeline);
+				shPipelineDestroyLayout              (device, &pipeline);
+				shDestroyPipeline                    (device, pipeline.pipeline);
+
+				shClearPipeline(&pipeline);
+
+				createPipeline(device, renderpass, width, height, descriptors_buffer, &pipeline);
 
 				if (swapchain_image_count == 2 && swapchain_image_idx != 0) {//start from swaphain image idx 0
 					swapchain_image_idx = 0;
 				}
+
+				
 			}
 		}
 		
@@ -746,21 +567,24 @@ int main(void) {
 			vertex_buffer
 		);
 
+		VkClearValue clear_values[2] = { 0 };
+		float* p_colors = clear_values[0].color.float32;
+		p_colors[0] = 0.1f;
+		p_colors[1] = 0.1f;
+		p_colors[2] = 0.1f;
+
+		clear_values[1].depthStencil.depth = 0.0f;
+
 		shBeginRenderpass(
 			cmd_buffer,//graphics_cmd_buffer
 			renderpass,//renderpass
-			framebuffers[swapchain_image_idx],//framebuffer
 			0,//render_offset_x
 			0,//render_offset_y
 			surface_capabilities.currentExtent.width,//render_size_x
 			surface_capabilities.currentExtent.height,//render_size_y
-			0.1f,//clear_color_r
-			0.1f,//clear_color_g
-			0.1f,//clear_color_b
-			1.0f,//clear_color_a
-			0,//use_clear_depth_stencil_value
-			0.0f,//clear_depth
-			0//clear_stencil
+			2,//only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
+			clear_values,//p_clear_values
+			framebuffers[swapchain_image_idx]//framebuffer
 		);
 
 		VkDeviceSize vertex_offset     = 0;
@@ -977,7 +801,208 @@ void releaseMemory(
 	shClearBufferMemory(device, descriptors_buffer, descriptors_memory);
 }
 
+void createPipeline(
+	VkDevice      device,
+	VkRenderPass  renderpass,
+	uint32_t      width,
+	uint32_t      height,
+	VkBuffer      descriptors_buffer,
+	ShVkPipeline* p_pipeline
+) {
+	uint32_t attribute_0_offset = 0;
+	uint32_t attribute_0_size = 12;
+	uint32_t attribute_1_offset = attribute_0_offset + attribute_0_size;
+	uint32_t attribute_1_size = 8;
 
+	shPipelineSetVertexBinding(
+		PER_VERTEX_BINDING,
+		attribute_0_size + attribute_1_size,
+		VK_VERTEX_INPUT_RATE_VERTEX,
+		p_pipeline
+	);
+
+	shPipelineSetVertexAttribute(
+		0,
+		PER_VERTEX_BINDING,
+		VK_FORMAT_R32G32B32_SFLOAT,
+		attribute_0_offset,
+		p_pipeline
+	);
+
+	shPipelineSetVertexAttribute(
+		1,
+		PER_VERTEX_BINDING,
+		VK_FORMAT_R32G32_SFLOAT,
+		attribute_1_offset,
+		p_pipeline
+	);
+
+
+
+	shPipelineSetVertexBinding(
+		PER_INSTANCE_BINDING,
+		64,
+		VK_VERTEX_INPUT_RATE_INSTANCE,
+		p_pipeline
+	);
+
+	shPipelineSetVertexAttribute(
+		2,
+		PER_INSTANCE_BINDING,
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		0,
+		p_pipeline
+	);
+
+	shPipelineSetVertexAttribute(
+		3,
+		PER_INSTANCE_BINDING,
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		16,
+		p_pipeline
+	);
+
+	shPipelineSetVertexAttribute(
+		4,
+		PER_INSTANCE_BINDING,
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		32,
+		p_pipeline
+	);
+
+	shPipelineSetVertexAttribute(
+		5,
+		PER_INSTANCE_BINDING,
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		48,
+		p_pipeline
+	);
+
+	shPipelineSetVertexInputState(p_pipeline);
+
+	shPipelineCreateInputAssembly(
+		VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+		0,
+		p_pipeline
+	);
+
+	shPipelineCreateRasterizer(
+		VK_POLYGON_MODE_FILL,
+		0,
+		p_pipeline
+	);
+
+	shPipelineSetMultisampleState(
+		1,
+		0.0f,
+		p_pipeline
+	);
+
+	shPipelineSetViewport(
+		0, 0,
+		width, height,
+		0, 0,
+		width, height,
+		p_pipeline
+	);
+
+	shPipelineColorBlendSettings(p_pipeline);
+
+	uint32_t shader_size = 0;
+	char* shader_code = readBinary(
+		"../examples/shaders/bin/mesh.vert.spv",
+		&shader_size
+	);
+
+	shPipelineCreateShaderModule(
+		device,
+		shader_size,
+		shader_code,
+		p_pipeline
+	);
+
+	free(shader_code);
+
+	shPipelineCreateShaderStage(
+		VK_SHADER_STAGE_VERTEX_BIT,
+		p_pipeline
+	);
+
+	shader_code = readBinary(
+		"../examples/shaders/bin/mesh.frag.spv",
+		&shader_size
+	);
+
+	shPipelineCreateShaderModule(
+		device,
+		shader_size,
+		shader_code,
+		p_pipeline
+	);
+
+	shPipelineCreateShaderStage(
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		p_pipeline
+	);
+
+	shPipelineSetPushConstants(
+		VK_SHADER_STAGE_VERTEX_BIT,
+		0,
+		sizeof(projection_view),
+		p_pipeline
+	);
+
+	shPipelineCreateDescriptorSetLayout(
+		device,
+		0,
+		0,
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		p_pipeline
+	);
+
+	shPipelineSetDescriptorBufferInfo(
+		0,
+		descriptors_buffer,
+		0,
+		sizeof(light),
+		p_pipeline
+	);
+
+	VkDescriptorPoolSize pool_size = { 
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//type;
+		1,//descriptorCount;
+	};
+	shPipelineCreateDescriptorPool(
+		device,//device,
+		0,//pool_idx,
+		1,//pool_size_count,
+		&pool_size,//p_pool_sizes,
+		p_pipeline//p_pipeline
+	);
+	
+	shPipelineAllocateDescriptorSet(
+		device,//device, 
+		0,//pool_idx,
+		0,//binding,
+		0,//set,
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type, 
+		p_pipeline//p_pipeline
+	);
+
+	shPipelineCreateLayout(
+		device,
+		1,
+		p_pipeline
+	);
+
+	shSetupGraphicsPipeline(
+		device,
+		renderpass,
+		p_pipeline
+	);
+
+}
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4996)

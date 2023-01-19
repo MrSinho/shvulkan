@@ -97,12 +97,12 @@ int main(void) {
 	VkFramebuffer                    framebuffers[SWAPCHAIN_IMAGE_COUNT]          = { NULL };
 
 	shCreateInstance(
-		&instance,//p_instance,
 		"vulkan app",//application_name,
 		"vulkan engine",//engine_name, 
 		1,//enable_validation_layers,
 		instance_extension_count,//extension_count,
-		pp_instance_extensions//pp_extension_names
+		pp_instance_extensions,//pp_extension_names,
+		&instance//p_instance
 	);
 
 	glfwCreateWindowSurface(
@@ -480,24 +480,24 @@ int main(void) {
 		);
 		shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
-		float red   = (float)sin(glfwGetTime());
-		float green = (float)cos(glfwGetTime());
-		float blue  = (float)tan(glfwGetTime());
+		VkClearValue clear_values[2] = { 0 };
+		float* p_colors = clear_values[0].color.float32;
+		p_colors[0] = (float)sin(glfwGetTime());
+		p_colors[1] = (float)cos(glfwGetTime());
+		p_colors[2] = (float)tan(glfwGetTime());
+
+		clear_values[1].depthStencil.depth = 0.0f;
+		
 		shBeginRenderpass(
 			graphics_cmd_buffers[swapchain_image_idx],//graphics_cmd_buffer
 			renderpass,//renderpass
-			framebuffers[swapchain_image_idx],//framebuffer
 			0,//render_offset_x
 			0,//render_offset_y
 			surface_capabilities.currentExtent.width,//render_size_x
 			surface_capabilities.currentExtent.height,//render_size_y
-			red,//clear_color_r
-			green,//clear_color_g
-			blue,//clear_color_b
-			1.0f,//clear_color_a
-			1,//use_clear_depth_stencil_value
-			0.0f,//clear_depth
-			0//clear_stencil
+			2,//clear_value_count, only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
+			clear_values,//p_clear_values
+			framebuffers[swapchain_image_idx]//framebuffer
 		);
 
 		shEndRenderpass(graphics_cmd_buffers[swapchain_image_idx]);

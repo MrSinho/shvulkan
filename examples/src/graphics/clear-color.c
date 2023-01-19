@@ -78,28 +78,22 @@ int main(void) {
 																	                       
 	VkAttachmentDescription          swapchain_attachment                                  = { 0 };
 	VkAttachmentReference            swapchain_attachment_reference                        = { 0 };
-	VkAttachmentDescription          depth_attachment                                      = { 0 };
-	VkAttachmentReference            depth_attachment_reference                            = { 0 };
 	VkSubpassDescription             subpass                                               = { 0 };
 																	                       
 	VkRenderPass                     renderpass                                            = NULL;
 
-	VkImage                          swapchain_images[SWAPCHAIN_IMAGE_COUNT]      = { NULL };
-	VkImageView                      swapchain_image_views[SWAPCHAIN_IMAGE_COUNT] = { NULL };
-
-	VkImage                          depth_image = NULL;
-	VkDeviceMemory                   depth_image_memory = NULL;
-	VkImageView                      depth_image_view = NULL;
-
-	VkFramebuffer                    framebuffers[SWAPCHAIN_IMAGE_COUNT]          = { NULL };
+	VkImage                          swapchain_images[SWAPCHAIN_IMAGE_COUNT]               = { NULL };
+	VkImageView                      swapchain_image_views[SWAPCHAIN_IMAGE_COUNT]          = { NULL };
+																				           
+	VkFramebuffer                    framebuffers[SWAPCHAIN_IMAGE_COUNT]                   = { NULL };
 
 	shCreateInstance(
-		&instance,//p_instance, 
 		"vulkan app",//application_name, 
 		"vulkan engine",//engine_name, 
 		1,//enable_validation_layers,
 		instance_extension_count,//extension_count, 
-		pp_instance_extensions//pp_extension_names
+		pp_instance_extensions,//pp_extension_names,
+		&instance//p_instance,
 	);
 
 	glfwCreateWindowSurface(
@@ -291,22 +285,6 @@ int main(void) {
 		0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		&swapchain_attachment_reference
 	);
-
-	shCreateRenderpassAttachment(
-		VK_FORMAT_D32_SFLOAT,
-		1,//sample_count
-		VK_ATTACHMENT_LOAD_OP_CLEAR,
-		VK_ATTACHMENT_STORE_OP_STORE,
-		VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-		VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-		&depth_attachment
-	);
-	shCreateRenderpassAttachmentReference(
-		1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-		&depth_attachment_reference
-	);
 	
 	shCreateSubpass(
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -314,19 +292,19 @@ int main(void) {
 		NULL,
 		1,
 		&swapchain_attachment_reference,
-		&depth_attachment_reference,
+		NULL,
 		NULL,//resolve_attachment_reference
 		0,
 		NULL,
 		&subpass
 	);
 
-	VkAttachmentDescription attachment_descriptions[2] = {
-		swapchain_attachment, depth_attachment
+	VkAttachmentDescription attachment_descriptions[1] = {
+		swapchain_attachment
 	};
 	shCreateRenderpass(
 		device,
-		2,
+		1,
 		attachment_descriptions,
 		1,
 		&subpass,
@@ -334,51 +312,14 @@ int main(void) {
 	);
 
 
-	shCreateImage(
-		device,
-		VK_IMAGE_TYPE_2D,
-		surface_capabilities.currentExtent.width,
-		surface_capabilities.currentExtent.height,
-		1,
-		VK_FORMAT_D32_SFLOAT,
-		1,
-		1,//sample_count
-		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		VK_SHARING_MODE_EXCLUSIVE,
-		&depth_image
-	);
-	shAllocateImageMemory(
-		device,
-		physical_device,
-		depth_image,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		&depth_image_memory
-	);
-	shBindImageMemory(
-		device,
-		depth_image,
-		0,
-		depth_image_memory
-	);
-	shCreateImageView(
-		device,
-		depth_image,
-		VK_IMAGE_VIEW_TYPE_2D,
-		VK_IMAGE_ASPECT_DEPTH_BIT,
-		1,
-		VK_FORMAT_D32_SFLOAT,
-		&depth_image_view
-	);
-
-
 	for (uint32_t i = 0; i < swapchain_image_count; i++) {
-		VkImageView image_views[3] = {
-		swapchain_image_views[i], depth_image_view
+		VkImageView image_views[1] = {
+			swapchain_image_views[i]
 		};
 		shCreateFramebuffer(
 			device,
 			renderpass,
-			2,
+			1,
 			image_views,
 			surface_capabilities.currentExtent.width,
 			surface_capabilities.currentExtent.height,
@@ -419,18 +360,22 @@ int main(void) {
 		);
 		shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
-		float red   = (float)sin(glfwGetTime());
-		float green = (float)cos(glfwGetTime());
-		float blue  = (float)tan(glfwGetTime());
+		VkClearValue swapchain_clear_value = { 0 };
+		float* p_colors = swapchain_clear_value.color.float32;
+		p_colors[0] = (float)sin(glfwGetTime());
+		p_colors[1] = (float)cos(glfwGetTime());
+		p_colors[2] = (float)tan(glfwGetTime());
+
 		shBeginRenderpass(
-			graphics_cmd_buffers[swapchain_image_idx],
-			renderpass,
-			framebuffers[swapchain_image_idx],
-			0, 0,
-			surface_capabilities.currentExtent.width,
-			surface_capabilities.currentExtent.height,
-			red, green, blue, 1.0f,
-			1, 0.0f, 0
+			graphics_cmd_buffers[swapchain_image_idx],//graphics_cmd_buffer
+			renderpass,//renderpass
+			0,//render_offset_x 
+			0,//render_offset_y
+			surface_capabilities.currentExtent.width,//render_size_x
+			surface_capabilities.currentExtent.height,//render_size_y
+			1,//only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
+			&swapchain_clear_value,//p_clear_values
+			framebuffers[swapchain_image_idx]//framebuffer
 		);
 
 		shEndRenderpass(graphics_cmd_buffers[swapchain_image_idx]);
@@ -531,14 +476,6 @@ int main(void) {
 		swapchain_image_count,
 		swapchain_image_views
 	);
-
-	shDestroyImageViews(
-		device,
-		1,
-		&depth_image_view
-	);
-
-	shClearImageMemory(device, depth_image, depth_image_memory);
 
 	shDestroySwapchain(device, swapchain);
 

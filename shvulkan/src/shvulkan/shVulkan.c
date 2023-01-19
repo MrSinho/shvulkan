@@ -1486,20 +1486,15 @@ uint8_t shAcquireSwapchainImage(
 }
 
 uint8_t shBeginRenderpass(
-	VkCommandBuffer graphics_cmd_buffer,
-	VkRenderPass    renderpass,
-	VkFramebuffer   framebuffer,
-	int32_t         render_offset_x,
-	int32_t         render_offset_y,
-	uint32_t        render_size_x,
-	uint32_t        render_size_y,
-	float           clear_color_r,
-	float           clear_color_g,
-	float           clear_color_b,
-	float           clear_color_a,
-	uint8_t         use_clear_depth_stencil_value,
-	float           clear_depth,
-	uint32_t        clear_stencil
+	VkCommandBuffer    graphics_cmd_buffer,
+	VkRenderPass       renderpass,
+	int32_t            render_offset_x,
+	int32_t            render_offset_y,
+	uint32_t           render_size_x,
+	uint32_t           render_size_y,
+	uint32_t           clear_value_count,
+	VkClearValue*      p_clear_values,
+	VkFramebuffer      framebuffer
 ) {
 	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
 	shVkError(renderpass          == NULL, "invalid renderpass memory",     return 0);
@@ -1507,41 +1502,25 @@ uint8_t shBeginRenderpass(
 	shVkError(render_size_x       == 0,    "invalid render size x",         return 0);
 	shVkError(render_size_y       == 0,    "invalid render size y",         return 0);
 
+	shVkError(
+		clear_value_count != 0 && p_clear_values == NULL,
+		"invalid framebuffer attachments clear values memory",
+		return 0
+	);
+
 	VkRect2D render_area = {
 		{ render_offset_x, render_offset_y },
 		{ render_size_x,   render_size_y   }
 	};
 
-	VkClearColorValue clear_color = {
-		clear_color_r,
-		clear_color_g,
-		clear_color_b,
-		clear_color_a
-	};
-	VkClearValue clear_color_value = {
-		clear_color
-	};
-
-	VkClearDepthStencilValue clear_depth_stencil = {
-		clear_depth,
-		clear_stencil
-	};
-	VkClearValue clear_depth_stencil_value = { 0 };
-	clear_depth_stencil_value.depthStencil = clear_depth_stencil;
-
-
-	VkClearValue clear_values[2] = {
-		clear_color_value, clear_depth_stencil_value
-	};
-
 	VkRenderPassBeginInfo renderpass_begin_info = {
-		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		NULL,
-		renderpass,
-		framebuffer,
-		render_area,
-		use_clear_depth_stencil_value ? 2 : 1,
-		clear_values
+		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, //sType;
+		NULL,                                     //pNext;
+		renderpass,                               //renderPass;
+		framebuffer,                              //framebuffer;
+		render_area,                              //renderArea;
+		clear_value_count,                        //clearValueCount;
+		p_clear_values                            //pClearValues;
 	};
 
 	vkCmdBeginRenderPass(
@@ -2390,25 +2369,29 @@ uint8_t shCreateDescriptorSetLayout(
 }
 
 uint8_t shCreateDescriptorPool(
-	VkDevice          device, 
-	VkDescriptorType  descriptor_type, 
-	VkDescriptorPool* p_descriptor_pool
+	VkDevice              device,
+	uint32_t              pool_size_count,
+	VkDescriptorPoolSize* p_pool_sizes,
+	VkDescriptorPool*     p_descriptor_pool
 ) {
-	shVkError(device            == NULL, "invalid device memory",           return 0);
-	shVkError(p_descriptor_pool == NULL, "invalid descriptor pool pointer", return 0);
+	shVkError(device            == NULL, "invalid device memory",                return 0);
+	shVkError(pool_size_count   == 0,    "invalid descriptor pool size count",   return 0);
+	shVkError(p_pool_sizes      == NULL, "invalid descriptor pool sizes memory", return 0);
+	shVkError(p_descriptor_pool == NULL, "invalid descriptor pool memory",       return 0);
+	
+	uint32_t max_sets = 0;
 
-	VkDescriptorPoolSize descriptor_pool_size = {
-		descriptor_type, //type
-		1                //descriptorCount;
-	};
+	for (uint32_t pool_size_idx = 0; pool_size_idx < pool_size_count; pool_size_idx++) {
+		max_sets += p_pool_sizes->descriptorCount;
+	}
 
 	VkDescriptorPoolCreateInfo descriptor_pool_create_info = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, //sType;
 		NULL,                                          //pNext;
 		0,                                             //flags;
-		1,                                             //maxSets;
-		1,                                             //poolSizeCount;
-		&descriptor_pool_size                          //pPoolSizes;
+		max_sets,                                      //maxSets;
+		pool_size_count,                               //poolSizeCount;
+		p_pool_sizes                                   //pPoolSizes;
 	};
 
 	shVkResultError(
@@ -2443,10 +2426,10 @@ uint8_t shSetDescriptorBufferInfo(
 
 uint8_t shAllocateDescriptorSet(
 	VkDevice                device, 
-	uint32_t                binding, 
+	VkDescriptorPool        descriptor_pool,
+	uint32_t                binding,
 	VkDescriptorType        descriptor_type, 
 	VkDescriptorSetLayout*  p_descriptor_set_layout, 
-	VkDescriptorPool        descriptor_pool, 
 	VkDescriptorSet*        p_descriptor_set, 
 	VkDescriptorBufferInfo* p_buffer_info, 
 	VkWriteDescriptorSet*   p_write_descriptor_set
@@ -2644,6 +2627,16 @@ uint8_t shDestroyPipeline(
 	shVkError(pipeline == NULL, "invalid pipeline memory", return 0);
 
 	vkDestroyPipeline(device, pipeline, NULL);
+
+	return 1;
+}
+
+uint8_t shClearPipeline(
+	ShVkPipeline* p_pipeline
+) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+
+	memset(p_pipeline, 0, sizeof(ShVkPipeline));
 
 	return 1;
 }
@@ -2962,26 +2955,6 @@ uint8_t shPipelineCreateDescriptorSetLayout(
 	return 1;
 }
 
-uint8_t shPipelineCreateDescriptorPool(
-	VkDevice          device,
-	uint32_t          set,
-	VkDescriptorType  descriptor_type,
-	ShVkPipeline*     p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		shCreateDescriptorPool(device,
-			p_pipeline->descriptor_set_layout_bindings[set].descriptorType,
-			&p_pipeline->descriptor_pools[set]\
-		) == 0,
-		"failed creating descriptor pool",
-		return 0
-	);
-
-	return 1;
-}
-
 uint8_t shPipelineSetDescriptorBufferInfo(
 	uint32_t      set,
 	VkBuffer      buffer,
@@ -3006,8 +2979,34 @@ uint8_t shPipelineSetDescriptorBufferInfo(
 	return 1;
 }
 
+uint8_t shPipelineCreateDescriptorPool(
+	VkDevice              device,
+	uint32_t              pool_idx,
+	uint32_t              pool_size_count,
+	VkDescriptorPoolSize* p_pool_sizes,
+	ShVkPipeline*         p_pipeline
+) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+
+	shVkError(
+		shCreateDescriptorPool(
+			device,
+			pool_size_count,
+			p_pool_sizes,
+			&p_pipeline->descriptor_pools[pool_idx]\
+		) == 0,
+		"failed creating descriptor pool",
+		return 0
+	);
+
+	p_pipeline->descriptor_pool_count++;
+
+	return 1;
+}
+
 uint8_t shPipelineAllocateDescriptorSet(
 	VkDevice         device, 
+	uint32_t         pool_idx,
 	uint32_t         binding,
 	uint32_t         set,
 	VkDescriptorType descriptor_type, 
@@ -3018,10 +3017,10 @@ uint8_t shPipelineAllocateDescriptorSet(
 	shVkError(
 		shAllocateDescriptorSet(
 			device,
+			p_pipeline->descriptor_pools[pool_idx],
 			binding,
 			descriptor_type,
 			&p_pipeline->descriptor_set_layouts[set],
-			p_pipeline->descriptor_pools[set],
 			&p_pipeline->descriptor_sets[set],
 			&p_pipeline->descriptor_buffer_infos[set],
 			&p_pipeline->write_descriptor_sets[set]
@@ -3200,6 +3199,115 @@ uint8_t shPipelineBindDescriptorSets(
 
 	return 1;
 }
+
+uint8_t shPipelineDestroyShaderModules(
+	VkDevice      device,
+	uint32_t      first_module,
+	uint32_t      module_count,
+	ShVkPipeline* p_pipeline
+) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+
+	shVkError(
+		first_module + module_count > p_pipeline->shader_module_count,
+		"invalid shader module range",
+		return 0
+	);
+
+	for (uint32_t module_idx = first_module; module_idx < (first_module + module_count); module_idx++) {
+		shVkError(
+			shDestroyShaderModule(
+				device,
+				p_pipeline->shader_modules[module_idx]
+			) == 0,
+			"failed destroying shader moudule",
+			return 0
+		);
+	}
+
+	p_pipeline->shader_module_count -= module_count;
+	
+	return 1;
+}
+
+uint8_t shPipelineDestroyDescriptorSetLayouts(
+	VkDevice      device,
+	uint32_t      first_set,
+	uint32_t      set_count,
+	ShVkPipeline* p_pipeline
+) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+
+	shVkError(
+		first_set + set_count > p_pipeline->descriptor_count,
+		"invalid descriptor set range",
+		return 0
+	);
+
+	for (uint32_t set_idx = first_set; set_idx < (first_set + set_count); set_idx++) {
+		shVkError(
+			shDestroyDescriptorSetLayout(
+				device,
+				p_pipeline->descriptor_set_layouts[set_idx]
+			) == 0,
+			"failed destroying descriptor set layout",
+			return 0
+		);
+	}
+
+	p_pipeline->descriptor_count -= set_count;
+
+	return 1;
+}
+
+uint8_t shPipelineDestroyDescriptorPools(
+	VkDevice      device,
+	uint32_t      first_pool,
+	uint32_t      pool_count,
+	ShVkPipeline* p_pipeline
+) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+
+	shVkError(
+		first_pool + pool_count > p_pipeline->descriptor_pool_count,
+		"invalid descriptor pool range",
+		return 0
+	);
+
+	for (uint32_t pool_idx = first_pool; pool_idx < (first_pool + pool_count); pool_idx++) {
+		shVkError(
+			shDestroyDescriptorPool(
+				device,
+				p_pipeline->descriptor_pools[pool_idx]
+			) == 0,
+			"failed destroying descriptor pool",
+			return 0
+		);
+	}
+
+	p_pipeline->descriptor_pool_count -= pool_count;
+
+	return 1;
+}
+
+uint8_t shPipelineDestroyLayout(
+	VkDevice      device,
+	ShVkPipeline* p_pipeline
+) {
+	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+
+	shVkError(
+		shDestroyPipelineLayout(
+			device, p_pipeline->pipeline_layout
+		) == 0,
+		"failed destroying pipeline layout",
+		return 0
+	);
+
+	return 1;
+}
+
+
 
 #ifdef __cplusplus
 }

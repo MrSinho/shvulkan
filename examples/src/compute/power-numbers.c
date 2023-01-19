@@ -245,11 +245,11 @@ int main(void) {
 	//
 	//DESTROY PIPELINE
 	//
-	shDestroyDescriptorPool(device, pipeline.descriptor_pools[0]);
-	shDestroyDescriptorSetLayout(device, pipeline.descriptor_set_layouts[0]);
-	shDestroyShaderModule(device, pipeline.shader_modules[0]);
-	shDestroyPipelineLayout(device, pipeline.pipeline_layout);
-	shDestroyPipeline(device, pipeline.pipeline);
+	shPipelineDestroyDescriptorPools     (device, 0, 1, &pipeline);
+	shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
+	shPipelineDestroyShaderModules       (device, 0, 1, &pipeline);
+	shPipelineDestroyLayout              (device, &pipeline);
+	shDestroyPipeline                    (device, pipeline.pipeline);
 
 	//
 	//END VULKAN
@@ -347,12 +347,20 @@ void setupPipeline(
 		0, device_local_buffer, 0, sizeof(inputs), p_pipeline
 	);//each input value to compute shader is 4 bytes
 
-	shPipelineCreateDescriptorPool(device, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, p_pipeline);
+	VkDescriptorPoolSize pool_size = {
+		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,//type;
+		1,//descriptorCount;
+	};
+	shPipelineCreateDescriptorPool(
+		device, 0, 1, &pool_size, p_pipeline
+	);
 	shPipelineCreateDescriptorSetLayout(
 		device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 
 		VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline
 	);
-	shPipelineAllocateDescriptorSet(device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, p_pipeline);
+	shPipelineAllocateDescriptorSet(
+		device, 0, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, p_pipeline
+	);
 	
 	shPipelineCreateLayout(device, 1, p_pipeline);
 
