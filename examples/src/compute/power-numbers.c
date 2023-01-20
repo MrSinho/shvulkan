@@ -4,16 +4,10 @@ extern "C" {
 
 #include <shvulkan/shVulkan.h>
 
-#ifndef NDEBUG
-#define VALIDATION_LAYERS_ENABLED 1
-#else
-#define VALIDATION_LAYERS_ENABLED 0
-#endif//NDEBUG
-
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 
 
 void writeMemory(

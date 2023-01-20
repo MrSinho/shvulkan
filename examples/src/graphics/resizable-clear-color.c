@@ -12,7 +12,7 @@ extern "C" {
 #include <math.h>
 
 #define SWAPCHAIN_IMAGE_COUNT 2
-#define RENDERPASS_ATTACHMENT_COUNT 2
+#define RENDERPASS_ATTACHMENT_COUNT 1
 
 int main(void) {
 
@@ -81,18 +81,12 @@ int main(void) {
 																	              
 	VkAttachmentDescription          swapchain_attachment                         = { 0 };
 	VkAttachmentReference            swapchain_attachment_reference               = { 0 };
-	VkAttachmentDescription          depth_attachment                             = { 0 };
-	VkAttachmentReference            depth_attachment_reference                   = { 0 };
 	VkSubpassDescription             subpass                                      = { 0 };
 																	              
 	VkRenderPass                     renderpass                                   = NULL;
 
 	VkImage                          swapchain_images[SWAPCHAIN_IMAGE_COUNT]      = { NULL };
 	VkImageView                      swapchain_image_views[SWAPCHAIN_IMAGE_COUNT] = { NULL };
-
-	VkImage                          depth_image = NULL;
-	VkDeviceMemory                   depth_image_memory = NULL;
-	VkImageView                      depth_image_view = NULL;
 
 	VkFramebuffer                    framebuffers[SWAPCHAIN_IMAGE_COUNT]          = { NULL };
 
@@ -298,23 +292,6 @@ int main(void) {
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,//layout
 		&swapchain_attachment_reference//p_attachment_reference
 	);
-
-	shCreateRenderpassAttachment(
-		VK_FORMAT_D32_SFLOAT,//format
-		1,//sample_count
-		VK_ATTACHMENT_LOAD_OP_CLEAR,//load_treatment
-		VK_ATTACHMENT_STORE_OP_STORE,//store_treatment
-		VK_ATTACHMENT_LOAD_OP_DONT_CARE,//stencil_load_treatment
-		VK_ATTACHMENT_STORE_OP_DONT_CARE,//stencil_store_treatment
-		VK_IMAGE_LAYOUT_UNDEFINED,//initial_layout
-		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,//final_layout
-		&depth_attachment//p_attachment_description
-	);
-	shCreateRenderpassAttachmentReference(
-		1,//attachment_idx
-		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,//layout
-		&depth_attachment_reference//p_attachment_reference
-	);
 	
 	shCreateSubpass(
 		VK_PIPELINE_BIND_POINT_GRAPHICS,//bind_point
@@ -322,7 +299,7 @@ int main(void) {
 		NULL,//p_input_attachments_reference
 		1,//color_attachment_count
 		&swapchain_attachment_reference,//p_color_attachments_reference
-		&depth_attachment_reference,//p_depth_stencil_attachment_reference
+		NULL,//p_depth_stencil_attachment_reference
 		NULL,//p_resolve_attachment_reference
 		0,//preserve_attachment_count
 		NULL,//p_preserve_attachments
@@ -330,7 +307,7 @@ int main(void) {
 	);
 
 	VkAttachmentDescription attachment_descriptions[RENDERPASS_ATTACHMENT_COUNT] = {
-		swapchain_attachment, depth_attachment
+		swapchain_attachment
 	};
 	shCreateRenderpass(
 		device,//device
@@ -342,46 +319,9 @@ int main(void) {
 	);
 
 
-	shCreateImage(
-		device,//device
-		VK_IMAGE_TYPE_2D,//type
-		surface_capabilities.currentExtent.width,//x
-		surface_capabilities.currentExtent.height,//y
-		1,//z
-		VK_FORMAT_D32_SFLOAT,//format
-		1,//mip_levels
-		1,//sample_count
-		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,//usage
-		VK_SHARING_MODE_EXCLUSIVE,//sharing_mode
-		&depth_image//p_image
-	);
-	shAllocateImageMemory(
-		device,//device
-		physical_device,//physical_device
-		depth_image,//image
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,//memory_property_flags
-		&depth_image_memory//p_image_memory
-	);
-	shBindImageMemory(
-		device,//device
-		depth_image,//image
-		0,//offset
-		depth_image_memory//image_memory
-	);
-	shCreateImageView(
-		device,//device
-		depth_image,//image
-		VK_IMAGE_VIEW_TYPE_2D,//view_type
-		VK_IMAGE_ASPECT_DEPTH_BIT,//image_aspect
-		1,//mip_levels
-		VK_FORMAT_D32_SFLOAT,//format
-		&depth_image_view//p_image_view
-	);
-
-
 	for (uint32_t i = 0; i < swapchain_image_count; i++) {
 		VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = {
-		swapchain_image_views[i], depth_image_view
+		swapchain_image_views[i]
 		};
 		shCreateFramebuffer(
 			device,//device
@@ -425,8 +365,6 @@ int main(void) {
 				shDestroyRenderpass(device, renderpass);
 				shDestroyFramebuffers(device, swapchain_image_count, framebuffers);
 				shDestroyImageViews(device, swapchain_image_count, swapchain_image_views);
-				shDestroyImageViews(device, 1, &depth_image_view);
-				shClearImageMemory(device, depth_image, depth_image_memory);
 				shDestroySwapchain(device, swapchain);
 				shDestroySurface(instance, surface);
 
@@ -447,13 +385,9 @@ int main(void) {
 				for (uint32_t i = 0; i < swapchain_image_count; i++) {
 					shCreateImageView(device, swapchain_images[i], VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1, swapchain_image_format, &swapchain_image_views[i]);
 				}
-				shCreateImage(device, VK_IMAGE_TYPE_2D, _width, _height, 1, VK_FORMAT_D32_SFLOAT, 1, 1, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_SHARING_MODE_EXCLUSIVE, &depth_image);
-				shAllocateImageMemory(device, physical_device, depth_image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &depth_image_memory);
-				shBindImageMemory(device, depth_image, 0, depth_image_memory);
-				shCreateImageView(device, depth_image, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT, 1, VK_FORMAT_D32_SFLOAT, &depth_image_view);
 				shCreateRenderpass(device, RENDERPASS_ATTACHMENT_COUNT, attachment_descriptions, 1, &subpass, &renderpass);
 				for (uint32_t i = 0; i < swapchain_image_count; i++) {
-					VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { swapchain_image_views[i], depth_image_view };
+					VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { swapchain_image_views[i] };
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
@@ -480,13 +414,11 @@ int main(void) {
 		);
 		shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
-		VkClearValue clear_values[2] = { 0 };
+		VkClearValue clear_values[1] = { 0 };
 		float* p_colors = clear_values[0].color.float32;
 		p_colors[0] = (float)sin(glfwGetTime());
 		p_colors[1] = (float)cos(glfwGetTime());
 		p_colors[2] = (float)tan(glfwGetTime());
-
-		clear_values[1].depthStencil.depth = 0.0f;
 		
 		shBeginRenderpass(
 			graphics_cmd_buffers[swapchain_image_idx],//graphics_cmd_buffer
@@ -495,7 +427,7 @@ int main(void) {
 			0,//render_offset_y
 			surface_capabilities.currentExtent.width,//render_size_x
 			surface_capabilities.currentExtent.height,//render_size_y
-			2,//clear_value_count, only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
+			1,//clear_value_count, only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
 			clear_values,//p_clear_values
 			framebuffers[swapchain_image_idx]//framebuffer
 		);
@@ -559,10 +491,6 @@ int main(void) {
 	shDestroyFramebuffers(device, swapchain_image_count, framebuffers);
 
 	shDestroyImageViews(device, swapchain_image_count, swapchain_image_views);
-
-	shDestroyImageViews(device, 1, &depth_image_view);
-
-	shClearImageMemory(device, depth_image, depth_image_memory);
 
 	shDestroySwapchain(device, swapchain);
 

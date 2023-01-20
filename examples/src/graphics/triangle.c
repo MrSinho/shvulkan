@@ -11,8 +11,8 @@ extern "C" {
 #include <stdio.h>
 #include <math.h>
 
-#define SWAPCHAIN_IMAGE_COUNT 1
-#define RENDERPASS_ATTACHMENT_COUNT 1
+#define SWAPCHAIN_IMAGE_COUNT 2
+#define RENDERPASS_ATTACHMENT_COUNT 3
 
 #define QUAD_VERTEX_COUNT     20
 #define TRIANGLE_VERTEX_COUNT 15
@@ -110,6 +110,7 @@ void createPipeline(
 	VkRenderPass  renderpass,
 	uint32_t      width,
 	uint32_t      height,
+	uint32_t      sample_count,
 	VkBuffer      descriptors_buffer,
 	ShVkPipeline* p_pipeline
 );
@@ -184,14 +185,24 @@ int main(void) {
 																	              
 	uint32_t                         sample_count                                 = 0;
 																	              
-	VkAttachmentDescription          swapchain_attachment                         = { 0 };
-	VkAttachmentReference            swapchain_attachment_reference               = { 0 };
+	VkAttachmentDescription          input_color_attachment                         = { 0 };
+	VkAttachmentReference            input_color_attachment_reference               = { 0 };
+	VkAttachmentDescription          depth_attachment                             = { 0 };
+	VkAttachmentReference            depth_attachment_reference                   = { 0 };
+	VkAttachmentDescription          resolve_attachment                           = { 0 };
+	VkAttachmentReference            resolve_attachment_reference                 = { 0 };
 	VkSubpassDescription             subpass                                      = { 0 };
 																	              
 	VkRenderPass                     renderpass                                   = NULL;
 
 	VkImage                          swapchain_images[SWAPCHAIN_IMAGE_COUNT]      = { NULL };
 	VkImageView                      swapchain_image_views[SWAPCHAIN_IMAGE_COUNT] = { NULL };
+	VkImage                          depth_image = NULL;
+	VkDeviceMemory                   depth_image_memory                           = NULL;
+	VkImageView                      depth_image_view                             = NULL;
+	VkImage                          input_color_image                            = NULL;
+	VkDeviceMemory                   input_color_image_memory                     = NULL;
+	VkImageView                      input_color_image_view                       = NULL;
 
 	VkFramebuffer                    framebuffers[SWAPCHAIN_IMAGE_COUNT]          = { NULL };
 
@@ -366,38 +377,77 @@ int main(void) {
 		);
 	}
 
+	shCombineMaxSamples(
+		physical_device_properties, 64,
+		1, 1, &sample_count
+	);
+
 	shCreateRenderpassAttachment(
 		swapchain_image_format,//format
-		1,//sample_count
+		sample_count,//sample_count
 		VK_ATTACHMENT_LOAD_OP_CLEAR,//load_treatment
 		VK_ATTACHMENT_STORE_OP_STORE,//store_treatment
 		VK_ATTACHMENT_LOAD_OP_DONT_CARE,//stencil_load_treatment
 		VK_ATTACHMENT_STORE_OP_DONT_CARE,//stencil_store_treatment
 		VK_IMAGE_LAYOUT_UNDEFINED,//initial_layout
-		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,//final_layout
-		&swapchain_attachment//p_attachment_description
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,//final_layout
+		&input_color_attachment//p_attachment_description
 	);
 	shCreateRenderpassAttachmentReference(
 		0,//attachment_idx
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,//layout
-		&swapchain_attachment_reference//p_attachment_reference
+		&input_color_attachment_reference//p_attachment_reference
+	);
+
+	shCreateRenderpassAttachment(
+		VK_FORMAT_D32_SFLOAT,
+		sample_count,
+		VK_ATTACHMENT_LOAD_OP_CLEAR,
+		VK_ATTACHMENT_STORE_OP_STORE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		&depth_attachment
+	);
+	shCreateRenderpassAttachmentReference(
+		1,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		&depth_attachment_reference
 	);
 	
+	shCreateRenderpassAttachment(
+		swapchain_image_format,
+		1,
+		VK_ATTACHMENT_LOAD_OP_LOAD,
+		VK_ATTACHMENT_STORE_OP_STORE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		&resolve_attachment
+	);
+	shCreateRenderpassAttachmentReference(
+		2,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		&resolve_attachment_reference
+	);
+
 	shCreateSubpass(
 		VK_PIPELINE_BIND_POINT_GRAPHICS,//bind_point
 		0,//input_attachment_count
 		NULL,//p_input_attachments_reference
 		1,//color_attachment_count
-		&swapchain_attachment_reference,//p_color_attachments_reference
-		NULL,//p_depth_stencil_attachment_reference
-		NULL,//p_resolve_attachment_reference
+		&input_color_attachment_reference,//p_color_attachments_reference
+		&depth_attachment_reference,//p_depth_stencil_attachment_reference
+		&resolve_attachment_reference,//p_resolve_attachment_reference
 		0,//preserve_attachment_count
 		NULL,//p_preserve_attachments
 		&subpass//p_subpass
 	);
 
 	VkAttachmentDescription attachment_descriptions[RENDERPASS_ATTACHMENT_COUNT] = {
-		swapchain_attachment
+		input_color_attachment, depth_attachment, resolve_attachment
 	};
 	shCreateRenderpass(
 		device,//device
@@ -408,9 +458,52 @@ int main(void) {
 		&renderpass//p_renderpass
 	);
 	
+	shCreateImage(
+		device,
+		VK_IMAGE_TYPE_2D,
+		width, height, 1,
+		VK_FORMAT_D32_SFLOAT,
+		1, sample_count,
+		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+		VK_SHARING_MODE_EXCLUSIVE,
+		&depth_image
+	);
+	shAllocateImageMemory(
+		device, physical_device, depth_image,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		&depth_image_memory
+	);
+	shBindImageMemory(
+		device, depth_image, 0, depth_image_memory
+	);
+	shCreateImageView(
+		device, depth_image, VK_IMAGE_VIEW_TYPE_2D,
+		VK_IMAGE_ASPECT_DEPTH_BIT, 1,
+		VK_FORMAT_D32_SFLOAT, &depth_image_view
+	);
+
+	shCreateImage(
+		device, VK_IMAGE_TYPE_2D, width, height, 1,
+		swapchain_image_format, 1, sample_count,
+		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_SHARING_MODE_EXCLUSIVE,
+		&input_color_image
+	);
+	shAllocateImageMemory(
+		device, physical_device, input_color_image,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &input_color_image_memory
+	);
+	shBindImageMemory(
+		device, input_color_image, 0, input_color_image_memory
+	);
+	shCreateImageView(
+		device, input_color_image, VK_IMAGE_VIEW_TYPE_2D,
+		VK_IMAGE_ASPECT_COLOR_BIT, 1, swapchain_image_format,
+		&input_color_image_view
+	);
+
 	for (uint32_t i = 0; i < swapchain_image_count; i++) {
 		VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = {
-			swapchain_image_views[i]
+			input_color_image_view, depth_image_view, swapchain_image_views[i]
 		};
 		shCreateFramebuffer(
 			device,//device
@@ -469,7 +562,12 @@ int main(void) {
 
 	ShVkPipeline pipeline = { 0 };
 
-	createPipeline(device, renderpass, width, height, descriptors_buffer, &pipeline);
+	createPipeline(
+		device, renderpass, 
+		width, height, sample_count,
+		descriptors_buffer, 
+		&pipeline
+	);
 
 	uint32_t swapchain_image_idx = 0;
 	while (!glfwWindowShouldClose(window)) {
@@ -492,26 +590,81 @@ int main(void) {
 				shDestroySwapchain(device, swapchain);
 				shDestroySurface(instance, surface);
 
+				shClearImageMemory(device, depth_image, depth_image_memory);
+				shClearImageMemory(device, input_color_image, input_color_image_memory);
+				shDestroyImageViews(device, 1, &depth_image_view);
+				shDestroyImageViews(device, 1, &input_color_image_view);
+
 				glfwCreateWindowSurface(instance, window, NULL, &surface);
 				shGetPhysicalDeviceSurfaceCapabilities(physical_device, surface, &surface_capabilities);
 				shCreateSwapchain(
-					device,
-					physical_device,
-					surface,
-					swapchain_image_format,
+					device, physical_device, surface,
+					swapchain_image_format, 
 					&swapchain_image_format,
 					SWAPCHAIN_IMAGE_COUNT,
 					swapchain_image_sharing_mode,
-					0,
-					&swapchain
+					0, &swapchain
 				);
 				shGetSwapchainImages(device, swapchain, &swapchain_image_count, swapchain_images);
 				for (uint32_t i = 0; i < swapchain_image_count; i++) {
-					shCreateImageView(device, swapchain_images[i], VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1, swapchain_image_format, &swapchain_image_views[i]);
+					shCreateImageView(
+						device, swapchain_images[i], 
+						VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 
+						1, swapchain_image_format, 
+						&swapchain_image_views[i]
+					);
 				}
+
+				shCreateImage(
+					device, VK_IMAGE_TYPE_2D,
+					width, height, 1,
+					VK_FORMAT_D32_SFLOAT, 
+					1, sample_count,
+					VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+					VK_SHARING_MODE_EXCLUSIVE, &depth_image
+				);
+				shAllocateImageMemory(
+					device, physical_device, depth_image,
+					VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+					&depth_image_memory
+				);
+				shBindImageMemory(
+					device, depth_image, 0, depth_image_memory
+				);
+				shCreateImageView(
+					device, depth_image, VK_IMAGE_VIEW_TYPE_2D,
+					VK_IMAGE_ASPECT_DEPTH_BIT, 1,
+					VK_FORMAT_D32_SFLOAT, &depth_image_view
+				);
+
+				shCreateImage(
+					device, VK_IMAGE_TYPE_2D,
+					width, height, 1,
+					swapchain_image_format, 
+					1, sample_count, 
+					VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+					VK_SHARING_MODE_EXCLUSIVE,
+					&input_color_image
+				);
+				shAllocateImageMemory(
+					device, physical_device, input_color_image,
+					VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+					&input_color_image_memory
+				);
+				shBindImageMemory(
+					device, input_color_image, 0, input_color_image_memory
+				);
+				shCreateImageView(
+					device, input_color_image, VK_IMAGE_VIEW_TYPE_2D,
+					VK_IMAGE_ASPECT_COLOR_BIT, 1, swapchain_image_format,
+					&input_color_image_view
+				);
+
 				shCreateRenderpass(device, RENDERPASS_ATTACHMENT_COUNT, attachment_descriptions, 1, &subpass, &renderpass);
 				for (uint32_t i = 0; i < swapchain_image_count; i++) {
-					VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { swapchain_image_views[i] };
+					VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { 
+						input_color_image_view, depth_image_view, swapchain_image_views[i]
+					};
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
@@ -523,7 +676,7 @@ int main(void) {
 
 				shClearPipeline(&pipeline);
 
-				createPipeline(device, renderpass, width, height, descriptors_buffer, &pipeline);
+				createPipeline(device, renderpass, width, height, sample_count, descriptors_buffer, &pipeline);
 
 				if (swapchain_image_count == 2 && swapchain_image_idx != 0) {//start from swaphain image idx 0
 					swapchain_image_idx = 0;
@@ -573,7 +726,7 @@ int main(void) {
 		p_colors[1] = 0.1f;
 		p_colors[2] = 0.1f;
 
-		clear_values[1].depthStencil.depth = 0.0f;
+		clear_values[1].depthStencil.depth = 1.0f;
 
 		shBeginRenderpass(
 			cmd_buffer,//graphics_cmd_buffer
@@ -602,7 +755,7 @@ int main(void) {
 
 		shPipelineBindDescriptorSets(cmd_buffer, 0, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, &pipeline);
 
-		vkCmdDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
+		shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
 
 		shDraw(cmd_buffer, 3, 4, 1, 2);
 
@@ -675,6 +828,11 @@ int main(void) {
 		index_buffer, index_memory,
 		descriptors_buffer, descriptors_memory
 	);
+
+	shClearImageMemory(device, depth_image, depth_image_memory);
+	shClearImageMemory(device, input_color_image, input_color_image_memory);
+	shDestroyImageViews(device, 1, &depth_image_view);
+	shDestroyImageViews(device, 1, &input_color_image_view);
 
 	shDestroyRenderpass(device, renderpass);
 
@@ -806,6 +964,7 @@ void createPipeline(
 	VkRenderPass  renderpass,
 	uint32_t      width,
 	uint32_t      height,
+	uint32_t      sample_count,
 	VkBuffer      descriptors_buffer,
 	ShVkPipeline* p_pipeline
 ) {
@@ -893,7 +1052,7 @@ void createPipeline(
 	);
 
 	shPipelineSetMultisampleState(
-		1,
+		sample_count,
 		0.0f,
 		p_pipeline
 	);

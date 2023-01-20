@@ -985,18 +985,26 @@ uint8_t shCreateFramebuffer(
 ) {
 	shVkError(device           == NULL, "invalid device memory",      return 0);
 	shVkError(renderpass       == NULL, "invalid renderpass memory",  return 0);
-	shVkError(image_view_count == 0,    "invalid image view count",   return 0);
-	shVkError(p_image_views    == NULL, "invalid image views memory", return 0);
 	shVkError(x                == 0,    "invalid framebuffer x size", return 0);
 	shVkError(y                == 0,    "invalid framebuffer y size", return 0);
 	shVkError(z                == 0,    "invalid framebuffer z size", return 0);
 	shVkError(p_framebuffer    == NULL, "invalid framebuffer memory", return 0);
 
+	VkFramebufferCreateFlags flags = 0;
+
+	if (image_view_count == 0) {
+		flags = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT;
+	}
+
+	shVkError(image_view_count != 0 && p_image_views == NULL, 
+		"invalid image views memory", 
+		return 0
+	);
 
 	VkFramebufferCreateInfo framebuffer_create_info = {
 		VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, //sType;
 		NULL,                                      //pNext;
-		0,                                         //flags;
+		flags,                                     //flags;
 		renderpass,                                //renderPass;
 		image_view_count,                          //attachmentCount;
 		p_image_views,                             //pAttachments;
