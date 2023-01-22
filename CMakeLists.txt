@@ -26,24 +26,31 @@ function(build_shvulkan_examples)
 add_subdirectory(examples/external/glfw)
 
 add_executable(shvulkan-clear-color examples/src/graphics/clear-color.c)
-target_link_libraries(shvulkan-clear-color PUBLIC shvulkan glfw)
 
 add_executable(shvulkan-resizable-clear-color examples/src/graphics/resizable-clear-color.c)
-target_link_libraries(shvulkan-resizable-clear-color PUBLIC shvulkan glfw)
 
 add_executable(shvulkan-scene examples/src/graphics/triangle.c)
-target_link_libraries(shvulkan-scene PUBLIC shvulkan glfw)
 
-if (UNIX)
+if (WIN32)
 target_link_libraries(
     shvulkan-clear-color 
     shvulkan-resizable-clear-color 
     shvulkan-scene
-    PUBLIC X11)
+    PUBLIC 
+    shvulkan glfw
+)
+else if (UNIX)
+target_link_libraries(
+    shvulkan-clear-color 
+    shvulkan-resizable-clear-color 
+    shvulkan-scene
+    PUBLIC 
+    shvulkan glfw X11
+)
 endif(UNIX)
 
 add_executable(shvulkan-compute-power-numbers examples/src/compute/power-numbers.c)
-target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan glfw)
+target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
 
 set_target_properties(
     shvulkan-clear-color 
