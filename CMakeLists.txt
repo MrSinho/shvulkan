@@ -34,7 +34,15 @@ add_executable(shvulkan-scene examples/src/graphics/triangle.c)
 if (WIN32)
 target_link_libraries(
     shvulkan-clear-color 
+    PUBLIC 
+    shvulkan glfw
+)
+target_link_libraries(
     shvulkan-resizable-clear-color 
+    PUBLIC 
+    shvulkan glfw
+)
+target_link_libraries(
     shvulkan-scene
     PUBLIC 
     shvulkan glfw
@@ -42,7 +50,15 @@ target_link_libraries(
 elseif (UNIX)
 target_link_libraries(
     shvulkan-clear-color 
+    PUBLIC 
+    shvulkan glfw X11
+)
+target_link_libraries(
     shvulkan-resizable-clear-color 
+    PUBLIC 
+    shvulkan glfw X11
+)
+target_link_libraries(
     shvulkan-scene
     PUBLIC 
     shvulkan glfw X11
