@@ -163,12 +163,15 @@ int main(void) {
 	//
 	//UPDATE DESCRIPTOR BEFORE BINDING SETS
 	//
-	shPipelineUpdateDescriptorSets(device, &pipeline);
+	shPipelineUpdateDescriptorSets(device, 0, 1, &pipeline);
 
 	//
 	//BIND DESCRIPTOR SET
 	//
-	shPipelineBindDescriptorSet(cmd_buffer, 0, VK_PIPELINE_BIND_POINT_COMPUTE, &pipeline);
+	shPipelineBindDescriptorSets(
+		cmd_buffer, 0, 1, VK_PIPELINE_BIND_POINT_COMPUTE, 
+		0, NULL, &pipeline
+	);
 
 	printf("\nSquaring the numbers...\n\n");
 	//
@@ -239,11 +242,11 @@ int main(void) {
 	//
 	//DESTROY PIPELINE
 	//
-	shPipelineDestroyDescriptorPools     (device, 0, 1, &pipeline);
+	shPipelineDestroyDescriptorPools  (device, 0, 1, &pipeline);
 	shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
-	shPipelineDestroyShaderModules       (device, 0, 1, &pipeline);
-	shPipelineDestroyLayout              (device, &pipeline);
-	shDestroyPipeline                    (device, pipeline.pipeline);
+	shPipelineDestroyShaderModules    (device, 0, 1, &pipeline);
+	shPipelineDestroyLayout           (device, &pipeline);
+	shDestroyPipeline                 (device, pipeline.pipeline);
 
 	//
 	//END VULKAN
@@ -337,23 +340,26 @@ void setupPipeline(
 	shPipelineCreateShaderModule(device, shader_size, shader_code, p_pipeline);
 	shPipelineCreateShaderStage(VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline);
 
-	shPipelineSetDescriptorBufferInfo(
-		0, device_local_buffer, 0, sizeof(inputs), p_pipeline
+	shPipelineSetDescriptorSetBufferInfos(
+		0, 1, device_local_buffer, 0, sizeof(inputs), p_pipeline
 	);//each input value to compute shader is 4 bytes
 
-	VkDescriptorPoolSize pool_size = {
-		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,//type;
-		1,//descriptorCount;
-	};
-	shPipelineCreateDescriptorPool(
-		device, 0, 1, &pool_size, p_pipeline
+	shPipelineCreateDescriptorSetLayoutBinding(
+		0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		1, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline
 	);
+
 	shPipelineCreateDescriptorSetLayout(
-		device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 
-		VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline
+		device, 0, 1, 0, p_pipeline
 	);
-	shPipelineAllocateDescriptorSet(
-		device, 0, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, p_pipeline
+	
+	shPipelineCreateDescriptorPool(
+		device, 0,
+		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		1, p_pipeline
+	);
+	shPipelineAllocateDescriptorSets(
+		device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 0, 1, p_pipeline
 	);
 	
 	shPipelineCreateLayout(device, 1, p_pipeline);

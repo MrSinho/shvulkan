@@ -12,6 +12,12 @@ All the samples were built and tested on Windows and Linux Mint.
 
 ---
 
+# todo
+ * read spirv assembly
+ * copy buffer regions
+
+---
+
 # Index
 * [Clone and build](#clone-and-build)
 * [CMake targets](#cmake-targets)
@@ -97,10 +103,10 @@ Through the renderpass, the second draw call will produce the following framebuf
 
 ### What could the graphics example be improved with
 
-* multiple frames in flight
 * textures
-* read swapchain image memory
+* read framebuffer attachments memory
 * offline rendering
+* raytracing using compute shader
 
 [top](#shvulkan)
 

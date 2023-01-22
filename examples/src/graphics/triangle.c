@@ -11,7 +11,7 @@ extern "C" {
 #include <stdio.h>
 #include <math.h>
 
-#define SWAPCHAIN_IMAGE_COUNT 2
+#define SWAPCHAIN_IMAGE_COUNT 3
 #define RENDERPASS_ATTACHMENT_COUNT 3
 
 #define QUAD_VERTEX_COUNT     20
@@ -174,7 +174,7 @@ int main(void) {
 	VkCommandBuffer                  graphics_cmd_buffers[SWAPCHAIN_IMAGE_COUNT]  = { NULL };
 	VkCommandBuffer                  present_cmd_buffer                           = NULL;
 															                      
-	VkFence                          current_graphics_cmd_buffer_fence            = { NULL };
+	VkFence                          graphics_cmd_fences[SWAPCHAIN_IMAGE_COUNT]   = {NULL};
 															                      
 	VkSemaphore                      current_image_acquired_semaphore             = NULL;
 	VkSemaphore                      current_graphics_queue_finished_semaphore    = NULL;
@@ -337,9 +337,9 @@ int main(void) {
 
 	shCreateFences(
 		device,//device
-		1,//fence_count
+		SWAPCHAIN_IMAGE_COUNT,//fence_count
 		1,//signaled
-		&current_graphics_cmd_buffer_fence//p_fences
+		graphics_cmd_fences//p_fences
 	);
 
 	VkSharingMode swapchain_image_sharing_mode = VK_SHARING_MODE_EXCLUSIVE;
@@ -546,7 +546,7 @@ int main(void) {
 		device,
 		physical_device,
 		graphics_cmd_buffers[0],//any graphics command buffer
-		current_graphics_cmd_buffer_fence,
+		graphics_cmd_fences[0],
 		graphics_queue,
 		&staging_buffer,
 		&staging_memory,
@@ -668,20 +668,17 @@ int main(void) {
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
-				shPipelineDestroyShaderModules       (device, 0, 2, &pipeline);
+				shPipelineDestroyShaderModules    (device, 0, 2, &pipeline);
 				shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
-				shPipelineDestroyDescriptorPools     (device,  0, 1, &pipeline);
-				shPipelineDestroyLayout              (device, &pipeline);
-				shDestroyPipeline                    (device, pipeline.pipeline);
+				shPipelineDestroyDescriptorPools  (device,  0, 1, &pipeline);
+				shPipelineDestroyLayout           (device, &pipeline);
+				shDestroyPipeline                 (device, pipeline.pipeline);
 
 				shClearPipeline(&pipeline);
 
 				createPipeline(device, renderpass, width, height, sample_count, descriptors_buffer, &pipeline);
 
-				if (swapchain_image_count == 2 && swapchain_image_idx != 0) {//start from swaphain image idx 0
-					swapchain_image_idx = 0;
-				}
-
+				swapchain_image_idx = 0;
 				
 			}
 		}
@@ -695,10 +692,18 @@ int main(void) {
 			&swapchain_image_idx//p_swapchain_image_index
 		);
 
+		shWaitForFences(
+			device,//device
+			1,//fence_count
+			&graphics_cmd_fences[swapchain_image_idx],//p_fences
+			1,//wait_for_all
+			UINT64_MAX//timeout_ns
+		);
+
 		shResetFences(
 			device,//device
 			1,//fence_count
-			&current_graphics_cmd_buffer_fence//p_fences
+			&graphics_cmd_fences[swapchain_image_idx]//p_fences
 		);
 
 		VkCommandBuffer cmd_buffer = graphics_cmd_buffers[swapchain_image_idx];
@@ -743,7 +748,7 @@ int main(void) {
 		VkDeviceSize vertex_offset     = 0;
 		VkDeviceSize vertex_offsets[2] = {0, 0};
 		VkBuffer     vertex_buffers[2] = { vertex_buffer, instance_buffer };
-		vkCmdBindVertexBuffers(cmd_buffer, 0, 2, vertex_buffers, vertex_offsets);
+		shBindVertexBuffers(cmd_buffer, 0, 2, vertex_buffers, vertex_offsets);
 		
 		shBindIndexBuffer(cmd_buffer, 0, index_buffer);
 
@@ -751,9 +756,11 @@ int main(void) {
 
 		shPipelinePushConstants(cmd_buffer, projection_view, &pipeline);
 
-		shPipelineUpdateDescriptorSets(device, &pipeline);
-
-		shPipelineBindDescriptorSets(cmd_buffer, 0, 1, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, &pipeline);
+		shPipelineBindDescriptorSets(
+			cmd_buffer, swapchain_image_idx, 1,
+			VK_PIPELINE_BIND_POINT_GRAPHICS, 0, 
+			NULL, &pipeline
+		);
 
 		shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
 
@@ -767,19 +774,12 @@ int main(void) {
 			1,//cmd_buffer_count
 			&cmd_buffer,//p_cmd_buffers
 			graphics_queue,//queue
-			current_graphics_cmd_buffer_fence,//fence
+			graphics_cmd_fences[swapchain_image_idx],//fence
 			1,//semaphores_to_wait_for_count
 			&current_image_acquired_semaphore,//p_semaphores_to_wait_for
 			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,//wait_stage
 			1,//signal_semaphore_count
 			&current_graphics_queue_finished_semaphore//p_signal_semaphores
-		);
-		shWaitForFences(
-			device,//device
-			1,//fence_count
-			&current_graphics_cmd_buffer_fence,//p_fences
-			1,//wait_for_all
-			UINT64_MAX//timeout_ns
 		);
 
 		shQueuePresentSwapchainImage(
@@ -790,26 +790,25 @@ int main(void) {
 			swapchain_image_idx//swapchain_image_idx
 		);
 
-		if (swapchain_image_count == 2) {
-			swapchain_image_idx = !swapchain_image_idx;//switch from idx 0 and 1
-		}
+		swapchain_image_idx = (swapchain_image_idx + 1) % SWAPCHAIN_IMAGE_COUNT;
 
 	}
 
 	shWaitDeviceIdle(device);
 
-	shDestroyShaderModule(device, pipeline.shader_modules[0]);
-	shDestroyShaderModule(device, pipeline.shader_modules[1]);
-	shDestroyDescriptorPool(device, pipeline.descriptor_pools[0]);
-	shDestroyDescriptorSetLayout(device, pipeline.descriptor_set_layouts[0]);
-	shDestroyPipelineLayout(device, pipeline.pipeline_layout);
+	shPipelineDestroyShaderModules(device, 0, 2, &pipeline);
+	shPipelineDestroyDescriptorPools(device, 0, 1, &pipeline);
+	shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
+	shPipelineDestroyLayout(device, &pipeline);
 	shDestroyPipeline(device, pipeline.pipeline);
+
+	shClearPipeline(&pipeline);
 
 	shDestroySemaphores(device, 1, &current_image_acquired_semaphore);
 
 	shDestroySemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 
-	shDestroyFences(device, 1, &current_graphics_cmd_buffer_fence);
+	shDestroyFences(device, SWAPCHAIN_IMAGE_COUNT, graphics_cmd_fences);
 
 	shDestroyCommandBuffers(device, graphics_cmd_pool, swapchain_image_count, graphics_cmd_buffers);
 
@@ -1110,48 +1109,59 @@ void createPipeline(
 		sizeof(projection_view),
 		p_pipeline
 	);
-
-	shPipelineCreateDescriptorSetLayout(
-		device,
+	
+	shPipelineSetDescriptorSetBufferInfos(
 		0,
-		0,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		VK_SHADER_STAGE_FRAGMENT_BIT,
-		p_pipeline
-	);
-
-	shPipelineSetDescriptorBufferInfo(
-		0,
+		SWAPCHAIN_IMAGE_COUNT,
 		descriptors_buffer,
 		0,
 		sizeof(light),
 		p_pipeline
 	);
 
-	VkDescriptorPoolSize pool_size = { 
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//type;
-		1,//descriptorCount;
-	};
+	shPipelineCreateDescriptorSetLayoutBinding(
+		0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		1,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		p_pipeline
+	);
+
+	shPipelineCreateDescriptorSetLayout(
+		device,
+		0, 1,
+		0,
+		p_pipeline
+	);
+	shPipelineCopyDescriptorSetLayout(
+		0, 1, SWAPCHAIN_IMAGE_COUNT - 1, p_pipeline
+	);
+
 	shPipelineCreateDescriptorPool(
 		device,//device,
 		0,//pool_idx,
-		1,//pool_size_count,
-		&pool_size,//p_pool_sizes,
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
+		SWAPCHAIN_IMAGE_COUNT,//set_count,
 		p_pipeline//p_pipeline
 	);
-	
-	shPipelineAllocateDescriptorSet(
-		device,//device, 
+
+	shPipelineAllocateDescriptorSets(
+		device,//device,
 		0,//pool_idx,
 		0,//binding,
-		0,//set,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type, 
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
+		0,//first_set,
+		SWAPCHAIN_IMAGE_COUNT,//set_count,
 		p_pipeline//p_pipeline
+	);
+
+	shPipelineUpdateDescriptorSets(
+		device, 0,
+		SWAPCHAIN_IMAGE_COUNT, p_pipeline
 	);
 
 	shPipelineCreateLayout(
 		device,
-		1,
+		SWAPCHAIN_IMAGE_COUNT,
 		p_pipeline
 	);
 

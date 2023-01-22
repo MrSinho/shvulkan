@@ -67,9 +67,9 @@ int main(void) {
 															                      
 	VkCommandBuffer                  graphics_cmd_buffers[SWAPCHAIN_IMAGE_COUNT]  = { NULL };
 	VkCommandBuffer                  present_cmd_buffer                           = NULL;
-															                      
-	VkFence                          current_graphics_cmd_buffer_fence            = { NULL };
-															                      
+											
+	VkFence                          graphics_cmd_fences[SWAPCHAIN_IMAGE_COUNT]   = { NULL };
+
 	VkSemaphore                      current_image_acquired_semaphore             = NULL;
 	VkSemaphore                      current_graphics_queue_finished_semaphore    = NULL;
 
@@ -228,9 +228,9 @@ int main(void) {
 
 	shCreateFences(
 		device,//device
-		1,//fence_count
+		SWAPCHAIN_IMAGE_COUNT,//fence_count
 		1,//signaled
-		&current_graphics_cmd_buffer_fence//p_fences
+		graphics_cmd_fences//p_fences
 	);
 
 	VkSharingMode swapchain_image_sharing_mode = VK_SHARING_MODE_EXCLUSIVE;
@@ -407,10 +407,18 @@ int main(void) {
 			&swapchain_image_idx//p_swapchain_image_index
 		);
 
+		shWaitForFences(
+			device,//device
+			1,//fence_count
+			&graphics_cmd_fences[swapchain_image_idx],//p_fences
+			1,//wait_for_all
+			UINT64_MAX//timeout_ns
+		);
+
 		shResetFences(
 			device,//device
 			1,//fence_count
-			&current_graphics_cmd_buffer_fence//p_fences
+			&graphics_cmd_fences[swapchain_image_idx]//p_fences
 		);
 		shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
@@ -440,19 +448,12 @@ int main(void) {
 			1,//cmd_buffer_count
 			&graphics_cmd_buffers[swapchain_image_idx],//p_cmd_buffers
 			graphics_queue,//queue
-			current_graphics_cmd_buffer_fence,//fence
+			graphics_cmd_fences[swapchain_image_idx],//fence
 			1,//semaphores_to_wait_for_count
 			&current_image_acquired_semaphore,//p_semaphores_to_wait_for
 			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,//wait_stage
 			1,//signal_semaphore_count
 			&current_graphics_queue_finished_semaphore//p_signal_semaphores
-		);
-		shWaitForFences(
-			device,//device
-			1,//fence_count
-			&current_graphics_cmd_buffer_fence,//p_fences
-			1,//wait_for_all
-			UINT64_MAX//timeout_ns
 		);
 
 		shQueuePresentSwapchainImage(
@@ -475,7 +476,7 @@ int main(void) {
 
 	shDestroySemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 
-	shDestroyFences(device, 1, &current_graphics_cmd_buffer_fence);
+	shDestroyFences(device, SWAPCHAIN_IMAGE_COUNT, graphics_cmd_fences);
 
 	shDestroyCommandBuffers(device, graphics_cmd_pool, swapchain_image_count, graphics_cmd_buffers);
 

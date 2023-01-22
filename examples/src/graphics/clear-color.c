@@ -353,6 +353,14 @@ int main(void) {
 			&swapchain_image_idx
 		);
 
+		shWaitForFences(
+			device,
+			1,
+			&graphics_cmd_fences[swapchain_image_idx],
+			1,
+			UINT64_MAX
+		);
+
 		shResetFences(
 			device, 
 			1, 
@@ -392,13 +400,6 @@ int main(void) {
 			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
 			1,
 			&renderpass_finished_semaphores[swapchain_image_idx]
-		);
-		shWaitForFences(
-			device,
-			1,
-			&graphics_cmd_fences[swapchain_image_idx],
-			1,
-			UINT64_MAX
 		);
 
 		shQueuePresentSwapchainImage(

@@ -466,6 +466,18 @@ extern uint8_t shCopyBuffer(
 	VkBuffer        dst_buffer
 );
 
+#define SH_MAX_STACK_BUFFER_REGION_COUNT 256
+
+uint8_t shCopyBufferRegions(
+	VkCommandBuffer transfer_cmd_buffer,
+	VkBuffer        src_buffer,
+	uint32_t        region_count,
+	uint32_t*       p_src_offsets,
+	uint32_t*       p_dst_offsets,
+	uint32_t*       p_sizes,
+	VkBuffer        dst_buffer
+);
+
 extern uint8_t shBindBufferMemory(
 	VkDevice       device,
 	VkBuffer       buffer,
@@ -554,9 +566,10 @@ extern uint8_t shBindIndexBuffer(
 #define SH_MAX_PIPELINE_VERTEX_BINDING_COUNT   32
 #define SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT 32
 
-#define SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT  32
-#define SH_MAX_PIPELINE_DESCRIPTOR_POOL_COUNT 32
-#define SH_MAX_PIPELINE_SHADER_STAGE_COUNT    6
+#define SH_MAX_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT 32
+#define SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT                32
+#define SH_MAX_PIPELINE_DESCRIPTOR_POOL_COUNT               32
+#define SH_MAX_PIPELINE_SHADER_STAGE_COUNT                  6
 
 typedef struct ShVkPipeline {
 	/*Vertex inputs*/
@@ -573,15 +586,16 @@ typedef struct ShVkPipeline {
 	VkPipelineShaderStageCreateInfo         shader_stages                  [SH_MAX_PIPELINE_SHADER_STAGE_COUNT];
 	/*Push constants*/													   
 	VkPushConstantRange                     push_constant_range;		   
-	/*Descriptors*/					        							   
-	uint32_t                                descriptor_count;			   
-	VkDescriptorSetLayout                   descriptor_set_layouts         [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkDescriptorSet                         descriptor_sets                [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkWriteDescriptorSet                    write_descriptor_sets          [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkDescriptorSetLayoutBinding            descriptor_set_layout_bindings [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkDescriptorBufferInfo                  descriptor_buffer_infos        [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
+	/*Descriptors*/					        		
+	uint32_t                                set_layout_binding_count;
+	VkDescriptorSetLayoutBinding            descriptor_set_layout_bindings[SH_MAX_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT];
 	uint32_t                                descriptor_pool_count;
-	VkDescriptorPool                        descriptor_pools               [SH_MAX_PIPELINE_DESCRIPTOR_POOL_COUNT];
+	VkDescriptorPool                        descriptor_pools              [SH_MAX_PIPELINE_DESCRIPTOR_POOL_COUNT];
+	uint32_t                                set_count;
+	VkDescriptorSetLayout                   descriptor_set_layouts        [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
+	VkDescriptorSet                         descriptor_sets               [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
+	VkWriteDescriptorSet                    write_descriptor_sets         [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
+	VkDescriptorBufferInfo                  descriptor_buffer_infos       [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
 	/*Rasterizer*/
 	VkPipelineRasterizationStateCreateInfo	rasterizer;
 	/*Viewport*/
@@ -680,12 +694,18 @@ extern uint8_t shSetPushConstants(
 	VkPushConstantRange* p_push_constant_range
 );
 
+extern uint8_t shCreateDescriptorSetLayoutBinding(
+	uint32_t                      binding,
+	VkDescriptorType              descriptor_type,
+	uint32_t                      descriptor_count,
+	VkShaderStageFlags            shader_stage,
+	VkDescriptorSetLayoutBinding* p_binding
+);
+
 extern uint8_t shCreateDescriptorSetLayout(
 	VkDevice                      device, 
-	uint32_t                      binding, 
-	VkDescriptorType              descriptor_type, 
-	VkShaderStageFlags            shaderStageFlags, 
-	VkDescriptorSetLayoutBinding* p_binding, 
+	uint32_t                      binding_count,
+	VkDescriptorSetLayoutBinding* p_bindings, 
 	VkDescriptorSetLayout*        p_descriptor_set_layout
 );
 
@@ -697,29 +717,29 @@ extern uint8_t shCreateDescriptorPool(
 );
 
 extern uint8_t shSetDescriptorBufferInfo(
-	uint32_t                set,
 	VkBuffer                buffer,
 	uint32_t                buffer_offset,
 	uint32_t                set_size,
 	VkDescriptorBufferInfo* p_buffer_info
 );
 
-extern uint8_t shAllocateDescriptorSet(
+extern uint8_t shAllocateDescriptorSets(
 	VkDevice                device, 
 	VkDescriptorPool        descriptor_pool,
+	VkDescriptorType        descriptor_type,
 	uint32_t                binding,
-	VkDescriptorType        descriptor_type, 
-	VkDescriptorSetLayout*  p_descriptor_set_layout, 
-	VkDescriptorSet*        p_descriptor_set, 
-	VkDescriptorBufferInfo* p_buffer_info, 
-	VkWriteDescriptorSet*   p_write_descriptor_set
+	uint32_t                set_count,
+	VkDescriptorSetLayout*  p_descriptor_set_layouts, 
+	VkDescriptorSet*        p_descriptor_sets, 
+	VkDescriptorBufferInfo* p_buffer_infos, 
+	VkWriteDescriptorSet*   p_write_descriptor_sets
 );
 
 extern uint8_t shCreatePipelineLayout(
 	VkDevice               device,
 	uint32_t               push_constant_range_count,
 	VkPushConstantRange*   p_push_constants_range,
-	uint32_t               descriptor_count,
+	uint32_t               set_count,
 	VkDescriptorSetLayout* p_descriptor_set_layouts,
 	VkPipelineLayout*      p_pipeline_layout
 );
@@ -836,17 +856,32 @@ extern uint8_t shPipelineSetPushConstants(
 	ShVkPipeline*      p_pipeline
 );
 
-extern uint8_t shPipelineCreateDescriptorSetLayout(
-	VkDevice           device, 
+extern uint8_t shPipelineCreateDescriptorSetLayoutBinding(
 	uint32_t           binding,
-	uint32_t           set,
-	VkDescriptorType   descriptor_type, 
-	VkShaderStageFlags shader_stage, 
+	VkDescriptorType   descriptor_type,
+	uint32_t           descriptor_count,
+	VkShaderStageFlags shader_stage,
 	ShVkPipeline*      p_pipeline
 );
 
-extern uint8_t shPipelineSetDescriptorBufferInfo(
-	uint32_t      set,
+extern uint8_t shPipelineCreateDescriptorSetLayout(
+	VkDevice           device, 
+	uint32_t           first_binding,
+	uint32_t           binding_count,
+	uint32_t           set_layout_idx,
+	ShVkPipeline*      p_pipeline
+) ;
+
+extern uint8_t shPipelineCopyDescriptorSetLayout(
+	uint32_t      src_set_layout_idx,
+	uint32_t      first_dst_set_layout_idx,
+	uint32_t      dst_set_layout_count,
+	ShVkPipeline* p_pipeline
+);
+
+extern uint8_t shPipelineSetDescriptorSetBufferInfos(
+	uint32_t      first_set,
+	uint32_t      set_count,
 	VkBuffer      buffer,
 	uint32_t      buffer_offset,
 	uint32_t      set_size,
@@ -856,23 +891,24 @@ extern uint8_t shPipelineSetDescriptorBufferInfo(
 uint8_t shPipelineCreateDescriptorPool(
 	VkDevice              device,
 	uint32_t              pool_idx,
-	uint32_t              pool_size_count,
-	VkDescriptorPoolSize* p_pool_sizes,
+	VkDescriptorType      descriptor_type,
+	uint32_t              set_count,
 	ShVkPipeline*         p_pipeline
 );
 
-extern uint8_t shPipelineAllocateDescriptorSet(
+extern uint8_t shPipelineAllocateDescriptorSets(
 	VkDevice         device, 
 	uint32_t         pool_idx,
 	uint32_t         binding,
-	uint32_t         set,
 	VkDescriptorType descriptor_type, 
+	uint32_t         first_set,
+	uint32_t         set_count,
 	ShVkPipeline*    p_pipeline
 );
 
 extern uint8_t shPipelineCreateLayout(
 	VkDevice      device,
-	uint32_t      descriptor_count,
+	uint32_t      set_count,
 	ShVkPipeline* p_pipeline
 );
 
@@ -891,29 +927,15 @@ extern uint8_t shBindPipeline(
 
 extern uint8_t shPipelineUpdateDescriptorSets(
 	VkDevice      device,
+	uint32_t      first_set,
+	uint32_t      set_count,
 	ShVkPipeline* p_pipeline
 );
-	
-
-extern uint8_t shPipelineUpdateDescriptorSet(
-	VkDevice      device,
-	uint32_t      descriptor_idx,
-	ShVkPipeline* p_pipeline
-);
-	
-
-extern uint8_t shPipelineBindDescriptorSet(
-	VkCommandBuffer     cmd_buffer,
-	uint32_t            descriptor_idx,
-	VkPipelineBindPoint bind_point,
-	ShVkPipeline*       p_pipeline
-);
-	
 
 extern uint8_t shPipelineBindDescriptorSets(
 	VkCommandBuffer     cmd_buffer,
-	uint32_t            first_descriptor,
-	uint32_t            descriptor_count,
+	uint32_t            first_set,
+	uint32_t            set_count,
 	VkPipelineBindPoint bind_point,
 	uint32_t            dynamic_descriptors_count,
 	uint32_t*           p_dynamic_offsets,
@@ -929,8 +951,8 @@ extern uint8_t shPipelineDestroyShaderModules(
 
 extern uint8_t shPipelineDestroyDescriptorSetLayouts(
 	VkDevice      device,
-	uint32_t      first_set,
-	uint32_t      set_count,
+	uint32_t      first_set_layout,
+	uint32_t      set_layout_count,
 	ShVkPipeline* p_pipeline
 );
 
