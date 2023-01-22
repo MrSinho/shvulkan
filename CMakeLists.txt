@@ -39,7 +39,7 @@ target_link_libraries(
     PUBLIC 
     shvulkan glfw
 )
-else if (UNIX)
+elseif (UNIX)
 target_link_libraries(
     shvulkan-clear-color 
     shvulkan-resizable-clear-color 
@@ -47,7 +47,7 @@ target_link_libraries(
     PUBLIC 
     shvulkan glfw X11
 )
-endif(UNIX)
+endif(WIN32)
 
 add_executable(shvulkan-compute-power-numbers examples/src/compute/power-numbers.c)
 target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
