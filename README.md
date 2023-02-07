@@ -71,9 +71,7 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ## [Graphics example overview](examples/src/graphicsExample.c)
 
-This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, enable multisampled anti aliasing, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls (with indexing and without indexing, with instancing and without instancing) to a graphics queue and synchronize data between host and graphics card. The following diagram briefly shows what happens in this example program: 
-
-[![](examples/diagrams/shvulkan%20graphics.drawio.svg)](examples/diagrams/shvulkan%20graphics.drawio.svg)
+This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, enable multisampled anti aliasing, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls (with indexing and without indexing, with instancing and without instancing) to a graphics queue and synchronize data between host and graphics card.
 
 The first draw call will require some quad vertices, which are going to be combined with two `per instance` model matrices located on an instance buffer, which was bound with and offset of 0 bytes, and produce different vertex positions (see `gl_PerVertex_var.gl_Position`):
 
