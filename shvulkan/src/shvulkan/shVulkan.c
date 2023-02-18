@@ -2123,12 +2123,6 @@ uint8_t shSetVertexInputState(
 	VkVertexInputAttributeDescription*    p_vertex_attributes, 
 	VkPipelineVertexInputStateCreateInfo* p_vertex_input_state
 ) {
-	shVkError(vertex_binding_count   == 0,    "invalid vertex binding count",                       return 0);
-	shVkError(p_vertex_bindings      == NULL, "invalid vertex input binding descriptions memory",   return 0);
-	shVkError(vertex_attribute_count == 0,    "invalid vertex attribute count",                     return 0);
-	shVkError(p_vertex_attributes    == NULL, "invalid vertex input attribute descriptions memory", return 0);
-	shVkError(p_vertex_input_state   == NULL, "invalid vertex input state memory",                  return 0);
-
 	VkPipelineVertexInputStateCreateInfo vertexInput = {
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, //sType;
 		NULL,                                                      //pNext;
