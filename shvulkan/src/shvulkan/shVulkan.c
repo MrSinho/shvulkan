@@ -2927,7 +2927,7 @@ uint8_t shPipelineColorBlendSettings(
 		return 0
 	);
 
-	return 0;
+	return 1;
 }
 
 uint8_t shPipelineCreateShaderModule(
