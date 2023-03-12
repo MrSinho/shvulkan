@@ -105,14 +105,19 @@ void releaseMemory(
 	VkDeviceMemory descriptors_memory
 );
 
+void createPipelinesDataPool(
+	VkDevice          device,
+	VkBuffer          descriptors_buffer,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
 void createPipeline(
-	VkDevice      device,
-	VkRenderPass  renderpass,
-	uint32_t      width,
-	uint32_t      height,
-	uint32_t      sample_count,
-	VkBuffer      descriptors_buffer,
-	ShVkPipeline* p_pipeline
+	VkDevice          device,
+	VkRenderPass      renderpass,
+	uint32_t          width,
+	uint32_t          height,
+	uint32_t          sample_count,
+	ShVkPipelinePool* p_pipeline_pool
 );
 
 char* readBinary(
@@ -174,7 +179,7 @@ int main(void) {
 	VkCommandBuffer                  graphics_cmd_buffers[SWAPCHAIN_IMAGE_COUNT]  = { NULL };
 	VkCommandBuffer                  present_cmd_buffer                           = NULL;
 															                      
-	VkFence                          graphics_cmd_fences[SWAPCHAIN_IMAGE_COUNT]   = {NULL};
+	VkFence                          graphics_cmd_fences[SWAPCHAIN_IMAGE_COUNT]   = { NULL };
 															                      
 	VkSemaphore                      current_image_acquired_semaphore             = NULL;
 	VkSemaphore                      current_graphics_queue_finished_semaphore    = NULL;
@@ -185,8 +190,8 @@ int main(void) {
 																	              
 	uint32_t                         sample_count                                 = 0;
 																	              
-	VkAttachmentDescription          input_color_attachment                         = { 0 };
-	VkAttachmentReference            input_color_attachment_reference               = { 0 };
+	VkAttachmentDescription          input_color_attachment                       = { 0 };
+	VkAttachmentReference            input_color_attachment_reference             = { 0 };
 	VkAttachmentDescription          depth_attachment                             = { 0 };
 	VkAttachmentReference            depth_attachment_reference                   = { 0 };
 	VkAttachmentDescription          resolve_attachment                           = { 0 };
@@ -560,13 +565,26 @@ int main(void) {
 		&descriptors_memory
 	);
 
-	ShVkPipeline pipeline = { 0 };
+	ShVkPipelinePool* p_pipeline_pool =  shAllocatePipelinePool();
+
+	shVkError(
+		p_pipeline_pool == NULL,
+		"invalid pipeline pool memory",
+		return -1
+	);
+
+	ShVkPipeline* p_pipeline = &p_pipeline_pool->pipelines[0];
+
+	createPipelinesDataPool(
+		device,
+		descriptors_buffer,
+		p_pipeline_pool
+	);
 
 	createPipeline(
 		device, renderpass, 
 		width, height, sample_count,
-		descriptors_buffer, 
-		&pipeline
+		p_pipeline_pool
 	);
 
 	uint32_t swapchain_image_idx = 0;
@@ -668,15 +686,13 @@ int main(void) {
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
-				shPipelineDestroyShaderModules    (device, 0, 2, &pipeline);
-				shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
-				shPipelineDestroyDescriptorPools  (device,  0, 1, &pipeline);
-				shPipelineDestroyLayout           (device, &pipeline);
-				shDestroyPipeline                 (device, pipeline.pipeline);
+				shPipelineDestroyShaderModules    (device, 0, 2, p_pipeline);
+				shPipelineDestroyLayout           (device, p_pipeline);
+				shDestroyPipeline                 (device, p_pipeline->pipeline);
 
-				shClearPipeline(&pipeline);
+				shClearPipeline(p_pipeline);
 
-				createPipeline(device, renderpass, width, height, sample_count, descriptors_buffer, &pipeline);
+				createPipeline(device, renderpass, width, height, sample_count, p_pipeline_pool);
 
 				swapchain_image_idx = 0;
 				
@@ -752,14 +768,15 @@ int main(void) {
 		
 		shBindIndexBuffer(cmd_buffer, 0, index_buffer);
 
-		shBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, &pipeline);
+		shBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
 
-		shPipelinePushConstants(cmd_buffer, projection_view, &pipeline);
+		shPipelinePushConstants(cmd_buffer, projection_view, p_pipeline);
 
 		shPipelineBindDescriptorSets(
 			cmd_buffer, swapchain_image_idx, 1,
-			VK_PIPELINE_BIND_POINT_GRAPHICS, 0, 
-			NULL, &pipeline
+			VK_PIPELINE_BIND_POINT_GRAPHICS, 
+			0, NULL, 
+			p_pipeline_pool, p_pipeline
 		);
 
 		shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
@@ -795,14 +812,18 @@ int main(void) {
 	}
 
 	shWaitDeviceIdle(device);
+	
+	shPipelinePoolDestroyDescriptorPools(device, 0, 1, p_pipeline_pool);
+	shPipelinePoolDestroyDescriptorSetLayouts(device, 0, 1, p_pipeline_pool);
 
-	shPipelineDestroyShaderModules(device, 0, 2, &pipeline);
-	shPipelineDestroyDescriptorPools(device, 0, 1, &pipeline);
-	shPipelineDestroyDescriptorSetLayouts(device, 0, 1, &pipeline);
-	shPipelineDestroyLayout(device, &pipeline);
-	shDestroyPipeline(device, pipeline.pipeline);
+	shPipelineDestroyShaderModules(device, 0, 2, p_pipeline);
+	shPipelineDestroyLayout(device, p_pipeline);
+	shDestroyPipeline(device, p_pipeline->pipeline);
 
-	shClearPipeline(&pipeline);
+	shClearPipeline(p_pipeline);
+
+	shFreePipelinePool(p_pipeline_pool);
+
 
 	shDestroySemaphores(device, 1, &current_image_acquired_semaphore);
 
@@ -958,15 +979,72 @@ void releaseMemory(
 	shClearBufferMemory(device, descriptors_buffer, descriptors_memory);
 }
 
-void createPipeline(
-	VkDevice      device,
-	VkRenderPass  renderpass,
-	uint32_t      width,
-	uint32_t      height,
-	uint32_t      sample_count,
-	VkBuffer      descriptors_buffer,
-	ShVkPipeline* p_pipeline
+void createPipelinesDataPool(
+	VkDevice          device,
+	VkBuffer          descriptors_buffer,
+	ShVkPipelinePool* p_pipeline_pool
 ) {
+	shPipelinePoolSetDescriptorSetBufferInfos(
+		0,
+		SWAPCHAIN_IMAGE_COUNT,
+		descriptors_buffer,
+		0,
+		sizeof(light),
+		p_pipeline_pool
+	);
+
+	shPipelinePoolCreateDescriptorSetLayoutBinding(
+		0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		1,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		p_pipeline_pool
+	);
+
+	shPipelinePoolCreateDescriptorSetLayout(
+		device,
+		0, 1,
+		0,
+		p_pipeline_pool
+	);
+	shPipelinePoolCopyDescriptorSetLayout(
+		0, 1, SWAPCHAIN_IMAGE_COUNT - 1, p_pipeline_pool
+	);
+
+	shPipelinePoolCreateDescriptorPool(
+		device,//device
+		0,//pool_idx
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
+		SWAPCHAIN_IMAGE_COUNT,//set_count,
+		p_pipeline_pool//p_pipeline_pool
+	);
+
+	shPipelinePoolAllocateDescriptorSets(
+		device,//device,
+		0,//pool_idx,
+		0,//binding,
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
+		0,//first_set,
+		SWAPCHAIN_IMAGE_COUNT,//set_count,
+		p_pipeline_pool//p_pipeline
+	);
+
+	shPipelinePoolUpdateDescriptorSets(
+		device, 0,
+		SWAPCHAIN_IMAGE_COUNT, p_pipeline_pool
+	);
+
+}
+
+void createPipeline(
+	VkDevice          device,
+	VkRenderPass      renderpass,
+	uint32_t          width,
+	uint32_t          height,
+	uint32_t          sample_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	ShVkPipeline* p_pipeline = &p_pipeline_pool->pipelines[0];
+
 	uint32_t attribute_0_offset = 0;
 	uint32_t attribute_0_size = 12;
 	uint32_t attribute_1_offset = attribute_0_offset + attribute_0_size;
@@ -1109,59 +1187,12 @@ void createPipeline(
 		sizeof(projection_view),
 		p_pipeline
 	);
-	
-	shPipelineSetDescriptorSetBufferInfos(
-		0,
-		SWAPCHAIN_IMAGE_COUNT,
-		descriptors_buffer,
-		0,
-		sizeof(light),
-		p_pipeline
-	);
-
-	shPipelineCreateDescriptorSetLayoutBinding(
-		0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		1,
-		VK_SHADER_STAGE_FRAGMENT_BIT,
-		p_pipeline
-	);
-
-	shPipelineCreateDescriptorSetLayout(
-		device,
-		0, 1,
-		0,
-		p_pipeline
-	);
-	shPipelineCopyDescriptorSetLayout(
-		0, 1, SWAPCHAIN_IMAGE_COUNT - 1, p_pipeline
-	);
-
-	shPipelineCreateDescriptorPool(
-		device,//device,
-		0,//pool_idx,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
-		SWAPCHAIN_IMAGE_COUNT,//set_count,
-		p_pipeline//p_pipeline
-	);
-
-	shPipelineAllocateDescriptorSets(
-		device,//device,
-		0,//pool_idx,
-		0,//binding,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
-		0,//first_set,
-		SWAPCHAIN_IMAGE_COUNT,//set_count,
-		p_pipeline//p_pipeline
-	);
-
-	shPipelineUpdateDescriptorSets(
-		device, 0,
-		SWAPCHAIN_IMAGE_COUNT, p_pipeline
-	);
 
 	shPipelineCreateLayout(
 		device,
+		0,
 		SWAPCHAIN_IMAGE_COUNT,
+		p_pipeline_pool,
 		p_pipeline
 	);
 

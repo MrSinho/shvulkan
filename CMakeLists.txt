@@ -29,7 +29,7 @@ add_executable(shvulkan-clear-color examples/src/graphics/clear-color.c)
 
 add_executable(shvulkan-resizable-clear-color examples/src/graphics/resizable-clear-color.c)
 
-add_executable(shvulkan-scene examples/src/graphics/triangle.c)
+add_executable(shvulkan-scene examples/src/graphics/scene.c)
 
 if (WIN32)
 target_link_libraries(
@@ -71,6 +71,7 @@ target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
 set_target_properties(
     shvulkan-clear-color 
     shvulkan-resizable-clear-color 
+    shvulkan-scene
     shvulkan-compute-power-numbers 
 
     PROPERTIES

@@ -563,62 +563,11 @@ extern uint8_t shBindIndexBuffer(
 
 
 
-#define SH_MAX_PIPELINE_VERTEX_BINDING_COUNT   32
-#define SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT 32
-
-#define SH_MAX_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT 32
-#define SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT                32
-#define SH_MAX_PIPELINE_DESCRIPTOR_POOL_COUNT               32
-#define SH_MAX_PIPELINE_SHADER_STAGE_COUNT                  6
-
-typedef struct ShVkPipeline {
-	/*Vertex inputs*/
-	uint32_t								vertex_binding_count;
-	VkVertexInputBindingDescription			vertex_bindings                [SH_MAX_PIPELINE_VERTEX_BINDING_COUNT];
-	uint32_t								vertex_attribute_count;
-	VkVertexInputAttributeDescription		vertex_attributes              [SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT];
-	VkPipelineVertexInputStateCreateInfo	vertex_input_state_info;	   
-	VkPipelineInputAssemblyStateCreateInfo	input_assembly;				   
-	/*Shaders*/															   
-	uint32_t                                shader_module_count;		   
-	VkShaderModule                          shader_modules                 [SH_MAX_PIPELINE_SHADER_STAGE_COUNT];
-	uint32_t                                shader_stage_count;
-	VkPipelineShaderStageCreateInfo         shader_stages                  [SH_MAX_PIPELINE_SHADER_STAGE_COUNT];
-	/*Push constants*/													   
-	VkPushConstantRange                     push_constant_range;		   
-	/*Descriptors*/					        		
-	uint32_t                                set_layout_binding_count;
-	VkDescriptorSetLayoutBinding            descriptor_set_layout_bindings[SH_MAX_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT];
-	uint32_t                                descriptor_pool_count;
-	VkDescriptorPool                        descriptor_pools              [SH_MAX_PIPELINE_DESCRIPTOR_POOL_COUNT];
-	uint32_t                                set_count;
-	VkDescriptorSetLayout                   descriptor_set_layouts        [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkDescriptorSet                         descriptor_sets               [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkWriteDescriptorSet                    write_descriptor_sets         [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	VkDescriptorBufferInfo                  descriptor_buffer_infos       [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT];
-	/*Rasterizer*/
-	VkPipelineRasterizationStateCreateInfo	rasterizer;
-	/*Viewport*/
-	VkViewport								viewport;
-	VkRect2D								scissors;
-	VkPipelineViewportStateCreateInfo		viewport_state;
-	/*Color blending*/
-	VkPipelineColorBlendAttachmentState		color_blend_attachment;
-	VkPipelineColorBlendStateCreateInfo		color_blend_state;
-	/*Multisample state*/
-	VkPipelineMultisampleStateCreateInfo	multisample_state_info;
-	/*Pipeline*/				    
-	VkPipelineLayout                        pipeline_layout;
-	VkPipeline                              pipeline;
-} ShVkPipeline;
-
-
-
 extern uint8_t shSetVertexBinding(
 	uint32_t                           binding,
 	uint32_t                           size,
 	VkVertexInputRate                  input_rate,
-	VkVertexInputBindingDescription*   p_vertex_input_binding
+	VkVertexInputBindingDescription* p_vertex_input_binding
 );
 
 extern uint8_t shSetVertexAttribute(
@@ -630,16 +579,16 @@ extern uint8_t shSetVertexAttribute(
 );
 
 extern uint8_t shSetVertexInputState(
-	uint32_t                              vertex_binding_count, 
-	VkVertexInputBindingDescription*      p_vertex_bindings, 
-	uint32_t                              vertex_attribute_count, 
-	VkVertexInputAttributeDescription*    p_vertex_attributes, 
+	uint32_t                              vertex_binding_count,
+	VkVertexInputBindingDescription* p_vertex_bindings,
+	uint32_t                              vertex_attribute_count,
+	VkVertexInputAttributeDescription* p_vertex_attributes,
 	VkPipelineVertexInputStateCreateInfo* p_vertex_input_state
 );
 
 extern uint8_t shCreateInputAssembly(
-	VkPrimitiveTopology                     primitive_topology, 
-	VkBool32                                primitive_restart_enable, 
+	VkPrimitiveTopology                     primitive_topology,
+	VkBool32                                primitive_restart_enable,
 	VkPipelineInputAssemblyStateCreateInfo* p_input_assembly
 );
 
@@ -658,14 +607,14 @@ extern uint8_t shSetMultisampleState(
 extern uint8_t shSetViewport(
 	uint32_t                           viewport_pos_x,
 	uint32_t                           viewport_pos_y,
-	uint32_t                           viewport_width, 
-	uint32_t                           viewport_height, 
-	VkViewport*                        p_viewport,
+	uint32_t                           viewport_width,
+	uint32_t                           viewport_height,
+	VkViewport* p_viewport,
 	uint32_t                           scissors_pos_x,
 	uint32_t                           scissors_pos_y,
 	uint32_t                           scissors_width,
 	uint32_t                           scissors_height,
-	VkRect2D*                          p_scissors, 
+	VkRect2D* p_scissors,
 	VkPipelineViewportStateCreateInfo* p_viewport_state
 );
 
@@ -675,9 +624,9 @@ extern uint8_t shColorBlendSettings(
 );
 
 extern uint8_t shCreateShaderModule(
-	VkDevice        device, 
+	VkDevice        device,
 	uint32_t        size,
-	char*           code,
+	char* code,
 	VkShaderModule* p_shader_module
 );
 
@@ -703,17 +652,17 @@ extern uint8_t shCreateDescriptorSetLayoutBinding(
 );
 
 extern uint8_t shCreateDescriptorSetLayout(
-	VkDevice                      device, 
+	VkDevice                      device,
 	uint32_t                      binding_count,
-	VkDescriptorSetLayoutBinding* p_bindings, 
-	VkDescriptorSetLayout*        p_descriptor_set_layout
+	VkDescriptorSetLayoutBinding* p_bindings,
+	VkDescriptorSetLayout* p_descriptor_set_layout
 );
 
 extern uint8_t shCreateDescriptorPool(
 	VkDevice              device,
 	uint32_t              pool_size_count,
 	VkDescriptorPoolSize* p_pool_sizes,
-	VkDescriptorPool*     p_descriptor_pool
+	VkDescriptorPool* p_descriptor_pool
 );
 
 extern uint8_t shSetDescriptorBufferInfo(
@@ -724,35 +673,24 @@ extern uint8_t shSetDescriptorBufferInfo(
 );
 
 extern uint8_t shAllocateDescriptorSets(
-	VkDevice                device, 
+	VkDevice                device,
 	VkDescriptorPool        descriptor_pool,
 	VkDescriptorType        descriptor_type,
 	uint32_t                binding,
 	uint32_t                set_count,
-	VkDescriptorSetLayout*  p_descriptor_set_layouts, 
-	VkDescriptorSet*        p_descriptor_sets, 
-	VkDescriptorBufferInfo* p_buffer_infos, 
-	VkWriteDescriptorSet*   p_write_descriptor_sets
+	VkDescriptorSetLayout* p_descriptor_set_layouts,
+	VkDescriptorSet* p_descriptor_sets,
+	VkDescriptorBufferInfo* p_buffer_infos,
+	VkWriteDescriptorSet* p_write_descriptor_sets
 );
 
 extern uint8_t shCreatePipelineLayout(
 	VkDevice               device,
 	uint32_t               push_constant_range_count,
-	VkPushConstantRange*   p_push_constants_range,
+	VkPushConstantRange* p_push_constants_range,
 	uint32_t               set_count,
 	VkDescriptorSetLayout* p_descriptor_set_layouts,
-	VkPipelineLayout*      p_pipeline_layout
-);
-
-extern uint8_t shSetupComputePipeline(
-	VkDevice      device,
-	ShVkPipeline* p_pipeline
-);
-
-extern uint8_t shSetupGraphicsPipeline(
-	VkDevice      device,
-	VkRenderPass  render_pass,
-	ShVkPipeline* p_pipeline
+	VkPipelineLayout* p_pipeline_layout
 );
 
 extern uint8_t shDestroyDescriptorPool(
@@ -780,6 +718,52 @@ extern uint8_t shDestroyPipeline(
 	VkPipeline pipeline
 );
 
+
+
+#define SH_MAX_PIPELINE_VERTEX_BINDING_COUNT   32
+#define SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT 32
+
+#define SH_MAX_PIPELINE_SHADER_STAGE_COUNT     6
+
+typedef struct ShVkPipeline {
+	/*Vertex inputs*/
+	uint32_t								vertex_binding_count;
+	VkVertexInputBindingDescription			vertex_bindings      [SH_MAX_PIPELINE_VERTEX_BINDING_COUNT];
+	uint32_t								vertex_attribute_count;
+	VkVertexInputAttributeDescription		vertex_attributes    [SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT];
+	VkPipelineVertexInputStateCreateInfo	vertex_input_state_info;	   
+	VkPipelineInputAssemblyStateCreateInfo	input_assembly;				   
+	/*Shaders*/															   
+	uint32_t                                shader_module_count;		   
+	VkShaderModule                          shader_modules       [SH_MAX_PIPELINE_SHADER_STAGE_COUNT];
+	uint32_t                                shader_stage_count;
+	VkPipelineShaderStageCreateInfo         shader_stages        [SH_MAX_PIPELINE_SHADER_STAGE_COUNT];
+	/*Push constants*/													   
+	VkPushConstantRange                     push_constant_range;	
+	/*Descriptor sets*/
+	uint32_t                                descriptor_set_count;
+	/*Rasterizer*/
+	VkPipelineRasterizationStateCreateInfo	rasterizer;
+	/*Viewport*/
+	VkViewport								viewport;
+	VkRect2D								scissors;
+	VkPipelineViewportStateCreateInfo		viewport_state;
+	/*Color blending*/
+	VkPipelineColorBlendAttachmentState		color_blend_attachment;
+	VkPipelineColorBlendStateCreateInfo		color_blend_state;
+	/*Multisample state*/
+	VkPipelineMultisampleStateCreateInfo	multisample_state_info;
+	/*Pipeline*/				    
+	VkPipelineLayout                        pipeline_layout;
+	VkPipeline                              pipeline;
+} ShVkPipeline;
+
+
+
+typedef struct ShVkPipelinePool ShVkPipelinePool;
+
+
+
 extern uint8_t shClearPipeline(
 	ShVkPipeline* p_pipeline
 );
@@ -788,7 +772,7 @@ extern uint8_t shPipelineSetVertexBinding(
 	uint32_t          binding,
 	uint32_t          size,
 	VkVertexInputRate input_rate,
-	ShVkPipeline*     p_pipeline
+	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelineSetVertexAttribute(
@@ -806,19 +790,19 @@ extern uint8_t shPipelineSetVertexInputState(
 extern uint8_t shPipelineCreateInputAssembly(
 	VkPrimitiveTopology primitive_topology,
 	VkBool32            primitive_restart_enable,
-	ShVkPipeline*       p_pipeline
+	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelineCreateRasterizer(
 	VkPolygonMode      polygon_mode,
 	VkCullModeFlagBits cull_mode,
-	ShVkPipeline*      p_pipeline
+	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelineSetMultisampleState(
 	VkSampleCountFlagBits sample_count,
 	float                 min_sample_shading_size,
-	ShVkPipeline*         p_pipeline
+	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelineSetViewport(
@@ -840,95 +824,50 @@ extern uint8_t shPipelineColorBlendSettings(
 extern uint8_t shPipelineCreateShaderModule(
 	VkDevice        device,
 	uint32_t        size,
-	char*           code,
-	ShVkPipeline*   p_pipeline
+	char* code,
+	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelineCreateShaderStage(
 	VkShaderStageFlags shader_stage,
-	ShVkPipeline*      p_pipeline
+	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelineSetPushConstants(
 	VkShaderStageFlags shader_stage,
 	uint32_t           offset,
 	uint32_t           size,
-	ShVkPipeline*      p_pipeline
-);
-
-extern uint8_t shPipelineCreateDescriptorSetLayoutBinding(
-	uint32_t           binding,
-	VkDescriptorType   descriptor_type,
-	uint32_t           descriptor_count,
-	VkShaderStageFlags shader_stage,
-	ShVkPipeline*      p_pipeline
-);
-
-extern uint8_t shPipelineCreateDescriptorSetLayout(
-	VkDevice           device, 
-	uint32_t           first_binding,
-	uint32_t           binding_count,
-	uint32_t           set_layout_idx,
-	ShVkPipeline*      p_pipeline
-) ;
-
-extern uint8_t shPipelineCopyDescriptorSetLayout(
-	uint32_t      src_set_layout_idx,
-	uint32_t      first_dst_set_layout_idx,
-	uint32_t      dst_set_layout_count,
 	ShVkPipeline* p_pipeline
-);
-
-extern uint8_t shPipelineSetDescriptorSetBufferInfos(
-	uint32_t      first_set,
-	uint32_t      set_count,
-	VkBuffer      buffer,
-	uint32_t      buffer_offset,
-	uint32_t      set_size,
-	ShVkPipeline* p_pipeline
-);
-
-uint8_t shPipelineCreateDescriptorPool(
-	VkDevice              device,
-	uint32_t              pool_idx,
-	VkDescriptorType      descriptor_type,
-	uint32_t              set_count,
-	ShVkPipeline*         p_pipeline
-);
-
-extern uint8_t shPipelineAllocateDescriptorSets(
-	VkDevice         device, 
-	uint32_t         pool_idx,
-	uint32_t         binding,
-	VkDescriptorType descriptor_type, 
-	uint32_t         first_set,
-	uint32_t         set_count,
-	ShVkPipeline*    p_pipeline
 );
 
 extern uint8_t shPipelineCreateLayout(
+	VkDevice          device,
+	uint32_t          first_set,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool,
+	ShVkPipeline* p_pipeline
+);
+
+extern uint8_t shSetupComputePipeline(
 	VkDevice      device,
-	uint32_t      set_count,
+	ShVkPipeline* p_pipeline
+);
+
+extern uint8_t shSetupGraphicsPipeline(
+	VkDevice      device,
+	VkRenderPass  render_pass,
 	ShVkPipeline* p_pipeline
 );
 
 extern uint8_t shPipelinePushConstants(
 	VkCommandBuffer cmd_buffer,
-	void*           p_data,
-	ShVkPipeline*   p_pipeline
+	void* p_data,
+	ShVkPipeline* p_pipeline
 );
-	
 
 extern uint8_t shBindPipeline(
 	VkCommandBuffer     cmd_buffer,
 	VkPipelineBindPoint bind_point,
-	ShVkPipeline*       p_pipeline
-);
-
-extern uint8_t shPipelineUpdateDescriptorSets(
-	VkDevice      device,
-	uint32_t      first_set,
-	uint32_t      set_count,
 	ShVkPipeline* p_pipeline
 );
 
@@ -939,6 +878,7 @@ extern uint8_t shPipelineBindDescriptorSets(
 	VkPipelineBindPoint bind_point,
 	uint32_t            dynamic_descriptors_count,
 	uint32_t*           p_dynamic_offsets,
+	ShVkPipelinePool*   p_pipeline_pool,
 	ShVkPipeline*       p_pipeline
 );
 
@@ -949,23 +889,113 @@ extern uint8_t shPipelineDestroyShaderModules(
 	ShVkPipeline* p_pipeline
 );
 
-extern uint8_t shPipelineDestroyDescriptorSetLayouts(
-	VkDevice      device,
-	uint32_t      first_set_layout,
-	uint32_t      set_layout_count,
-	ShVkPipeline* p_pipeline
-);
-
-extern uint8_t shPipelineDestroyDescriptorPools(
-	VkDevice      device,
-	uint32_t      first_pool,
-	uint32_t      pool_count,
-	ShVkPipeline* p_pipeline
-);
-
 extern uint8_t shPipelineDestroyLayout(
 	VkDevice      device,
 	ShVkPipeline* p_pipeline
+);
+
+
+
+#define SH_PIPELINE_POOL_MAX_PIPELINE_COUNT                      64
+#define SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT 64
+#define SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_LAYOUT_COUNT         64
+#define SH_MAX_PIPELINE_POOL_DESCRIPTOR_POOL_COUNT               64
+#define SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT                64
+
+typedef struct ShVkPipelinePool {
+	uint32_t                     max_pipeline_count;
+	uint32_t                     pipeline_count;
+	ShVkPipeline                 pipelines                     [SH_PIPELINE_POOL_MAX_PIPELINE_COUNT];
+						         
+	uint32_t                     descriptor_set_layout_binding_count;
+	uint32_t                     descriptor_set_layout_count;
+	uint32_t                     descriptor_pool_count;
+	uint32_t                     descriptor_set_count;
+
+	VkDescriptorSetLayoutBinding descriptor_set_layout_bindings[SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT];
+	VkDescriptorSetLayout        descriptor_set_layouts        [SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_LAYOUT_COUNT];
+
+	VkDescriptorPool             descriptor_pools              [SH_MAX_PIPELINE_POOL_DESCRIPTOR_POOL_COUNT];
+	VkDescriptorSet              descriptor_sets               [SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT];
+	VkDescriptorBufferInfo       descriptor_buffer_infos       [SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT];
+	VkWriteDescriptorSet         write_descriptor_sets         [SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT];
+
+} ShVkPipelinePool;
+
+
+
+#define shAllocatePipelinePool() ((ShVkPipelinePool*)calloc(1, sizeof(ShVkPipelinePool)))
+#define shFreePipelinePool       free
+
+extern uint8_t shPipelinePoolCreateDescriptorSetLayoutBinding(
+	uint32_t           binding,
+	VkDescriptorType   descriptor_type,
+	uint32_t           descriptor_count,
+	VkShaderStageFlags shader_stage,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolCreateDescriptorSetLayout(
+	VkDevice          device,
+	uint32_t          first_binding,
+	uint32_t          binding_count,
+	uint32_t          set_layout_idx,//set_idx
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolCopyDescriptorSetLayout(
+	uint32_t          src_set_layout_idx,
+	uint32_t          first_dst_set_layout_idx,
+	uint32_t          dst_set_layout_count,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolCreateDescriptorPool(
+	VkDevice          device,
+	uint32_t          pool_idx,
+	VkDescriptorType  descriptor_type,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolAllocateDescriptorSets(
+	VkDevice          device,
+	uint32_t          binding,
+	uint32_t          pool_idx,
+	VkDescriptorType  descriptor_type,
+	uint32_t          first_set,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolSetDescriptorSetBufferInfos(
+	uint32_t          first_set,
+	uint32_t          set_count,
+	VkBuffer          buffer,
+	uint32_t          buffer_offset,
+	uint32_t          set_size,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolDestroyDescriptorSetLayouts(
+	VkDevice          device,
+	uint32_t          first_set_layout,
+	uint32_t          set_layout_count,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolDestroyDescriptorPools(
+	VkDevice          device,
+	uint32_t          first_pool,
+	uint32_t          pool_count,
+	ShVkPipelinePool* p_pipeline_pool
+);
+
+extern uint8_t shPipelinePoolUpdateDescriptorSets(
+	VkDevice          device,
+	uint32_t          first_set,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool
 );
 
 

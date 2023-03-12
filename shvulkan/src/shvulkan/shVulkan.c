@@ -15,8 +15,8 @@ uint8_t shFindValidationLayer(
 ) {
 	shVkError(validation_layer_name == NULL, "invalid validation layer name memory", return 0);
 
-	uint32_t          available_layer_count = 0;
-	VkLayerProperties layer_properties[SH_MAX_STACK_VALIDATION_LAYER_COUNT] = { 0 };
+	uint32_t           available_layer_count =   0;
+	VkLayerProperties* p_layer_properties    = { 0 };
 
 	vkEnumerateInstanceLayerProperties(&available_layer_count, NULL);
 
@@ -31,13 +31,23 @@ uint8_t shFindValidationLayer(
 		return 0
 	);
 	
-	vkEnumerateInstanceLayerProperties(&available_layer_count, layer_properties);
+	p_layer_properties = calloc(available_layer_count, sizeof(VkLayerProperties));
+
+	shVkError(
+		p_layer_properties == NULL,
+		"invalid layer properties memory",
+		return 0
+	);
+
+	vkEnumerateInstanceLayerProperties(&available_layer_count, p_layer_properties);
 
 	for (uint32_t i = 0; i < available_layer_count; i++) {
-		if (strcmp(layer_properties[i].layerName, validation_layer_name) == 0) {
+		if (strcmp(p_layer_properties[i].layerName, validation_layer_name) == 0) {
             return 1;
         }
     }
+
+	free(p_layer_properties);
 
 	return 0;
 }
@@ -1847,8 +1857,8 @@ uint8_t shWriteMemory(
 	void*          p_data
 ) {
 	shVkError(device == NULL, "invalid device memory", return 0);
-	shVkError(memory == NULL, "invalid memory", return 0);
-	shVkError(data_size == 0, "invalid data size", return 0);
+	shVkError(memory == NULL, "invalid memory",        return 0);
+	shVkError(data_size == 0, "invalid data size",     return 0);
 	shVkError(p_data == NULL, "invalid memory buffer", return 0);
 
 	void* data;
@@ -2990,201 +3000,15 @@ uint8_t shPipelineSetPushConstants(
 	return 1;
 }
 
-uint8_t shPipelineCreateDescriptorSetLayoutBinding(
-	uint32_t           binding,
-	VkDescriptorType   descriptor_type,
-	uint32_t           descriptor_count,
-	VkShaderStageFlags shader_stage,
-	ShVkPipeline*      p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-	
-	shVkError(
-		binding > SH_MAX_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT,
-		"invalid descriptor set layout binding value",
-		return 0
-	);
-
-	shCreateDescriptorSetLayoutBinding(
-		binding,
-		descriptor_type,
-		descriptor_count,
-		shader_stage,
-		&p_pipeline->descriptor_set_layout_bindings[binding]
-	);
-
-	p_pipeline->set_layout_binding_count++;
-
-	return 1;
-}
-
-uint8_t shPipelineCreateDescriptorSetLayout(
-	VkDevice           device, 
-	uint32_t           first_binding,
-	uint32_t           binding_count,
-	uint32_t           set_layout_idx,//set_idx
-	ShVkPipeline*      p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		(first_binding + binding_count) > p_pipeline->set_layout_binding_count,
-		"invalid descriptor set layout binding range", 
-		return 0
-	);
-
-	shVkError(
-		shCreateDescriptorSetLayout(
-			device,
-			binding_count,
-			&p_pipeline->descriptor_set_layout_bindings[first_binding],
-			&p_pipeline->descriptor_set_layouts[set_layout_idx]
-		) == 0,
-		"failed creating descriptor set layout",
-		return 0
-	);
-
-	return 1;
-}
-
-uint8_t shPipelineCopyDescriptorSetLayout(
-	uint32_t      src_set_layout_idx,
-	uint32_t      first_dst_set_layout_idx,
-	uint32_t      dst_set_layout_count,
-	ShVkPipeline* p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		(first_dst_set_layout_idx + dst_set_layout_count) > SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT,
-		"invalid descriptor set layouts range",
-		return 0
-	);
-
-	for (
-			uint32_t set_layout_idx = first_dst_set_layout_idx;
-			set_layout_idx < (first_dst_set_layout_idx + dst_set_layout_count);
-			set_layout_idx++
-		) {
-
-		p_pipeline->descriptor_set_layouts[set_layout_idx] = p_pipeline->descriptor_set_layouts[src_set_layout_idx];
-		p_pipeline->descriptor_set_layout_bindings[set_layout_idx] = p_pipeline->descriptor_set_layout_bindings[src_set_layout_idx];
-	}
-
-	return 1;
-}
-
-uint8_t shPipelineSetDescriptorSetBufferInfos(
-	uint32_t      first_set,
-	uint32_t      set_count,
-	VkBuffer      buffer,
-	uint32_t      buffer_offset,
-	uint32_t      set_size,
-	ShVkPipeline* p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		(first_set + set_count) > SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT,
-		"reached max pipeline descriptor buffer info count",
-		return 0
-	);
-
-	for (uint32_t set_idx = first_set; set_idx < (first_set + set_count); set_idx++) {
-		shVkError(
-			shSetDescriptorBufferInfo(
-				buffer,
-				buffer_offset,
-				set_size,
-				&p_pipeline->descriptor_buffer_infos[set_idx]
-			) == 0,
-			"failed setting descriptor buffer info",
-			return 0
-		);
-	}
-
-	return 1;
-}
-
-uint8_t shPipelineCreateDescriptorPool(
-	VkDevice              device,
-	uint32_t              pool_idx,
-	VkDescriptorType      descriptor_type,
-	uint32_t              set_count,
-	ShVkPipeline*         p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory",       return 0);
-	shVkError(set_count  == 0,    "invvalid descriptor set count", return 0);
-
-	VkDescriptorPoolSize pool_size = {
-		descriptor_type,
-		set_count
-	};
-
-	shVkError(
-		shCreateDescriptorPool(
-			device,
-			1,
-			&pool_size,
-			&p_pipeline->descriptor_pools[pool_idx]\
-		) == 0,
-		"failed creating descriptor pool",
-		return 0
-	);
-
-	p_pipeline->descriptor_pool_count++;
-
-	return 1;
-}
-
-uint8_t shPipelineAllocateDescriptorSets(
-	VkDevice         device, 
-	uint32_t         pool_idx,
-	uint32_t         binding,
-	VkDescriptorType descriptor_type, 
-	uint32_t         first_set,
-	uint32_t         set_count,
-	ShVkPipeline*    p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		pool_idx >= p_pipeline->descriptor_pool_count,
-		"invalid descriptor pool index",
-		return 0
-	);
-
-	shVkError(
-		(first_set + set_count) > SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT,
-		"invalid descriptor set range",
-		return 0
-	);
-
-	shVkError(
-		shAllocateDescriptorSets(
-			device,
-			p_pipeline->descriptor_pools[pool_idx],
-			descriptor_type,
-			binding,
-			set_count,
-			&p_pipeline->descriptor_set_layouts[first_set],
-			&p_pipeline->descriptor_sets[first_set],
-			&p_pipeline->descriptor_buffer_infos[first_set],
-			&p_pipeline->write_descriptor_sets[first_set]
-		) == 0,
-		"failed allocating descriptor set",
-		return 0
-	);
-
-	return 1;
-}
-
 uint8_t shPipelineCreateLayout(
-	VkDevice      device,
-	uint32_t      set_count,
-	ShVkPipeline* p_pipeline
+	VkDevice          device,
+	uint32_t          first_set,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool,
+	ShVkPipeline*     p_pipeline
 ) {
 	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		shCreatePipelineLayout(
@@ -3192,14 +3016,14 @@ uint8_t shPipelineCreateLayout(
 			p_pipeline->push_constant_range.size != 0,
 			&p_pipeline->push_constant_range,
 			set_count,
-			p_pipeline->descriptor_set_layouts,
+			&p_pipeline_pool->descriptor_set_layouts[first_set],
 			&p_pipeline->pipeline_layout
 		) == 0,
 		"failed creating pipeline layout",
 		return 0
 	);
 
-	p_pipeline->set_count = set_count;
+	p_pipeline->descriptor_set_count = set_count;
 
 	return 1;
 }
@@ -3238,32 +3062,6 @@ uint8_t shBindPipeline(
 	return 1;
 }
 
-uint8_t shPipelineUpdateDescriptorSets(
-	VkDevice      device,
-	uint32_t      first_set, 
-	uint32_t      set_count,
-	ShVkPipeline* p_pipeline
-) {
-	shVkError(device     == NULL, "invalid device memory",   return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		(first_set + set_count) > SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT,
-		"invalid descriptors range",
-		return 0
-	);
-
-	vkUpdateDescriptorSets(
-		device,
-		set_count,
-		&p_pipeline->write_descriptor_sets[first_set],
-		0,
-		NULL
-	);
-
-	return 1;
-}
-
 uint8_t shPipelineBindDescriptorSets(
 	VkCommandBuffer     cmd_buffer,
 	uint32_t            first_set,
@@ -3271,13 +3069,15 @@ uint8_t shPipelineBindDescriptorSets(
 	VkPipelineBindPoint bind_point,
 	uint32_t            dynamic_descriptors_count,
 	uint32_t*           p_dynamic_offsets,
+	ShVkPipelinePool*   p_pipeline_pool,
 	ShVkPipeline*       p_pipeline
 ) {
-	shVkError(cmd_buffer == NULL, "invalid command buffer memory", return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(cmd_buffer      == NULL, "invalid command buffer memory", return 0);
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory",  return 0);
+	shVkError(p_pipeline      == NULL, "invalid pipeline memory",       return 0);
 
 	shVkError(
-		(first_set + set_count) > p_pipeline->set_count,
+		(first_set + set_count) > p_pipeline->descriptor_set_count,
 		"invalid descriptors range",
 		return 0
 	);
@@ -3294,7 +3094,7 @@ uint8_t shPipelineBindDescriptorSets(
 		p_pipeline->pipeline_layout,
 		0,
 		set_count,
-		&p_pipeline->descriptor_sets[first_set],
+		&p_pipeline_pool->descriptor_sets[first_set],
 		dynamic_descriptors_count,
 		p_dynamic_offsets
 	);
@@ -3332,64 +3132,6 @@ uint8_t shPipelineDestroyShaderModules(
 	return 1;
 }
 
-uint8_t shPipelineDestroyDescriptorSetLayouts(
-	VkDevice      device,
-	uint32_t      first_set_layout,
-	uint32_t      set_layout_count,
-	ShVkPipeline* p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		first_set_layout + set_layout_count > p_pipeline->set_count,
-		"invalid descriptor set layout range",
-		return 0
-	);
-
-	for (uint32_t set_layout_idx = first_set_layout; set_layout_idx < (first_set_layout + set_layout_count); set_layout_idx++) {
-		shVkError(
-			shDestroyDescriptorSetLayout(
-				device,
-				p_pipeline->descriptor_set_layouts[set_layout_idx]
-			) == 0,
-			"failed destroying descriptor set layout",
-			return 0
-		);
-	}
-
-	return 1;
-}
-
-uint8_t shPipelineDestroyDescriptorPools(
-	VkDevice      device,
-	uint32_t      first_pool,
-	uint32_t      pool_count,
-	ShVkPipeline* p_pipeline
-) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-
-	shVkError(
-		first_pool + pool_count > p_pipeline->descriptor_pool_count,
-		"invalid descriptor pool range",
-		return 0
-	);
-
-	for (uint32_t pool_idx = first_pool; pool_idx < (first_pool + pool_count); pool_idx++) {
-		shVkError(
-			shDestroyDescriptorPool(
-				device,
-				p_pipeline->descriptor_pools[pool_idx]
-			) == 0,
-			"failed destroying descriptor pool",
-			return 0
-		);
-	}
-
-	p_pipeline->descriptor_pool_count -= pool_count;
-
-	return 1;
-}
-
 uint8_t shPipelineDestroyLayout(
 	VkDevice      device,
 	ShVkPipeline* p_pipeline
@@ -3402,6 +3144,277 @@ uint8_t shPipelineDestroyLayout(
 		) == 0,
 		"failed destroying pipeline layout",
 		return 0
+	);
+
+	return 1;
+}
+
+
+
+uint8_t shPipelinePoolCreateDescriptorSetLayoutBinding(
+	uint32_t           binding,
+	VkDescriptorType   descriptor_type,
+	uint32_t           descriptor_count,
+	VkShaderStageFlags shader_stage,
+	ShVkPipelinePool*  p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	
+	shVkError(
+		binding > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT,
+		"invalid descriptor set layout binding value",
+		return 0
+	);
+
+	shCreateDescriptorSetLayoutBinding(
+		binding,
+		descriptor_type,
+		descriptor_count,
+		shader_stage,
+		&p_pipeline_pool->descriptor_set_layout_bindings[binding]
+	);
+
+	p_pipeline_pool->descriptor_set_layout_binding_count++;
+
+	return 1;
+}
+
+uint8_t shPipelinePoolCreateDescriptorSetLayout(
+	VkDevice          device, 
+	uint32_t          first_binding,
+	uint32_t          binding_count,
+	uint32_t          set_layout_idx,//set_idx
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+
+	shVkError(
+		(first_binding + binding_count) > p_pipeline_pool->descriptor_set_layout_binding_count,
+		"invalid descriptor set layout binding range", 
+		return 0
+	);
+
+	shVkError(
+		shCreateDescriptorSetLayout(
+			device,
+			binding_count,
+			&p_pipeline_pool->descriptor_set_layout_bindings[first_binding],
+			&p_pipeline_pool->descriptor_set_layouts        [set_layout_idx]
+		) == 0,
+		"failed creating descriptor set layout",
+		return 0
+	);
+
+	p_pipeline_pool->descriptor_set_layout_count++;
+
+	return 1;
+}
+
+uint8_t shPipelinePoolCopyDescriptorSetLayout(
+	uint32_t          src_set_layout_idx,
+	uint32_t          first_dst_set_layout_idx,
+	uint32_t          dst_set_layout_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+
+	shVkError(
+		(first_dst_set_layout_idx + dst_set_layout_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
+		"invalid descriptor set layouts range",
+		return 0
+	);
+
+	for (
+			uint32_t set_layout_idx = first_dst_set_layout_idx;
+			set_layout_idx < (first_dst_set_layout_idx + dst_set_layout_count);
+			set_layout_idx++
+		) {
+
+		p_pipeline_pool->descriptor_set_layouts        [set_layout_idx] = p_pipeline_pool->descriptor_set_layouts        [src_set_layout_idx];
+		p_pipeline_pool->descriptor_set_layout_bindings[set_layout_idx] = p_pipeline_pool->descriptor_set_layout_bindings[src_set_layout_idx];
+	}
+
+	return 1;
+}
+
+uint8_t shPipelinePoolCreateDescriptorPool(
+	VkDevice          device,
+	uint32_t          pool_idx,
+	VkDescriptorType  descriptor_type,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(set_count == 0, "invvalid descriptor set count", return 0);
+
+	VkDescriptorPoolSize pool_size = {
+		descriptor_type,
+		set_count
+	};
+
+	shVkError(
+		shCreateDescriptorPool(
+			device,
+			1,
+			&pool_size,
+			&p_pipeline_pool->descriptor_pools[pool_idx]
+		) == 0,
+		"failed creating descriptor pool",
+		return 0
+	);
+
+	p_pipeline_pool->descriptor_pool_count++;
+
+	return 1;
+}
+
+uint8_t shPipelinePoolAllocateDescriptorSets(
+	VkDevice          device,
+	uint32_t          binding,
+	uint32_t          pool_idx,
+	VkDescriptorType  descriptor_type,
+	uint32_t          first_set,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+
+	shVkError(
+		(first_set + set_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
+		"invalid descriptor set range",
+		return 0
+	);
+
+	shVkError(
+		shAllocateDescriptorSets(
+			device,
+			p_pipeline_pool->descriptor_pools[pool_idx],
+			descriptor_type,
+			binding,
+			set_count,
+			&p_pipeline_pool->descriptor_set_layouts[first_set],
+			&p_pipeline_pool->descriptor_sets[first_set],
+			&p_pipeline_pool->descriptor_buffer_infos[first_set],
+			&p_pipeline_pool->write_descriptor_sets[first_set]
+		) == 0,
+		"failed allocating descriptor set",
+		return 0
+	);
+
+	return 1;
+}
+
+uint8_t shPipelinePoolSetDescriptorSetBufferInfos(
+	uint32_t          first_set,
+	uint32_t          set_count,
+	VkBuffer          buffer,
+	uint32_t          buffer_offset,
+	uint32_t          set_size,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+
+	shVkError(
+		(first_set + set_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
+		"reached max pipeline descriptor buffer info count",
+		return 0
+	);
+
+	for (uint32_t set_idx = first_set; set_idx < (first_set + set_count); set_idx++) {
+		shVkError(
+			shSetDescriptorBufferInfo(
+				buffer,
+				buffer_offset,
+				set_size,
+				&p_pipeline_pool->descriptor_buffer_infos[set_idx]
+			) == 0,
+			"failed setting descriptor buffer info",
+			return 0
+		);
+	}
+
+	return 1;
+}
+
+uint8_t shPipelinePoolDestroyDescriptorSetLayouts(
+	VkDevice          device,
+	uint32_t          first_set_layout,
+	uint32_t          set_layout_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+
+	shVkError(
+		first_set_layout + set_layout_count > p_pipeline_pool->descriptor_set_layout_count,
+		"invalid descriptor set layout range",
+		return 0
+	);
+
+	for (uint32_t set_layout_idx = first_set_layout; set_layout_idx < (first_set_layout + set_layout_count); set_layout_idx++) {
+		shVkError(
+			shDestroyDescriptorSetLayout(
+				device,
+				p_pipeline_pool->descriptor_set_layouts[set_layout_idx]
+			) == 0,
+			"failed destroying descriptor set layout",
+			return 0
+		);
+	}
+
+	return 1;
+}
+
+uint8_t shPipelinePoolDestroyDescriptorPools(
+	VkDevice          device,
+	uint32_t          first_pool,
+	uint32_t          pool_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline memory", return 0);
+
+	shVkError(
+		first_pool + pool_count > p_pipeline_pool->descriptor_pool_count,
+		"invalid descriptor pool range",
+		return 0
+	);
+
+	for (uint32_t pool_idx = first_pool; pool_idx < (first_pool + pool_count); pool_idx++) {
+		shVkError(
+			shDestroyDescriptorPool(
+				device,
+				p_pipeline_pool->descriptor_pools[pool_idx]
+			) == 0,
+			"failed destroying descriptor pool",
+			return 0
+		);
+	}
+
+	p_pipeline_pool->descriptor_pool_count -= pool_count;
+
+	return 1;
+}
+
+uint8_t shPipelinePoolUpdateDescriptorSets(
+	VkDevice          device,
+	uint32_t          first_set,
+	uint32_t          set_count,
+	ShVkPipelinePool* p_pipeline_pool
+) {
+	shVkError(device == NULL, "invalid device memory", return 0);
+	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+
+	shVkError(
+		(first_set + set_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
+		"invalid descriptors range",
+		return 0
+	);
+
+	vkUpdateDescriptorSets(
+		device,
+		set_count,
+		&p_pipeline_pool->write_descriptor_sets[first_set],
+		0,
+		NULL
 	);
 
 	return 1;
