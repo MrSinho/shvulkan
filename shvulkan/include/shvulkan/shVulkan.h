@@ -903,8 +903,6 @@ extern uint8_t shPipelineDestroyLayout(
 #define SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT                64
 
 typedef struct ShVkPipelinePool {
-	uint32_t                     max_pipeline_count;
-	uint32_t                     pipeline_count;
 	ShVkPipeline                 pipelines                     [SH_PIPELINE_POOL_MAX_PIPELINE_COUNT];
 						         
 	uint32_t                     descriptor_set_layout_binding_count;

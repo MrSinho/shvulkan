@@ -3077,7 +3077,13 @@ uint8_t shPipelineBindDescriptorSets(
 	shVkError(p_pipeline      == NULL, "invalid pipeline memory",       return 0);
 
 	shVkError(
-		(first_set + set_count) > p_pipeline->descriptor_set_count,
+		(first_set + set_count) > p_pipeline_pool->descriptor_set_count,
+		"invalid descriptors range",
+		return 0
+	);
+
+	shVkError(
+		set_count > p_pipeline->descriptor_set_count,
 		"invalid descriptors range",
 		return 0
 	);
@@ -3301,6 +3307,8 @@ uint8_t shPipelinePoolAllocateDescriptorSets(
 		return 0
 	);
 
+	p_pipeline_pool->descriptor_set_count += set_count;
+
 	return 1;
 }
 
@@ -3404,7 +3412,7 @@ uint8_t shPipelinePoolUpdateDescriptorSets(
 	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
 
 	shVkError(
-		(first_set + set_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
+		(first_set + set_count) > p_pipeline_pool->descriptor_set_count,
 		"invalid descriptors range",
 		return 0
 	);
