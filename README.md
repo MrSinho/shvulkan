@@ -13,8 +13,10 @@ All the samples were built and tested on Windows and Linux Mint.
 ---
 
 # todo
+ * texture examples (graphics and plain data)
+  * Error/debug/info logging to file
+   * options: log all, log error, log info, write all, write error, write info
  * read spirv assembly
- * copy buffer regions
 
 ---
 

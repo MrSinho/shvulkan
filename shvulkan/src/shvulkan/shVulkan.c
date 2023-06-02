@@ -13,12 +13,12 @@
 uint8_t shFindValidationLayer(
 	const char* validation_layer_name
 ) {
-	shVkError(validation_layer_name == NULL, "invalid validation layer name memory", return 0);
+	shVkError(validation_layer_name == VK_NULL_HANDLE, "invalid validation layer name memory", return 0);
 
 	uint32_t           available_layer_count =   0;
 	VkLayerProperties* p_layer_properties    = { 0 };
 
-	vkEnumerateInstanceLayerProperties(&available_layer_count, NULL);
+	vkEnumerateInstanceLayerProperties(&available_layer_count, VK_NULL_HANDLE);
 
 	shVkError(
 		available_layer_count == 0, 
@@ -34,7 +34,7 @@ uint8_t shFindValidationLayer(
 	p_layer_properties = calloc(available_layer_count, sizeof(VkLayerProperties));
 
 	shVkError(
-		p_layer_properties == NULL,
+		p_layer_properties == VK_NULL_HANDLE,
 		"invalid layer properties memory",
 		return 0
 	);
@@ -150,36 +150,37 @@ uint8_t shCreateInstance(
 	const uint8_t  enable_validation_layers, 
 	const uint32_t extension_count, 
 	const char**   pp_extension_names,
+	uint32_t       api_version,
 	VkInstance*    p_instance
 ) {
-	shVkError(p_instance         == NULL, "invalid instance memory",          return 0);
-	shVkError(application_name   == NULL, "invalid application name memory",  return 0);
-	shVkError(engine_name        == NULL, "invalid engine name memory",       return 0);
+	shVkError(p_instance         == VK_NULL_HANDLE, "invalid instance memory",          return 0);
+	shVkError(application_name   == VK_NULL_HANDLE, "invalid application name memory",  return 0);
+	shVkError(engine_name        == VK_NULL_HANDLE, "invalid engine name memory",       return 0);
 	
 	shVkError(
-		extension_count > 0 && pp_extension_names == NULL, 
+		extension_count > 0 && pp_extension_names == VK_NULL_HANDLE, 
 		"invalid extension names memory",   
 		return 0
 	);
 
 	VkApplicationInfo application_info = {
 		VK_STRUCTURE_TYPE_APPLICATION_INFO, //sType;
-		NULL,                               //pNext;
+		VK_NULL_HANDLE,                     //pNext;
 		application_name,                   //pApplicationName;
 		VK_MAKE_VERSION(0, 1, 0),           //applicationVersion;
 		engine_name,                        //pEngineName;
 		VK_MAKE_VERSION(0, 1, 0),           //engineVersion;
-		SH_VULKAN_VERSION,                  //apiVersion;
+		api_version,                        //apiVersion;
 	};
 
 
 	VkInstanceCreateInfo instance_create_info = {
 		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,	//sType;
-		NULL,                                   //pNext;
+		VK_NULL_HANDLE,                                   //pNext;
 		0,                                      //flags;
 		&application_info,                      //pApplicationInfo;
 		0,                                      //enabledLayerCount;
-		NULL,                                   //ppEnabledLayerNames;
+		VK_NULL_HANDLE,                                   //ppEnabledLayerNames;
 		extension_count,                        //enabledExtensionCount;
 		pp_extension_names                      //ppEnabledExtensionNames;
 	};
@@ -214,12 +215,12 @@ uint8_t shGetPhysicalDeviceQueueFamilies(
 	uint32_t*                p_transfer_queue_family_indices,
 	VkQueueFamilyProperties* p_queue_families_properties
 ) {
-	shVkError(physical_device == NULL, "invalid physical device memory",    return 0);
+	shVkError(physical_device == VK_NULL_HANDLE, "invalid physical device memory",    return 0);
 
 	uint32_t                queue_family_count = 0;
 	VkQueueFamilyProperties queue_families_properties[SH_MAX_STACK_QUEUE_FAMILY_COUNT];
 
-	vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queue_family_count, NULL);
+	vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queue_family_count, VK_NULL_HANDLE);
 	vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queue_family_count, queue_families_properties);
 
 	uint32_t graphics_queue_family_count  = 0;
@@ -234,7 +235,7 @@ uint8_t shGetPhysicalDeviceQueueFamilies(
 	
 	for (uint32_t queue_family_idx = 0; queue_family_idx < queue_family_count; queue_family_idx++) {
 			
-		if (surface != NULL) {
+		if (surface != VK_NULL_HANDLE) {
 			uint32_t surface_support = 0;
 			vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, queue_family_idx, surface, &surface_support);
 			if (surface_support) {
@@ -260,19 +261,19 @@ uint8_t shGetPhysicalDeviceQueueFamilies(
 
 	}
 	
-	if (p_queue_family_count != NULL) {
+	if (p_queue_family_count != VK_NULL_HANDLE) {
 		(*p_queue_family_count) = queue_family_count;
 	}
-	if (p_graphics_queue_family_count != NULL) {
+	if (p_graphics_queue_family_count != VK_NULL_HANDLE) {
 		(*p_graphics_queue_family_count) = graphics_queue_family_count;
 	}
 	if (p_surface_queue_family_count) {
 		(*p_surface_queue_family_count) = surface_queue_family_count;
 	}
-	if (p_compute_queue_family_count != NULL) {
+	if (p_compute_queue_family_count != VK_NULL_HANDLE) {
 		(*p_compute_queue_family_count) = compute_queue_family_count;
 	}
-	if (p_transfer_queue_family_count != NULL) {
+	if (p_transfer_queue_family_count != VK_NULL_HANDLE) {
 		(*p_transfer_queue_family_count) = transfer_queue_family_count;
 	}
 	if (p_graphics_queue_family_indices) {
@@ -300,8 +301,8 @@ uint8_t shGetQueueFamilySurfaceSupport(
 	VkSurfaceKHR     surface,
 	uint8_t*         p_support
 ) {
-	shVkError(physical_device == NULL, "invalid physical device memory", return 0);
-	shVkError(p_support       == NULL, "invalid support value memory",   return 0);
+	shVkError(physical_device == VK_NULL_HANDLE, "invalid physical device memory", return 0);
+	shVkError(p_support       == VK_NULL_HANDLE, "invalid support value memory",   return 0);
 
 	VkBool32 supported = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(
@@ -323,14 +324,14 @@ uint8_t shSelectPhysicalDevice(
 	VkPhysicalDeviceFeatures*         p_physical_device_features,
 	VkPhysicalDeviceMemoryProperties* p_physical_device_memory_properties
 ) {
-	shVkError(instance                            == NULL, "invalid instance memory",                          return 0);
-	shVkError(p_physical_device                   == NULL, "invalid physical device memory",                   return 0);
+	shVkError(instance                            == VK_NULL_HANDLE, "invalid instance memory",                return 0);
+	shVkError(p_physical_device                   == VK_NULL_HANDLE, "invalid physical device memory",         return 0);
 	shVkError(requirements                        == 0,    "invalid requirement flags",                        return 0);
 
 	uint32_t         physical_device_count = 0;
 	VkPhysicalDevice physical_devices[SH_MAX_STACK_PHYSICAL_DEVICE_COUNT] = { 0 };
 
-	vkEnumeratePhysicalDevices(instance, &physical_device_count, NULL);
+	vkEnumeratePhysicalDevices(instance, &physical_device_count, VK_NULL_HANDLE);
 	vkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
 	
 	shVkError(physical_device_count == 0, "no vulkan compatible gpu has been found", return 0);
@@ -348,12 +349,12 @@ uint8_t shSelectPhysicalDevice(
 		shGetPhysicalDeviceQueueFamilies(
 			physical_devices[physical_device_idx], 
 			surface,
-			NULL,
+			VK_NULL_HANDLE,
 			&graphics_queue_families_count[physical_device_idx],
 			&surface_queue_families_count[physical_device_idx],
 			&compute_queue_families_count[physical_device_idx],
 			&transfer_queue_families_count[physical_device_idx],
-			NULL, NULL, NULL, NULL, NULL
+			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 		);
 	}
 
@@ -366,7 +367,7 @@ uint8_t shSelectPhysicalDevice(
 		uint32_t transfer_queue_family_count  = transfer_queue_families_count[physical_device_idx];
 
 		uint32_t graphics_bit = ((requirements & VK_QUEUE_GRAPHICS_BIT) == 0) ? 1 : graphics_queue_family_count;
-		uint32_t surface_bit  = (surface == NULL)                             ? 1 : surface_queue_family_count ;
+		uint32_t surface_bit  = (surface == VK_NULL_HANDLE)                             ? 1 : surface_queue_family_count ;
 		uint32_t compute_bit  = ((requirements & VK_QUEUE_COMPUTE_BIT) == 0)  ? 1 : compute_queue_family_count;
 		uint32_t transfer_bit = ((requirements & VK_QUEUE_TRANSFER_BIT) == 0) ? 1 : transfer_queue_family_count;
 		
@@ -417,13 +418,13 @@ uint8_t shSelectPhysicalDevice(
 		}
 	}
 
-	if (p_physical_device_properties != NULL) {
+	if (p_physical_device_properties != VK_NULL_HANDLE) {
 		vkGetPhysicalDeviceProperties(*p_physical_device, p_physical_device_properties);
 	}
-	if (p_physical_device_features != NULL) {
+	if (p_physical_device_features != VK_NULL_HANDLE) {
 		vkGetPhysicalDeviceFeatures(*p_physical_device, p_physical_device_features);
 	}
-	if (p_physical_device_memory_properties != NULL) {
+	if (p_physical_device_memory_properties != VK_NULL_HANDLE) {
 		vkGetPhysicalDeviceMemoryProperties(*p_physical_device, p_physical_device_memory_properties);
 	}
 
@@ -435,9 +436,9 @@ uint8_t shGetPhysicalDeviceSurfaceCapabilities(
 	VkSurfaceKHR              surface,
 	VkSurfaceCapabilitiesKHR* p_surface_capabilities
 ) {
-	shVkError(physical_device == NULL, "invalid physical device memory", return 0);
-	shVkError(surface == NULL, "invalid surface memory", return 0);
-	shVkError(p_surface_capabilities == NULL, "invalid surface capabilities memory", return 0);
+	shVkError(physical_device        == VK_NULL_HANDLE, "invalid physical device memory", return 0);
+	shVkError(surface                == VK_NULL_HANDLE, "invalid surface memory", return 0);
+	shVkError(p_surface_capabilities == VK_NULL_HANDLE, "invalid surface capabilities memory", return 0);
 
 	shVkResultError(
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, p_surface_capabilities),
@@ -456,14 +457,14 @@ uint8_t shQueryForDeviceQueueInfo(
 	VkDeviceQueueCreateInfo* p_device_queue_info
 ) {
 	shVkError(queue_count         == 0,    "invalid queue count",              return 0);
-	shVkError(p_queue_priorities  == NULL, "invalid queue priorities memory",  return 0);
-	shVkError(p_device_queue_info == NULL, "invalid device queue info memory", return 0);
+	shVkError(p_queue_priorities  == VK_NULL_HANDLE, "invalid queue priorities memory",  return 0);
+	shVkError(p_device_queue_info == VK_NULL_HANDLE, "invalid device queue info memory", return 0);
 
 	VkDeviceQueueCreateFlagBits flags = protected ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
 
 	VkDeviceQueueCreateInfo device_queue_info = {
 		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, //sType;
-		NULL,                                       //pNext;
+		VK_NULL_HANDLE,                                       //pNext;
 		flags,                                      //flags;
 		queue_family_index,                         //queueFamilyIndex;
 		queue_count,                                //queueCount;
@@ -483,27 +484,27 @@ uint8_t shSetLogicalDevice(
 	uint32_t                 device_queue_count, 
 	VkDeviceQueueCreateInfo* p_device_queue_infos
 ) {
-	shVkError(physical_device        == NULL,                           "invalid physical device memory",      return 0);
-	shVkError(p_device               == NULL,                           "invalid device memory",               return 0);
+	shVkError(physical_device        == VK_NULL_HANDLE,                 "invalid physical device memory",      return 0);
+	shVkError(p_device               == VK_NULL_HANDLE,                 "invalid device memory",               return 0);
 	shVkError(extension_count        > 0 && pp_extension_names == NULL, "invalid extensions names memory",     return 0);
 	shVkError(device_queue_count     == 0,                              "invalid device queue count",          return 0);
-	shVkError(p_device_queue_infos   == NULL,                           "invalid device queue infos memory",   return 0);
+	shVkError(p_device_queue_infos   == VK_NULL_HANDLE,                 "invalid device queue infos memory",   return 0);
 
 	VkDeviceCreateInfo device_create_info = {
-		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, //sType;
-		NULL,                                 //pNext;
-		0,                                    //flags;
-		device_queue_count,                   //queueCreateInfoCount;
-		p_device_queue_infos,                 //pQueueCreateInfos;
-		0,                                    //enabledLayerCount;
-		NULL,                                 //ppEnabledLayerNames;
-		extension_count,                      //enabledExtensionCount;
-		pp_extension_names,                   //ppEnabledExtensionNames;
-		NULL                                  //pEnabledFeatures;
+		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,   //sType;
+		VK_NULL_HANDLE,                         //pNext;
+		0,                                      //flags;
+		device_queue_count,                     //queueCreateInfoCount;
+		p_device_queue_infos,                   //pQueueCreateInfos;
+		0,                                      //enabledLayerCount;
+		VK_NULL_HANDLE,                         //ppEnabledLayerNames;
+		extension_count,                        //enabledExtensionCount;
+		(const char* const*)pp_extension_names, //ppEnabledExtensionNames;
+		VK_NULL_HANDLE                          //pEnabledFeatures;
 	};
 	
 	shVkResultError(
-		vkCreateDevice(physical_device, &device_create_info, NULL, p_device),
+		vkCreateDevice(physical_device, &device_create_info, VK_NULL_HANDLE, p_device),
 		"error creating logical device", return 0
 	);
 
@@ -516,9 +517,9 @@ uint8_t shGetDeviceQueues(
 	uint32_t* p_queue_family_indices,
 	VkQueue*  p_queues
 ) {
-	shVkError(device                 == NULL, "invalid device memory",               return 0);
-	shVkError(p_queue_family_indices == NULL, "invalid queue family indices memory", return 0);
-	shVkError(p_queues               == NULL, "invalid queues memory",               return 0);
+	shVkError(device                 == VK_NULL_HANDLE, "invalid device memory",               return 0);
+	shVkError(p_queue_family_indices == VK_NULL_HANDLE, "invalid queue family indices memory", return 0);
+	shVkError(p_queues               == VK_NULL_HANDLE, "invalid queues memory",               return 0);
 
 	for (uint32_t queue_idx = 0; queue_idx < queue_count; queue_idx++) {
 		vkGetDeviceQueue(
@@ -541,21 +542,24 @@ uint8_t shCreateSwapchain(
 	uint32_t                 swapchain_image_count,
 	VkSharingMode            image_sharing_mode,
 	uint8_t                  vsync,
+	uint32_t*                p_swapchain_image_count,
 	VkSwapchainKHR*          p_swapchain
 ) {
-	shVkError(device == NULL,             "invalid device memory",         return 0);
-	shVkError(swapchain_image_count == 0, "invalid swapchain image count", return 0);
+	shVkError(device                  == VK_NULL_HANDLE, "invalid device memory",                return 0);
+	shVkError(swapchain_image_count   == 0,              "invalid swapchain image count",        return 0);
+	shVkError(p_swapchain_image_count == NULL,           "invalid swapchain image count memory", return 0);
 
-	uint32_t                 format_count                                              = 0;
+	uint32_t                 _swapchain_image_count                                    =   0  ;
+	uint32_t                 format_count                                              =   0  ;
 	VkSurfaceFormatKHR       surface_formats[SH_MAX_STACK_DEVICE_SURFACE_FORMAT_COUNT] = { 0 };
-	uint8_t                  format_found                                              = 0;
+	uint8_t                  format_found                                              =   0  ;
 	VkSurfaceFormatKHR       surface_format                                            = { 0 };
 
 	VkSurfaceCapabilitiesKHR surface_capabilities                                      = { 0 };
-	VkCompositeAlphaFlagsKHR composite_alpha                                           = 0;
+	VkCompositeAlphaFlagsKHR composite_alpha                                           =   0  ;
 
 	shVkResultError(
-		vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, surface, &format_count, NULL),
+		vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, surface, &format_count, VK_NULL_HANDLE),
 		"error getting surface available formats", 
 		return 0
 	);
@@ -586,7 +590,13 @@ uint8_t shCreateSwapchain(
 		"failed getting surface capabilities",
 		return 0
 	);
-	
+
+	_swapchain_image_count = swapchain_image_count;
+	if (_swapchain_image_count < surface_capabilities.minImageCount) {
+		_swapchain_image_count = surface_capabilities.minImageCount;
+	}
+	(*p_swapchain_image_count) = _swapchain_image_count;
+
 	VkCompositeAlphaFlagBitsKHR composite_alpha_flags[4] = {
 	    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 	    VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
@@ -600,7 +610,7 @@ uint8_t shCreateSwapchain(
 	    }
 	}
 
-	if (p_image_format != NULL) {
+	if (p_image_format != VK_NULL_HANDLE) {
 		(*p_image_format) = surface_format.format;
 	}
 
@@ -608,7 +618,7 @@ uint8_t shCreateSwapchain(
 	VkPresentModeKHR present_modes[SH_MAX_STACK_SURFACE_PRESENT_MODE_COUNT] = { 0 };
 	VkPresentModeKHR present_mode                                           = VK_PRESENT_MODE_MAX_ENUM_KHR;
 	shVkError(
-		vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, surface, &present_mode_count, NULL),
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, surface, &present_mode_count, VK_NULL_HANDLE),
 		"present mode count exceeds max stack count",
 		return 0
 	);
@@ -637,7 +647,7 @@ uint8_t shCreateSwapchain(
 
 	VkSwapchainCreateInfoKHR swapchain_create_info = {
 		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,  //sType;
-		NULL,                                         //pNext;
+		VK_NULL_HANDLE,                                         //pNext;
 		0,                                            //flags;
 		surface,                                      //surface;
 		swapchain_image_count,                        //minImageCount;
@@ -651,7 +661,7 @@ uint8_t shCreateSwapchain(
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,          //imageUsage;
 		image_sharing_mode,                           //imageSharingMode;
 		0,                                            //queueFamilyIndexCount;
-		NULL,                                         //pQueueFamilyIndices;
+		VK_NULL_HANDLE,                                         //pQueueFamilyIndices;
 		surface_capabilities.currentTransform,        //preTransform;
 		composite_alpha,                              //compositeAlpha;
 		present_mode,                                 //presentMode;
@@ -660,7 +670,7 @@ uint8_t shCreateSwapchain(
 	};
 
 	shVkResultError(
-		vkCreateSwapchainKHR(device, &swapchain_create_info, NULL, p_swapchain),
+		vkCreateSwapchainKHR(device, &swapchain_create_info, VK_NULL_HANDLE, p_swapchain),
 		"error creating swapchain", return 0
 	);
 
@@ -675,7 +685,7 @@ uint8_t shCombineMaxSamples(
 	uint8_t                    combine_depth_sample, 
 	uint32_t*                  p_sample_count
 ) {
-	shVkError(p_sample_count == NULL, "invalid sample count memory",        return 0);
+	shVkError(p_sample_count == VK_NULL_HANDLE, "invalid sample count memory",        return 0);
 	shVkError(sample_count   == 0, "invalid starting sample count value 0", return 0);
 
 	//fill bits, example: decimal 8 = 0b1000 ---> 0b1111 = 15
@@ -712,13 +722,13 @@ uint8_t shGetSwapchainImages(
 	uint32_t*      p_swapchain_image_count,
 	VkImage*       p_swapchain_images
 ) {
-	shVkError(swapchain               == NULL, "invalid swapchain memory",   return 0);
-	shVkError(device                  == NULL, "invalid device memory",      return 0);
-	shVkError(p_swapchain_image_count == NULL, "invalid image count memory", return 0);
-	shVkError(p_swapchain_images      == NULL, "invalid images memory",      return 0);
+	shVkError(swapchain               == VK_NULL_HANDLE, "invalid swapchain memory",   return 0);
+	shVkError(device                  == VK_NULL_HANDLE, "invalid device memory",      return 0);
+	shVkError(p_swapchain_image_count == VK_NULL_HANDLE, "invalid image count memory", return 0);
+	shVkError(p_swapchain_images      == VK_NULL_HANDLE, "invalid images memory",      return 0);
 
 	shVkResultError(
-		vkGetSwapchainImagesKHR(device, swapchain, p_swapchain_image_count, NULL),
+		vkGetSwapchainImagesKHR(device, swapchain, p_swapchain_image_count, VK_NULL_HANDLE),
 		"failed getting swapchain image count",
 		return 0
 	);
@@ -740,10 +750,10 @@ uint8_t shCreateImageView(
 	VkFormat              format, 
 	VkImageView*          p_image_view
 ) {
-	shVkError(device       == NULL, "invalid device memory",     return 0);
-	shVkError(image        == NULL, "invalid image memory",      return 0);
+	shVkError(device       == VK_NULL_HANDLE, "invalid device memory",     return 0);
+	shVkError(image        == VK_NULL_HANDLE, "invalid image memory",      return 0);
 	shVkError(mip_levels   == 0,    "invalid mip levels value",  return 0);
-	shVkError(p_image_view == NULL, "invalid image view memory", return 0);
+	shVkError(p_image_view == VK_NULL_HANDLE, "invalid image view memory", return 0);
 
 	VkImageSubresourceRange subresource_range = {
 		image_aspect, //aspectMask
@@ -755,7 +765,7 @@ uint8_t shCreateImageView(
 	
 	VkImageViewCreateInfo image_view_create_info = {
 			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,   //sType;
-			NULL,                                       //pNext;
+			VK_NULL_HANDLE,                                       //pNext;
 			0,                                          //flags;
 			image,                                      //image;
 			view_type,                                  //viewType;
@@ -766,7 +776,7 @@ uint8_t shCreateImageView(
 	image_view_create_info.subresourceRange = subresource_range;
 
 	shVkResultError(
-		vkCreateImageView(device, &image_view_create_info, NULL, p_image_view),
+		vkCreateImageView(device, &image_view_create_info, VK_NULL_HANDLE, p_image_view),
 		"error creating image view", return 0
 	);
 
@@ -780,10 +790,10 @@ uint8_t shCreateSwapchainImageViews(
 	VkImage*     p_swapchain_images,
 	VkImageView* p_swapchain_image_views
 ) {
-	shVkError(device                  == NULL, "invalid device memory",           return 0);
+	shVkError(device                  == VK_NULL_HANDLE, "invalid device memory",           return 0);
 	shVkError(swapchain_image_count   == 0,    "invalid swapchain image count",   return 0);
-	shVkError(p_swapchain_images      == NULL, "invalid swapchain images memory", return 0);
-	shVkError(p_swapchain_image_views == NULL, "invalid swapchain image views",   return 0);
+	shVkError(p_swapchain_images      == VK_NULL_HANDLE, "invalid swapchain images memory", return 0);
+	shVkError(p_swapchain_image_views == VK_NULL_HANDLE, "invalid swapchain image views",   return 0);
 
 	for (uint32_t image_idx = 0; image_idx < swapchain_image_count; image_idx++) {
 		shCreateImageView(
@@ -805,18 +815,18 @@ uint8_t shCreateCommandPool(
 	uint32_t       queue_family_index,
 	VkCommandPool* p_cmd_pool
 ) {
-	shVkError(device     == NULL, "invalid device memory",       return 0);
-	shVkError(p_cmd_pool == NULL, "invalid command pool memory", return 0);
+	shVkError(device     == VK_NULL_HANDLE, "invalid device memory",       return 0);
+	shVkError(p_cmd_pool == VK_NULL_HANDLE, "invalid command pool memory", return 0);
 
 	VkCommandPoolCreateInfo cmd_pool_create_info = {
 		VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,			//sType;
-		NULL,												//pNext;
+		VK_NULL_HANDLE,												//pNext;
 		VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,	//flags;
 		queue_family_index									//queueFamilyIndex;
 	};
 	
 	shVkResultError(
-		vkCreateCommandPool(device, &cmd_pool_create_info, NULL, p_cmd_pool),
+		vkCreateCommandPool(device, &cmd_pool_create_info, VK_NULL_HANDLE, p_cmd_pool),
 		"error creating command pool", return 0
 	);
 
@@ -829,13 +839,13 @@ uint8_t shAllocateCommandBuffers(
 	uint32_t         cmd_buffer_count,
 	VkCommandBuffer* p_cmd_buffer
 ) {
-	shVkError(device       == NULL, "invalid device memory",         return 0);
-	shVkError(cmd_pool     == NULL, "invalid command pool memory",   return 0);
-	shVkError(p_cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(device       == VK_NULL_HANDLE, "invalid device memory",         return 0);
+	shVkError(cmd_pool     == VK_NULL_HANDLE, "invalid command pool memory",   return 0);
+	shVkError(p_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 	
 	VkCommandBufferAllocateInfo cmd_buffer_allocate_info = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,	//sType;
-		NULL,											//pNext;
+		VK_NULL_HANDLE,											//pNext;
 		cmd_pool,										//commandPool;
 		VK_COMMAND_BUFFER_LEVEL_PRIMARY,				//level;
 		cmd_buffer_count								//commandBufferCount;
@@ -861,7 +871,7 @@ uint8_t shCreateRenderpassAttachment(
 	VkImageLayout            final_layout,
 	VkAttachmentDescription* p_attachment_description
 ) {
-	shVkError(p_attachment_description == NULL, "invalid attachment description memory", return 0);
+	shVkError(p_attachment_description == VK_NULL_HANDLE, "invalid attachment description memory", return 0);
 	
 	VkAttachmentDescription attachment_description = {
 		0,                       //flags;
@@ -885,7 +895,7 @@ uint8_t shCreateRenderpassAttachmentReference(
 	VkImageLayout          layout,
 	VkAttachmentReference* p_attachment_reference
 ) {
-	shVkError(p_attachment_reference == NULL, "invalid attachment reference memory", return 0);
+	shVkError(p_attachment_reference == VK_NULL_HANDLE, "invalid attachment reference memory", return 0);
 
 	VkAttachmentReference attachment_reference = {
 		attachment_idx, //attachment;
@@ -909,20 +919,20 @@ uint8_t shCreateSubpass(
 	uint32_t*              p_preserve_attachments,
 	VkSubpassDescription*  p_subpass
 ) {
-	shVkError(p_subpass == NULL, "invalid subpass memory", return 0);
+	shVkError(p_subpass == VK_NULL_HANDLE, "invalid subpass memory", return 0);
 
 	shVkError(
-		input_attachment_count != 0 && p_input_attachments_reference == NULL,
+		input_attachment_count != 0 && p_input_attachments_reference == VK_NULL_HANDLE,
 		"invalid input attachment memory",
 		return 0
 	);
 	shVkError(
-		color_attachment_count != 0 && p_color_attachments_reference == NULL,
+		color_attachment_count != 0 && p_color_attachments_reference == VK_NULL_HANDLE,
 		"invalid color attachment memory",
 		return 0
 	);
 	shVkError(
-		preserve_attachment_count != 0 && p_preserve_attachments == NULL,
+		preserve_attachment_count != 0 && p_preserve_attachments == VK_NULL_HANDLE,
 		"invalid color attachment memory",
 		return 0
 	);
@@ -940,7 +950,7 @@ uint8_t shCreateSubpass(
 		p_preserve_attachments                //pPreserveAttachments;
 	};
 
-	if (p_subpass != NULL) {
+	if (p_subpass != VK_NULL_HANDLE) {
 		(*p_subpass) = subpass_description;
 	}
 
@@ -955,27 +965,27 @@ uint8_t shCreateRenderpass(
 	VkSubpassDescription*    p_subpasses,
 	VkRenderPass*            p_renderpass
 ) {
-	shVkError(device                     == NULL,  "invalid device memory",                  return 0);
-	shVkError(attachment_count           == 0,     "invalid attachment count",               return 0);
-	shVkError(p_attachments_descriptions == NULL, "invalid attachments descriptions memory", return 0);
-	shVkError(subpass_count              == 0,     "invalid subpass count",                  return 0);
-	shVkError(p_subpasses                == NULL,  "invalid subpasses memory",               return 0);
-	shVkError(p_renderpass               == NULL,  "invalid renderpass memory",              return 0);
+	shVkError(device                     == VK_NULL_HANDLE,  "invalid device memory",                   return 0);
+	shVkError(attachment_count           == 0,               "invalid attachment count",                return 0);
+	shVkError(p_attachments_descriptions == VK_NULL_HANDLE,  "invalid attachments descriptions memory", return 0);
+	shVkError(subpass_count              == 0,               "invalid subpass count",                   return 0);
+	shVkError(p_subpasses                == VK_NULL_HANDLE,  "invalid subpasses memory",                return 0);
+	shVkError(p_renderpass               == VK_NULL_HANDLE,  "invalid renderpass memory",               return 0);
 
 	VkRenderPassCreateInfo renderpass_create_info = {
 		VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, //sType;
-		NULL,                                      //pNext;
+		VK_NULL_HANDLE,                            //pNext;
 		0,                                         //flags;
         attachment_count,                          //attachmentCount;
         p_attachments_descriptions,                //pAttachments;
         subpass_count,                             //subpassCount;
         p_subpasses,                               //pSubpasses;
         0,                                         //dependencyCount;
-        NULL                                       //pDependencies;
+        VK_NULL_HANDLE                             //pDependencies;
 	};
 
 	shVkResultError(
-		vkCreateRenderPass(device, &renderpass_create_info, NULL, p_renderpass),
+		vkCreateRenderPass(device, &renderpass_create_info, VK_NULL_HANDLE, p_renderpass),
 		"failed creating renderpass",
 		return 0
 	);
@@ -993,12 +1003,12 @@ uint8_t shCreateFramebuffer(
 	uint32_t       z,
 	VkFramebuffer* p_framebuffer
 ) {
-	shVkError(device           == NULL, "invalid device memory",      return 0);
-	shVkError(renderpass       == NULL, "invalid renderpass memory",  return 0);
+	shVkError(device           == VK_NULL_HANDLE, "invalid device memory",      return 0);
+	shVkError(renderpass       == VK_NULL_HANDLE, "invalid renderpass memory",  return 0);
 	shVkError(x                == 0,    "invalid framebuffer x size", return 0);
 	shVkError(y                == 0,    "invalid framebuffer y size", return 0);
 	shVkError(z                == 0,    "invalid framebuffer z size", return 0);
-	shVkError(p_framebuffer    == NULL, "invalid framebuffer memory", return 0);
+	shVkError(p_framebuffer    == VK_NULL_HANDLE, "invalid framebuffer memory", return 0);
 
 	VkFramebufferCreateFlags flags = 0;
 
@@ -1006,14 +1016,14 @@ uint8_t shCreateFramebuffer(
 		flags = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT;
 	}
 
-	shVkError(image_view_count != 0 && p_image_views == NULL, 
+	shVkError(image_view_count != 0 && p_image_views == VK_NULL_HANDLE, 
 		"invalid image views memory", 
 		return 0
 	);
 
 	VkFramebufferCreateInfo framebuffer_create_info = {
 		VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, //sType;
-		NULL,                                      //pNext;
+		VK_NULL_HANDLE,                                      //pNext;
 		flags,                                     //flags;
 		renderpass,                                //renderPass;
 		image_view_count,                          //attachmentCount;
@@ -1024,7 +1034,7 @@ uint8_t shCreateFramebuffer(
 	};
 	
 	shVkResultError(
-		vkCreateFramebuffer(device, &framebuffer_create_info, NULL, p_framebuffer),
+		vkCreateFramebuffer(device, &framebuffer_create_info, VK_NULL_HANDLE, p_framebuffer),
 		"failed creating framebuffer",
 		return 0
 	);
@@ -1035,7 +1045,7 @@ uint8_t shCreateFramebuffer(
 uint8_t shWaitDeviceIdle(
 	VkDevice device
 ) {
-	shVkError(device == NULL, "invalid device memory", return 0);
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory", return 0);
 
 	shVkResultError(
 		vkDeviceWaitIdle(device),
@@ -1050,8 +1060,8 @@ uint8_t shDestroySwapchain(
 	VkDevice       device, 
 	VkSwapchainKHR swapchain
 ) {
-	shVkError(device    == NULL, "invalid device memory",    return 0);
-	shVkError(swapchain == NULL, "invalid swapchain memory", return 0);
+	shVkError(device    == VK_NULL_HANDLE, "invalid device memory",    return 0);
+	shVkError(swapchain == VK_NULL_HANDLE, "invalid swapchain memory", return 0);
 	
 	shVkError(
 		shWaitDeviceIdle(device) == 0, 
@@ -1059,7 +1069,7 @@ uint8_t shDestroySwapchain(
 		return 0
 	);
 
-	vkDestroySwapchainKHR(device, swapchain, NULL);
+	vkDestroySwapchainKHR(device, swapchain, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -1069,9 +1079,9 @@ uint8_t shDestroyFramebuffers(
 	uint32_t       framebuffer_count, 
 	VkFramebuffer* p_framebuffers
 ) {
-	shVkError(device            == NULL, "invalid device memory",       return 0);
+	shVkError(device            == VK_NULL_HANDLE, "invalid device memory",       return 0);
 	shVkError(framebuffer_count == 0,    "invalid framebuffer count",   return 0);
-	shVkError(p_framebuffers    == NULL, "invalid framebuffers memory", return 0);
+	shVkError(p_framebuffers    == VK_NULL_HANDLE, "invalid framebuffers memory", return 0);
 
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1080,7 +1090,7 @@ uint8_t shDestroyFramebuffers(
 	);
 
 	for (uint32_t framebuffer_idx = 0; framebuffer_idx < framebuffer_count; framebuffer_idx++) {
-		vkDestroyFramebuffer(device, p_framebuffers[framebuffer_idx], NULL);
+		vkDestroyFramebuffer(device, p_framebuffers[framebuffer_idx], VK_NULL_HANDLE);
 	}
 
 	return 1;
@@ -1091,9 +1101,9 @@ uint8_t shDestroyImageViews(
 	uint32_t     image_view_count,
 	VkImageView* p_image_views
 ) {
-	shVkError(device           == NULL, "invalid device memory",      return 0);
+	shVkError(device           == VK_NULL_HANDLE, "invalid device memory",      return 0);
 	shVkError(image_view_count == 0,    "invalid image view count",   return 0);
-	shVkError(p_image_views    == NULL, "invalid image views memory", return 0);
+	shVkError(p_image_views    == VK_NULL_HANDLE, "invalid image views memory", return 0);
 
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1102,7 +1112,7 @@ uint8_t shDestroyImageViews(
 	);
 
 	for (uint32_t image_view_idx = 0; image_view_idx < image_view_count; image_view_idx++) {
-		vkDestroyImageView(device, p_image_views[image_view_idx], NULL);
+		vkDestroyImageView(device, p_image_views[image_view_idx], VK_NULL_HANDLE);
 	}
 
 	return 1;
@@ -1112,10 +1122,10 @@ uint8_t shDestroySurface(
 	VkInstance instance,
 	VkSurfaceKHR surface
 ) {
-	shVkError(instance == NULL, "invalid instance memory",  return 0);
-	shVkError(surface  == NULL, "invalid surface memory",   return 0);
+	shVkError(instance == VK_NULL_HANDLE, "invalid instance memory",  return 0);
+	shVkError(surface  == VK_NULL_HANDLE, "invalid surface memory",   return 0);
 	
-	vkDestroySurfaceKHR(instance, surface, NULL);
+	vkDestroySurfaceKHR(instance, surface, VK_NULL_HANDLE);
 	
 	return 1;
 }
@@ -1126,9 +1136,9 @@ uint8_t shDestroyCommandBuffers(
 	uint32_t         cmd_buffer_count,
 	VkCommandBuffer* p_cmd_buffers
 ) {
-	shVkError(device           == NULL, "invalid device memory",          return 0);
+	shVkError(device           == VK_NULL_HANDLE, "invalid device memory",          return 0);
 	shVkError(cmd_buffer_count == 0,    "invalid command buffer count",   return 0);
-	shVkError(p_cmd_buffers    == NULL, "invalid command buffers memory", return 0);
+	shVkError(p_cmd_buffers    == VK_NULL_HANDLE, "invalid command buffers memory", return 0);
 	
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1145,8 +1155,8 @@ uint8_t shDestroyCommandPool(
 	VkDevice      device,
 	VkCommandPool cmd_pool
 ) {
-	shVkError(device   == NULL, "invalid device memory",       return 0);
-	shVkError(cmd_pool == NULL, "invalid command pool memory", return 0);
+	shVkError(device   == VK_NULL_HANDLE, "invalid device memory",       return 0);
+	shVkError(cmd_pool == VK_NULL_HANDLE, "invalid command pool memory", return 0);
 
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1154,7 +1164,7 @@ uint8_t shDestroyCommandPool(
 		return 0
 	);
 
-	vkDestroyCommandPool(device, cmd_pool, NULL);
+	vkDestroyCommandPool(device, cmd_pool, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -1163,8 +1173,8 @@ uint8_t shDestroyRenderpass(
 	VkDevice device, 
 	VkRenderPass render_pass
 ) {
-	shVkError(device      == NULL, "invalid device memory",      return 0);
-	shVkError(render_pass == NULL, "invalid render pass memory", return 0);
+	shVkError(device      == VK_NULL_HANDLE, "invalid device memory",      return 0);
+	shVkError(render_pass == VK_NULL_HANDLE, "invalid render pass memory", return 0);
 	
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1172,7 +1182,7 @@ uint8_t shDestroyRenderpass(
 		return 0
 	);
 
-	vkDestroyRenderPass(device, render_pass, NULL);
+	vkDestroyRenderPass(device, render_pass, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -1180,7 +1190,7 @@ uint8_t shDestroyRenderpass(
 uint8_t shDestroyDevice(
 	VkDevice device
 ) {
-	shVkError(device == NULL, "invalid device memory", return 0);
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory", return 0);
 	
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1188,7 +1198,7 @@ uint8_t shDestroyDevice(
 		return 0
 	);
 
-	vkDestroyDevice(device, NULL);
+	vkDestroyDevice(device, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -1196,9 +1206,9 @@ uint8_t shDestroyDevice(
 uint8_t shDestroyInstance(
 	VkInstance instance
 ) {
-	shVkError(instance == NULL, "invalid instance memory", return 0);
+	shVkError(instance == VK_NULL_HANDLE, "invalid instance memory", return 0);
 
-	vkDestroyInstance(instance, NULL);
+	vkDestroyInstance(instance, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -1206,7 +1216,7 @@ uint8_t shDestroyInstance(
 uint8_t shResetCommandBuffer(
 	VkCommandBuffer cmd_buffer
 ) {
-	shVkError(cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 
 	shVkResultError(
 		vkResetCommandBuffer(cmd_buffer, 0),
@@ -1220,13 +1230,13 @@ uint8_t shResetCommandBuffer(
 uint8_t shBeginCommandBuffer(
 	VkCommandBuffer cmd_buffer
 ) {
-	shVkError(cmd_buffer == NULL, "invalid command buffer", return 0);
+	shVkError(cmd_buffer == VK_NULL_HANDLE, "invalid command buffer", return 0);
 
 	VkCommandBufferBeginInfo command_buffer_begin_info = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		NULL,
+		VK_NULL_HANDLE,
 		0,
-		NULL
+		VK_NULL_HANDLE
 	};
 
 	shVkResultError(
@@ -1241,7 +1251,7 @@ uint8_t shBeginCommandBuffer(
 uint8_t shEndCommandBuffer(
 	VkCommandBuffer cmd_buffer
 ) {
-	shVkError(cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 
 	shVkResultError(
 		vkEndCommandBuffer(cmd_buffer),
@@ -1258,7 +1268,7 @@ uint8_t shCmdDispatch(
 	uint32_t        group_count_y,
 	uint32_t        group_count_z
 ) {
-	shVkError(cmd_buffer    == NULL, "invalid command buffer memory", return 0);
+	shVkError(cmd_buffer    == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 	shVkError(group_count_x == 0,    "invalid x group count",         return 0);
 	shVkError(group_count_y == 0,    "invalid y group count",         return 0);
 	shVkError(group_count_z == 0,    "invalid z group count",         return 0);
@@ -1279,12 +1289,12 @@ uint8_t shQueueSubmit(
 	uint32_t             signal_semaphore_count,
 	VkSemaphore*         p_signal_semaphores
 ) {
-	shVkError(p_cmd_buffers == NULL,	"invalid command buffers memory",	return 0);
-	shVkError(queue == NULL,			"invalid queue",					return 0);
+	shVkError(p_cmd_buffers == VK_NULL_HANDLE,	"invalid command buffers memory",	return 0);
+	shVkError(queue == VK_NULL_HANDLE,			"invalid queue",					return 0);
 
 	VkSubmitInfo submit_info = {
 			VK_STRUCTURE_TYPE_SUBMIT_INFO, //sType;
-			NULL,                          //pNext;
+			VK_NULL_HANDLE,                          //pNext;
 			semaphores_to_wait_for_count,  //waitSemaphoreCount;
 			p_semaphores_to_wait_for,      //pWaitSemaphores;
 			&wait_stage,                   //pWaitDstStageMask;
@@ -1303,6 +1313,16 @@ uint8_t shQueueSubmit(
 	return 1;
 }
 
+uint8_t shWaitForQueue(
+	VkQueue queue
+) {
+	shVkError(queue == VK_NULL_HANDLE, "invalid queue memory", return 0);
+
+	vkQueueWaitIdle(queue);
+
+	return 1;
+}
+
 
 uint8_t shCreateFences(
 	VkDevice  device,
@@ -1310,21 +1330,21 @@ uint8_t shCreateFences(
 	uint8_t   signaled,
 	VkFence*  p_fences
 ) {
-	shVkError(device      == NULL, "invalid device memory", return 0);
+	shVkError(device      == VK_NULL_HANDLE, "invalid device memory", return 0);
 	shVkError(fence_count == 0,    "invalid fence count",   return 0);
-	shVkError(p_fences    == NULL, "invalid fences memory", return 0);
+	shVkError(p_fences    == VK_NULL_HANDLE, "invalid fences memory", return 0);
 
 	VkFenceCreateFlags flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 
 	VkFenceCreateInfo fence_create_info = {
 		VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, //sType;
-		NULL,                                //pNext;
+		VK_NULL_HANDLE,                                //pNext;
 		flags                                //flags;
 	};
 
 	for (uint32_t fence_idx = 0; fence_idx < fence_count; fence_idx++) {
 		shVkResultError(
-			vkCreateFence(device, &fence_create_info, NULL, &p_fences[fence_idx]),
+			vkCreateFence(device, &fence_create_info, VK_NULL_HANDLE, &p_fences[fence_idx]),
 			"error creating fence", return 0
 		);
 	}
@@ -1337,19 +1357,19 @@ uint8_t shCreateSemaphores(
 	uint32_t     semaphore_count,
 	VkSemaphore* p_semaphores
 ) {
-	shVkError(device          == NULL, "invalid device memory",     return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",     return 0);
 	shVkError(semaphore_count == 0,    "invalid semaphore count",   return 0);
-	shVkError(p_semaphores    == NULL, "invalid semaphores memory", return 0);
+	shVkError(p_semaphores    == VK_NULL_HANDLE, "invalid semaphores memory", return 0);
 
 	VkSemaphoreCreateInfo semaphore_create_info = {
 		VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, //sType;
-		NULL,                                    //pNext;
+		VK_NULL_HANDLE,                                    //pNext;
 		0                                        //flags;
 	};
 
 	for (uint32_t semaphore_idx = 0; semaphore_idx < semaphore_count; semaphore_idx++) {
 		shVkResultError(
-			vkCreateSemaphore(device, &semaphore_create_info, NULL, &p_semaphores[semaphore_idx]),
+			vkCreateSemaphore(device, &semaphore_create_info, VK_NULL_HANDLE, &p_semaphores[semaphore_idx]),
 			"error creating render semaphore", return 0
 		);
 	}
@@ -1362,9 +1382,9 @@ uint8_t shDestroyFences(
 	uint32_t  fence_count,
 	VkFence*  p_fences
 ) {
-	shVkError(device      == NULL, "invalid device memory", return 0);
+	shVkError(device      == VK_NULL_HANDLE, "invalid device memory", return 0);
 	shVkError(fence_count == 0,    "invalid fence count",   return 0);
-	shVkError(p_fences    == NULL, "invalid fences memory", return 0);
+	shVkError(p_fences    == VK_NULL_HANDLE, "invalid fences memory", return 0);
 
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1373,7 +1393,7 @@ uint8_t shDestroyFences(
 	);
 
 	for (uint32_t fence_idx = 0; fence_idx < fence_count; fence_idx++) {
-		vkDestroyFence(device, p_fences[fence_idx], NULL);
+		vkDestroyFence(device, p_fences[fence_idx], VK_NULL_HANDLE);
 	}
 
 	return 1;
@@ -1384,9 +1404,9 @@ uint8_t shDestroySemaphores(
 	uint32_t      semaphore_count,
 	VkSemaphore*  p_semaphores
 ) {
-	shVkError(device          == NULL, "invalid device memory",     return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",     return 0);
 	shVkError(semaphore_count == 0,    "invalid semaphore count",   return 0);
-	shVkError(p_semaphores    == NULL, "invalid semaphores memory", return 0);
+	shVkError(p_semaphores    == VK_NULL_HANDLE, "invalid semaphores memory", return 0);
 
 	shVkError(
 		shWaitDeviceIdle(device) == 0,
@@ -1395,7 +1415,7 @@ uint8_t shDestroySemaphores(
 	);
 
 	for (uint32_t semaphore_idx = 0; semaphore_idx < semaphore_count; semaphore_idx++) {
-		vkDestroySemaphore(device, p_semaphores[semaphore_idx], NULL);
+		vkDestroySemaphore(device, p_semaphores[semaphore_idx], VK_NULL_HANDLE);
 	}
 
 	return 1;
@@ -1406,9 +1426,9 @@ uint8_t shResetFences(
 	uint32_t fence_count,
 	VkFence* p_fences
 ) {
-	shVkError(device      == NULL, "invalid command buffer memory", return 0);
+	shVkError(device      == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 	shVkError(fence_count == 0,    "invalid fence count",           return 0);
-	shVkError(p_fences    == NULL, "invalid fences memory",         return 0);
+	shVkError(p_fences    == VK_NULL_HANDLE, "invalid fences memory",         return 0);
 
 	shVkResultError(
 		vkResetFences(device, fence_count, p_fences),
@@ -1426,9 +1446,9 @@ uint8_t shWaitForFences(
 	uint8_t  wait_for_all,
 	uint64_t timeout_ns
 ) {
-	shVkError(device      == NULL, "invalid command buffer memory", return 0);
+	shVkError(device      == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 	shVkError(fence_count == 0,    "invalid fence count",           return 0);
-	shVkError(p_fences    == NULL, "invalid fences memory",         return 0);
+	shVkError(p_fences    == VK_NULL_HANDLE, "invalid fences memory",         return 0);
 
 	shVkResultError(
 		vkWaitForFences(device, fence_count, p_fences, (VkBool32)wait_for_all, timeout_ns),
@@ -1447,14 +1467,14 @@ uint8_t shWaitForSemaphores(
 	uint64_t     timeout_ns,
 	uint64_t*    p_semaphores_values
 ) {
-	shVkError(device              == NULL, "invalid command buffer memory",    return 0);
+	shVkError(device              == VK_NULL_HANDLE, "invalid command buffer memory",    return 0);
 	shVkError(semaphore_count     == 0,    "invalid semaphore count",          return 0);
-	shVkError(p_semaphores        == NULL, "invalid semaphores memory",        return 0);
-	shVkError(p_semaphores_values == NULL, "invalid semaphores values memory", return 0);
+	shVkError(p_semaphores        == VK_NULL_HANDLE, "invalid semaphores memory",        return 0);
+	shVkError(p_semaphores_values == VK_NULL_HANDLE, "invalid semaphores values memory", return 0);
 
 	VkSemaphoreWaitInfo semaphore_wait_info = {
 		VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO,
-		NULL,
+		VK_NULL_HANDLE,
 		wait_for_all ? 0 : VK_SEMAPHORE_WAIT_ANY_BIT,
 		semaphore_count,
 		p_semaphores,
@@ -1478,12 +1498,12 @@ uint8_t shAcquireSwapchainImage(
 	VkFence        acquired_signal_fence,
 	uint32_t*      p_swapchain_image_index
 ) {
-	shVkError(device                    == NULL, "invalid command buffer memory",        return 0);
-	shVkError(p_swapchain_image_index   == NULL, "invalid swapchain image index memory", return 0);
+	shVkError(device                    == VK_NULL_HANDLE, "invalid command buffer memory",        return 0);
+	shVkError(p_swapchain_image_index   == VK_NULL_HANDLE, "invalid swapchain image index memory", return 0);
 
 	shVkError(
-		acquired_signal_semaphore == NULL && acquired_signal_fence == NULL, 
-		"semaphore and fence are both null", 
+		acquired_signal_semaphore == VK_NULL_HANDLE && acquired_signal_fence == VK_NULL_HANDLE, 
+		"semaphore and fence are both VK_NULL_HANDLE", 
 		return 0
 	);
 
@@ -1514,14 +1534,14 @@ uint8_t shBeginRenderpass(
 	VkClearValue*      p_clear_values,
 	VkFramebuffer      framebuffer
 ) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
-	shVkError(renderpass          == NULL, "invalid renderpass memory",     return 0);
-	shVkError(framebuffer         == NULL, "invalid framebuffer memory",    return 0);
+	shVkError(graphics_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
+	shVkError(renderpass          == VK_NULL_HANDLE, "invalid renderpass memory",     return 0);
+	shVkError(framebuffer         == VK_NULL_HANDLE, "invalid framebuffer memory",    return 0);
 	shVkError(render_size_x       == 0,    "invalid render size x",         return 0);
 	shVkError(render_size_y       == 0,    "invalid render size y",         return 0);
 
 	shVkError(
-		clear_value_count != 0 && p_clear_values == NULL,
+		clear_value_count != 0 && p_clear_values == VK_NULL_HANDLE,
 		"invalid framebuffer attachments clear values memory",
 		return 0
 	);
@@ -1533,7 +1553,7 @@ uint8_t shBeginRenderpass(
 
 	VkRenderPassBeginInfo renderpass_begin_info = {
 		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, //sType;
-		NULL,                                     //pNext;
+		VK_NULL_HANDLE,                                     //pNext;
 		renderpass,                               //renderPass;
 		framebuffer,                              //framebuffer;
 		render_area,                              //renderArea;
@@ -1553,7 +1573,7 @@ uint8_t shBeginRenderpass(
 uint8_t shEndRenderpass(
 	VkCommandBuffer graphics_cmd_buffer
 ) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(graphics_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 
 	vkCmdEndRenderPass(graphics_cmd_buffer);
 
@@ -1567,7 +1587,7 @@ uint8_t shDraw(
 	uint32_t        instance_count,
 	uint32_t        first_instance
 ) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(graphics_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 
 	vkCmdDraw(
 		graphics_cmd_buffer,
@@ -1588,7 +1608,7 @@ uint8_t shDrawIndexed(
 	int32_t         vertex_offset,
 	uint32_t        first_instance
 ) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(graphics_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 
 	vkCmdDrawIndexed(
 		graphics_cmd_buffer, 
@@ -1609,14 +1629,14 @@ uint8_t shQueuePresentSwapchainImage(
 	VkSwapchainKHR swapchain,
 	uint32_t       swapchain_image_idx
 ) {
-	shVkError(present_queue == NULL, "invalid present queue memory", return 0);
-	shVkError(swapchain == NULL,     "invalid swapchain memory",     return 0);
+	shVkError(present_queue == VK_NULL_HANDLE, "invalid present queue memory", return 0);
+	shVkError(swapchain == VK_NULL_HANDLE,     "invalid swapchain memory",     return 0);
 
 	VkResult swapchain_result = VK_SUCCESS;
 
 	VkPresentInfoKHR present_info = {
 		VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		NULL,
+		VK_NULL_HANDLE,
 		semaphores_to_wait_for_count,
 		p_semaphores_to_wait_for,
 		1,
@@ -1648,23 +1668,23 @@ uint8_t shCreateBuffer(
 	VkSharingMode      sharing_mode,
 	VkBuffer*          p_buffer
 ) {
-	shVkError(device   == NULL, "invalid device memory", return 0);
-	shVkError(p_buffer == NULL, "invalid arguments",     return 0);
+	shVkError(device   == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(p_buffer == VK_NULL_HANDLE, "invalid arguments",     return 0);
 	shVkError(size     == 0,    "invalid buffer size",   return 0);
 
 	VkBufferCreateInfo buffer_create_info = {
 		VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, //sType;
-		NULL,                                 //pNext;
+		VK_NULL_HANDLE,                                 //pNext;
 		0,                                    //flags;
 		(VkDeviceSize)size,                   //size;
 		usage,                                //usage;
 		sharing_mode,                         //sharingMode;
 		0,                                    //queueFamilyIndexCount;
-		NULL                                  //pQueueFamilyIndices;
+		VK_NULL_HANDLE                                  //pQueueFamilyIndices;
 	};
 
 	shVkResultError(
-		vkCreateBuffer(device, &buffer_create_info, NULL, p_buffer),
+		vkCreateBuffer(device, &buffer_create_info, VK_NULL_HANDLE, p_buffer),
 		"error creating buffer", 
 		return 0
 	);
@@ -1679,10 +1699,10 @@ uint8_t shAllocateBufferMemory(
 	VkMemoryPropertyFlags property_flags,
 	VkDeviceMemory*       p_memory
 ) {
-	shVkError(device			== NULL, "invalid device handle",			return 0);
-	shVkError(physical_device	== NULL, "invalid physical device memory",	return 0);
-	shVkError(buffer			== NULL, "invalid buffer pointer",			return 0);
-	shVkError(p_memory			== NULL, "invalid device memory pointer",	return 0);
+	shVkError(device			== VK_NULL_HANDLE, "invalid device handle",			return 0);
+	shVkError(physical_device	== VK_NULL_HANDLE, "invalid physical device memory",	return 0);
+	shVkError(buffer			== VK_NULL_HANDLE, "invalid buffer pointer",			return 0);
+	shVkError(p_memory			== VK_NULL_HANDLE, "invalid device memory pointer",	return 0);
 
 	uint32_t memory_type_index = 0;
 	shGetMemoryType(device, physical_device, property_flags, &memory_type_index);
@@ -1692,13 +1712,13 @@ uint8_t shAllocateBufferMemory(
 
 	VkMemoryAllocateInfo memory_allocate_info = {
 		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,	//sType;
-		NULL,									//pNext;
+		VK_NULL_HANDLE,									//pNext;
 		memory_requirements.size,				//allocationSize;
 		memory_type_index						//memoryTypeIndex;
 	};
 
 	shVkResultError(
-		vkAllocateMemory(device, &memory_allocate_info, NULL, p_memory),
+		vkAllocateMemory(device, &memory_allocate_info, VK_NULL_HANDLE, p_memory),
 		"error allocating memory", 
 		return 0
 	);
@@ -1714,10 +1734,10 @@ uint8_t shCopyBuffer(
 	uint32_t        size,
 	VkBuffer        dst_buffer
 ) {
-	shVkError(transfer_cmd_buffer == NULL, "invalid command buffer",     return 0);
-	shVkError(src_buffer          == NULL, "invalid source buffer",      return 0);
+	shVkError(transfer_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer",     return 0);
+	shVkError(src_buffer          == VK_NULL_HANDLE, "invalid source buffer",      return 0);
 	shVkError(size                == 0,    "invalid copy size",          return 0);
-	shVkError(dst_buffer          == NULL, "invalid destination buffer", return 0);
+	shVkError(dst_buffer          == VK_NULL_HANDLE, "invalid destination buffer", return 0);
 
 
 	VkBufferCopy region = {
@@ -1736,6 +1756,51 @@ uint8_t shCopyBuffer(
 	return 1;
 }
 
+//uint8_t shCopyBufferToImage(
+//	VkCommandBuffer transfer_cmd_buffer,
+//	VkBuffer        src_buffer,
+//	uint32_t        src_offset,
+//	uint32_t        dst_offset,
+//	uint32_t        width,
+//	uint32_t        height,
+//	VkImageAspectFlags dst_image_aspect_mask,
+//	uint32_t        dst_image_mip_level,
+//	VkImageLayout   dst_image_layout,
+//	VkImage         dst_image
+//) {
+//	shVkError(transfer_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer",    return 0);
+//	shVkError(src_buffer          == VK_NULL_HANDLE, "invalid source buffer",     return 0);
+//	shVkError(size                == 0,              "invalid copy size",         return 0);
+//	shVkError(dst_image           == VK_NULL_HANDLE, "invalid destination image", return 0);
+//
+//	VkImageSubresource image_subresource = {
+//		dst_image_aspect_mask,//aspectMask
+//		dst_image_mip_level,//mipLevel
+//		//arrayLayer
+//	};
+//
+//	VkBufferImageCopy region = {
+//		src_offset,//bufferOffset
+//		0,//bufferRowLength
+//		0,//bufferImageHeight
+//				   //imageSubresource
+//				   //imageOffset
+//				   //imageExtent
+//
+//
+//	};
+//	vkCmdCopyBufferToImage(
+//		transfer_cmd_buffer, 
+//		src_buffer, 
+//		dst_image,
+//		dst_image_layout,
+//		1, 
+//		&region
+//	);
+//
+//	return 1;
+//}
+
 uint8_t shCopyBufferRegions(
 	VkCommandBuffer transfer_cmd_buffer,
 	VkBuffer        src_buffer,
@@ -1745,13 +1810,13 @@ uint8_t shCopyBufferRegions(
 	uint32_t*       p_sizes,
 	VkBuffer        dst_buffer
 ) {
-	shVkError(transfer_cmd_buffer == NULL, "invalid command buffer",     return 0);
-	shVkError(src_buffer          == NULL, "invalid source buffer",      return 0);
+	shVkError(transfer_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer",     return 0);
+	shVkError(src_buffer          == VK_NULL_HANDLE, "invalid source buffer",      return 0);
 	shVkError(region_count        == 0,    "invalid region count",       return 0);
-	shVkError(p_src_offsets       == NULL, "invalid src offsets memory", return 0);
-	shVkError(p_dst_offsets       == NULL, "invalid dst offsets memory", return 0);
-	shVkError(p_sizes             == NULL, "invalid copy sizes memory",  return 0);
-	shVkError(dst_buffer          == NULL, "invalid destination buffer", return 0);
+	shVkError(p_src_offsets       == VK_NULL_HANDLE, "invalid src offsets memory", return 0);
+	shVkError(p_dst_offsets       == VK_NULL_HANDLE, "invalid dst offsets memory", return 0);
+	shVkError(p_sizes             == VK_NULL_HANDLE, "invalid copy sizes memory",  return 0);
+	shVkError(dst_buffer          == VK_NULL_HANDLE, "invalid destination buffer", return 0);
 
 	VkBufferCopy regions[SH_MAX_STACK_BUFFER_REGION_COUNT] = { 0 };
 
@@ -1783,9 +1848,9 @@ uint8_t shBindBufferMemory(
 	uint32_t       offset,
 	VkDeviceMemory buffer_memory
 ) {
-	shVkError(device == NULL,			"invalid device memory", return 0);
-	shVkError(buffer == NULL,			"invalid buffer handle", return 0);
-	shVkError(buffer_memory == NULL,	"invalid buffer memory", return 0);
+	shVkError(device == VK_NULL_HANDLE,			"invalid device memory", return 0);
+	shVkError(buffer == VK_NULL_HANDLE,			"invalid buffer handle", return 0);
+	shVkError(buffer_memory == VK_NULL_HANDLE,	"invalid buffer memory", return 0);
 	
 	shVkResultError(
 		vkBindBufferMemory(device, buffer, buffer_memory, offset),
@@ -1801,9 +1866,9 @@ uint8_t shGetMemoryType(
 	VkMemoryPropertyFlags property_flags,
 	uint32_t*             p_memory_type_index
 ) {
-	shVkError(device              == NULL, "invalid device memory",             return 0);
-	shVkError(physical_device     == NULL, "invalid physical device memory",    return 0);
-	shVkError(p_memory_type_index == NULL, "invalid memory type index pointer", return 0);
+	shVkError(device              == VK_NULL_HANDLE, "invalid device memory",             return 0);
+	shVkError(physical_device     == VK_NULL_HANDLE, "invalid physical device memory",    return 0);
+	shVkError(p_memory_type_index == VK_NULL_HANDLE, "invalid memory type index pointer", return 0);
 
 	VkPhysicalDeviceMemoryProperties memory_properties;
 	vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
@@ -1833,10 +1898,10 @@ uint8_t shReadMemory(
 	uint32_t       data_size,
 	void*          p_data
 ) {
-	shVkError(device    == NULL, "invalid device memory", return 0);
-	shVkError(memory    == NULL, "invalid memory",        return 0);
+	shVkError(device    == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(memory    == VK_NULL_HANDLE, "invalid memory",        return 0);
 	shVkError(data_size == 0,    "invalid data size",     return 0);
-	shVkError(p_data == NULL,    "invalid memory buffer", return 0);
+	shVkError(p_data == VK_NULL_HANDLE,    "invalid memory buffer", return 0);
 
 	void* data;
 	shVkResultError(
@@ -1856,10 +1921,10 @@ uint8_t shWriteMemory(
 	uint32_t       data_size,
 	void*          p_data
 ) {
-	shVkError(device == NULL, "invalid device memory", return 0);
-	shVkError(memory == NULL, "invalid memory",        return 0);
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(memory == VK_NULL_HANDLE, "invalid memory",        return 0);
 	shVkError(data_size == 0, "invalid data size",     return 0);
-	shVkError(p_data == NULL, "invalid memory buffer", return 0);
+	shVkError(p_data == VK_NULL_HANDLE, "invalid memory buffer", return 0);
 
 	void* data;
 	shVkResultError(
@@ -1877,17 +1942,17 @@ uint8_t shClearBufferMemory(
 	VkBuffer       buffer,
 	VkDeviceMemory memory
 ) {
-	shVkError(device == NULL, "invalid device handle", return 0);
-	shVkError(buffer == NULL, "invalid buffer memory", return 0);
-	shVkError(memory == NULL, "invalid device memory", return 0);
+	shVkError(device == VK_NULL_HANDLE, "invalid device handle", return 0);
+	shVkError(buffer == VK_NULL_HANDLE, "invalid buffer memory", return 0);
+	shVkError(memory == VK_NULL_HANDLE, "invalid device memory", return 0);
 
 	shVkResultError(
 		vkDeviceWaitIdle(device),
 		"failed waiting device idle",
 		return 0
 	);
-	vkDestroyBuffer(device, buffer, NULL);
-	vkFreeMemory(device, memory, NULL);
+	vkDestroyBuffer(device, buffer, VK_NULL_HANDLE);
+	vkFreeMemory(device, memory, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -1901,40 +1966,41 @@ uint8_t shCreateImage(
 	VkFormat              format,
 	uint32_t              mip_levels,
 	VkSampleCountFlagBits sample_count,
+	VkImageTiling         image_tiling,
 	VkImageUsageFlags     usage,
 	VkSharingMode         sharing_mode,
 	VkImage*              p_image
 ) {
-	shVkError(device       == NULL, "invalid device memory",   return 0);
+	shVkError(device       == VK_NULL_HANDLE, "invalid device memory",   return 0);
 	shVkError(x            == 0,    "invalid image x size",    return 0);
 	shVkError(y            == 0,    "invalid image y size",    return 0);
 	shVkError(z            == 0,    "invalid image z size",    return 0);
 	shVkError(mip_levels   == 0,    "invalid mip level count", return 0);
 	shVkError(sample_count == 0,    "invalid sample count",    return 0);
-	shVkError(p_image      == NULL, "invalid image memory",    return 0);
+	shVkError(p_image      == VK_NULL_HANDLE, "invalid image memory",    return 0);
 
 	VkExtent3D image_extent = {
 		x, y, z
 	};
 
 	VkImageCreateInfo image_create_info = {
-		VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,	//sType;			
-		NULL,									//pNext;
-		0,										//flags;
-		type,									//imageType;
-		format,									//format;
-		image_extent,							//extent;
-		mip_levels,								//mipLevels;
-		1,										//arrayLayers;
-		sample_count,							//samples;
-		VK_IMAGE_TILING_OPTIMAL,				//tiling;
-		usage,									//usage;
-		VK_SHARING_MODE_EXCLUSIVE,				//sharingMode;
-		0,										//queueFamilyIndexCount;
-		NULL									//pQueueFamilyIndices;
+		VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, //sType;			
+		VK_NULL_HANDLE,                                //pNext;
+		0,                                   //flags;
+		type,                                //imageType;
+		format,                              //format;
+		image_extent,                        //extent;
+		mip_levels,                          //mipLevels;
+		1,                                   //arrayLayers;
+		sample_count,                        //samples;
+		image_tiling,                        //tiling;
+		usage,                               //usage;
+		VK_SHARING_MODE_EXCLUSIVE,           //sharingMode;
+		0,                                   //queueFamilyIndexCount;
+		VK_NULL_HANDLE                                 //pQueueFamilyIndices;
 	};
 	shVkResultError(
-		vkCreateImage(device, &image_create_info, NULL, p_image),
+		vkCreateImage(device, &image_create_info, VK_NULL_HANDLE, p_image),
 		"error creating image", 
 		return 0
 	);
@@ -1949,10 +2015,10 @@ uint8_t shAllocateImageMemory(
 	VkMemoryPropertyFlags memory_property_flags,
 	VkDeviceMemory*       p_image_memory
 ) {
-	shVkError(device          == NULL, "invalid device memory",    return 0);
-	shVkError(physical_device == NULL, "invalid physical device ", return 0);
-	shVkError(image           == NULL, "invalid image",            return 0);
-	shVkError(p_image_memory  == NULL, "invalid image memory",     return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",    return 0);
+	shVkError(physical_device == VK_NULL_HANDLE, "invalid physical device ", return 0);
+	shVkError(image           == VK_NULL_HANDLE, "invalid image",            return 0);
+	shVkError(p_image_memory  == VK_NULL_HANDLE, "invalid image memory",     return 0);
 
 	VkMemoryRequirements memory_requirements = { 0 };
 	vkGetImageMemoryRequirements(device, image, &memory_requirements);
@@ -1966,13 +2032,13 @@ uint8_t shAllocateImageMemory(
 
 	VkMemoryAllocateInfo memory_allocate_info = {
 		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		NULL,
+		VK_NULL_HANDLE,
 		memory_requirements.size,
 		memory_type_index
 	};
 
 	shVkResultError(
-		vkAllocateMemory(device, &memory_allocate_info, NULL, p_image_memory),
+		vkAllocateMemory(device, &memory_allocate_info, VK_NULL_HANDLE, p_image_memory),
 		"error allocating image memory",
 		return 0
 	);
@@ -1986,9 +2052,9 @@ uint8_t shBindImageMemory(
 	uint32_t       offset,
 	VkDeviceMemory image_memory
 ) {
-	shVkError(device       == NULL, "invalid device memory", return 0);
-	shVkError(image        == NULL, "invalid image",         return 0);
-	shVkError(image_memory == NULL, "invalid image memory",  return 0);
+	shVkError(device       == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(image        == VK_NULL_HANDLE, "invalid image",         return 0);
+	shVkError(image_memory == VK_NULL_HANDLE, "invalid image memory",  return 0);
 
 	shVkResultError(
 		vkBindImageMemory(device, image, image_memory, offset),
@@ -2004,9 +2070,9 @@ uint8_t shClearImageMemory(
 	VkImage        image,
 	VkDeviceMemory image_memory
 ) {
-	shVkError(device       == NULL, "invalid device memory", return 0);
-	shVkError(image        == NULL, "invalid image",         return 0);
-	shVkError(image_memory == NULL, "invalid image memory",  return 0);
+	shVkError(device       == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(image        == VK_NULL_HANDLE, "invalid image",         return 0);
+	shVkError(image_memory == VK_NULL_HANDLE, "invalid image memory",  return 0);
 
 	shVkResultError(
 		vkDeviceWaitIdle(device),
@@ -2014,8 +2080,8 @@ uint8_t shClearImageMemory(
 		return 0
 	);
 
-	vkDestroyImage(device, image, NULL);
-	vkFreeMemory(device, image_memory, NULL);
+	vkDestroyImage(device, image, VK_NULL_HANDLE);
+	vkFreeMemory(device, image_memory, VK_NULL_HANDLE);
 
 	return 0;
 }
@@ -2024,13 +2090,13 @@ uint8_t shGetMemoryBudgetProperties(
 	VkPhysicalDevice                           physical_device,
 	VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties
 ) {
-	shVkError(physical_device            == NULL, "invalid physical device memory",          return 0);
-	shVkError(p_memory_budget_properties == NULL, "invalid memory budget properties memory", return 0);
+	shVkError(physical_device            == VK_NULL_HANDLE, "invalid physical device memory",          return 0);
+	shVkError(p_memory_budget_properties == VK_NULL_HANDLE, "invalid memory budget properties memory", return 0);
 
 
 	VkPhysicalDeviceMemoryBudgetPropertiesEXT memory_budget_properties = {
 		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
-		NULL
+		VK_NULL_HANDLE
 	};
 
 	VkPhysicalDeviceMemoryProperties2 memory_properties_2 = {
@@ -2047,7 +2113,7 @@ uint8_t shGetMemoryBudgetProperties(
 		process_used_memory += (uint32_t)memory_budget_properties.heapUsage[i];
 	}
 	
-	if (p_memory_budget_properties != NULL) {
+	if (p_memory_budget_properties != VK_NULL_HANDLE) {
 		(*p_memory_budget_properties) = memory_budget_properties;
 	}
 
@@ -2061,10 +2127,10 @@ uint8_t shBindVertexBuffers(
 	VkBuffer*       p_vertex_buffers,
 	VkDeviceSize*   p_vertex_offsets
 ) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
+	shVkError(graphics_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 	shVkError(binding_count       == 0,    "invalid binding count",         return 0);
-	shVkError(p_vertex_buffers    == NULL, "invalid vertex buffers memory", return 0);
-	shVkError(p_vertex_offsets    == NULL, "invalid vertex offsets memory", return 0);
+	shVkError(p_vertex_buffers    == VK_NULL_HANDLE, "invalid vertex buffers memory", return 0);
+	shVkError(p_vertex_offsets    == VK_NULL_HANDLE, "invalid vertex offsets memory", return 0);
 
 	vkCmdBindVertexBuffers(graphics_cmd_buffer, first_binding, binding_count, p_vertex_buffers, p_vertex_offsets);
 
@@ -2076,8 +2142,8 @@ uint8_t shBindIndexBuffer(
 	uint32_t        index_offset,
 	VkBuffer        index_buffer
 ) {
-	shVkError(graphics_cmd_buffer == NULL, "invalid command buffer memory", return 0);
-	shVkError(index_buffer        == NULL, "invalid index buffer memory",   return 0);
+	shVkError(graphics_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
+	shVkError(index_buffer        == VK_NULL_HANDLE, "invalid index buffer memory",   return 0);
 
 	vkCmdBindIndexBuffer(graphics_cmd_buffer, index_buffer, index_offset, VK_INDEX_TYPE_UINT32);
 	
@@ -2092,7 +2158,7 @@ uint8_t shSetVertexBinding(
 	VkVertexInputRate                  input_rate,
 	VkVertexInputBindingDescription*   p_vertex_input_binding
 ) {
-	shVkError(p_vertex_input_binding == NULL, "invalid vertex input binding memory", return 0);
+	shVkError(p_vertex_input_binding == VK_NULL_HANDLE, "invalid vertex input binding memory", return 0);
 
 	VkVertexInputBindingDescription vertex_input_binding = {
 		binding,
@@ -2112,7 +2178,7 @@ uint8_t shSetVertexAttribute(
 	uint32_t                           offset,
 	VkVertexInputAttributeDescription* p_vertex_input_attribute
 ) {
-	shVkError(p_vertex_input_attribute == NULL, "invalid vertex input attribute memory", return 0);
+	shVkError(p_vertex_input_attribute == VK_NULL_HANDLE, "invalid vertex input attribute memory", return 0);
 	
 	VkVertexInputAttributeDescription vertex_input_attribute = {
 		location,
@@ -2135,7 +2201,7 @@ uint8_t shSetVertexInputState(
 ) {
 	VkPipelineVertexInputStateCreateInfo vertexInput = {
 		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, //sType;
-		NULL,                                                      //pNext;
+		VK_NULL_HANDLE,                                                      //pNext;
 		0,                                                         //flags;
 		vertex_binding_count,                                      //vertexBindingDescriptionCount;
 		p_vertex_bindings,                                         //pVertexBindingDescriptions;
@@ -2153,11 +2219,11 @@ uint8_t shCreateInputAssembly(
 	VkBool32                                primitive_restart_enable, 
 	VkPipelineInputAssemblyStateCreateInfo* p_input_assembly
 ) {
-	shVkError(p_input_assembly == NULL, "invalid input assembly state memory", return 0);
+	shVkError(p_input_assembly == VK_NULL_HANDLE, "invalid input assembly state memory", return 0);
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,	//sType;
-		NULL,															//pNext;
+		VK_NULL_HANDLE,															//pNext;
 		0,																//flags;
 		primitive_topology,												//topology;
 		primitive_restart_enable										//primitiveRestartEnable;
@@ -2173,11 +2239,11 @@ uint8_t shCreateRasterizer(
 	VkCullModeFlagBits                      cull_mode,
 	VkPipelineRasterizationStateCreateInfo* p_rasterizer
 ) {
-	shVkError(p_rasterizer == NULL, "invalid rasterizer memory", return 0);
+	shVkError(p_rasterizer == VK_NULL_HANDLE, "invalid rasterizer memory", return 0);
 
 	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, //sType;
-		NULL,                                                       //pNext;
+		VK_NULL_HANDLE,                                                       //pNext;
 		0,                                                          //flags;
 		VK_FALSE,                                                   //depthClampEnable;
 		VK_FALSE,                                                   //rasterizerDiscardEnable;
@@ -2202,18 +2268,18 @@ uint8_t shSetMultisampleState(
 	VkPipelineMultisampleStateCreateInfo* p_multisample_state
 ) {
 	shVkError(sample_count        == 0,    "invalid sample count",             return 0);
-	shVkError(p_multisample_state == NULL, "invalid multisample state memory", return 0);
+	shVkError(p_multisample_state == VK_NULL_HANDLE, "invalid multisample state memory", return 0);
 
 	VkBool32 sample_shading_enable = min_sample_shading_size == 0.0f ? VK_FALSE : VK_TRUE;
 
 	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, //sType;
-		NULL,                                                     //pNext;
+		VK_NULL_HANDLE,                                                     //pNext;
 		0,                                                        //flags;
 		sample_count,                                             //rasterizationSamples;
 		sample_shading_enable,                                    //sampleShadingEnable;
 		min_sample_shading_size,                                  //minSampleShading;
-		NULL,                                                     //pSampleMask;
+		VK_NULL_HANDLE,                                                     //pSampleMask;
 		VK_FALSE,                                                 //alphaToCoverageEnable;
 		VK_FALSE                                                  //alphaToOneEnable;
 	};
@@ -2238,11 +2304,11 @@ uint8_t shSetViewport(
 ) {
 	shVkError(viewport_width   == 0,    "invalid viewport width",         return 0);
 	shVkError(viewport_height  == 0,    "invalid viewport height",        return 0);
-	shVkError(p_viewport       == NULL, "invalid viewport memory",        return 0);
+	shVkError(p_viewport       == VK_NULL_HANDLE, "invalid viewport memory",        return 0);
 	shVkError(scissors_width   == 0,    "invalid scissors width",         return 0);
 	shVkError(scissors_height  == 0,    "invalid scissors height",        return 0);
-	shVkError(p_scissors       == NULL, "invalid scissors memory",        return 0);
-	shVkError(p_viewport_state == NULL, "invalid viewport state pointer", return 0);
+	shVkError(p_scissors       == VK_NULL_HANDLE, "invalid scissors memory",        return 0);
+	shVkError(p_viewport_state == VK_NULL_HANDLE, "invalid viewport state pointer", return 0);
 
 	VkViewport viewport = {
 		(float)viewport_pos_x,  //x; 
@@ -2270,7 +2336,7 @@ uint8_t shSetViewport(
 
 	VkPipelineViewportStateCreateInfo viewportStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, //sType;
-		NULL,                                                  //pNext;
+		VK_NULL_HANDLE,                                                  //pNext;
 		0,                                                     //flags;
 		1,                                                     //viewportCount;
 		p_viewport,                                            //pViewports;
@@ -2287,8 +2353,8 @@ uint8_t shColorBlendSettings(
 	VkPipelineColorBlendAttachmentState *p_color_blend_attachment, 
 	VkPipelineColorBlendStateCreateInfo* p_color_blend_state
 ) {
-	shVkError(p_color_blend_attachment == NULL, "invalid color blend attachment state memory", return 0);
-	shVkError(p_color_blend_state      == NULL, "invalid color blend state memory",            return 0);
+	shVkError(p_color_blend_attachment == VK_NULL_HANDLE, "invalid color blend attachment state memory", return 0);
+	shVkError(p_color_blend_state      == VK_NULL_HANDLE, "invalid color blend state memory",            return 0);
 	
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {
 		VK_FALSE,                //blendEnable;
@@ -2307,7 +2373,7 @@ uint8_t shColorBlendSettings(
 
 	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = {
 		VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, //sType
-		NULL,                                                     //pNext
+		VK_NULL_HANDLE,                                                     //pNext
 		0,                                                        //flags
 		VK_FALSE,                                                 //logicOpEnable
 		VK_LOGIC_OP_COPY,                                         //logicOp
@@ -2327,21 +2393,21 @@ uint8_t shCreateShaderModule(
 	char*           code,
 	VkShaderModule* p_shader_module
 ) {
-	shVkError(device          == NULL, "invalid device memory",             return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",             return 0);
 	shVkError(size            == 0,    "invalid shader module size",        return 0);
-	shVkError(code            == NULL, "invalid shader module code memory", return 0);
-	shVkError(p_shader_module == NULL, "invalid shader module memory",      return 0);
+	shVkError(code            == VK_NULL_HANDLE, "invalid shader module code memory", return 0);
+	shVkError(p_shader_module == VK_NULL_HANDLE, "invalid shader module memory",      return 0);
 
 	VkShaderModuleCreateInfo shader_module_create_info = {
 		VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, //sType;
-		NULL,                                        //pNext;
+		VK_NULL_HANDLE,                                        //pNext;
 		0,                                           //flags;
 		size,                                        //codeSize;
 		(uint32_t*)(code)                            //pCode;
 	};
 
 	shVkResultError(
-		vkCreateShaderModule(device, &shader_module_create_info, NULL, p_shader_module),
+		vkCreateShaderModule(device, &shader_module_create_info, VK_NULL_HANDLE, p_shader_module),
 		"error creating shader module", return 0
 	);
 
@@ -2353,16 +2419,16 @@ uint8_t shCreateShaderStage(
 	VkShaderStageFlags               shader_stage_flag, 
 	VkPipelineShaderStageCreateInfo* p_shader_stage
 ) {
-	shVkError(p_shader_stage == NULL, "invalid shader stage memory", return 0);
+	shVkError(p_shader_stage == VK_NULL_HANDLE, "invalid shader stage memory", return 0);
 
 	VkPipelineShaderStageCreateInfo shader_stage_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, //sType;
-		NULL,                                                //pNext;
+		VK_NULL_HANDLE,                                                //pNext;
 		0,                                                   //flags;
 		shader_stage_flag,                                   //stage;
 		shader_module,                                       //module;
 		"main",                                              //pName;
-		NULL,                                                //pSpecializationInfo;
+		VK_NULL_HANDLE,                                                //pSpecializationInfo;
 	};
 
 	(*p_shader_stage) = shader_stage_create_info;
@@ -2377,7 +2443,7 @@ uint8_t shSetPushConstants(
 	VkPushConstantRange* p_push_constant_range
 ) {
 	shVkError(size                  == 0, "invalid push constant size",            return 0);
-	shVkError(p_push_constant_range == NULL, "invalid push constant range memory", return 0);
+	shVkError(p_push_constant_range == VK_NULL_HANDLE, "invalid push constant range memory", return 0);
 	
 	VkPushConstantRange push_constant_range = {
 		shader_stage, //stageFlags;
@@ -2399,14 +2465,14 @@ uint8_t shCreateDescriptorSetLayoutBinding(
 	VkDescriptorSetLayoutBinding* p_binding
 ) {
 	shVkError(descriptor_count == 0,    "invalid descriptor count",                     return 0);
-	shVkError(p_binding        == NULL, "invalid descriptor set layout binding memory", return 0);
+	shVkError(p_binding        == VK_NULL_HANDLE, "invalid descriptor set layout binding memory", return 0);
 
 	VkDescriptorSetLayoutBinding descriptor_set_layout_binding = {
 		binding,          //binding;
 		descriptor_type,  //descriptorType
 		descriptor_count, //descriptorCount;
 		shader_stage,     //stageFlags;
-		NULL              //pImmutableSamplers;
+		VK_NULL_HANDLE              //pImmutableSamplers;
 	};
 
 	*p_binding = descriptor_set_layout_binding;
@@ -2420,20 +2486,20 @@ uint8_t shCreateDescriptorSetLayout(
 	VkDescriptorSetLayoutBinding* p_bindings, 
 	VkDescriptorSetLayout*        p_descriptor_set_layout
 ) {
-	shVkError(device                  == NULL,  "invalid device memory",                        return 0);
-	shVkError(p_bindings              == NULL, "invalid descriptor set layout bindings memory", return 0);
-	shVkError(p_descriptor_set_layout == NULL,  "invalid descriptor set layout memory",         return 0);
+	shVkError(device                  == VK_NULL_HANDLE,  "invalid device memory",                        return 0);
+	shVkError(p_bindings              == VK_NULL_HANDLE, "invalid descriptor set layout bindings memory", return 0);
+	shVkError(p_descriptor_set_layout == VK_NULL_HANDLE,  "invalid descriptor set layout memory",         return 0);
 
 	VkDescriptorSetLayoutCreateInfo descriptor_set_layout_create_info = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, //sType;
-		NULL,                                                //pNext;
+		VK_NULL_HANDLE,                                                //pNext;
 		0,                                                   //flags;
 		binding_count,                                       //bindingCount;
 		p_bindings                                           //pBindings;
 	};
 
 	shVkResultError(
-		vkCreateDescriptorSetLayout(device, &descriptor_set_layout_create_info, NULL, p_descriptor_set_layout),
+		vkCreateDescriptorSetLayout(device, &descriptor_set_layout_create_info, VK_NULL_HANDLE, p_descriptor_set_layout),
 		"error creating descriptor set layout", return 0
 	);
 
@@ -2446,10 +2512,10 @@ uint8_t shCreateDescriptorPool(
 	VkDescriptorPoolSize* p_pool_sizes,
 	VkDescriptorPool*     p_descriptor_pool
 ) {
-	shVkError(device            == NULL, "invalid device memory",                return 0);
+	shVkError(device            == VK_NULL_HANDLE, "invalid device memory",                return 0);
 	shVkError(pool_size_count   == 0,    "invalid descriptor pool size count",   return 0);
-	shVkError(p_pool_sizes      == NULL, "invalid descriptor pool sizes memory", return 0);
-	shVkError(p_descriptor_pool == NULL, "invalid descriptor pool memory",       return 0);
+	shVkError(p_pool_sizes      == VK_NULL_HANDLE, "invalid descriptor pool sizes memory", return 0);
+	shVkError(p_descriptor_pool == VK_NULL_HANDLE, "invalid descriptor pool memory",       return 0);
 	
 	uint32_t max_sets = 0;
 
@@ -2459,7 +2525,7 @@ uint8_t shCreateDescriptorPool(
 
 	VkDescriptorPoolCreateInfo descriptor_pool_create_info = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, //sType;
-		NULL,                                          //pNext;
+		VK_NULL_HANDLE,                                          //pNext;
 		0,                                             //flags;
 		max_sets,                                      //maxSets;
 		pool_size_count,                               //poolSizeCount;
@@ -2467,7 +2533,7 @@ uint8_t shCreateDescriptorPool(
 	};
 
 	shVkResultError(
-		vkCreateDescriptorPool(device, &descriptor_pool_create_info, NULL, p_descriptor_pool),
+		vkCreateDescriptorPool(device, &descriptor_pool_create_info, VK_NULL_HANDLE, p_descriptor_pool),
 		"error creating descriptor pool", return 0
 	);
 
@@ -2480,9 +2546,9 @@ uint8_t shSetDescriptorBufferInfo(
 	uint32_t                set_size, 
 	VkDescriptorBufferInfo* p_buffer_info
 ) {
-	shVkError(buffer        == NULL, "invalid descriptor buffer memory",      return 0);
+	shVkError(buffer        == VK_NULL_HANDLE, "invalid descriptor buffer memory",      return 0);
 	shVkError(set_size      == 0,    "invalid descriptor set size",           return 0);
-	shVkError(p_buffer_info == NULL, "invalid descriptor buffer info memory", return 0);
+	shVkError(p_buffer_info == VK_NULL_HANDLE, "invalid descriptor buffer info memory", return 0);
 
 	VkDescriptorBufferInfo buffer_info = {
 		buffer,            //buffer;
@@ -2506,17 +2572,17 @@ uint8_t shAllocateDescriptorSets(
 	VkDescriptorBufferInfo* p_buffer_infos, 
 	VkWriteDescriptorSet*   p_write_descriptor_sets
 ) {
-	shVkError(device                   == NULL, "invalid device memory",                  return 0);
-	shVkError(descriptor_pool          == NULL, "invalid descriptor pool memory",         return 0);
+	shVkError(device                   == VK_NULL_HANDLE, "invalid device memory",                  return 0);
+	shVkError(descriptor_pool          == VK_NULL_HANDLE, "invalid descriptor pool memory",         return 0);
 	shVkError(set_count                == 0,    "invalid descriptor set count",           return 0);
-	shVkError(p_descriptor_set_layouts == NULL, "invalid descriptor set layouts memory",  return 0);
-	shVkError(p_buffer_infos           == NULL, "invalid descriptor buffer infos memory", return 0);
-	shVkError(p_descriptor_sets        == NULL, "invalid descriptor sets memory",         return 0);
-	shVkError(p_write_descriptor_sets  == NULL, "invalid write descriptor sets memory",   return 0);
+	shVkError(p_descriptor_set_layouts == VK_NULL_HANDLE, "invalid descriptor set layouts memory",  return 0);
+	shVkError(p_buffer_infos           == VK_NULL_HANDLE, "invalid descriptor buffer infos memory", return 0);
+	shVkError(p_descriptor_sets        == VK_NULL_HANDLE, "invalid descriptor sets memory",         return 0);
+	shVkError(p_write_descriptor_sets  == VK_NULL_HANDLE, "invalid write descriptor sets memory",   return 0);
 
 	VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, //sType;
-		NULL,                                           //pNext;
+		VK_NULL_HANDLE,                                           //pNext;
 		descriptor_pool,                                //descriptorPool;
 		set_count,                                      //descriptorSetCount;
 		p_descriptor_set_layouts                        //pSetLayouts;
@@ -2529,15 +2595,15 @@ uint8_t shAllocateDescriptorSets(
 	for (uint32_t set_idx = 0; set_idx < set_count; set_idx++) {
 		VkWriteDescriptorSet write_descriptor_set = {
 			VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, //sType;
-			NULL,                                   //pNext;
+			VK_NULL_HANDLE,                                   //pNext;
 			p_descriptor_sets[set_idx],             //dstSet;
 			binding,                                //dstBinding
 			0,                                      //dstArrayElement;
 			1,                                      //descriptorCount;
 			descriptor_type,                        //descriptorType
-			NULL,                                   //pImageInfo;
+			VK_NULL_HANDLE,                                   //pImageInfo;
 			&p_buffer_infos[set_idx],               //pBufferInfo;
-			NULL									//pTexelBufferView;
+			VK_NULL_HANDLE									//pTexelBufferView;
 		};
 		p_write_descriptor_sets[set_idx] = write_descriptor_set;
 	}
@@ -2553,17 +2619,17 @@ uint8_t shCreatePipelineLayout(
 	VkDescriptorSetLayout* p_descriptor_set_layouts,
 	VkPipelineLayout*      p_pipeline_layout
 ) {
-	shVkError(device            == NULL, "invalid device memory",          return 0);
-	shVkError(p_pipeline_layout == NULL, "invalid pipeline layout memory", return 0);
+	shVkError(device            == VK_NULL_HANDLE, "invalid device memory",          return 0);
+	shVkError(p_pipeline_layout == VK_NULL_HANDLE, "invalid pipeline layout memory", return 0);
 	
 	shVkError(
-		push_constant_range_count != 0 && p_push_constants_range == NULL, 
+		push_constant_range_count != 0 && p_push_constants_range == VK_NULL_HANDLE, 
 		"invalid push constants range memory", 
 		return 0
 	);
 
 	shVkError(
-		descriptor_count != 0 && p_descriptor_set_layouts == NULL,
+		descriptor_count != 0 && p_descriptor_set_layouts == VK_NULL_HANDLE,
 		"invalid descriptor set layouts memory", 
 		return 0
 	);
@@ -2571,7 +2637,7 @@ uint8_t shCreatePipelineLayout(
 
 	VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, //sType;
-		NULL,                                          //pNext;
+		VK_NULL_HANDLE,                                          //pNext;
 		0,                                             //flags;
 		descriptor_count,                              //setLayoutCount;
 		p_descriptor_set_layouts,                      //pSetLayouts;
@@ -2580,7 +2646,7 @@ uint8_t shCreatePipelineLayout(
 	};
 
 	shVkResultError(
-		vkCreatePipelineLayout(device, &pipeline_layout_create_info, NULL, p_pipeline_layout),
+		vkCreatePipelineLayout(device, &pipeline_layout_create_info, VK_NULL_HANDLE, p_pipeline_layout),
 		"error creating main pipeline layout", return 0
 	);
 
@@ -2592,13 +2658,13 @@ uint8_t shSetupGraphicsPipeline(
 	VkRenderPass  renderpass, 
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(device      == NULL, "invalid device memory",            return 0);
-	shVkError(renderpass  == NULL, "invalid renderpass memory",        return 0);
-	shVkError(p_pipeline  == NULL, "invalid graphics pipeline memory", return 0);
+	shVkError(device      == VK_NULL_HANDLE, "invalid device memory",            return 0);
+	shVkError(renderpass  == VK_NULL_HANDLE, "invalid renderpass memory",        return 0);
+	shVkError(p_pipeline  == VK_NULL_HANDLE, "invalid graphics pipeline memory", return 0);
 
 	VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, //sType;
-		NULL,                                                       //pNext;
+		VK_NULL_HANDLE,                                                       //pNext;
 		0,                                                          //flags;
 		VK_TRUE,                                                    //depthTestEnable;
 		VK_TRUE,                                                    //depthWriteEnable;
@@ -2613,19 +2679,19 @@ uint8_t shSetupGraphicsPipeline(
 
 	VkGraphicsPipelineCreateInfo graphics_pipeline_create_info = {
 		VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, //sType;
-		NULL,                                            //pNext;
+		VK_NULL_HANDLE,                                            //pNext;
 		0,                                               //flags;
 		p_pipeline->shader_module_count,                 //stageCount;
 		p_pipeline->shader_stages,                       //pStages;
 		&p_pipeline->vertex_input_state_info,            //pVertexInputState;
 		& p_pipeline->input_assembly,                    //pInputAssemblyState;
-		NULL,                                            //pTessellationState;
+		VK_NULL_HANDLE,                                            //pTessellationState;
 		&p_pipeline->viewport_state,                     //pViewportState;
 		&p_pipeline->rasterizer,                         //pRasterizationState;
 		&p_pipeline->multisample_state_info,             //pMultisampleState;
 		&depth_stencil_state_create_info,                //pDepthStencilState;
 		&p_pipeline->color_blend_state,                  //pColorBlendState;
-		NULL,                                            //pDynamicState;
+		VK_NULL_HANDLE,                                            //pDynamicState;
 		p_pipeline->pipeline_layout,                     //layout;
 		renderpass,                                      //renderPass;
 		0,                                               //subpass;
@@ -2639,7 +2705,7 @@ uint8_t shSetupGraphicsPipeline(
 			0, 
 			1, 
 			&graphics_pipeline_create_info, 
-			NULL, 
+			VK_NULL_HANDLE, 
 			&p_pipeline->pipeline
 		),
 		"error creating graphics pipeline", return 0
@@ -2652,10 +2718,10 @@ extern uint8_t shDestroyDescriptorPool(
 	VkDevice         device,
 	VkDescriptorPool descriptor_pool
 ) {
-	shVkError(device          == NULL, "invalid device memory",          return 0);
-	shVkError(descriptor_pool == NULL, "invalid descriptor pool memory", return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",          return 0);
+	shVkError(descriptor_pool == VK_NULL_HANDLE, "invalid descriptor pool memory", return 0);
 
-	vkDestroyDescriptorPool(device, descriptor_pool, NULL);
+	vkDestroyDescriptorPool(device, descriptor_pool, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -2664,10 +2730,10 @@ extern uint8_t shDestroyDescriptorSetLayout(
 	VkDevice device,
 	VkDescriptorSetLayout descriptor_set_layout
 ) {
-	shVkError(device                == NULL, "invalid device memory",                return 0);
-	shVkError(descriptor_set_layout == NULL, "invalid descriptor set layout memory", return 0);
+	shVkError(device                == VK_NULL_HANDLE, "invalid device memory",                return 0);
+	shVkError(descriptor_set_layout == VK_NULL_HANDLE, "invalid descriptor set layout memory", return 0);
 
-	vkDestroyDescriptorSetLayout(device, descriptor_set_layout, NULL);
+	vkDestroyDescriptorSetLayout(device, descriptor_set_layout, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -2676,10 +2742,10 @@ uint8_t shDestroyShaderModule(
 	VkDevice       device,
 	VkShaderModule shader_module
 ) {
-	shVkError(device        == NULL, "invalid device memory",        return 0);
-	shVkError(shader_module == NULL, "invalid shader module memory", return 0);
+	shVkError(device        == VK_NULL_HANDLE, "invalid device memory",        return 0);
+	shVkError(shader_module == VK_NULL_HANDLE, "invalid shader module memory", return 0);
 
-	vkDestroyShaderModule(device, shader_module, NULL);
+	vkDestroyShaderModule(device, shader_module, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -2688,10 +2754,10 @@ uint8_t shDestroyPipelineLayout(
 	VkDevice         device,
 	VkPipelineLayout pipeline_layout
 ) {
-	shVkError(device          == NULL, "invalid device memory",          return 0);
-	shVkError(pipeline_layout == NULL, "invalid pipeline layout memory", return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",          return 0);
+	shVkError(pipeline_layout == VK_NULL_HANDLE, "invalid pipeline layout memory", return 0);
 
-	vkDestroyPipelineLayout(device, pipeline_layout, NULL);
+	vkDestroyPipelineLayout(device, pipeline_layout, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -2700,10 +2766,10 @@ uint8_t shDestroyPipeline(
 	VkDevice   device,
 	VkPipeline pipeline
 ) {
-	shVkError(device   == NULL, "invalid device memory",   return 0);
-	shVkError(pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(device   == VK_NULL_HANDLE, "invalid device memory",   return 0);
+	shVkError(pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
-	vkDestroyPipeline(device, pipeline, NULL);
+	vkDestroyPipeline(device, pipeline, VK_NULL_HANDLE);
 
 	return 1;
 }
@@ -2711,7 +2777,7 @@ uint8_t shDestroyPipeline(
 uint8_t shClearPipeline(
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	memset(p_pipeline, 0, sizeof(ShVkPipeline));
 
@@ -2722,19 +2788,19 @@ uint8_t shSetupComputePipeline(
 	VkDevice      device,
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(device     == NULL, "invalid device memory",            return 0);
-	shVkError(p_pipeline == NULL, "invalid compute pipeline pointer", return 0);
+	shVkError(device     == VK_NULL_HANDLE, "invalid device memory",            return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid compute pipeline pointer", return 0);
 
 	VkComputePipelineCreateInfo pipeline_create_info = {
 		VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-		NULL,
+		VK_NULL_HANDLE,
 		0,
 		p_pipeline->shader_stages[0],
 		p_pipeline->pipeline_layout,
 	};
 
 	shVkResultError(
-		vkCreateComputePipelines(device, 0, 1, &pipeline_create_info, NULL, &p_pipeline->pipeline),
+		vkCreateComputePipelines(device, 0, 1, &pipeline_create_info, VK_NULL_HANDLE, &p_pipeline->pipeline),
 		"error creating pipeline layout", return 0
 	);
 
@@ -2747,7 +2813,7 @@ uint8_t shPipelineSetVertexBinding(
 	VkVertexInputRate input_rate,
 	ShVkPipeline*     p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 	
 	shVkError(
 		p_pipeline->vertex_binding_count == SH_MAX_PIPELINE_VERTEX_BINDING_COUNT,
@@ -2778,7 +2844,7 @@ uint8_t shPipelineSetVertexAttribute(
 	uint32_t      offset,
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 	
 	shVkError(
 		p_pipeline->vertex_binding_count == SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT,
@@ -2806,7 +2872,7 @@ uint8_t shPipelineSetVertexAttribute(
 uint8_t shPipelineSetVertexInputState(
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shSetVertexInputState(
@@ -2828,7 +2894,7 @@ uint8_t shPipelineCreateInputAssembly(
 	VkBool32            primitive_restart_enable,
 	ShVkPipeline*       p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shCreateInputAssembly(
@@ -2848,7 +2914,7 @@ uint8_t shPipelineCreateRasterizer(
 	VkCullModeFlagBits cull_mode,
 	ShVkPipeline*      p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shCreateRasterizer(
@@ -2868,7 +2934,7 @@ uint8_t shPipelineSetMultisampleState(
 	float                 min_sample_shading_size,
 	ShVkPipeline*         p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shSetMultisampleState(
@@ -2894,7 +2960,7 @@ uint8_t shPipelineSetViewport(
 	uint32_t      scissors_height,
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shSetViewport(
@@ -2920,7 +2986,7 @@ uint8_t shPipelineSetViewport(
 uint8_t shPipelineColorBlendSettings(
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shColorBlendSettings(
@@ -2940,7 +3006,7 @@ uint8_t shPipelineCreateShaderModule(
 	char*           code,
 	ShVkPipeline*   p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shCreateShaderModule(
@@ -2984,7 +3050,7 @@ uint8_t shPipelineSetPushConstants(
 	uint32_t           size,
 	ShVkPipeline*      p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shSetPushConstants(
@@ -3007,8 +3073,8 @@ uint8_t shPipelineCreateLayout(
 	ShVkPipelinePool* p_pipeline_pool,
 	ShVkPipeline*     p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		shCreatePipelineLayout(
@@ -3033,9 +3099,9 @@ uint8_t shPipelinePushConstants(
 	void*           p_data,
 	ShVkPipeline*   p_pipeline
 ) {
-	shVkError(cmd_buffer == NULL, "invalid command buffer memory",     return 0);
-	shVkError(p_data     == NULL, "invalid push constant data memory", return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory",           return 0);
+	shVkError(cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory",     return 0);
+	shVkError(p_data     == VK_NULL_HANDLE, "invalid push constant data memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory",           return 0);
 
 	vkCmdPushConstants(
 		cmd_buffer,
@@ -3054,8 +3120,8 @@ uint8_t shBindPipeline(
 	VkPipelineBindPoint bind_point,
 	ShVkPipeline*       p_pipeline
 ) {
-	shVkError(cmd_buffer == NULL, "invalid command buffer memory", return 0);
-	shVkError(p_pipeline == NULL, "invalid pipeline memory",       return 0);
+	shVkError(cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory",       return 0);
 
 	vkCmdBindPipeline(cmd_buffer, bind_point, p_pipeline->pipeline);
 
@@ -3072,9 +3138,9 @@ uint8_t shPipelineBindDescriptorSets(
 	ShVkPipelinePool*   p_pipeline_pool,
 	ShVkPipeline*       p_pipeline
 ) {
-	shVkError(cmd_buffer      == NULL, "invalid command buffer memory", return 0);
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory",  return 0);
-	shVkError(p_pipeline      == NULL, "invalid pipeline memory",       return 0);
+	shVkError(cmd_buffer      == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory",  return 0);
+	shVkError(p_pipeline      == VK_NULL_HANDLE, "invalid pipeline memory",       return 0);
 
 	shVkError(
 		(first_set + set_count) > p_pipeline_pool->descriptor_set_count,
@@ -3089,7 +3155,7 @@ uint8_t shPipelineBindDescriptorSets(
 	);
 
 	shVkError(
-		dynamic_descriptors_count != 0 && p_dynamic_offsets == NULL,
+		dynamic_descriptors_count != 0 && p_dynamic_offsets == VK_NULL_HANDLE,
 		"invalid dynamic offsets memory",
 		return 0
 	);
@@ -3114,7 +3180,7 @@ uint8_t shPipelineDestroyShaderModules(
 	uint32_t      module_count,
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		first_module + module_count > p_pipeline->shader_module_count,
@@ -3142,7 +3208,7 @@ uint8_t shPipelineDestroyLayout(
 	VkDevice      device,
 	ShVkPipeline* p_pipeline
 ) {
-	shVkError(p_pipeline == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shDestroyPipelineLayout(
@@ -3164,7 +3230,7 @@ uint8_t shPipelinePoolCreateDescriptorSetLayoutBinding(
 	VkShaderStageFlags shader_stage,
 	ShVkPipelinePool*  p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 	
 	shVkError(
 		binding > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT,
@@ -3192,7 +3258,7 @@ uint8_t shPipelinePoolCreateDescriptorSetLayout(
 	uint32_t          set_layout_idx,//set_idx
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		(first_binding + binding_count) > p_pipeline_pool->descriptor_set_layout_binding_count,
@@ -3222,7 +3288,7 @@ uint8_t shPipelinePoolCopyDescriptorSetLayout(
 	uint32_t          dst_set_layout_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		(first_dst_set_layout_idx + dst_set_layout_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
@@ -3250,7 +3316,7 @@ uint8_t shPipelinePoolCreateDescriptorPool(
 	uint32_t          set_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 	shVkError(set_count == 0, "invvalid descriptor set count", return 0);
 
 	VkDescriptorPoolSize pool_size = {
@@ -3283,7 +3349,7 @@ uint8_t shPipelinePoolAllocateDescriptorSets(
 	uint32_t          set_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		(first_set + set_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
@@ -3320,7 +3386,7 @@ uint8_t shPipelinePoolSetDescriptorSetBufferInfos(
 	uint32_t          set_size,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		(first_set + set_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_SET_COUNT,
@@ -3350,7 +3416,7 @@ uint8_t shPipelinePoolDestroyDescriptorSetLayouts(
 	uint32_t          set_layout_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		first_set_layout + set_layout_count > p_pipeline_pool->descriptor_set_layout_count,
@@ -3378,7 +3444,7 @@ uint8_t shPipelinePoolDestroyDescriptorPools(
 	uint32_t          pool_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		first_pool + pool_count > p_pipeline_pool->descriptor_pool_count,
@@ -3408,8 +3474,8 @@ uint8_t shPipelinePoolUpdateDescriptorSets(
 	uint32_t          set_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shVkError(device == NULL, "invalid device memory", return 0);
-	shVkError(p_pipeline_pool == NULL, "invalid pipeline pool memory", return 0);
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
 	shVkError(
 		(first_set + set_count) > p_pipeline_pool->descriptor_set_count,
@@ -3422,7 +3488,7 @@ uint8_t shPipelinePoolUpdateDescriptorSets(
 		set_count,
 		&p_pipeline_pool->write_descriptor_sets[first_set],
 		0,
-		NULL
+		VK_NULL_HANDLE
 	);
 
 	return 1;

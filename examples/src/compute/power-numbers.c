@@ -65,16 +65,16 @@ float inputs[INPUT_COUNT];
 
 int main(void) {
 
-	VkInstance       instance                   = NULL;
-	VkDevice         device                     = NULL;
-	VkPhysicalDevice physical_device            = NULL;
+	VkInstance       instance                   = VK_NULL_HANDLE;
+	VkDevice         device                     = VK_NULL_HANDLE;
+	VkPhysicalDevice physical_device            = VK_NULL_HANDLE;
 	
 	uint32_t         compute_queue_family_index = 0;
-	VkQueue          compute_queue              = NULL;
+	VkQueue          compute_queue              = VK_NULL_HANDLE;
 
-	VkCommandPool    cmd_pool                   = NULL;
-	VkCommandBuffer  cmd_buffer                 = NULL;
-	VkFence          fence                      = NULL;
+	VkCommandPool    cmd_pool                   = VK_NULL_HANDLE;
+	VkCommandBuffer  cmd_buffer                 = VK_NULL_HANDLE;
+	VkFence          fence                      = VK_NULL_HANDLE;
 
 	shCreateInstance(
 		"vulkan app",//application_name, 
@@ -82,17 +82,18 @@ int main(void) {
 		1,//enable_validation_layers,
 		0,//extension_count, 
 		NULL,//pp_extension_names,
+		VK_MAKE_API_VERSION(1, 3, 0, 0),//api_version,
 		&instance//p_instance	
 	);
 
 	shSelectPhysicalDevice(
-		instance, NULL, VK_QUEUE_COMPUTE_BIT, &physical_device,
+		instance, VK_NULL_HANDLE, VK_QUEUE_COMPUTE_BIT, &physical_device,
 		NULL, NULL, NULL
 	);
 
 	uint32_t compute_queue_family_indices[SH_MAX_STACK_QUEUE_COUNT] = { 0 };
 	shGetPhysicalDeviceQueueFamilies(
-		physical_device, NULL, NULL, NULL, NULL, 
+		physical_device, VK_NULL_HANDLE, NULL, NULL, NULL, 
 		NULL, NULL, NULL, NULL, compute_queue_family_indices, NULL, NULL
 	);
 
@@ -137,11 +138,11 @@ int main(void) {
 	}
 	
 	
-	VkBuffer       staging_buffer      = NULL;
-	VkBuffer       device_local_buffer = NULL;
+	VkBuffer       staging_buffer      = VK_NULL_HANDLE;
+	VkBuffer       device_local_buffer = VK_NULL_HANDLE;
 
-	VkDeviceMemory staging_memory      = NULL;
-	VkDeviceMemory device_local_memory = NULL;
+	VkDeviceMemory staging_memory      = VK_NULL_HANDLE;
+	VkDeviceMemory device_local_memory = VK_NULL_HANDLE;
 
 	//
 	//WRITE INPUT MEMORY

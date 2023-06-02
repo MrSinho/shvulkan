@@ -1,3 +1,10 @@
+/************************************************
+ * The structures shown at shVkCore.h are no longer 
+ * in use by the shvulkan library, but they might be 
+ * useful for some developers to organize the vulkan 
+ * handles in a single place.
+ ***********************************************/
+
 #ifndef SH_VK_CORE_H
 #define SH_VK_CORE_HSH_MAX_STACK_QUEUE_FAMILY_COUNT
 

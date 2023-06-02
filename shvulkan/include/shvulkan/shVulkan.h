@@ -11,8 +11,6 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "shvulkan/shVkVersion.h"
-
 
 
 #define shVkError(condition, error_msg, failure_expression)\
@@ -51,6 +49,7 @@ extern uint8_t shCreateInstance(
 	const uint8_t  enable_validation_layers, 
 	const uint32_t extension_count, 
 	const char**   pp_extension_names,
+	uint32_t       api_version,
 	VkInstance*    p_instance
 );
 
@@ -125,6 +124,7 @@ extern uint8_t shCreateSwapchain(
 	uint32_t                 swapchain_image_count,
 	VkSharingMode            image_sharing_mode,
 	uint8_t                  vsync,
+	uint32_t*                p_swapchain_image_count,
 	VkSwapchainKHR*          p_swapchain
 );
 
@@ -305,6 +305,10 @@ extern uint8_t shQueueSubmit(
 	VkPipelineStageFlags wait_stage,
 	uint32_t             signal_semaphore_count,
 	VkSemaphore*         p_signal_semaphores
+);
+
+extern uint8_t shWaitForQueue(
+	VkQueue queue
 );
 
 extern uint8_t shCreateFences(
@@ -516,6 +520,7 @@ extern uint8_t shCreateImage(
 	VkFormat              format,
 	uint32_t              mip_levels,
 	VkSampleCountFlagBits sample_count,
+	VkImageTiling         image_tiling,
 	VkImageUsageFlags     usage,
 	VkSharingMode         sharing_mode,
 	VkImage*              p_image
