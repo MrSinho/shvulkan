@@ -107,6 +107,7 @@ Through the renderpass, the second draw call will produce the following framebuf
 * read framebuffer attachments memory
 * offline rendering
 * raytracing using compute shader
+* update graphics examples maps for a quick look 
 
 [top](#shvulkan)
 
