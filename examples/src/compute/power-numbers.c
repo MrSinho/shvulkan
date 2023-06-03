@@ -63,6 +63,7 @@ float inputs[INPUT_COUNT];
 //	
 
 
+
 int main(void) {
 
 	VkInstance       instance                   = VK_NULL_HANDLE;
