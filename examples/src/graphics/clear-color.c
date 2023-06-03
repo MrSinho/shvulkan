@@ -2,7 +2,7 @@
 extern "C" {
 #endif//__cplusplus
 
-#include <shvulkan/shVkCore.h>
+#include <shvulkan/shVulkan.h>
 
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
@@ -11,8 +11,9 @@ extern "C" {
 #include <stdio.h>
 #include <math.h>
 
-#define SWAPCHAIN_IMAGE_COUNT     2
-#define MAX_SWAPCHAIN_IMAGE_COUNT 6
+#define SWAPCHAIN_IMAGE_COUNT       2
+#define MAX_SWAPCHAIN_IMAGE_COUNT   6
+#define RENDERPASS_ATTACHMENT_COUNT 1
 
 
 
@@ -35,68 +36,71 @@ int main(void) {
 	);
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE,  GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE,  GLFW_TRUE);
+
+	int width  = 720;
+	int height = 480;
 
 	uint32_t     instance_extension_count = 0;
-	GLFWwindow*  window                   = glfwCreateWindow(720, 480, "vulkan clear color", NULL, NULL);
+	GLFWwindow*  window                   = glfwCreateWindow(720, 480, "vulkan resizable clear color", NULL, NULL);
 	const char** pp_instance_extensions   = glfwGetRequiredInstanceExtensions(&instance_extension_count);
 
 
-	VkInstance                       instance                                                  = VK_NULL_HANDLE;
-											                                                   
-	VkSurfaceKHR                     surface                                                   = VK_NULL_HANDLE;
-	VkSurfaceCapabilitiesKHR         surface_capabilities                                      = { 0 };
-																	                           
-	VkPhysicalDevice                 physical_device                                           = VK_NULL_HANDLE;
-	VkPhysicalDeviceProperties       physical_device_properties                                = { 0 };
-	VkPhysicalDeviceFeatures         physical_device_features                                  = { 0 };
-	VkPhysicalDeviceMemoryProperties physical_device_memory_properties                         = { 0 };
-																	                           
-	uint32_t                         graphics_queue_family_index                               = 0;
-	uint32_t                         present_queue_family_index                                = 0;
-																	                           
-	VkDevice                         device                                                    = VK_NULL_HANDLE;
-	uint32_t                         device_extension_count                                    = 0;
-															                                   
-	VkQueue                          graphics_queue                                            = VK_NULL_HANDLE;
-	VkQueue                          present_queue                                             = VK_NULL_HANDLE;
-					           						                                               
-	VkCommandPool                    graphics_cmd_pool                                         = VK_NULL_HANDLE;
-	VkCommandPool                    present_cmd_pool                                          = VK_NULL_HANDLE;
-															                                   
-	VkCommandBuffer                  graphics_cmd_buffers[MAX_SWAPCHAIN_IMAGE_COUNT]           = { VK_NULL_HANDLE };
-	VkCommandBuffer                  present_cmd_buffer                                        = VK_NULL_HANDLE;
-															                               
-	VkFence                          graphics_cmd_fences[MAX_SWAPCHAIN_IMAGE_COUNT]            = { VK_NULL_HANDLE };
-															                      		   
-	VkSemaphore                      image_acquired_semaphores[MAX_SWAPCHAIN_IMAGE_COUNT]      = { VK_NULL_HANDLE };
-	VkSemaphore                      renderpass_finished_semaphores[MAX_SWAPCHAIN_IMAGE_COUNT] = { VK_NULL_HANDLE };
+	VkInstance                       instance                                         = VK_NULL_HANDLE;
+											                                          
+	VkSurfaceKHR                     surface                                          = VK_NULL_HANDLE;
+	VkSurfaceCapabilitiesKHR         surface_capabilities                             = { 0 };
+																	                  
+	VkPhysicalDevice                 physical_device                                  = VK_NULL_HANDLE;
+	VkPhysicalDeviceProperties       physical_device_properties                       = { 0 };
+	VkPhysicalDeviceFeatures         physical_device_features                         = { 0 };
+	VkPhysicalDeviceMemoryProperties physical_device_memory_properties                = { 0 };
+																	                  
+	uint32_t                         graphics_queue_family_index                      = 0;
+	uint32_t                         present_queue_family_index                       = 0;
+																	                  
+	VkDevice                         device                                           = VK_NULL_HANDLE;
+	uint32_t                         device_extension_count                           = 0;
+															                          
+	VkQueue                          graphics_queue                                   = VK_NULL_HANDLE;
+	VkQueue                          present_queue                                    = VK_NULL_HANDLE;
+					           						                                      
+	VkCommandPool                    graphics_cmd_pool                                = VK_NULL_HANDLE;
+	VkCommandPool                    present_cmd_pool                                 = VK_NULL_HANDLE;
+															                      
+	VkCommandBuffer                  graphics_cmd_buffers[MAX_SWAPCHAIN_IMAGE_COUNT]  = { VK_NULL_HANDLE };
+	VkCommandBuffer                  present_cmd_buffer                               = VK_NULL_HANDLE;
+											
+	VkFence                          graphics_cmd_fences[MAX_SWAPCHAIN_IMAGE_COUNT]   = { VK_NULL_HANDLE };
 
-	VkSwapchainKHR                   swapchain                                                 = VK_NULL_HANDLE;
-	VkFormat                         swapchain_image_format                                    = 0;
-	uint32_t                         swapchain_image_count                                     = 0;
-																	                           
-	uint32_t                         sample_count                                              = 0;
-																	                           
-	VkAttachmentDescription          swapchain_attachment                                      = { 0 };
-	VkAttachmentReference            swapchain_attachment_reference                            = { 0 };
-	VkSubpassDescription             subpass                                                   = { 0 };
-																	                           
-	VkRenderPass                     renderpass                                                = VK_NULL_HANDLE;
-																						       
-	VkImage                          swapchain_images[MAX_SWAPCHAIN_IMAGE_COUNT]               = { VK_NULL_HANDLE };
-	VkImageView                      swapchain_image_views[MAX_SWAPCHAIN_IMAGE_COUNT]          = { VK_NULL_HANDLE };
-																				               
-	VkFramebuffer                    framebuffers[MAX_SWAPCHAIN_IMAGE_COUNT]                   = { VK_NULL_HANDLE };
+	VkSemaphore                      current_image_acquired_semaphore                 = VK_NULL_HANDLE;
+	VkSemaphore                      current_graphics_queue_finished_semaphore        = VK_NULL_HANDLE;
+																				      
+	VkSwapchainKHR                   swapchain                                        = VK_NULL_HANDLE;
+	VkFormat                         swapchain_image_format                           = 0;
+	uint32_t                         swapchain_image_count                            = 0;
+																	                  
+	uint32_t                         sample_count                                     = 0;
+																	                  
+	VkAttachmentDescription          swapchain_attachment                             = { 0 };
+	VkAttachmentReference            swapchain_attachment_reference                   = { 0 };
+	VkSubpassDescription             subpass                                          = { 0 };
+																	                  
+	VkRenderPass                     renderpass                                       = VK_NULL_HANDLE;
+
+	VkImage                          swapchain_images[MAX_SWAPCHAIN_IMAGE_COUNT]      = { VK_NULL_HANDLE };
+	VkImageView                      swapchain_image_views[MAX_SWAPCHAIN_IMAGE_COUNT] = { VK_NULL_HANDLE };
+
+	VkFramebuffer                    framebuffers[MAX_SWAPCHAIN_IMAGE_COUNT]          = { VK_NULL_HANDLE };
 
 	shCreateInstance(
-		"vulkan app",//application_name, 
+		"vulkan app",//application_name,
 		"vulkan engine",//engine_name, 
 		1,//enable_validation_layers,
-		instance_extension_count,//extension_count, 
+		instance_extension_count,//extension_count,
 		pp_instance_extensions,//pp_extension_names,
 		VK_MAKE_API_VERSION(1, 3, 0, 0),//api_version,
-		&instance//p_instance,
+		&instance//p_instance
 	);
 
 	glfwCreateWindowSurface(
@@ -107,8 +111,8 @@ int main(void) {
 	);
 
 	shSelectPhysicalDevice(
-		instance,//instance, 
-		surface,//surface, 
+		instance,//instance,
+		surface,//surface,
 		VK_QUEUE_GRAPHICS_BIT |
 		VK_QUEUE_COMPUTE_BIT |
 		VK_QUEUE_TRANSFER_BIT,//requirements,
@@ -201,16 +205,16 @@ int main(void) {
 		swapchain_image_sharing_mode = VK_SHARING_MODE_CONCURRENT;
 	}
 	shCreateSwapchain(
-		device,
-		physical_device,
-		surface,
-		VK_FORMAT_R8G8B8_UNORM,
-		&swapchain_image_format,
-		SWAPCHAIN_IMAGE_COUNT,
-		swapchain_image_sharing_mode,
-		0,
-		&swapchain_image_count,
-		&swapchain
+		device,//device
+		physical_device,//physical_device
+		surface,//surface
+		VK_FORMAT_R8G8B8_UNORM,//image_format
+		&swapchain_image_format,//p_image_format
+		SWAPCHAIN_IMAGE_COUNT,//swapchain_image_count
+		swapchain_image_sharing_mode,//image_sharing_mode
+		0,//vsync
+		&swapchain_image_count,//p_swapchain_image_count
+		&swapchain//p_swapchain
 	);
 
 	shCreateCommandPool(
@@ -237,156 +241,210 @@ int main(void) {
 		present_cmd_pool   = graphics_cmd_pool;
 	}
 	shAllocateCommandBuffers(
-		device,
-		present_cmd_pool,
-		1,
-		&present_cmd_buffer
+		device,//device
+		present_cmd_pool,//cmd_pool
+		1,//cmd_buffer_count
+		&present_cmd_buffer//p_cmd_buffer
 	);
 
 	shCreateFences(
-		device,
-		swapchain_image_count,
-		1,
-		graphics_cmd_fences
+		device,//device
+		swapchain_image_count,//fence_count
+		1,//signaled
+		graphics_cmd_fences//p_fences
 	);
 
 	shGetSwapchainImages(
-		device,
-		swapchain,
-		&swapchain_image_count,
-		swapchain_images
+		device,//device
+		swapchain,//swapchain
+		&swapchain_image_count,//p_swapchain_image_count
+		swapchain_images//p_swapchain_images
 	);
 
 	for (uint32_t i = 0; i < swapchain_image_count; i++) {
 		shCreateImageView(
-			device,
-			swapchain_images[i],
-			VK_IMAGE_VIEW_TYPE_2D,
-			VK_IMAGE_ASPECT_COLOR_BIT,
-			1,
-			swapchain_image_format,
-			&swapchain_image_views[i]
+			device,//device
+			swapchain_images[i],//image
+			VK_IMAGE_VIEW_TYPE_2D,//view_type
+			VK_IMAGE_ASPECT_COLOR_BIT,//image_aspect
+			1,//mip_levels
+			swapchain_image_format,//format
+			&swapchain_image_views[i]//p_image_view
 		);
 	}
 
 	shCombineMaxSamples(
-		physical_device_properties,
-		64, 1, 1, &sample_count
+		physical_device_properties,//physical_device_properties
+		64,//sample_count 
+		1,//combine_color_sample 
+		1,//combine_depth_sample 
+		&sample_count//p_sample_count
 	);
 
 	shCreateRenderpassAttachment(
-		swapchain_image_format,
+		swapchain_image_format,//format
 		1,//sample_count
-		VK_ATTACHMENT_LOAD_OP_CLEAR,
-		VK_ATTACHMENT_STORE_OP_STORE,
-		VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-		VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		&swapchain_attachment
+		VK_ATTACHMENT_LOAD_OP_CLEAR,//load_treatment
+		VK_ATTACHMENT_STORE_OP_STORE,//store_treatment
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE,//stencil_load_treatment
+		VK_ATTACHMENT_STORE_OP_DONT_CARE,//stencil_store_treatment
+		VK_IMAGE_LAYOUT_UNDEFINED,//initial_layout
+		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,//final_layout
+		&swapchain_attachment//p_attachment_description
 	);
 	shCreateRenderpassAttachmentReference(
-		0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		&swapchain_attachment_reference
+		0,//attachment_idx
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,//layout
+		&swapchain_attachment_reference//p_attachment_reference
 	);
 	
 	shCreateSubpass(
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		0,
-		VK_NULL_HANDLE,
-		1,
-		&swapchain_attachment_reference,
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE,//resolve_attachment_reference
-		0,
-		VK_NULL_HANDLE,
-		&subpass
+		VK_PIPELINE_BIND_POINT_GRAPHICS,//bind_point
+		0,//input_attachment_count
+		VK_NULL_HANDLE,//p_input_attachments_reference
+		1,//color_attachment_count
+		&swapchain_attachment_reference,//p_color_attachments_reference
+		VK_NULL_HANDLE,//p_depth_stencil_attachment_reference
+		VK_NULL_HANDLE,//p_resolve_attachment_reference
+		0,//preserve_attachment_count
+		VK_NULL_HANDLE,//p_preserve_attachments
+		&subpass//p_subpass
 	);
 
-	VkAttachmentDescription attachment_descriptions[1] = {
+	VkAttachmentDescription attachment_descriptions[RENDERPASS_ATTACHMENT_COUNT] = {
 		swapchain_attachment
 	};
 	shCreateRenderpass(
-		device,
-		1,
-		attachment_descriptions,
-		1,
-		&subpass,
-		&renderpass
+		device,//device
+		RENDERPASS_ATTACHMENT_COUNT,//attachment_count
+		attachment_descriptions,//p_attachments_descriptions
+		1,//subpass_count
+		&subpass,//p_subpasses
+		&renderpass//p_renderpass
 	);
 
 
 	for (uint32_t i = 0; i < swapchain_image_count; i++) {
-		VkImageView image_views[1] = {
-			swapchain_image_views[i]
+		VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = {
+		swapchain_image_views[i]
 		};
 		shCreateFramebuffer(
-			device,
-			renderpass,
-			1,
-			image_views,
-			surface_capabilities.currentExtent.width,
-			surface_capabilities.currentExtent.height,
-			1,
-			&framebuffers[i]
+			device,//device
+			renderpass,//renderpass
+			RENDERPASS_ATTACHMENT_COUNT,//image_view_count
+			image_views,//p_image_views
+			surface_capabilities.currentExtent.width,//x
+			surface_capabilities.currentExtent.height,//y
+			1,//z
+			&framebuffers[i]//p_framebuffer
 		);
 	}
 
 	shCreateSemaphores(
-		device,
-		swapchain_image_count,
-		image_acquired_semaphores
+		device,//device
+		1,//semaphore_count
+		&current_image_acquired_semaphore//p_semaphores
 	);
 
 	shCreateSemaphores(
-		device,
-		swapchain_image_count,
-		renderpass_finished_semaphores
+		device,//device
+		1,//semaphore_count
+		&current_graphics_queue_finished_semaphore//p_semaphores
 	);
 
 	uint32_t swapchain_image_idx = 0;
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
+		int _width = 0;
+		int _height = 0;
+		glfwGetWindowSize(window, &_width, &_height);
+
+		if (_width != 0 && height != 0) {//otherwise it's minimized
+			if (_width != width || _height != height) {//window is resized
+
+				width   = _width;
+				height  = _height;
+
+				shWaitDeviceIdle(device);
+
+				shDestroyRenderpass(device, renderpass);
+				shDestroyFramebuffers(device, swapchain_image_count, framebuffers);
+				shDestroyImageViews(device, swapchain_image_count, swapchain_image_views);
+				shDestroySwapchain(device, swapchain);
+				shDestroySurface(instance, surface);
+
+				glfwCreateWindowSurface(instance, window, VK_NULL_HANDLE, &surface);
+				uint8_t graphics_supported = 0;
+				shGetPhysicalDeviceSurfaceSupport(physical_device, graphics_queue_family_index, surface, &graphics_supported);//always true
+				shGetPhysicalDeviceSurfaceCapabilities(physical_device, surface, &surface_capabilities);
+				shCreateSwapchain(
+					device,
+					physical_device,
+					surface,
+					swapchain_image_format,
+					&swapchain_image_format,
+					swapchain_image_count,
+					swapchain_image_sharing_mode,
+					0,
+					&swapchain_image_count,
+					&swapchain
+				);
+				shGetSwapchainImages(device, swapchain, &swapchain_image_count, swapchain_images);
+				for (uint32_t i = 0; i < swapchain_image_count; i++) {
+					shCreateImageView(device, swapchain_images[i], VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1, swapchain_image_format, &swapchain_image_views[i]);
+				}
+				shCreateRenderpass(device, RENDERPASS_ATTACHMENT_COUNT, attachment_descriptions, 1, &subpass, &renderpass);
+				for (uint32_t i = 0; i < swapchain_image_count; i++) {
+					VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { swapchain_image_views[i] };
+					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
+				}
+
+				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
+				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
+			}
+		}
+		
+
 		shAcquireSwapchainImage(
-			device,
-			swapchain,
-			UINT64_MAX,
-			image_acquired_semaphores[swapchain_image_idx],
-			VK_NULL_HANDLE,
-			&swapchain_image_idx
+			device,//device
+			swapchain,//swapchain
+			UINT64_MAX,//timeout_ns
+			current_image_acquired_semaphore,//acquired_signal_semaphore
+			VK_NULL_HANDLE,//acquired_signal_fence
+			&swapchain_image_idx//p_swapchain_image_index
 		);
 
 		shWaitForFences(
-			device,
-			1,
-			&graphics_cmd_fences[swapchain_image_idx],
-			1,
-			UINT64_MAX
+			device,//device
+			1,//fence_count
+			&graphics_cmd_fences[swapchain_image_idx],//p_fences
+			1,//wait_for_all
+			UINT64_MAX//timeout_ns
 		);
 
 		shResetFences(
-			device, 
-			1, 
-			&graphics_cmd_fences[swapchain_image_idx]
+			device,//device
+			1,//fence_count
+			&graphics_cmd_fences[swapchain_image_idx]//p_fences
 		);
 		shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
-		VkClearValue swapchain_clear_value = { 0 };
-		float* p_colors = swapchain_clear_value.color.float32;
+		VkClearValue clear_values[1] = { 0 };
+		float* p_colors = clear_values[0].color.float32;
 		p_colors[0] = (float)sin(glfwGetTime());
 		p_colors[1] = (float)cos(glfwGetTime());
 		p_colors[2] = (float)tan(glfwGetTime());
-
+		
 		shBeginRenderpass(
 			graphics_cmd_buffers[swapchain_image_idx],//graphics_cmd_buffer
 			renderpass,//renderpass
-			0,//render_offset_x 
+			0,//render_offset_x
 			0,//render_offset_y
 			surface_capabilities.currentExtent.width,//render_size_x
 			surface_capabilities.currentExtent.height,//render_size_y
-			1,//only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
-			&swapchain_clear_value,//p_clear_values
+			1,//clear_value_count, only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
+			clear_values,//p_clear_values
 			framebuffers[swapchain_image_idx]//framebuffer
 		);
 
@@ -395,92 +453,50 @@ int main(void) {
 		shEndCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
 		shQueueSubmit(
-			1,
-			&graphics_cmd_buffers[swapchain_image_idx],
-			graphics_queue,
-			graphics_cmd_fences[swapchain_image_idx],
-			1,
-			&image_acquired_semaphores[swapchain_image_idx],
-			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-			1,
-			&renderpass_finished_semaphores[swapchain_image_idx]
+			1,//cmd_buffer_count
+			&graphics_cmd_buffers[swapchain_image_idx],//p_cmd_buffers
+			graphics_queue,//queue
+			graphics_cmd_fences[swapchain_image_idx],//fence
+			1,//semaphores_to_wait_for_count
+			&current_image_acquired_semaphore,//p_semaphores_to_wait_for
+			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,//wait_stage
+			1,//signal_semaphore_count
+			&current_graphics_queue_finished_semaphore//p_signal_semaphores
 		);
 
 		shQueuePresentSwapchainImage(
-			present_queue,
-			1,
-			&renderpass_finished_semaphores[swapchain_image_idx],
-			swapchain,
-			swapchain_image_idx
+			present_queue,//present_queue
+			1,//semaphores_to_wait_for_count
+			&current_graphics_queue_finished_semaphore,//p_semaphores_to_wait_for
+			swapchain,//swapchain
+			swapchain_image_idx//swapchain_image_idx
 		);
 
-		if (swapchain_image_count == 2) {
-			swapchain_image_idx = !swapchain_image_idx;
-		}
-
+		swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
 	}
 
 	shWaitDeviceIdle(device);
 
-	shDestroySemaphores(
-		device,
-		swapchain_image_count,
-		image_acquired_semaphores
-	);
+	shDestroySemaphores(device, 1, &current_image_acquired_semaphore);
 
-	shDestroySemaphores(
-		device,
-		swapchain_image_count,
-		renderpass_finished_semaphores
-	);
+	shDestroySemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 
-	shDestroyFences(
-		device,
-		swapchain_image_count,
-		graphics_cmd_fences
-	);
+	shDestroyFences(device, swapchain_image_count, graphics_cmd_fences);
 
-	shDestroyCommandBuffers(
-		device,
-		graphics_cmd_pool,
-		swapchain_image_count,
-		graphics_cmd_buffers
-	);
+	shDestroyCommandBuffers(device, graphics_cmd_pool, swapchain_image_count, graphics_cmd_buffers);
 
-	shDestroyCommandBuffers(
-		device,
-		present_cmd_pool,
-		1,
-		&present_cmd_buffer
-	);
+	shDestroyCommandBuffers(device, present_cmd_pool, 1, &present_cmd_buffer);
 
-	shDestroyCommandPool(
-		device,
-		graphics_cmd_pool
-	);
+	shDestroyCommandPool(device, graphics_cmd_pool);
 	if (graphics_queue_family_index != present_queue_family_index) {
-		shDestroyCommandPool(
-			device,
-			present_cmd_pool
-		);
+		shDestroyCommandPool(device, present_cmd_pool);
 	}
 
-	shDestroyRenderpass(
-		device,
-		renderpass
-	);
+	shDestroyRenderpass(device, renderpass);
 
-	shDestroyFramebuffers(
-		device,
-		swapchain_image_count,
-		framebuffers
-	);
+	shDestroyFramebuffers(device, swapchain_image_count, framebuffers);
 
-	shDestroyImageViews(
-		device,
-		swapchain_image_count,
-		swapchain_image_views
-	);
+	shDestroyImageViews(device, swapchain_image_count, swapchain_image_views);
 
 	shDestroySwapchain(device, swapchain);
 

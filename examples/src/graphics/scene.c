@@ -153,7 +153,7 @@ int main(void) {
 	int height = 480;
 
 	uint32_t     instance_extension_count = 0;
-	GLFWwindow*  window                   = glfwCreateWindow(720, 480, "vulkan scene color", NULL, NULL);
+	GLFWwindow*  window                   = glfwCreateWindow(720, 480, "vulkan scene", NULL, NULL);
 	const char** pp_instance_extensions   = glfwGetRequiredInstanceExtensions(&instance_extension_count);
 
 
@@ -606,6 +606,7 @@ int main(void) {
 
 		if (_width != 0 && height != 0) {//otherwise it's minimized
 			if (_width != width || _height != height) {//window is resized
+
 				width  = _width;
 				height = _height;
 
@@ -709,8 +710,8 @@ int main(void) {
 
 				createPipeline(device, renderpass, width, height, sample_count, swapchain_image_count, p_pipeline_pool);
 
-				swapchain_image_idx = 0;
-				
+				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
+				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 			}
 		}
 		
@@ -823,7 +824,6 @@ int main(void) {
 		);
 
 		swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
-
 	}
 
 	shWaitDeviceIdle(device);

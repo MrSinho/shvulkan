@@ -32,20 +32,17 @@ add_subdirectory(examples/external/glfw)
 
 add_executable(shvulkan-compute-power-numbers examples/src/compute/power-numbers.c)
 add_executable(shvulkan-clear-color           examples/src/graphics/clear-color.c)
-add_executable(shvulkan-resizable-clear-color examples/src/graphics/resizable-clear-color.c)
 add_executable(shvulkan-scene                 examples/src/graphics/scene.c)
 #add_executable(shvulkan-texture               examples/src/graphics/texture.c)
 
 target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
 if (WIN32)
 target_link_libraries(shvulkan-clear-color           PUBLIC shvulkan glfw)
-target_link_libraries(shvulkan-resizable-clear-color PUBLIC shvulkan glfw)
 target_link_libraries(shvulkan-scene                 PUBLIC shvulkan glfw)
 target_link_libraries(shvulkan-scene                 PUBLIC shvulkan glfw)
 #target_link_libraries(shvulkan-texture               PUBLIC shvulkan glfw)
 elseif (UNIX)
 target_link_libraries(shvulkan-clear-color           PUBLIC shvulkan glfw X11)
-target_link_libraries(shvulkan-resizable-clear-color PUBLIC shvulkan glfw X11)
 target_link_libraries(shvulkan-scene                 PUBLIC shvulkan glfw X11)
 #target_link_libraries(shvulkan-texture               PUBLIC shvulkan glfw X11)
 endif(WIN32)
@@ -53,7 +50,6 @@ endif(WIN32)
 set_target_properties(
     shvulkan-compute-power-numbers 
     shvulkan-clear-color 
-    shvulkan-resizable-clear-color 
     shvulkan-scene
     #shvulkan-texture
 

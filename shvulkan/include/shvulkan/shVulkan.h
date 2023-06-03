@@ -356,6 +356,12 @@ extern uint8_t shResetFences(
 	VkFence* p_fences
 );
 
+extern uint8_t shResetSemaphores(
+	VkDevice     device,
+	uint32_t     semaphore_count,
+	VkSemaphore* p_semaphores
+);
+
 extern uint8_t shWaitForFences(
 	VkDevice device,
 	uint32_t fence_count,

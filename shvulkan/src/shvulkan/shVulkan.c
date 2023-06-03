@@ -1383,7 +1383,7 @@ uint8_t shCreateSemaphores(
 
 	VkSemaphoreCreateInfo semaphore_create_info = {
 		VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                    //pNext;
+		VK_NULL_HANDLE,                          //pNext;
 		0                                        //flags;
 	};
 
@@ -1457,6 +1457,28 @@ uint8_t shResetFences(
 	);
 
 	return 1;
+}
+
+uint8_t shResetSemaphores(
+	VkDevice     device,
+	uint32_t     semaphore_count,
+	VkSemaphore* p_semaphores
+) {
+	shVkError(device          == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
+	shVkError(semaphore_count == 0,              "invalid semaphore count",       return 0);
+	shVkError(p_semaphores    == VK_NULL_HANDLE, "invalid semaphores memory",     return 0);
+
+	uint8_t r = 1;
+	r = r && shDestroySemaphores(device, semaphore_count, p_semaphores);
+	r = r && shCreateSemaphores(device, semaphore_count, p_semaphores);
+
+	shVkError(
+		r == 0,
+		"failed resetting semaphores",
+		return 0
+	);
+
+	return r;
 }
 
 uint8_t shWaitForFences(
