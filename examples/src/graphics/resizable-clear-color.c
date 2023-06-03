@@ -14,6 +14,8 @@ extern "C" {
 #define SWAPCHAIN_IMAGE_COUNT 2
 #define RENDERPASS_ATTACHMENT_COUNT 1
 
+
+
 int main(void) {
 
 	int r = glfwInit();
