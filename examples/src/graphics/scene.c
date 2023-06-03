@@ -474,7 +474,7 @@ int main(void) {
 		width, height, 1,
 		VK_FORMAT_D32_SFLOAT,
 		1, sample_count,
-VK_IMAGE_TILING_OPTIMAL,
+	VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 		VK_SHARING_MODE_EXCLUSIVE,
 		&depth_image
@@ -623,6 +623,8 @@ VK_IMAGE_TILING_OPTIMAL,
 				shDestroyImageViews(device, 1, &input_color_image_view);
 
 				glfwCreateWindowSurface(instance, window, VK_NULL_HANDLE, &surface);
+				uint8_t graphics_supported = 0;
+				shGetPhysicalDeviceSurfaceSupport(physical_device, graphics_queue_family_index, surface, &graphics_supported);//always true
 				shGetPhysicalDeviceSurfaceCapabilities(physical_device, surface, &surface_capabilities);
 				shCreateSwapchain(
 					device, physical_device, surface,

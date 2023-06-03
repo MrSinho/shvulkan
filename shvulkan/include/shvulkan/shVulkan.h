@@ -92,6 +92,13 @@ extern uint8_t shSelectPhysicalDevice(
 	VkPhysicalDeviceMemoryProperties* p_physical_device_memory_properties
 );
 
+extern uint8_t shGetPhysicalDeviceSurfaceSupport(
+	VkPhysicalDevice physical_device,
+	uint32_t         queue_family_index,
+	VkSurfaceKHR     surface,
+	uint8_t*         p_supported
+);
+
 extern uint8_t shGetPhysicalDeviceSurfaceCapabilities(
 	VkPhysicalDevice          physical_device,
 	VkSurfaceKHR              surface,

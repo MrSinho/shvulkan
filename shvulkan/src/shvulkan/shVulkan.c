@@ -431,13 +431,33 @@ uint8_t shSelectPhysicalDevice(
 	return 1;
 }
 
+uint8_t shGetPhysicalDeviceSurfaceSupport(
+	VkPhysicalDevice          physical_device,
+	uint32_t                  queue_family_index,
+	VkSurfaceKHR              surface,
+	uint8_t*                  p_supported
+) {
+	shVkError(physical_device        == VK_NULL_HANDLE, "invalid physical device memory", return 0);
+	shVkError(surface                == VK_NULL_HANDLE, "invalid surface memory",         return 0);
+	shVkError(p_supported            == NULL,           "invalid support memory",         return 0);
+
+	VkBool32 supported = 0;
+	vkGetPhysicalDeviceSurfaceSupportKHR(
+		physical_device, queue_family_index, surface, &supported
+	);
+
+	(*p_supported) = (uint8_t)supported;
+
+	return 1;
+}
+
 uint8_t shGetPhysicalDeviceSurfaceCapabilities(
 	VkPhysicalDevice          physical_device,
 	VkSurfaceKHR              surface,
 	VkSurfaceCapabilitiesKHR* p_surface_capabilities
 ) {
-	shVkError(physical_device        == VK_NULL_HANDLE, "invalid physical device memory", return 0);
-	shVkError(surface                == VK_NULL_HANDLE, "invalid surface memory", return 0);
+	shVkError(physical_device        == VK_NULL_HANDLE, "invalid physical device memory",      return 0);
+	shVkError(surface                == VK_NULL_HANDLE, "invalid surface memory",              return 0);
 	shVkError(p_surface_capabilities == VK_NULL_HANDLE, "invalid surface capabilities memory", return 0);
 
 	shVkResultError(
