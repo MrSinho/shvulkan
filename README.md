@@ -45,18 +45,6 @@ If you are having some trouble with building the targets and compiling the code,
 
 ---
 
-### Vulkan version
-
-If you haven't installed Vulkan 1.2 you can set the cmake options `SH_USE_VULKAN_1_0` or `SH_USE_VULKAN_1_1` as true:
-```bash
-cmake -DSH_USE_VULKAN_1_0=ON ..
-cmake -DSH_USE_VULKAN_1_1=ON ..
-```
-
-[top](#shvulkan)
-
----
-
 ## CMake targets
 
 | CMake target                                           | type       |
