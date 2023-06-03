@@ -400,8 +400,6 @@ int main(void) {
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
-				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
-				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 			}
 		}
 		

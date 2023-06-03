@@ -710,8 +710,6 @@ int main(void) {
 
 				createPipeline(device, renderpass, width, height, sample_count, swapchain_image_count, p_pipeline_pool);
 
-				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
-				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 			}
 		}
 		

@@ -1510,7 +1510,7 @@ uint8_t shWaitForSemaphores(
 	uint64_t*    p_semaphores_values
 ) {
 	shVkError(device              == VK_NULL_HANDLE, "invalid command buffer memory",    return 0);
-	shVkError(semaphore_count     == 0,    "invalid semaphore count",          return 0);
+	shVkError(semaphore_count     == 0,              "invalid semaphore count",          return 0);
 	shVkError(p_semaphores        == VK_NULL_HANDLE, "invalid semaphores memory",        return 0);
 	shVkError(p_semaphores_values == VK_NULL_HANDLE, "invalid semaphores values memory", return 0);
 
