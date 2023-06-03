@@ -650,7 +650,7 @@ uint8_t shCreateSwapchain(
 		VK_NULL_HANDLE,                                         //pNext;
 		0,                                            //flags;
 		surface,                                      //surface;
-		swapchain_image_count,                        //minImageCount;
+		_swapchain_image_count,                       //minImageCount;
 		surface_format.format,                        //imageFormat;
 		surface_format.colorSpace,                    //imageColorSpace;
 		(VkExtent2D) {
