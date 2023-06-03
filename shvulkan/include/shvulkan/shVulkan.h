@@ -13,6 +13,13 @@ extern "C" {
 
 
 
+#ifndef VK_MAKE_API_VERSION
+#define VK_MAKE_API_VERSION(variant, major, minor, patch)\
+    ((((uint32_t)(variant)) << 29U) | (((uint32_t)(major)) << 22U) | (((uint32_t)(minor)) << 12U) | ((uint32_t)(patch)))
+#endif//VK_MAKE_API_VERSION
+	
+
+
 #define shVkError(condition, error_msg, failure_expression)\
 	if ((int)(condition)) {\
 		printf("shvulkan error: %s\n", (const char*)(error_msg));\
