@@ -156,6 +156,7 @@ int main(void) {
 	GLFWwindow*  window                   = glfwCreateWindow(720, 480, "vulkan scene", NULL, NULL);
 	const char** pp_instance_extensions   = glfwGetRequiredInstanceExtensions(&instance_extension_count);
 
+	glfwSetWindowSizeLimits(window, 400, 300, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 	VkInstance                       instance                                         = VK_NULL_HANDLE;
 											                                        
@@ -604,7 +605,7 @@ int main(void) {
 		int _height = 0;
 		glfwGetWindowSize(window, &_width, &_height);
 
-		if (_width != 0 && height != 0) {//otherwise it's minimized
+		if (_width != 0 && _height != 0) {//otherwise it's minimized
 			if (_width != width || _height != height) {//window is resized
 
 				width  = _width;
@@ -701,6 +702,9 @@ int main(void) {
 					};
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
+
+				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
+				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 
 				shPipelineDestroyShaderModules    (device, 0, 2, p_pipeline);
 				shPipelineDestroyLayout           (device, p_pipeline);
