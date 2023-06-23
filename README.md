@@ -31,7 +31,7 @@ All the samples were built and tested on Windows and Linux Mint.
 ## Clone and Build
 Open the terminal and run the following commands:
 ```bash
-git clone --recursive https://github.com/MrSinho/shvulkan.git
+git clone --recursive https://github.com/mrsinho/shvulkan.git
 cd shvulkan
 mkdir build
 cd build
@@ -47,11 +47,12 @@ If you are having some trouble with building the targets and compiling the code,
 
 ## CMake targets
 
-| CMake target                                           | type       |
-|--------------------------------------------------------|------------|
-| [shvulkan](../ShVulkan/index)                       	 | library    |
-| [shvulkan-graphics-example](#graphics-example)         | executable |
-| [shvulkan-compute-example](#compute-example)           | executable |
+| CMake target                                                | type       |
+|-------------------------------------------------------------|------------|
+| [shvulkan](../ShVulkan/index)                       	      | library    |
+| [shvulkan-clear-color](examples/src/graphics/clear-color.c) | executable |
+| [shvulkan-scene](#graphics-example-overview)                | executable |
+| [shvulkan-compute-example](#compute-example-overview)       | executable |
 
 If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw`](https://github.com/glfw/glfw) target will be generated as a static library.
 
@@ -59,7 +60,7 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ---
 
-## [Graphics example overview](examples/src/graphicsExample.c)
+## [Graphics example overview](examples/src/graphics/scene.c)
 
 This example demonstrates how to setup a vulkan environment, allocate, write and bind memory to the GPU, enable multisampled anti aliasing, write a vertex and a fragment shader, build a graphics pipeline, bind inputs with a command buffer, query draw calls (with indexing and without indexing, with instancing and without instancing) to a graphics queue and synchronize data between host and graphics card.
 
@@ -101,7 +102,7 @@ Through the renderpass, the second draw call will produce the following framebuf
 
 ---
 
-## [Compute example overview](examples/src/computeExample.c)
+## [Compute example overview](examples/src/compute/power-numbers.c)
 
 The compute examples shows how setup a vulkan environment, allocate, write and bind memory to the GPU, setup a compute shader, write a compute shader and build a compute pipeline (the program takes 64 decimal numbers as inputs and square their values), bind and dispatch inputs to compute workgroups, manage parallel invocations, submit to a compute queue, synchronize data between host and graphics card and read the output values. The following diagram briefly shows what happens in this example program:
 
