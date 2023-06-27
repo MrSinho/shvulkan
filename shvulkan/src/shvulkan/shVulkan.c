@@ -3452,6 +3452,192 @@ uint8_t shPipelinePoolSetDescriptorSetBufferInfos(
 	return 1;
 }
 
+//uint8_t shReadShaderSourceCodeArgs(
+//	char*                       p_source_code,
+//	uint32_t                    code_size,
+//	const char*                 declaration_block,
+//	uint32_t*                   p_declaration_block_count,
+//	uint32_t                    declaration_arg_count,
+//	uint32_t*                   p_working_declaration_arg_values
+//) {
+//	shVkError(p_source_code                    == NULL, "invalid shader source code memory",      return 0);
+//	shVkError(declaration_block                == NULL, "invalid declaration block memory",       return 0);
+//	shVkError(p_declaration_block_count        == NULL, "invalid declaration block count memory", return 0);
+//	shVkError(p_working_declaration_arg_values == NULL, "invalid declaration arg values memory",  return 0);
+//	
+//	uint32_t declaration_arg_idx  = 0;
+//	uint32_t declaration_block_idx        = 0;
+//
+//	for (uint32_t char_idx = 0; char_idx < code_size; char_idx++) {
+//
+//		char*    p_current_token = &p_source_code[char_idx];
+//		uint32_t remaining_bytes = code_size - char_idx;//remaining source code bytes, exluding the current byte
+//
+//		if ((*p_current_token) == ' ') {
+//			p_current_token++;
+//		}
+//
+//		if (remaining_bytes > strlen(declaration_block)) {
+//			if ((*p_current_token) == ',') {
+//				p_current_token++;
+//				declaration_arg_idx++;
+//			}
+//			if (declaration_block_idx != (*p_declaration_block_count)) {
+//				
+//				if (declaration_arg_idx < declaration_arg_count) {
+//					char* p_last_value_char = NULL;
+//					p_working_declaration_arg_values[declaration_block_idx * SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT + declaration_arg_idx] 
+//						= strtol(p_current_token, &p_last_value_char, 10);
+//					char_idx += (uint32_t)(p_last_value_char - p_current_token);
+//				}
+//				else {
+//					declaration_block_idx++;
+//				}
+//			}
+//
+//			if (memcmp(p_current_token, declaration_block, strlen(declaration_block)) == 0) {
+//				declaration_block_idx = (*p_declaration_block_count);
+//				declaration_arg_idx   = 0;//reset args
+//				(*p_declaration_block_count)++;
+//				char_idx += (uint32_t)strlen(declaration_block) - 1;//-1 because is followed by char_idx++
+//			}
+//
+//		}
+//
+//	}
+//
+//	return 0;
+//}
+//
+//uint8_t shParseShaderSourceCode(
+//	char*              p_source_code,
+//	uint32_t           code_size,
+//	uint32_t           swapchain_image_count,
+//	VkShaderStageFlags shader_stage,
+//	ShVkPipeline*      p_pipeline
+//) {
+//	shVkError(p_source_code == NULL, "invalid shader source code memory", return 0);
+//
+//	uint32_t vertex_binding_count                = 0;
+//	uint32_t vertex_attribute_count              = 0;
+//	uint32_t push_constant_count                 = 0;
+//	uint32_t descriptor_set_layout_binding_count = 0;
+//	uint32_t descriptor_set_count                = 0;
+//
+//	uint32_t vertex_binding_arg_values                [SH_MAX_PIPELINE_VERTEX_BINDING_COUNT                * SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT] = { 0 };
+//	uint32_t vertex_attribute_arg_values              [SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT              * SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT] = { 0 };
+//	uint32_t push_constant_arg_values                 [1                                                   * SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT] = { 0 };
+//	uint32_t descriptor_set_layout_binding_arg_values [SH_MAX_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_COUNT * SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT] = { 0 };
+//	uint32_t descriptor_set_arg_values                [SH_MAX_PIPELINE_DESCRIPTOR_SET_COUNT                * SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT] = { 0 };
+//
+//	shReadShaderSourceCodeArgs(
+//		p_source_code, code_size, SH_PIPELINE_VERTEX_BINDING_DECLARATION_BLOCK,
+//		&vertex_binding_count, SH_PARSER_VERTEX_BINDING_ARG_COUNT,
+//		vertex_binding_arg_values
+//	);
+//
+//	shReadShaderSourceCodeArgs(
+//		p_source_code, code_size, SH_PIPELINE_VERTEX_ATTRIBUTE_DECLARATION_BLOCK,
+//		&vertex_attribute_count, SH_PARSER_VERTEX_ATTRIBUTE_ARG_COUNT,
+//		vertex_attribute_arg_values
+//	);
+//
+//	shReadShaderSourceCodeArgs(
+//		p_source_code, code_size, SH_PIPELINE_PUSH_CONSTANT_DECLARATION_BLOCK,
+//		&push_constant_count, SH_PARSER_PUSH_CONSTANT_ARG_COUNT,
+//		push_constant_arg_values
+//	);
+//
+//	shReadShaderSourceCodeArgs(
+//		p_source_code, code_size, SH_PIPELINE_DESCRIPTOR_SET_LAYOUT_BINDING_DECLARATION_BLOCK,
+//		&descriptor_set_layout_binding_count, SH_PARSER_DESCRIPTOR_SET_LAYOUT_BINDING_ARG_COUNT,
+//		descriptor_set_layout_binding_arg_values
+//	);
+//
+//	shReadShaderSourceCodeArgs(
+//		p_source_code, code_size, SH_PIPELINE_DESCRIPTOR_SET_DECLARATION_BLOCK,
+//		&descriptor_set_count, SH_PARSER_DESCRIPTOR_SET_ARG_COUNT,
+//		descriptor_set_arg_values
+//	);
+//
+//	//
+//	//VERTEX BINDING
+//	//
+//	for (uint32_t vertex_binding_idx = 0; vertex_binding_idx < vertex_binding_count; vertex_binding_idx++) {
+//
+//		uint32_t binding             = vertex_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_binding_idx + 0];//_binding
+//		uint32_t size                = vertex_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_binding_idx + 1];//_size
+//		uint32_t input_rate_vertex   = vertex_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_binding_idx + 2];//_is_input_rate_vertex
+//		uint32_t input_rate_instance = vertex_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_binding_idx + 3];//_is_input_rate_instance
+//		
+//		VkVertexInputRate vertex_input_rate         = VK_VERTEX_INPUT_RATE_MAX_ENUM;
+//		(input_rate_vertex)   && (vertex_input_rate = VK_VERTEX_INPUT_RATE_VERTEX);
+//		(input_rate_instance) && (vertex_input_rate = VK_VERTEX_INPUT_RATE_INSTANCE);
+//
+//		shVkError(
+//			shPipelineSetVertexBinding(binding, size, vertex_input_rate, p_pipeline) == 0,
+//			"failed setting vertex binding",
+//			return 0
+//		);
+//	}
+//
+//	//
+//	//VERTEX ATTRIBUTE
+//	//
+//	for (uint32_t vertex_attribute_idx = 0; vertex_attribute_idx < vertex_attribute_count; vertex_attribute_idx++) {
+//		uint32_t binding  = vertex_attribute_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_attribute_idx + 0];//_binding
+//		uint32_t location = vertex_attribute_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_attribute_idx + 1];//_location
+//		uint32_t offset   = vertex_attribute_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_attribute_idx + 2];//_offset
+//		uint32_t size     = vertex_attribute_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * vertex_attribute_idx + 3];//_size
+//
+//		VkFormat format   = VK_FORMAT_MAX_ENUM;
+//
+//		//hmm not precise
+//		     if (size == 4)  { format = VK_FORMAT_R32_SFLOAT; }
+//		else if (size == 8)  { format = VK_FORMAT_R32G32_SFLOAT; }
+//		else if (size == 12) { format = VK_FORMAT_R32G32B32_SFLOAT; }
+//		else                 { format = VK_FORMAT_R32G32B32A32_SFLOAT; }
+//
+//		shVkError(
+//			shPipelineSetVertexAttribute(location, binding, format, offset, p_pipeline) == 0,
+//			"failed setting vertex attribute",
+//			return 0
+//		);
+//	}
+//
+//	//
+//	//PUSH CONSTANTS
+//	//
+//	for (uint32_t push_constant_idx = 0; push_constant_idx < push_constant_count; push_constant_idx++) {//actually only one is allowed
+//		uint32_t offset = push_constant_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * push_constant_idx + 0];//_offset
+//		uint32_t size   = push_constant_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * push_constant_idx + 1];//_size
+//
+//		shVkError(
+//			shPipelineSetPushConstants(shader_stage, offset, size, p_pipeline) == 0,
+//			"failed setting push constant range",
+//			return 0
+//		);
+//	}
+//
+//	//
+//	//DESCRIPTOR SET LAYOUT BINDINGS
+//	//
+//	for (uint32_t set_layout_binding_idx = 0; set_layout_binding_idx < descriptor_set_layout_binding_count; set_layout_binding_idx++) {
+//		uint32_t binding    = descriptor_set_layout_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * set_layout_binding_idx + 0];//_binding
+//		uint32_t desc_type  = descriptor_set_layout_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * set_layout_binding_idx + 1];//_descriptor_type
+//		uint32_t desc_count = descriptor_set_layout_binding_arg_values[SH_PIPELINE_MAX_DECLARATION_BLOCK_ARG_COUNT * set_layout_binding_idx + 2];//_descriptor_count
+//
+//		shVkError(
+//			shPipelineCreateDescriptorSetLayoutBinding(binding, descriptor_type, desc_count, shader_stage, p_pipeline) == 0,
+//			"failed setting descriptor set layout binding",
+//			return 0
+//		);
+//
+//	}
+//
+//	return 1;
+//}
+
 uint8_t shPipelinePoolDestroyDescriptorSetLayouts(
 	VkDevice          device,
 	uint32_t          first_set_layout,

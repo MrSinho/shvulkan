@@ -706,126 +706,121 @@ int main(void) {
 				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
 				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 
-				shPipelineDestroyShaderModules    (device, 0, 2, p_pipeline);
-				shPipelineDestroyLayout           (device, p_pipeline);
-				shDestroyPipeline                 (device, p_pipeline->pipeline);
-
-				shClearPipeline(p_pipeline);
-
-				createPipeline(device, renderpass, width, height, sample_count, swapchain_image_count, p_pipeline_pool);
-
+				shDestroyPipeline (device, p_pipeline->pipeline);
+				shPipelineSetViewport(0, 0,width, height, 0, 0,width, height, p_pipeline);
+				shSetupGraphicsPipeline(device, renderpass, p_pipeline);
 			}
+
+			shAcquireSwapchainImage(
+				device,//device
+				swapchain,//swapchain
+				UINT64_MAX,//timeout_ns
+				current_image_acquired_semaphore,//acquired_signal_semaphore
+				VK_NULL_HANDLE,//acquired_signal_fence
+				&swapchain_image_idx//p_swapchain_image_index
+			);
+
+			shWaitForFences(
+				device,//device
+				1,//fence_count
+				&graphics_cmd_fences[swapchain_image_idx],//p_fences
+				1,//wait_for_all
+				UINT64_MAX//timeout_ns
+			);
+
+			shResetFences(
+				device,//device
+				1,//fence_count
+				&graphics_cmd_fences[swapchain_image_idx]//p_fences
+			);
+
+			VkCommandBuffer cmd_buffer = graphics_cmd_buffers[swapchain_image_idx];
+
+			shBeginCommandBuffer(cmd_buffer);
+
+			triangle[6] = (float)sin(glfwGetTime());
+			shWriteMemory(
+				device,
+				staging_memory,
+				sizeof(quad),
+				sizeof(triangle),
+				triangle
+			);
+			shCopyBuffer(
+				cmd_buffer,
+				staging_buffer,
+				sizeof(quad), sizeof(quad), sizeof(triangle),
+				vertex_buffer
+			);
+
+			VkClearValue clear_values[2] = { 0 };
+			float* p_colors = clear_values[0].color.float32;
+			p_colors[0] = 0.1f;
+			p_colors[1] = 0.1f;
+			p_colors[2] = 0.1f;
+
+			clear_values[1].depthStencil.depth = 1.0f;
+
+			shBeginRenderpass(
+				cmd_buffer,//graphics_cmd_buffer
+				renderpass,//renderpass
+				0,//render_offset_x
+				0,//render_offset_y
+				surface_capabilities.currentExtent.width,//render_size_x
+				surface_capabilities.currentExtent.height,//render_size_y
+				2,//only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
+				clear_values,//p_clear_values
+				framebuffers[swapchain_image_idx]//framebuffer
+			);
+
+			VkDeviceSize vertex_offset = 0;
+			VkDeviceSize vertex_offsets[2] = { 0, 0 };
+			VkBuffer     vertex_buffers[2] = { vertex_buffer, instance_buffer };
+			shBindVertexBuffers(cmd_buffer, 0, 2, vertex_buffers, vertex_offsets);
+
+			shBindIndexBuffer(cmd_buffer, 0, index_buffer);
+
+			shBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
+
+			shPipelinePushConstants(cmd_buffer, projection_view, p_pipeline);
+
+			shPipelineBindDescriptorSets(
+				cmd_buffer, swapchain_image_idx, 1,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				0, VK_NULL_HANDLE,
+				p_pipeline_pool, p_pipeline
+			);
+
+			shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
+
+			shDraw(cmd_buffer, 3, 4, 1, 2);
+
+			shEndRenderpass(cmd_buffer);
+
+			shEndCommandBuffer(cmd_buffer);
+
+			shQueueSubmit(
+				1,//cmd_buffer_count
+				&cmd_buffer,//p_cmd_buffers
+				graphics_queue,//queue
+				graphics_cmd_fences[swapchain_image_idx],//fence
+				1,//semaphores_to_wait_for_count
+				&current_image_acquired_semaphore,//p_semaphores_to_wait_for
+				VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,//wait_stage
+				1,//signal_semaphore_count
+				&current_graphics_queue_finished_semaphore//p_signal_semaphores
+			);
+
+			shQueuePresentSwapchainImage(
+				present_queue,//present_queue
+				1,//semaphores_to_wait_for_count
+				&current_graphics_queue_finished_semaphore,//p_semaphores_to_wait_for
+				swapchain,//swapchain
+				swapchain_image_idx//swapchain_image_idx
+			);
+
+			swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
 		}
-		
-		shAcquireSwapchainImage(
-			device,//device
-			swapchain,//swapchain
-			UINT64_MAX,//timeout_ns
-			current_image_acquired_semaphore,//acquired_signal_semaphore
-			VK_NULL_HANDLE,//acquired_signal_fence
-			&swapchain_image_idx//p_swapchain_image_index
-		);
-
-		shWaitForFences(
-			device,//device
-			1,//fence_count
-			&graphics_cmd_fences[swapchain_image_idx],//p_fences
-			1,//wait_for_all
-			UINT64_MAX//timeout_ns
-		);
-
-		shResetFences(
-			device,//device
-			1,//fence_count
-			&graphics_cmd_fences[swapchain_image_idx]//p_fences
-		);
-
-		VkCommandBuffer cmd_buffer = graphics_cmd_buffers[swapchain_image_idx];
-
-		shBeginCommandBuffer(cmd_buffer);
-
-		triangle[6] = (float)sin(glfwGetTime());
-		shWriteMemory(
-			device,
-			staging_memory,
-			sizeof(quad),
-			sizeof(triangle),
-			triangle
-		);
-		shCopyBuffer(
-			cmd_buffer,
-			staging_buffer,
-			sizeof(quad), sizeof(quad), sizeof(triangle),
-			vertex_buffer
-		);
-
-		VkClearValue clear_values[2] = { 0 };
-		float* p_colors = clear_values[0].color.float32;
-		p_colors[0] = 0.1f;
-		p_colors[1] = 0.1f;
-		p_colors[2] = 0.1f;
-
-		clear_values[1].depthStencil.depth = 1.0f;
-
-		shBeginRenderpass(
-			cmd_buffer,//graphics_cmd_buffer
-			renderpass,//renderpass
-			0,//render_offset_x
-			0,//render_offset_y
-			surface_capabilities.currentExtent.width,//render_size_x
-			surface_capabilities.currentExtent.height,//render_size_y
-			2,//only attachments with VK_ATTACHMENT_LOAD_OP_CLEAR
-			clear_values,//p_clear_values
-			framebuffers[swapchain_image_idx]//framebuffer
-		);
-
-		VkDeviceSize vertex_offset     = 0;
-		VkDeviceSize vertex_offsets[2] = {0, 0};
-		VkBuffer     vertex_buffers[2] = { vertex_buffer, instance_buffer };
-		shBindVertexBuffers(cmd_buffer, 0, 2, vertex_buffers, vertex_offsets);
-		
-		shBindIndexBuffer(cmd_buffer, 0, index_buffer);
-
-		shBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_pipeline);
-
-		shPipelinePushConstants(cmd_buffer, projection_view, p_pipeline);
-
-		shPipelineBindDescriptorSets(
-			cmd_buffer, swapchain_image_idx, 1,
-			VK_PIPELINE_BIND_POINT_GRAPHICS, 
-			0, VK_NULL_HANDLE, 
-			p_pipeline_pool, p_pipeline
-		);
-
-		shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
-
-		shDraw(cmd_buffer, 3, 4, 1, 2);
-
-		shEndRenderpass(cmd_buffer);
-
-		shEndCommandBuffer(cmd_buffer);
-
-		shQueueSubmit(
-			1,//cmd_buffer_count
-			&cmd_buffer,//p_cmd_buffers
-			graphics_queue,//queue
-			graphics_cmd_fences[swapchain_image_idx],//fence
-			1,//semaphores_to_wait_for_count
-			&current_image_acquired_semaphore,//p_semaphores_to_wait_for
-			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,//wait_stage
-			1,//signal_semaphore_count
-			&current_graphics_queue_finished_semaphore//p_signal_semaphores
-		);
-
-		shQueuePresentSwapchainImage(
-			present_queue,//present_queue
-			1,//semaphores_to_wait_for_count
-			&current_graphics_queue_finished_semaphore,//p_semaphores_to_wait_for
-			swapchain,//swapchain
-			swapchain_image_idx//swapchain_image_idx
-		);
-
-		swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
 	}
 
 	shWaitDeviceIdle(device);
