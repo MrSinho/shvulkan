@@ -71,7 +71,7 @@ int main(void) {
 	int height = (int)((float)video_mode->height / 1.5f);
 	
 	uint32_t     instance_extension_count = 0;
-	GLFWwindow*  window                   = glfwCreateWindow(width, height, "vulkan  clear color", NULL, NULL);
+	GLFWwindow*  window                   = glfwCreateWindow(width, height, "vulkan clear color", NULL, NULL);
 	const char** pp_instance_extensions   = glfwGetRequiredInstanceExtensions(&instance_extension_count);
 
 #ifdef _WIN32
@@ -408,8 +408,6 @@ int main(void) {
 					swapchain_image_sharing_mode, &swapchain_image_count, swapchain_image_views,
 					swapchain_images, &renderpass, attachment_descriptions, &subpass, framebuffers
 				);
-
-				puts("RESIZING WINDOW I\n\n");
 			}
 
 			shAcquireSwapchainImage(
@@ -423,8 +421,6 @@ int main(void) {
 			);
 
 			if (swapchain_suboptimal) {
-				printf("\n\n\tSWAPCHAIN IMAGE %i\n\n", swapchain_image_idx);
-				puts("RESIZING WINDOW II\n\n");
 				resizeWindow(
 					width, height, instance, window, &surface, &surface_capabilities, physical_device,
 					device, graphics_queue_family_index, &swapchain, &swapchain_image_format,
