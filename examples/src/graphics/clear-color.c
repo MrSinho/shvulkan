@@ -353,7 +353,9 @@ int main(void) {
 		&current_graphics_queue_finished_semaphore//p_semaphores
 	);
 
-	uint32_t swapchain_image_idx = 0;
+	uint32_t swapchain_image_idx  = 0;
+	uint8_t  swapchain_suboptimal = 0;
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
@@ -362,7 +364,7 @@ int main(void) {
 		glfwGetWindowSize(window, &_width, &_height);
 
 		if (_width != 0 && _height != 0) {//otherwise it's minimized
-			if (_width != width || _height != height) {//window is resized
+			if (_width != width || _height != height || swapchain_suboptimal) {//window is resized
 
 				width   = _width;
 				height  = _height;
@@ -401,9 +403,6 @@ int main(void) {
 					shCreateFramebuffer(device, renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, _width, _height, 1, &framebuffers[i]);
 				}
 
-				shResetSemaphores(device, 1, &current_image_acquired_semaphore);
-				shResetSemaphores(device, 1, &current_graphics_queue_finished_semaphore);
-
 			}
 		}
 		
@@ -414,7 +413,8 @@ int main(void) {
 			UINT64_MAX,//timeout_ns
 			current_image_acquired_semaphore,//acquired_signal_semaphore
 			VK_NULL_HANDLE,//acquired_signal_fence
-			&swapchain_image_idx//p_swapchain_image_index
+			&swapchain_image_idx,//p_swapchain_image_index
+			&swapchain_suboptimal//p_swapchain_suboptimal
 		);
 
 		shWaitForFences(

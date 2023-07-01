@@ -1538,10 +1538,12 @@ uint8_t shAcquireSwapchainImage(
 	uint64_t       timeout_ns,
 	VkSemaphore    acquired_signal_semaphore,
 	VkFence        acquired_signal_fence,
-	uint32_t*      p_swapchain_image_index
+	uint32_t*      p_swapchain_image_index,
+	uint8_t*       p_swapchain_suboptimal
 ) {
-	shVkError(device                    == VK_NULL_HANDLE, "invalid command buffer memory",        return 0);
-	shVkError(p_swapchain_image_index   == VK_NULL_HANDLE, "invalid swapchain image index memory", return 0);
+	shVkError(device                  == VK_NULL_HANDLE, "invalid command buffer memory",        return 0);
+	shVkError(p_swapchain_image_index == NULL,           "invalid swapchain image index memory", return 0);
+	shVkError(p_swapchain_suboptimal  == NULL,           "invalid swapchain suboptimal memory",  return 0);
 
 	shVkError(
 		acquired_signal_semaphore == VK_NULL_HANDLE && acquired_signal_fence == VK_NULL_HANDLE, 
@@ -1549,18 +1551,20 @@ uint8_t shAcquireSwapchainImage(
 		return 0
 	);
 
-	shVkResultError(
-		vkAcquireNextImageKHR(
-			device, 
-			swapchain, 
-			timeout_ns, 
-			acquired_signal_semaphore, 
-			acquired_signal_fence, 
-			p_swapchain_image_index
-		),
-		"failed acquiring swapchain image",
-		return 0
+	VkResult r = vkAcquireNextImageKHR(
+		device,
+		swapchain,
+		timeout_ns,
+		acquired_signal_semaphore,
+		acquired_signal_fence,
+		p_swapchain_image_index
 	);
+
+	shVkResultError(r, "failed acquiring swapchain image", return 0);
+
+	if (r == VK_SUBOPTIMAL_KHR) {
+		(*p_swapchain_suboptimal) = 1;
+	}
 
 	return 1;
 }
