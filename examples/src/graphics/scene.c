@@ -178,14 +178,22 @@ int main(void) {
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE,  GLFW_TRUE);
 
-	int width  = 720;
-	int height = 480;
+	GLFWmonitor* monitor    = (GLFWmonitor*)glfwGetPrimaryMonitor();
+	GLFWvidmode* video_mode = (GLFWvidmode*)glfwGetVideoMode(monitor); 	
+
+
+	int width  = (int)((float)video_mode->width  / 1.5f);
+	int height = (int)((float)video_mode->height / 1.5f);
 
 	uint32_t     instance_extension_count = 0;
-	GLFWwindow*  window                   = glfwCreateWindow(720, 480, "vulkan scene", NULL, NULL);
+	GLFWwindow*  window                   = glfwCreateWindow(width, height, "vulkan scene", NULL, NULL);
 	const char** pp_instance_extensions   = glfwGetRequiredInstanceExtensions(&instance_extension_count);
 
+#ifdef _WIN32
 	glfwSetWindowSizeLimits(window, 400, 300, GLFW_DONT_CARE, GLFW_DONT_CARE);
+#else
+	glfwSetWindowSizeLimits(window, width, height, width, height);//X11 is so problematic
+#endif//_WIN32
 
 	VkInstance                       instance                                         = VK_NULL_HANDLE;
 											                                        
