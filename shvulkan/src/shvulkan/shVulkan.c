@@ -439,14 +439,15 @@ uint8_t shGetPhysicalDeviceSurfaceSupport(
 ) {
 	shVkError(physical_device        == VK_NULL_HANDLE, "invalid physical device memory", return 0);
 	shVkError(surface                == VK_NULL_HANDLE, "invalid surface memory",         return 0);
-	shVkError(p_supported            == NULL,           "invalid support memory",         return 0);
 
 	VkBool32 supported = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(
 		physical_device, queue_family_index, surface, &supported
 	);
 
-	(*p_supported) = (uint8_t)supported;
+	if (p_supported != NULL) {
+		(*p_supported) = (uint8_t)supported;
+	}
 
 	return 1;
 }
@@ -1560,7 +1561,7 @@ uint8_t shAcquireSwapchainImage(
 		p_swapchain_image_index
 	);
 
-	shVkResultError(r, "failed acquiring swapchain image", return 0);
+	shVkError(r != VK_SUCCESS && r != VK_SUBOPTIMAL_KHR, "failed acquiring swapchain image", return 0);
 
 	if (r == VK_SUBOPTIMAL_KHR) {
 		(*p_swapchain_suboptimal) = 1;
