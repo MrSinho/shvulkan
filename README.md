@@ -1,25 +1,28 @@
 # shvulkan
 
+[![linux_badge](.shci/linux/exit_code.svg)](.shci/linux/log.md)
+[![windows_badge](.shci/windows/exit_code.svg)](.shci/windows/log.md)
+
 `shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.
 
 ---
 
 ## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.shci) 
 
-All the samples were built and tested on Windows and Linux Mint.
-
 _See the linux and windows build logs_
 
 [![linux_badge](.shci/linux/exit_code.svg)](.shci/linux/log.md)
 [![windows_badge](.shci/windows/exit_code.svg)](.shci/windows/log.md)
 
+The examples are frequently being tested on Windows 11, Linux Mint (virtual machine and pc) with different compilers (MSVC, gcc), and hardware configurations (RX580 4GB GDDR5, Radeon V Carrizo 500MB).
+
 ---
 
-# todo
+# To do
  * texture examples (graphics and plain data)
-  * Error/debug/info logging to file
-   * options: log all, log error, log info, write all, write error, write info
- * read spirv assembly
+ * Error/debug/info logging to file
+ * read spirv assembly (not sure about this)
+ * ray tracing example
 
 ---
 
