@@ -1,0 +1,12 @@
+owner=mrsinho
+access_token=None
+repo_name=shvulkan
+recursive=True
+repo_dir=./
+push=True
+
+prerequisites=.shci/windows/prerequisites.bat
+prerequisites_output=.shci/windows/prerequisites-output.txt
+
+build=.shci/windows/build.bat
+build_output=.shci/windows/build-output.txt

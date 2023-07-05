@@ -8,7 +8,10 @@
 
 All the samples were built and tested on Windows and Linux Mint.
 
-[![linux_badge](.shci/linux-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/linux-log.md) [![windows_badge](.shci/windows-status.svg)](https://github.com/MrSinho/ShVulkan/tree/main/.shci/windows-log.md)
+_See the linux and windows build logs_
+
+[![linux_badge](.shci/linux/exit_code.svg)](.shci/linux/log.md)
+[![windows_badge](.shci/windows/exit_code.svg)](.shci/windows/log.md)
 
 ---
 
