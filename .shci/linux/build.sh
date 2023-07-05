@@ -1,6 +1,6 @@
 function BUILD {
-	mkdir build
-    cd build
+	mkdir linux
+    cd linux
     cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..
     cmake --build .
 }
