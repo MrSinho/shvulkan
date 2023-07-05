@@ -1,3 +1,6 @@
 [submodule "examples/external/glfw"]
 	path = examples/external/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule ".shci/shci"]
+	path = .shci/shci
+	url = https://github.com/mrsinho/shci
