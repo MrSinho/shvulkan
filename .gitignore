@@ -54,4 +54,6 @@ dkms.conf
 .vs/*
 .vscode/*
 build/*
+windows/*
+linux/*
 bin/*
