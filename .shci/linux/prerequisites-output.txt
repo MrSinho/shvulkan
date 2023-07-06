@@ -1,7 +1,9 @@
 Hit:1 http://deb.debian.org/debian bullseye InRelease
-Hit:2 http://deb.debian.org/debian bullseye-updates InRelease
-Hit:3 http://security.debian.org/debian-security bullseye-security InRelease
-Hit:4 http://ftp.debian.org/debian bullseye-backports InRelease
+Get:2 http://deb.debian.org/debian bullseye-updates InRelease [44.1 kB]
+Get:3 http://security.debian.org/debian-security bullseye-security InRelease [48.4 kB]
+Get:4 http://ftp.debian.org/debian bullseye-backports InRelease [49.0 kB]
+Get:5 http://security.debian.org/debian-security bullseye-security/main amd64 Packages [252 kB]
+Fetched 393 kB in 4s (94.6 kB/s)
 Reading package lists...
 Building dependency tree...
 Reading state information...
