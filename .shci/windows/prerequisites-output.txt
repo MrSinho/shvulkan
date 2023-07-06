@@ -37,8 +37,6 @@ Warnings:
  - mingw - mingw v12.2.0.03042023 already installed.
  Use --force to reinstall, specify a version to install, or try upgrade.
 
-Did you know the proceeds of Pro (and some proceeds from other
- licensed editions) go into bettering the community infrastructure?
- Your support ensures an active community, keeps Chocolatey tip-top,
- plus it nets you some awesome features!
+Enjoy using Chocolatey? Explore more amazing features to take your
+experience to the next level at
  https://chocolatey.org/compare

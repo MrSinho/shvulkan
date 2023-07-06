@@ -15,7 +15,7 @@ max frequency : 3500.0 MHz
 cores         : 4
 ```
 
-build ran for `26.01 s` and terminated with exit code `0`
+build ran for `40.45 s` and terminated with exit code `0`
 
 ---
 
@@ -66,10 +66,8 @@ Warnings:
  - mingw - mingw v12.2.0.03042023 already installed.
  Use --force to reinstall, specify a version to install, or try upgrade.
 
-Did you know the proceeds of Pro (and some proceeds from other
- licensed editions) go into bettering the community infrastructure?
- Your support ensures an active community, keeps Chocolatey tip-top,
- plus it nets you some awesome features!
+Enjoy using Chocolatey? Explore more amazing features to take your
+experience to the next level at
  https://chocolatey.org/compare
 
 ```
@@ -93,28 +91,22 @@ Did you know the proceeds of Pro (and some proceeds from other
 -- shvulkan message: Vulkan_LIBRARY:     D:/lib/VulkanSDK/1.3.250.0/Lib/vulkan-1.lib
 -- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
 -- Including Win32 support
--- Configuring done (0.2s)
--- Generating done (0.6s)
+-- Configuring done (0.9s)
+-- Generating done (0.9s)
 -- Build files have been written to: D:/home/desktop/GitHub/shvulkan/windows
 MSBuild version 17.6.3+07e294721 for .NET Framework
 
-  Checking Build System
   glfw.vcxproj -> D:\home\desktop\GitHub\shvulkan\windows\examples\external\glfw\src\Debug\glfw3.lib
-  Building Custom Rule D:/home/desktop/GitHub/shvulkan/CMakeLists.txt
   shvulkan.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan.lib
-  Building Custom Rule D:/home/desktop/GitHub/shvulkan/CMakeLists.txt
   shvulkan-clear-color.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan-clear-color.exe
-  Building Custom Rule D:/home/desktop/GitHub/shvulkan/CMakeLists.txt
   shvulkan-compute-power-numbers.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan-compute-power-numbers.exe
-  Building Custom Rule D:/home/desktop/GitHub/shvulkan/CMakeLists.txt
   shvulkan-scene.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan-scene.exe
-  Building Custom Rule D:/home/desktop/GitHub/shvulkan/CMakeLists.txt
 
 ```
 
 ---
     
-build ran for `26.01 s` and terminated with exit code `0`
+build ran for `40.45 s` and terminated with exit code `0`
 
 ---
 
