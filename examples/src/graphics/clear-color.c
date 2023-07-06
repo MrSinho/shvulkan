@@ -187,7 +187,7 @@ int main(void) {
 		graphics_queue_family_index,//queue_family_index
 		1,//queue_count
 		&default_queue_priority,//p_queue_priorities
-		0,//protected
+		SH_FALSE,//protected
 		&graphics_device_queue_info//p_device_queue_info
 	);
 
@@ -196,7 +196,7 @@ int main(void) {
 		present_queue_family_index,//queue_family_index
 		1,//queue_count
 		&default_queue_priority,//p_queue_priorities
-		0,//protected
+		SH_FALSE,//protected
 		&present_device_queue_info//p_device_queue_info
 	);
 
@@ -246,7 +246,7 @@ int main(void) {
 		&swapchain_image_format,//p_image_format
 		SWAPCHAIN_IMAGE_COUNT,//swapchain_image_count
 		swapchain_image_sharing_mode,//image_sharing_mode
-		0,//vsync
+		SH_FALSE,//vsync
 		&swapchain_image_count,//p_swapchain_image_count
 		&swapchain//p_swapchain
 	);
@@ -564,7 +564,7 @@ void resizeWindow(
 		p_swapchain_image_format,
 		*p_swapchain_image_count,
 		swapchain_image_sharing_mode,
-		0,
+		SH_FALSE,
 		p_swapchain_image_count,
 		p_swapchain
 	);

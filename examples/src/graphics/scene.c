@@ -11,9 +11,10 @@ extern "C" {
 #include <stdio.h>
 #include <math.h>
 
-#define SWAPCHAIN_IMAGE_COUNT       3
-#define MAX_SWAPCHAIN_IMAGE_COUNT   6
-#define RENDERPASS_ATTACHMENT_COUNT 3
+#define SWAPCHAIN_IMAGE_COUNT          3
+#define MAX_SWAPCHAIN_IMAGE_COUNT      6
+#define RENDERPASS_ATTACHMENT_COUNT    3
+#define SUBPASS_COLOR_ATTACHMENT_COUNT 1 
 
 #define QUAD_VERTEX_COUNT     20
 #define TRIANGLE_VERTEX_COUNT 15
@@ -37,19 +38,19 @@ float triangle[TRIANGLE_VERTEX_COUNT] = {
 
 float models[48] = {
 	0.2f, 0.0f, 0.0f, 0.0f,//model 0
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 0.2f, 0.0f,
-   -0.6f,-0.2f, 0.0f, 1.0f,
+	0.0f, 1.3f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f,
+   -0.4f,-0.2f, 0.3f, 1.0f,
 
 	0.2f, 0.0f, 0.0f, 0.0f,//model 1
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 0.2f, 0.0f,
-	0.6f,-0.2f, 0.0f, 1.0f,
+	0.0f, 1.3f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f,
+	0.4f,-0.2f, 0.2f, 1.0f,
 
-	0.6f, 0.0f, 0.0f, 0.0f,//model 2
+	0.7f, 0.0f, 0.0f, 0.0f,//model 2
 	0.0f, 0.5f, 0.0f, 0.0f,
 	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.4f, 0.0f, 1.0f
+	0.0f, 0.3f, 0.1f, 1.0f
 };
 
 uint32_t indices[QUAD_INDEX_COUNT] = {
@@ -360,11 +361,11 @@ int main(void) {
 		device,//device
 		physical_device,//physical_device
 		surface,//surface
-		VK_FORMAT_R8G8B8_UNORM,//image_format
+		VK_FORMAT_R32G32B32A32_SFLOAT,//image_format
 		&swapchain_image_format,//p_image_format
 		SWAPCHAIN_IMAGE_COUNT,//swapchain_image_count
 		swapchain_image_sharing_mode,//image_sharing_mode
-		0,//vsync
+		SH_FALSE,//vsync
 		&swapchain_image_count,
 		&swapchain//p_swapchain
 	);//need p_swapchain_image_count
@@ -485,7 +486,7 @@ int main(void) {
 		VK_PIPELINE_BIND_POINT_GRAPHICS,//bind_point
 		0,//input_attachment_count
 		VK_NULL_HANDLE,//p_input_attachments_reference
-		1,//color_attachment_count
+		SUBPASS_COLOR_ATTACHMENT_COUNT,//color_attachment_count
 		&input_color_attachment_reference,//p_color_attachments_reference
 		&depth_attachment_reference,//p_depth_stencil_attachment_reference
 		&resolve_attachment_reference,//p_resolve_attachment_reference
@@ -702,8 +703,8 @@ int main(void) {
 			VkCommandBuffer cmd_buffer = graphics_cmd_buffers[swapchain_image_idx];
 
 			shBeginCommandBuffer(cmd_buffer);
-
-			triangle[6] = (float)sin(glfwGetTime());
+			
+			triangle[6] = (float)sin(glfwGetTime());;
 			shWriteMemory(
 				device,
 				staging_memory,
@@ -1097,13 +1098,13 @@ void createPipeline(
 
 	shPipelineCreateInputAssembly(
 		VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-		0,
+		SH_FALSE,
 		p_pipeline
 	);
 
 	shPipelineCreateRasterizer(
 		VK_POLYGON_MODE_FILL,
-		0,
+		SH_FALSE,
 		p_pipeline
 	);
 
@@ -1121,7 +1122,7 @@ void createPipeline(
 		p_pipeline
 	);
 
-	shPipelineColorBlendSettings(p_pipeline);
+	shPipelineColorBlendSettings(SH_FALSE, SH_TRUE, SUBPASS_COLOR_ATTACHMENT_COUNT, p_pipeline);
 
 	uint32_t shader_size = 0;
 	char* shader_code = readBinary(
@@ -1233,7 +1234,7 @@ void resizeWindow(
 		p_swapchain_image_format,
 		SWAPCHAIN_IMAGE_COUNT,
 		swapchain_image_sharing_mode,
-		0,
+		SH_FALSE,
 		p_swapchain_image_count,
 		p_swapchain
 	);

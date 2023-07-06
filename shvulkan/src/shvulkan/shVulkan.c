@@ -2381,7 +2381,7 @@ uint8_t shSetViewport(
 
 	(*p_scissors) = scissors;
 
-	VkPipelineViewportStateCreateInfo viewportStateCreateInfo = {
+	VkPipelineViewportStateCreateInfo viewport_state_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, //sType;
 		VK_NULL_HANDLE,                                                  //pNext;
 		0,                                                     //flags;
@@ -2391,45 +2391,63 @@ uint8_t shSetViewport(
 		p_scissors                                             //pScissors;
 	};
 
-	*p_viewport_state = viewportStateCreateInfo;
+	*p_viewport_state = viewport_state_create_info;
 
 	return 1;
 }
 
 uint8_t shColorBlendSettings(
-	VkPipelineColorBlendAttachmentState *p_color_blend_attachment, 
+	uint8_t                              enable_color_blending,
+	uint8_t                              enable_alpha_blending,
+	uint32_t                             subpass_color_attachment_count,
+	VkPipelineColorBlendAttachmentState* p_color_blend_attachment_states, 
 	VkPipelineColorBlendStateCreateInfo* p_color_blend_state
 ) {
-	shVkError(p_color_blend_attachment == VK_NULL_HANDLE, "invalid color blend attachment state memory", return 0);
-	shVkError(p_color_blend_state      == VK_NULL_HANDLE, "invalid color blend state memory",            return 0);
+	shVkError(p_color_blend_attachment_states == VK_NULL_HANDLE, "invalid color blend attachment states memory", return 0);
+	shVkError(p_color_blend_state             == VK_NULL_HANDLE, "invalid color blend state memory",             return 0);
 	
-	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {
-		VK_FALSE,                //blendEnable;
-		0.0f,                    //srcColorBlendFactor;
-		0.0f,                    //dstColorBlendFactor;
-		0.0f,                    //colorBlendOp;
-		0.0f,                    //srcAlphaBlendFactor;
-		0.0f,                    //dstAlphaBlendFactor;
-		VK_FALSE,                //alphaBlendOp;
+	VkPipelineColorBlendAttachmentState color_blend_attachment_state = {
+		VK_FALSE,                  //blendEnable;
+		VK_BLEND_FACTOR_ONE,       //srcColorBlendFactor;
+		VK_BLEND_FACTOR_ZERO,      //dstColorBlendFactor;
+		VK_BLEND_OP_ADD,           //colorBlendOp;
+		VK_BLEND_FACTOR_ONE,       //srcAlphaBlendFactor;
+		VK_BLEND_FACTOR_ZERO,      //dstAlphaBlendFactor;
+		VK_BLEND_OP_ADD,           //alphaBlendOp;
 		VK_COLOR_COMPONENT_R_BIT |
 		VK_COLOR_COMPONENT_G_BIT |
 		VK_COLOR_COMPONENT_B_BIT |
-		VK_COLOR_COMPONENT_A_BIT //colorWriteMask;
+		VK_COLOR_COMPONENT_A_BIT   //colorWriteMask;
 	};
-	*p_color_blend_attachment = colorBlendAttachmentState;
+	if (enable_alpha_blending) {
+		color_blend_attachment_state.blendEnable         = VK_TRUE;
 
-	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = {
+		color_blend_attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		color_blend_attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	}
+	if (enable_color_blending) {
+		color_blend_attachment_state.blendEnable         = VK_TRUE;
+
+		color_blend_attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_COLOR;
+		color_blend_attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+	}
+
+	for (uint32_t subpass_attachment_idx = 0; subpass_attachment_idx < subpass_color_attachment_count; subpass_attachment_idx++) {
+		p_color_blend_attachment_states[subpass_attachment_idx] = color_blend_attachment_state;
+	}
+
+	VkPipelineColorBlendStateCreateInfo color_blend_state_create_info = {
 		VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, //sType
-		VK_NULL_HANDLE,                                                     //pNext
+		VK_NULL_HANDLE,                                           //pNext
 		0,                                                        //flags
 		VK_FALSE,                                                 //logicOpEnable
 		VK_LOGIC_OP_COPY,                                         //logicOp
-		1,                                                        //attachmentCount
-		p_color_blend_attachment,                                 //pAttachments
+		subpass_color_attachment_count,                           //attachmentCount
+		p_color_blend_attachment_states,                          //pAttachments
 		{0.0f, 0.0f, 0.0f}                                        //blendConstants
 	};
 
-	*p_color_blend_state = colorBlendStateCreateInfo;
+	(*p_color_blend_state) = color_blend_state_create_info;
 
     return 1;
 }
@@ -3031,13 +3049,19 @@ uint8_t shPipelineSetViewport(
 }
 
 uint8_t shPipelineColorBlendSettings(
+	uint8_t       enable_color_blending,
+	uint8_t       enable_alpha_blending,
+	uint32_t      subpass_color_attachment_count,
 	ShVkPipeline* p_pipeline
 ) {
 	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid pipeline memory", return 0);
 
 	shVkError(
 		shColorBlendSettings(
-			&p_pipeline->color_blend_attachment,
+			enable_color_blending,
+			enable_alpha_blending,
+			subpass_color_attachment_count,
+			p_pipeline->color_blend_attachment_states,
 			&p_pipeline->color_blend_state
 		) == 0,
 		"failed setting pipeline color blend settings",
