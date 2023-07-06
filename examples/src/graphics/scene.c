@@ -341,17 +341,12 @@ int main(void) {
 		&graphics_queue//p_queues
 	);
 
-	if (graphics_queue_family_index != present_queue_family_index) {
-		shGetDeviceQueues(
-			device,//device
-			1,//queue_count
-			&present_queue_family_index,//p_queue_family_indices
-			&present_queue//p_queues
-		);
-	}
-	else {
-		present_queue = graphics_queue;
-	}
+	shGetDeviceQueues(
+		device,//device
+		1,//queue_count
+		&present_queue_family_index,//p_queue_family_indices
+		&present_queue//p_queues
+	);
 
 	VkSharingMode swapchain_image_sharing_mode = VK_SHARING_MODE_EXCLUSIVE;
 	if (graphics_queue_family_index != present_queue_family_index) {
