@@ -5,6 +5,8 @@
 
 `shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.
 
+![alpha-blend](examples/capture/alpha-blending.png)
+
 ---
 
 ## [Build status](https://github.com/MrSinho/ShVulkan/tree/main/.shci) 
