@@ -980,6 +980,7 @@ void createPipelinesDataPool(
 		0,
 		p_pipeline_pool
 	);
+
 	shPipelinePoolCopyDescriptorSetLayout(
 		0, 1, swapchain_image_count - 1, p_pipeline_pool
 	);
@@ -1021,9 +1022,9 @@ void createPipeline(
 	ShVkPipeline* p_pipeline = &p_pipeline_pool->pipelines[0];
 
 	uint32_t attribute_0_offset = 0;
-	uint32_t attribute_0_size = 12;
+	uint32_t attribute_0_size   = 12;
 	uint32_t attribute_1_offset = attribute_0_offset + attribute_0_size;
-	uint32_t attribute_1_size = 8;
+	uint32_t attribute_1_size   = 8;
 
 	shPipelineSetVertexBinding(
 		PER_VERTEX_BINDING,
