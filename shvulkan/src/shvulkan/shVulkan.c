@@ -2529,7 +2529,7 @@ uint8_t shCreateDescriptorSetLayoutBinding(
 	VkShaderStageFlags            shader_stage,
 	VkDescriptorSetLayoutBinding* p_binding
 ) {
-	shVkError(descriptor_count == 0,    "invalid descriptor count",                     return 0);
+	shVkError(descriptor_count == 0,              "invalid descriptor count",                     return 0);
 	shVkError(p_binding        == VK_NULL_HANDLE, "invalid descriptor set layout binding memory", return 0);
 
 	VkDescriptorSetLayoutBinding descriptor_set_layout_binding = {
@@ -2537,7 +2537,7 @@ uint8_t shCreateDescriptorSetLayoutBinding(
 		descriptor_type,  //descriptorType
 		descriptor_count, //descriptorCount;
 		shader_stage,     //stageFlags;
-		VK_NULL_HANDLE              //pImmutableSamplers;
+		VK_NULL_HANDLE    //pImmutableSamplers;
 	};
 
 	*p_binding = descriptor_set_layout_binding;
