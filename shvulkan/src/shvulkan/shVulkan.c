@@ -3675,12 +3675,6 @@ uint8_t shPipelinePoolDestroyDescriptorSetLayouts(
 ) {
 	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
 
-	shVkError(
-		first_set_layout + set_layout_count > p_pipeline_pool->descriptor_set_layout_count,
-		"invalid descriptor set layout range",
-		return 0
-	);
-
 	for (uint32_t set_layout_idx = first_set_layout; set_layout_idx < (first_set_layout + set_layout_count); set_layout_idx++) {
 		shVkError(
 			shDestroyDescriptorSetLayout(
