@@ -75,6 +75,10 @@ float projection_view[32] = {
 	0.0f, 0.0f, 0.0f, 1.0f
 };
 
+#define DESCRIPTOR_SET_COUNT        1
+#define INFO_DESCRIPTOR_SET_IDX     0
+#define OPTIONAL_DESCRIPTOR_SET_IDX 1
+
 void writeMemory(
 	VkDevice         device,
 	VkPhysicalDevice physical_device,
@@ -745,11 +749,16 @@ int main(void) {
 
 			shPipelinePushConstants(cmd_buffer, projection_view, p_pipeline);
 
-			shPipelineBindDescriptorSets(
-				cmd_buffer, swapchain_image_idx, 1,
-				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				0, VK_NULL_HANDLE,
-				p_pipeline_pool, p_pipeline
+			shPipelineBindDescriptorSetUnits(
+				cmd_buffer,                                 //cmd_buffer
+				INFO_DESCRIPTOR_SET_IDX,                    //first_descriptor_set
+				DESCRIPTOR_SET_COUNT * swapchain_image_idx, //first_descriptor_set_unit_idx
+				DESCRIPTOR_SET_COUNT,                       //descriptor_set_unit_count
+				VK_PIPELINE_BIND_POINT_GRAPHICS,            //bind_point
+				0,                                          //dynamic_descriptors_count
+				VK_NULL_HANDLE,                             //p_dynamic_offsets
+				p_pipeline_pool,                            //p_pipeline_pool
+				p_pipeline                                  //p_pipeline
 			);
 
 			shDrawIndexed(cmd_buffer, QUAD_INDEX_COUNT, 2, 0, 0, 0);
@@ -929,6 +938,8 @@ void writeMemory(
 
 	shQueueSubmit(1, &cmd_buffer, transfer_queue, fence, 0, VK_NULL_HANDLE, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, VK_NULL_HANDLE);
 	shWaitForFences(device, 1, &fence, 1, UINT64_MAX);
+
+	return;
 }
 
 void releaseMemory(
@@ -950,6 +961,7 @@ void releaseMemory(
 	shClearBufferMemory(device, instance_buffer, instance_memory);
 	shClearBufferMemory(device, index_buffer, index_memory);
 	shClearBufferMemory(device, descriptors_buffer, descriptors_memory);
+	return;
 }
 
 void createPipelinesDataPool(
@@ -958,56 +970,95 @@ void createPipelinesDataPool(
 	uint32_t          swapchain_image_count,
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shPipelinePoolSetDescriptorSetBufferInfos(
-		0,
-		swapchain_image_count,
-		descriptors_buffer,
-		0,
-		sizeof(light),
-		p_pipeline_pool
-	);
-
+	//SAME BINDING FOR ALL
+	//
+	//
 	shPipelinePoolCreateDescriptorSetLayoutBinding(
-		0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		1,
-		VK_SHADER_STAGE_FRAGMENT_BIT,
-		p_pipeline_pool
+		0,                                 //binding_idx
+		0,                                 //binding
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, //descriptor_type
+		1,                                 //descriptor_set_count
+		VK_SHADER_STAGE_FRAGMENT_BIT,      //shader_stage
+		p_pipeline_pool                    //p_pipeline_pool
 	);
+	
 
+
+	for (uint32_t i = 0; i < DESCRIPTOR_SET_COUNT * swapchain_image_count; i += DESCRIPTOR_SET_COUNT) {
+		//INFO
+		//
+		//
+		shPipelinePoolSetDescriptorBufferInfos(
+			i + INFO_DESCRIPTOR_SET_IDX, //first_descriptor
+			1,                           //descriptor_count
+			descriptors_buffer,          //buffer
+			0,                           //buffer_offset
+			sizeof(light),               //buffer_size
+			p_pipeline_pool              //p_pipeline_pool
+		);
+
+#if DESCRIPTOR_SET_COUNT == 2
+		//OPTIONAL
+		//
+		//
+		shPipelinePoolSetDescriptorBufferInfos(
+			i + OPTIONAL_DESCRIPTOR_SET_IDX, //first_descriptor
+			1,                               //descriptor_count
+			descriptors_buffer,              //buffer
+			0,                               //buffer_offset
+			sizeof(light) / 2,               //buffer_size
+			p_pipeline_pool                  //p_pipeline_pool
+		);
+#endif
+	}
+
+	//SAME DESCRIPTOR SET LAYOUT FOR ALL
+	//
+	//
 	shPipelinePoolCreateDescriptorSetLayout(
-		device,
-		0, 1,
-		0,
-		p_pipeline_pool
+		device,         //device
+		0,              //first_binding_idx
+		1,              //binding_count
+		0,              //set_layout_idx
+		p_pipeline_pool //p_pipeline_pool
 	);
-
+	
 	shPipelinePoolCopyDescriptorSetLayout(
-		0, 1, swapchain_image_count - 1, p_pipeline_pool
+		0,                                            //src_set_layout_idx
+		0,                                            //first_dst_set_layout_idx
+		DESCRIPTOR_SET_COUNT * swapchain_image_count, //dst_set_layout_count
+		p_pipeline_pool                               //p_pipeline_pool
 	);
 
+	//SAME DESCRIPTOR POOL FOR ALL
+	//
+	//
 	shPipelinePoolCreateDescriptorPool(
-		device,//device
-		0,//pool_idx
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
-		swapchain_image_count,//set_count,
-		p_pipeline_pool//p_pipeline_pool
+		device,                                       //device
+		0,                                            //pool_idx
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,            //descriptor_type
+		DESCRIPTOR_SET_COUNT * swapchain_image_count, //decriptor_count
+		p_pipeline_pool                               //p_pipeline_pool
 	);
 
-	shPipelinePoolAllocateDescriptorSets(
-		device,//device,
-		0,//pool_idx,
-		0,//binding,
-		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,//descriptor_type,
-		0,//first_set,
-		swapchain_image_count,//set_count,
-		p_pipeline_pool//p_pipeline
+	shPipelinePoolAllocateDescriptorSetUnits(
+		device,                                       //device,
+		0,                                            //binding,
+		0,                                            //pool_idx,
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,            //descriptor_type,
+		0,                                            //first_descriptor_set_unit,
+		DESCRIPTOR_SET_COUNT * swapchain_image_count, //descriptor_set_unit_count,
+		p_pipeline_pool                               //p_pipeline
 	);
 
-	shPipelinePoolUpdateDescriptorSets(
-		device, 0,
-		swapchain_image_count, p_pipeline_pool
+	//UPDATE ALL
+	//
+	//
+	shPipelinePoolUpdateDescriptorSetUnits(
+		device, 0, DESCRIPTOR_SET_COUNT * swapchain_image_count, p_pipeline_pool
 	);
 
+	return;
 }
 
 void createPipeline(
@@ -1167,7 +1218,7 @@ void createPipeline(
 	shPipelineCreateLayout(
 		device,
 		0,
-		swapchain_image_count,
+		DESCRIPTOR_SET_COUNT * swapchain_image_count,
 		p_pipeline_pool,
 		p_pipeline
 	);
@@ -1178,6 +1229,7 @@ void createPipeline(
 		p_pipeline
 	);
 
+	return;
 }
 
 void resizeWindow(
@@ -1298,6 +1350,8 @@ void resizeWindow(
 		};
 		shCreateFramebuffer(device, *p_renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, width, height, 1, &p_framebuffers[i]);
 	}
+
+	return;
 }
 
 #ifdef _MSC_VER

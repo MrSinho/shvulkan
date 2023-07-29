@@ -33,10 +33,10 @@ char* readBinary(const char* path, uint32_t* p_size);
 
 
 #define INPUT_COUNT 64
-float inputs[INPUT_COUNT];
+float inputs[INPUT_COUNT] = { 0 };
 #define OUTPUT_COUNT INPUT_COUNT
 
-
+float factor = 1.0f;
 
 //
 //NUMBER OF PARALLEL UNITS
@@ -172,11 +172,18 @@ int main(void) {
 	
 
 	//
-	//BIND DESCRIPTOR SET
+	//BIND ALL DESCRIPTOR SETS
 	//
-	shPipelineBindDescriptorSets(
-		cmd_buffer, 0, 1, VK_PIPELINE_BIND_POINT_COMPUTE, 
-		0, NULL, p_pipeline_pool, p_pipeline
+	shPipelineBindDescriptorSetUnits(
+		cmd_buffer,                     //cmd_buffer
+		0,                              //first_descriptor_set
+		0,                              //first_descriptor_set_unit_idx
+		2,                              //descriptor_set_unit_count
+		VK_PIPELINE_BIND_POINT_COMPUTE, //bind_point
+		0,                              //dynamic_descriptors_count
+		NULL,                           //p_dynamic_offsets
+		p_pipeline_pool,                //p_pipeline_pool
+		p_pipeline                      //p_pipeline
 	);
 
 	printf("\nSquaring the numbers...\n\n");
@@ -286,7 +293,7 @@ void writeMemory(
 	//CREATE INPUTS STAGING BUFFER
 	//
 	shCreateBuffer(
-		device, sizeof(inputs), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | 
+		device, sizeof(inputs) + sizeof(factor), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
 		VK_SHARING_MODE_EXCLUSIVE, p_staging_buffer
 	);
@@ -305,12 +312,15 @@ void writeMemory(
 	shWriteMemory(
 		device, *p_staging_memory, 0, sizeof(inputs), inputs
 	);
+	shWriteMemory(
+		device, *p_staging_memory, sizeof(inputs), sizeof(factor), &factor
+	);
 
 	//
 	//CREATE INPUT/OUTPUT DEVICE LOCAL BUFFER 
 	//
 	shCreateBuffer(
-		device, sizeof(inputs), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | 
+		device, sizeof(inputs) + sizeof(factor), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
 		VK_SHARING_MODE_EXCLUSIVE, p_device_local_buffer
 	);
@@ -328,7 +338,13 @@ void writeMemory(
 	shResetFences(device, 1, &fence);
 	shBeginCommandBuffer(cmd_buffer);
 	shCopyBuffer(
-		cmd_buffer, *p_staging_buffer, 0, 0, 
+		cmd_buffer, *p_staging_buffer, 
+		0, 0, 
+		sizeof(inputs), *p_device_local_buffer
+	);
+	shCopyBuffer(
+		cmd_buffer, *p_staging_buffer, 
+		sizeof(factor), sizeof(factor),
 		sizeof(inputs), *p_device_local_buffer
 	);
 	shEndCommandBuffer(cmd_buffer);
@@ -344,29 +360,43 @@ void setupPipeline(
 	VkBuffer          device_local_buffer, 
 	ShVkPipelinePool* p_pipeline_pool
 ) {
-	shPipelinePoolSetDescriptorSetBufferInfos(
+	shPipelinePoolSetDescriptorBufferInfos(
 		0, 1, device_local_buffer, 0, sizeof(inputs), p_pipeline_pool
 	);//each input value to compute shader is 4 bytes
 
+	shPipelinePoolSetDescriptorBufferInfos(
+		1, 1, device_local_buffer, sizeof(inputs), sizeof(factor), p_pipeline_pool
+	); 
+
+
+
 	shPipelinePoolCreateDescriptorSetLayoutBinding(
-		0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 		1, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline_pool
 	);
+
+
 
 	shPipelinePoolCreateDescriptorSetLayout(
 		device, 0, 1, 0, p_pipeline_pool
 	);
 
+	shPipelinePoolCopyDescriptorSetLayout(
+		0, 0, 2, p_pipeline_pool
+	);//same descriptor set layout for both descriptor sets
+
+
+
 	shPipelinePoolCreateDescriptorPool(
 		device, 0,
 		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-		1, p_pipeline_pool
+		2, p_pipeline_pool
 	);
-	shPipelinePoolAllocateDescriptorSets(
-		device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 0, 1, p_pipeline_pool
+	shPipelinePoolAllocateDescriptorSetUnits(
+		device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 0, 2, p_pipeline_pool
 	);
 
-	shPipelinePoolUpdateDescriptorSets(device, 0, 1, p_pipeline_pool);
+	shPipelinePoolUpdateDescriptorSetUnits(device, 0, 2, p_pipeline_pool);
 
 	ShVkPipeline* p_pipeline = &p_pipeline_pool->pipelines[0];
 
@@ -375,7 +405,7 @@ void setupPipeline(
 	shPipelineCreateShaderModule(device, shader_size, shader_code, p_pipeline);
 	shPipelineCreateShaderStage(VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline);
 	
-	shPipelineCreateLayout(device, 0, 1, p_pipeline_pool, p_pipeline);
+	shPipelineCreateLayout(device, 0, 2, p_pipeline_pool, p_pipeline);
 
 	shSetupComputePipeline(device, p_pipeline);
 }

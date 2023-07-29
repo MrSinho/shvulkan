@@ -15,15 +15,19 @@ layout (
     local_size_z = INVOCATION_Z_COUNT
 ) in;
 
-layout(std430, set = 0, binding = 0) buffer buf {
+layout(std430, set = 0, binding = 0) buffer _src {
    float values[];
-};
+} src;
+
+layout(std430, set = 1, binding = 0) buffer _test {
+    float factor;
+} test;
 
 void main() {
 
     //the invocation id is the computational unit index
     uint input_id = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y;
 
-    float src = values[input_id];    
-    values[input_id] = pow(src, 2);
+    float val = src.values[input_id];    
+    src.values[input_id] = pow(val, 2) * test.factor;
 }
