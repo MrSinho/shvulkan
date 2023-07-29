@@ -3297,7 +3297,6 @@ uint8_t shPipelineDestroyLayout(
 
 
 uint8_t shPipelinePoolCreateDescriptorSetLayoutBinding(
-	uint32_t           binding_idx,
 	uint32_t           binding,
 	VkDescriptorType   descriptor_type,
 	uint32_t           descriptor_set_count,
@@ -3317,31 +3316,10 @@ uint8_t shPipelinePoolCreateDescriptorSetLayoutBinding(
 		descriptor_type,
 		descriptor_set_count,
 		shader_stage,
-		&p_pipeline_pool->descriptor_set_layout_bindings[binding_idx]
+		&p_pipeline_pool->descriptor_set_layout_bindings[binding]
 	);
 
 	p_pipeline_pool->descriptor_set_layout_binding_count++;
-
-	return 1;
-}
-
-uint8_t shPipelinePoolCopyDescriptorSetLayoutBinding(
-	uint32_t           src_binding_idx,
-	uint32_t           first_dst_binding_idx,
-	uint32_t           dst_binding_count,
-	ShVkPipelinePool*  p_pipeline_pool
-) {
-	shVkError(p_pipeline_pool == VK_NULL_HANDLE, "invalid pipeline pool memory", return 0);
-
-	shVkError(
-		(first_dst_binding_idx + dst_binding_count) > SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT,
-		"invalid descriptor set layout binding range",
-		return 0
-	);
-
-	for (uint32_t set_layout_idx = first_dst_binding_idx; set_layout_idx < (first_dst_binding_idx + dst_binding_count); set_layout_idx++) {
-		p_pipeline_pool->descriptor_set_layout_bindings[set_layout_idx] = p_pipeline_pool->descriptor_set_layout_bindings[src_binding_idx];
-	}
 
 	return 1;
 }

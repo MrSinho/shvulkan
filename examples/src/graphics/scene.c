@@ -974,7 +974,6 @@ void createPipelinesDataPool(
 	//
 	//
 	shPipelinePoolCreateDescriptorSetLayoutBinding(
-		0,                                 //binding_idx
 		0,                                 //binding
 		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, //descriptor_type
 		1,                                 //descriptor_set_count

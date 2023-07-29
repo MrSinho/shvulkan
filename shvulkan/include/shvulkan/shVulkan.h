@@ -980,19 +980,11 @@ typedef struct ShVkPipelinePool {
 #define shFreePipelinePool       free
 
 extern uint8_t shPipelinePoolCreateDescriptorSetLayoutBinding(
-	uint32_t           binding_idx,
 	uint32_t           binding,
 	VkDescriptorType   descriptor_type,
 	uint32_t           descriptor_set_count,
 	VkShaderStageFlags shader_stage,
 	ShVkPipelinePool*  p_pipeline_pool
-);
-
-extern uint8_t shPipelinePoolCopyDescriptorSetLayoutBinding(
-	uint32_t          src_binding_idx,
-	uint32_t          first_dst_binding_idx,
-	uint32_t          dst_binding_count,
-	ShVkPipelinePool* p_pipeline_pool
 );
 
 extern uint8_t shPipelinePoolCreateDescriptorSetLayout(

@@ -371,7 +371,7 @@ void setupPipeline(
 
 
 	shPipelinePoolCreateDescriptorSetLayoutBinding(
-		0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 		1, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline_pool
 	);
 
