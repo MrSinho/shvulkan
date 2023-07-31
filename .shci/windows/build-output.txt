@@ -4,8 +4,8 @@
 -- shvulkan message: Vulkan_LIBRARY:     D:/lib/VulkanSDK/1.3.250.0/Lib/vulkan-1.lib
 -- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
 -- Including Win32 support
--- Configuring done (0.9s)
--- Generating done (0.9s)
+-- Configuring done (1.1s)
+-- Generating done (1.2s)
 -- Build files have been written to: D:/home/desktop/GitHub/shvulkan/windows
 MSBuild version 17.6.3+07e294721 for .NET Framework
 

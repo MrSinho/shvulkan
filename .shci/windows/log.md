@@ -15,7 +15,7 @@ max frequency : 3500.0 MHz
 cores         : 4
 ```
 
-build ran for `40.45 s` and terminated with exit code `0`
+build ran for `35.91 s` and terminated with exit code `0`
 
 ---
 
@@ -66,10 +66,6 @@ Warnings:
  - mingw - mingw v12.2.0.03042023 already installed.
  Use --force to reinstall, specify a version to install, or try upgrade.
 
-Enjoy using Chocolatey? Explore more amazing features to take your
-experience to the next level at
- https://chocolatey.org/compare
-
 ```
 
 ---
@@ -91,8 +87,8 @@ experience to the next level at
 -- shvulkan message: Vulkan_LIBRARY:     D:/lib/VulkanSDK/1.3.250.0/Lib/vulkan-1.lib
 -- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
 -- Including Win32 support
--- Configuring done (0.9s)
--- Generating done (0.9s)
+-- Configuring done (1.1s)
+-- Generating done (1.2s)
 -- Build files have been written to: D:/home/desktop/GitHub/shvulkan/windows
 MSBuild version 17.6.3+07e294721 for .NET Framework
 
@@ -106,7 +102,7 @@ MSBuild version 17.6.3+07e294721 for .NET Framework
 
 ---
     
-build ran for `40.45 s` and terminated with exit code `0`
+build ran for `35.91 s` and terminated with exit code `0`
 
 ---
 

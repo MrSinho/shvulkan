@@ -36,7 +36,3 @@ Warnings:
  Use --force to reinstall, specify a version to install, or try upgrade.
  - mingw - mingw v12.2.0.03042023 already installed.
  Use --force to reinstall, specify a version to install, or try upgrade.
-
-Enjoy using Chocolatey? Explore more amazing features to take your
-experience to the next level at
- https://chocolatey.org/compare
