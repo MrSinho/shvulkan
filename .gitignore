@@ -57,3 +57,7 @@ build/*
 windows/*
 linux/*
 bin/*
+
+
+release-windows/*
+release-linux/*
