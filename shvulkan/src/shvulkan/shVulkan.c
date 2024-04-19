@@ -2,7 +2,7 @@
 "C" {
 #endif//__cplusplus
 
-#include "shvulkan/shvulkan.h"
+#include "shvulkan/shVulkan.h"
 
 #include <memory.h>
 #include <string.h>
