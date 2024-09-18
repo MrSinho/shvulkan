@@ -1379,7 +1379,7 @@ uint8_t shCreateSemaphores(
 	VkSemaphore* p_semaphores
 ) {
 	shVkError(device          == VK_NULL_HANDLE, "invalid device memory",     return 0);
-	shVkError(semaphore_count == 0,    "invalid semaphore count",   return 0);
+	shVkError(semaphore_count == 0,              "invalid semaphore count",   return 0);
 	shVkError(p_semaphores    == VK_NULL_HANDLE, "invalid semaphores memory", return 0);
 
 	VkSemaphoreCreateInfo semaphore_create_info = {
