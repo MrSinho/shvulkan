@@ -227,6 +227,7 @@ int main(void) {
 															                      
 	VkFence                          graphics_cmd_fences[MAX_SWAPCHAIN_IMAGE_COUNT]   = { VK_NULL_HANDLE };
 															                      
+	VkSemaphore                      current_image_acquired_semaphore                 = VK_NULL_HANDLE;
 	VkSemaphore                      image_acquired_semaphores[SWAPCHAIN_IMAGE_COUNT] = { VK_NULL_HANDLE };
 	VkSemaphore                      current_graphics_queue_finished_semaphore        = VK_NULL_HANDLE;
     
@@ -569,12 +570,6 @@ int main(void) {
 
 	shCreateSemaphores(
 		device,//device
-		swapchain_image_count,//semaphore_count
-		image_acquired_semaphores//p_semaphores
-	);
-
-	shCreateSemaphores(
-		device,//device
 		1,//semaphore_count
 		&current_graphics_queue_finished_semaphore//p_semaphores
 	);
@@ -637,7 +632,6 @@ int main(void) {
 	uint32_t swapchain_image_idx  = 0;
 	uint8_t  swapchain_suboptimal = 0;
 
-
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
@@ -678,22 +672,30 @@ int main(void) {
 				swapchain_suboptimal = 0;
 			}
 
-			shWaitForFences(
+			shCreateSemaphores(
 				device,//device
-				1,//fence_count
-				&graphics_cmd_fences[swapchain_image_idx],//p_fences
-				1,//wait_for_all
-				UINT64_MAX//timeout_ns
+				1,//semaphore_count
+				&current_image_acquired_semaphore//p_semaphores
 			);
 
 			shAcquireSwapchainImage(
 				device,//device
 				swapchain,//swapchain
 				UINT64_MAX,//timeout_ns
-				image_acquired_semaphores[swapchain_image_idx],//acquired_signal_semaphore
+				current_image_acquired_semaphore,//acquired_signal_semaphore
 				VK_NULL_HANDLE,//acquired_signal_fence
 				&swapchain_image_idx,//p_swapchain_image_index
 				&swapchain_suboptimal//p_swapchain_suboptimal
+			);
+
+			image_acquired_semaphores[swapchain_image_idx] = current_image_acquired_semaphore;
+
+			shWaitForFences(
+				device,//device
+				1,//fence_count
+				&graphics_cmd_fences[swapchain_image_idx],//p_fences
+				1,//wait_for_all
+				UINT64_MAX//timeout_ns
 			);
 
 			shResetFences(
@@ -792,7 +794,11 @@ int main(void) {
 				swapchain_image_idx//swapchain_image_idx
 			);
 
-			swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
+			shDestroySemaphores(
+				device,//device
+				1,//semaphore_count
+				&current_image_acquired_semaphore//p_semaphores
+			);
 		}
 	}
 
@@ -809,8 +815,6 @@ int main(void) {
 
 	shFreePipelinePool(p_pipeline_pool);
 
-
-	shDestroySemaphores(device, swapchain_image_count, image_acquired_semaphores);
 
 	shDestroySemaphores(device, 1, &current_graphics_queue_finished_semaphore);
 

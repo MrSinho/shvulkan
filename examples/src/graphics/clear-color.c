@@ -107,6 +107,7 @@ int main(void) {
 						
 	VkFence                          graphics_cmd_fences[MAX_SWAPCHAIN_IMAGE_COUNT]   = { VK_NULL_HANDLE };
 
+	VkSemaphore                      current_image_acquired_semaphore                              = VK_NULL_HANDLE;
 	VkSemaphore                      image_acquired_semaphores[MAX_SWAPCHAIN_IMAGE_COUNT]          = { VK_NULL_HANDLE };
 	VkSemaphore                      graphics_queue_finished_semaphores[MAX_SWAPCHAIN_IMAGE_COUNT] = { VK_NULL_HANDLE };
 																				      
@@ -378,7 +379,6 @@ int main(void) {
 	uint32_t swapchain_image_idx  = 0;
 	uint8_t  swapchain_suboptimal = 0;
 
-	
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -412,7 +412,6 @@ int main(void) {
 				);
 			}
 
-			VkSemaphore current_image_acquired_semaphore = VK_NULL_HANDLE;
 
 			shCreateSemaphores(
 				device,//device
@@ -491,11 +490,7 @@ int main(void) {
 				swapchain_image_idx//swapchain_image_idx
 			);
 
-			//(resized_window == 1) && (resized_window = 0);
-			swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
-
 			shDestroySemaphores(device, 1, &current_image_acquired_semaphore);
-
 		}
 	}
 
