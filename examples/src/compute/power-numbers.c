@@ -88,36 +88,81 @@ int main(void) {
 	);
 
 	shSelectPhysicalDevice(
-		instance, VK_NULL_HANDLE, VK_QUEUE_COMPUTE_BIT, &physical_device,
-		NULL, NULL, NULL
+		instance,//instance
+		VK_NULL_HANDLE,//surface
+		VK_QUEUE_COMPUTE_BIT,//requirements
+		&physical_device,//p_physical_device
+		NULL,//p_physical_device_properties
+		NULL,//p_physical_device_features
+		NULL//p_physical_device_memory_properties
 	);
 
 	uint32_t compute_queue_family_indices[SH_MAX_STACK_QUEUE_COUNT] = { 0 };
+
 	shGetPhysicalDeviceQueueFamilies(
-		physical_device, VK_NULL_HANDLE, NULL, NULL, NULL, 
-		NULL, NULL, NULL, NULL, compute_queue_family_indices, NULL, NULL
+		physical_device,//physical_device
+		VK_NULL_HANDLE,//surface
+		NULL,//p_queue_family_count
+		NULL,//p_graphics_queue_family_count
+		NULL,//p_surface_queue_family_count
+		NULL,//p_compute_queue_family_count
+		NULL,//p_transfer_queue_family_count
+		NULL,//p_graphics_queue_family_indices
+		NULL,//p_surface_queue_family_indices
+		compute_queue_family_indices,//p_compute_queue_family_indices
+		NULL,//p_transfer_queue_family_indices
+		NULL//p_queue_families_properties
 	);
 
 	VkDeviceQueueCreateInfo compute_queue_info = { 0 };
 
 	compute_queue_family_index = compute_queue_family_indices[0];
+
 	float compute_queue_priority = 1.0f;
+
 	shQueryForDeviceQueueInfo(
-		compute_queue_family_index, 1, &compute_queue_priority, 0, &compute_queue_info
+		compute_queue_family_index,//queue_family_index
+		1,//queue_count
+		&compute_queue_priority,//p_queue_priorities
+		0,//protected
+		&compute_queue_info//p_device_queue_info
 	);
 
 	shSetLogicalDevice(
-		physical_device, &device,
-		0, NULL, 1, &compute_queue_info
+		physical_device,//physical_device
+		&device,//p_device
+		0,//extension_count
+		NULL,//pp_extension_names
+		1,//device_queue_count
+		&compute_queue_info//p_device_queue_infos
 	);
 
-	shGetDeviceQueues(device, 1, compute_queue_family_indices, &compute_queue);
+	shGetDeviceQueues(
+		device,//device
+		1,//queue_count
+		compute_queue_family_indices,//p_queue_family_indices
+		&compute_queue//p_queues
+	);
 
-	shCreateCommandPool(device, compute_queue_family_index, &cmd_pool);
+	shCreateCommandPool(
+		device,//device
+		compute_queue_family_index,//queue_family_index
+		&cmd_pool//p_cmd_pool
+	);
 
-	shAllocateCommandBuffers(device, cmd_pool, 1, &cmd_buffer);
+	shAllocateCommandBuffers(
+		device,//device
+		cmd_pool,//cmd_pool
+		1,//cmd_buffer_count
+		&cmd_buffer//p_cmd_buffer
+	);
 
-	shCreateFences(device, 1, 0, &fence);
+	shCreateFences(
+		device,//device
+		1,//fence_count
+		0,//signaled
+		&fence//p_fences
+	);
 
 	ShVkPipelinePool* p_pipeline_pool = shAllocatePipelinePool();
 
@@ -149,15 +194,25 @@ int main(void) {
 	//WRITE INPUT MEMORY
 	//
 	writeMemory(
-		device, physical_device, fence, 
-		compute_queue, cmd_buffer,  &staging_buffer, 
-		&staging_memory, &device_local_buffer, &device_local_memory
+		device,//device
+		physical_device,//physical_device
+		fence,//fence
+		compute_queue,//compute_queue
+		cmd_buffer,//cmd_buffer
+		&staging_buffer,//p_staging_buffer
+		&staging_memory,//p_staging_memory
+		&device_local_buffer,//p_device_local_buffer
+		&device_local_memory//p_device_local_memory
 	);
 
 	//
 	//SETUP COMPUTE PIPELINE
 	//
-	setupPipeline(device, device_local_buffer, p_pipeline_pool);
+	setupPipeline(
+		device,//device
+		device_local_buffer,//device_local_buffer
+		p_pipeline_pool//p_pipeline_pool
+	);
 
 	//
 	//OPERATION CHAIN
@@ -175,18 +230,19 @@ int main(void) {
 	//BIND ALL DESCRIPTOR SETS
 	//
 	shPipelineBindDescriptorSetUnits(
-		cmd_buffer,                     //cmd_buffer
-		0,                              //first_descriptor_set
-		0,                              //first_descriptor_set_unit_idx
-		2,                              //descriptor_set_unit_count
-		VK_PIPELINE_BIND_POINT_COMPUTE, //bind_point
-		0,                              //dynamic_descriptors_count
-		NULL,                           //p_dynamic_offsets
-		p_pipeline_pool,                //p_pipeline_pool
-		p_pipeline                      //p_pipeline
+		cmd_buffer,//cmd_buffer
+		0,//first_descriptor_set
+		0,//first_descriptor_set_unit_idx
+		2,//descriptor_set_unit_count
+		VK_PIPELINE_BIND_POINT_COMPUTE,//bind_point
+		0,//dynamic_descriptors_count
+		NULL,//p_dynamic_offsets
+		p_pipeline_pool,//p_pipeline_pool
+		p_pipeline//p_pipeline
 	);
 
 	printf("\nSquaring the numbers...\n\n");
+
 	//
 	//DISPATCH DATA TO WORK GROUPS
 	//
@@ -206,37 +262,80 @@ int main(void) {
 	//SUBMIT OPERATIONS FROM COMMAND BUFFER TO COMPUTE compute_queue
 	//
 	shQueueSubmit(
-		1, &cmd_buffer, compute_queue, fence, 0, NULL, 
-		VK_PIPELINE_STAGE_TRANSFER_BIT, 0, NULL
+		1,//cmd_buffer_count
+		&cmd_buffer,//p_cmd_buffers
+		compute_queue,//queue
+		fence,//fence
+		0,//semaphores_to_wait_for_count
+		NULL,//p_semaphores_to_wait_for
+		VK_PIPELINE_STAGE_TRANSFER_BIT,//wait_stage
+		0,//signal_semaphore_count
+		NULL//p_signal_semaphores
 	);
 
 	//
 	//WAIT FOR COMMAND BUFFER TO END
 	//
-	shWaitForFences(device, 1, &fence, 1, UINT64_MAX);
+	shWaitForFences(
+		device,//device
+		1,//fence_count
+		&fence,//p_fences
+		1,//wait_for_all
+		UINT64_MAX//timeout_ns
+	);
 
 	
 	//
 	//COPY DEVICE LOCAL BUFFER (NOW STORING OUTPUTS) TO STAGING BUFFER (HOST VISIBLE)
 	//
 	shResetFences(device, 1, &fence);
+
 	shBeginCommandBuffer(cmd_buffer);
+
 	shCopyBuffer(
-		cmd_buffer, device_local_buffer, 0, 0, 
-		sizeof(inputs), staging_buffer
+		cmd_buffer,//transfer_cmd_buffer
+		device_local_buffer,//src_buffer
+		0,//src_offset
+		0,//dst_offset
+		sizeof(inputs),//size
+		staging_buffer//dst_buffer
 	);
+
 	shEndCommandBuffer(cmd_buffer);
+
 	shQueueSubmit(
-		1, &cmd_buffer, compute_queue, fence, 0, NULL, 
-		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, NULL
+		1,//cmd_buffer_count
+		&cmd_buffer,//p_cmd_buffers
+		compute_queue,//queue
+		fence,//fence
+		0,//semaphores_to_wait_for_count
+		NULL,//p_semaphores_to_wait_for
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,//wait_stage
+		0,//signal_semaphore_count
+		NULL//p_signal_semaphores
 	);
-	shWaitForFences(device, 1, &fence, 1, UINT64_MAX);
+
+	shWaitForFences(
+		device,//device
+		1,//fence_count
+		&fence,//p_fences
+		1,//wait_for_all
+		UINT64_MAX//timeout_ns
+	);
 
 	//
 	//READ OUTPUT VALUES FROM STAGING MEMORY
 	//
+
 	float outputs[OUTPUT_COUNT];
-	shReadMemory(device, staging_memory, 0, sizeof(outputs), outputs);
+
+	shReadMemory(
+		device,//device
+		staging_memory,//memory
+		0,//offset
+		sizeof(outputs),//data_size
+		outputs//p_data
+	);
 	
 	//
 	//LOG OUTPUT VALUES
@@ -259,9 +358,9 @@ int main(void) {
 	//
 	//DESTROY PIPELINE
 	//
-	shPipelineDestroyShaderModules    (device, 0, 1, p_pipeline);
-	shPipelineDestroyLayout           (device, p_pipeline);
-	shDestroyPipeline                 (device, p_pipeline->pipeline);
+	shPipelineDestroyShaderModules(device, 0, 1, p_pipeline);
+	shPipelineDestroyLayout       (device, p_pipeline);
+	shDestroyPipeline             (device, p_pipeline->pipeline);
 
 	shFreePipelinePool(p_pipeline_pool);
 
@@ -293,43 +392,71 @@ void writeMemory(
 	//CREATE INPUTS STAGING BUFFER
 	//
 	shCreateBuffer(
-		device, sizeof(inputs) + sizeof(factor), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
-		VK_SHARING_MODE_EXCLUSIVE, p_staging_buffer
+		device,//device
+		sizeof(inputs) + sizeof(factor),//size
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,//usage
+		VK_SHARING_MODE_EXCLUSIVE,//sharing_mode
+		p_staging_buffer//p_buffer
 	);
+	
 	shAllocateBufferMemory(
-		device, physical_device, *p_staging_buffer, 
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-		p_staging_memory
+		device,//device
+		physical_device,//physical_device
+		*p_staging_buffer,//buffer
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,//property_flags
+		p_staging_memory//p_memory
 	);
+
 	shBindBufferMemory(
-		device, *p_staging_buffer, 0, *p_staging_memory
+		device,//device
+		*p_staging_buffer,//buffer
+		0,//offset
+		*p_staging_memory//buffer_memory
 	);
 
 	//
 	//WRITE INPUTS TO STAGING BUFFER
 	//
 	shWriteMemory(
-		device, *p_staging_memory, 0, sizeof(inputs), inputs
+		device,//device
+		*p_staging_memory,//memory
+		0,//offset
+		sizeof(inputs),//data_size
+		inputs//p_data
 	);
 	shWriteMemory(
-		device, *p_staging_memory, sizeof(inputs), sizeof(factor), &factor
+		device,//device
+		*p_staging_memory,//memory
+		sizeof(inputs),//offset
+		sizeof(factor),//data_size
+		&factor//p_data
 	);
 
 	//
 	//CREATE INPUT/OUTPUT DEVICE LOCAL BUFFER 
 	//
+
 	shCreateBuffer(
-		device, sizeof(inputs) + sizeof(factor), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
-		VK_SHARING_MODE_EXCLUSIVE, p_device_local_buffer
+		device,//device
+		sizeof(inputs) + sizeof(factor),//size
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,//usage
+		VK_SHARING_MODE_EXCLUSIVE,//sharing_mode
+		p_device_local_buffer//p_buffer
 	);
+
 	shAllocateBufferMemory(
-		device, physical_device, *p_device_local_buffer, 
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, p_device_local_memory
+		device,//device
+		physical_device,//physical_device
+		*p_device_local_buffer,//buffer
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,//property_flags
+		p_device_local_memory//p_memory
 	);
+
 	shBindBufferMemory(
-		device, *p_device_local_buffer, 0, *p_device_local_memory
+		device,//device
+		*p_device_local_buffer,//buffer
+		0,//offset
+		*p_device_local_memory//buffer_memory
 	);
 
 	//
@@ -337,22 +464,46 @@ void writeMemory(
 	//
 	shResetFences(device, 1, &fence);
 	shBeginCommandBuffer(cmd_buffer);
+	
 	shCopyBuffer(
-		cmd_buffer, *p_staging_buffer, 
-		0, 0, 
-		sizeof(inputs), *p_device_local_buffer
+		cmd_buffer,//transfer_cmd_buffer
+		*p_staging_buffer,//src_buffer
+		0,//src_offset
+		0,//dst_offset
+		sizeof(inputs),//size
+		*p_device_local_buffer//dst_buffer
 	);
+	
 	shCopyBuffer(
-		cmd_buffer, *p_staging_buffer, 
-		sizeof(factor), sizeof(factor),
-		sizeof(inputs), *p_device_local_buffer
+		cmd_buffer,//transfer_cmd_buffer
+		*p_staging_buffer,//src_buffer
+		sizeof(factor),//src_offset
+		sizeof(factor),//dst_offset
+		sizeof(inputs),//size
+		*p_device_local_buffer//dst_buffer
 	);
+	
 	shEndCommandBuffer(cmd_buffer);
+	
 	shQueueSubmit(
-		1, &cmd_buffer, compute_queue, fence, 0, NULL, 
-		VK_PIPELINE_STAGE_TRANSFER_BIT, 0, NULL
+		1,//cmd_buffer_count
+		&cmd_buffer,//p_cmd_buffers
+		compute_queue,//queue
+		fence,//fence
+		0,//semaphores_to_wait_for_count
+		NULL,//p_semaphores_to_wait_for
+		VK_PIPELINE_STAGE_TRANSFER_BIT,//wait_stage
+		0,//signal_semaphore_count
+		NULL//p_signal_semaphores
 	);
-	shWaitForFences(device, 1, &fence, 1, UINT64_MAX);
+	
+	shWaitForFences(
+		device,//device
+		1,//fence_count
+		&fence,//p_fences
+		1,//wait_for_all
+		UINT64_MAX//timeout_ns
+	);
 }
 
 void setupPipeline(
@@ -361,51 +512,102 @@ void setupPipeline(
 	ShVkPipelinePool* p_pipeline_pool
 ) {
 	shPipelinePoolSetDescriptorBufferInfos(
-		0, 1, device_local_buffer, 0, sizeof(inputs), p_pipeline_pool
+		0,//first_descriptor
+		1,//descriptor_count
+		device_local_buffer,//buffer
+		0,//buffer_offset
+		sizeof(inputs),//buffer_size
+		p_pipeline_pool//p_pipeline_pool
 	);//each input value to compute shader is 4 bytes
 
 	shPipelinePoolSetDescriptorBufferInfos(
-		1, 1, device_local_buffer, sizeof(inputs), sizeof(factor), p_pipeline_pool
+		1,//first_descriptor
+		1,//descriptor_count
+		device_local_buffer,//buffer
+		sizeof(inputs),//buffer_offset
+		sizeof(factor),//buffer_size
+		p_pipeline_pool//p_pipeline_pool
 	); 
 
 
 
 	shPipelinePoolCreateDescriptorSetLayoutBinding(
-		0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-		1, VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline_pool
+		0,//binding
+		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,//descriptor_type
+		1,//descriptor_set_count
+		VK_SHADER_STAGE_COMPUTE_BIT,//shader_stage
+		p_pipeline_pool//p_pipeline_pool
 	);
 
-
-
 	shPipelinePoolCreateDescriptorSetLayout(
-		device, 0, 1, 0, p_pipeline_pool
+		device,//device
+		0,//first_binding_idx
+		1,//binding_count
+		0,//set_layout_idx
+		p_pipeline_pool//p_pipeline_pool
 	);
 
 	shPipelinePoolCopyDescriptorSetLayout(
-		0, 0, 2, p_pipeline_pool
+		0,//src_set_layout_idx
+		0,//first_dst_set_layout_idx
+		2,//dst_set_layout_count
+		p_pipeline_pool//p_pipeline_pool
 	);//same descriptor set layout for both descriptor sets
 
 
 
 	shPipelinePoolCreateDescriptorPool(
-		device, 0,
-		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-		2, p_pipeline_pool
-	);
-	shPipelinePoolAllocateDescriptorSetUnits(
-		device, 0, 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 0, 2, p_pipeline_pool
+		device,//device
+		0,//pool_idx
+		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,//descriptor_type
+		2,//descriptor_count
+		p_pipeline_pool//p_pipeline_pool
 	);
 
-	shPipelinePoolUpdateDescriptorSetUnits(device, 0, 2, p_pipeline_pool);
+	shPipelinePoolAllocateDescriptorSetUnits(
+		device,//device
+		0,//binding
+		0,//pool_idx
+		VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,//descriptor_type
+		0,//first_descriptor_set_unit
+		2,//descriptor_set_unit_count
+		p_pipeline_pool//p_pipeline_pool
+	);
+
+	shPipelinePoolUpdateDescriptorSetUnits(
+		device,//device
+		0,//first_descriptor_set_unit
+		2,//descriptor_set_unit_count
+		p_pipeline_pool//p_pipeline_pool
+	);
 
 	ShVkPipeline* p_pipeline = &p_pipeline_pool->pipelines[0];
 
 	uint32_t shader_size = 0;
-	char* shader_code = readBinary("../examples/shaders/bin/power.comp.spv", &shader_size);
-	shPipelineCreateShaderModule(device, shader_size, shader_code, p_pipeline);
-	shPipelineCreateShaderStage(VK_SHADER_STAGE_COMPUTE_BIT, p_pipeline);
+	char* shader_code = readBinary(
+		"../examples/shaders/bin/power.comp.spv",
+		&shader_size
+	);
+
+	shPipelineCreateShaderModule(
+		device,//device
+		shader_size,//size
+		shader_code,//code
+		p_pipeline//p_pipeline
+	);
 	
-	shPipelineCreateLayout(device, 0, 2, p_pipeline_pool, p_pipeline);
+	shPipelineCreateShaderStage(
+		VK_SHADER_STAGE_COMPUTE_BIT,//shader_stage
+		p_pipeline//p_pipeline
+	);
+	
+	shPipelineCreateLayout(
+		device,//device
+		0,//first_descriptor_set_layout
+		2,//descriptor_set_layout_count
+		p_pipeline_pool,//p_pipeline_pool
+		p_pipeline//p_pipeline
+	);
 
 	shSetupComputePipeline(device, p_pipeline);
 }

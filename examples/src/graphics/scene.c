@@ -888,18 +888,18 @@ void writeMemory(
 	//WRITE ALL DATA TO STAGING BUFFER
 	//
 	shCreateBuffer(
-		device,
-		staging_size,
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_SHARING_MODE_EXCLUSIVE,
-		p_staging_buffer
+		device,//device
+		staging_size,//size
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,//usage
+		VK_SHARING_MODE_EXCLUSIVE,//sharing_mode
+		p_staging_buffer//p_buffer
 	);
 	shAllocateBufferMemory(
-		device,
-		physical_device,
-		*p_staging_buffer,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		p_staging_memory
+		device,//device
+		physical_device,//physical_device
+		*p_staging_buffer,//buffer
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,//property_flags
+		p_staging_memory//p_memory
 	);
 	shWriteMemory(device, *p_staging_memory, quad_vertices_offset,     sizeof(quad),     quad);
 	shWriteMemory(device, *p_staging_memory, triangle_vertices_offset, sizeof(triangle), triangle);
