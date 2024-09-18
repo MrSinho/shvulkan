@@ -391,6 +391,8 @@ int main(void) {
 		int _height = 0;
 		glfwGetWindowSize(window, &_width, &_height);
 
+		printf("SWAPCHAIN IMAGE IDX: %i\n", swapchain_image_idx);
+
 		if (_width != 0 && _height != 0) {//otherwise it's minimized
 			if (_width != width || _height != height) {//window is resized
 
@@ -424,6 +426,13 @@ int main(void) {
 				UINT64_MAX//timeout_ns
 			);
 
+
+			shResetFences(
+				device,//device
+				1,//fence_count
+				&graphics_cmd_fences[swapchain_image_idx]//p_fences
+			);
+
 			shAcquireSwapchainImage(
 				device,//device
 				swapchain,//swapchain
@@ -434,11 +443,6 @@ int main(void) {
 				&swapchain_suboptimal//p_swapchain_suboptimal
 			);
 
-			shResetFences(
-				device,//device
-				1,//fence_count
-				&graphics_cmd_fences[swapchain_image_idx]//p_fences
-			);
 			shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
 
 			VkClearValue clear_values[1] = { 0 };
