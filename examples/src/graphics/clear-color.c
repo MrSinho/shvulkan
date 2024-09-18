@@ -372,17 +372,13 @@ int main(void) {
 	shCreateSemaphores(
 		device,//device
 		swapchain_image_count,//semaphore_count
-		image_acquired_semaphores//p_semaphores
-	);
-
-	shCreateSemaphores(
-		device,//device
-		swapchain_image_count,//semaphore_count
 		graphics_queue_finished_semaphores//p_semaphores
 	);
 
 	uint32_t swapchain_image_idx  = 0;
 	uint8_t  swapchain_suboptimal = 0;
+
+	
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -390,8 +386,6 @@ int main(void) {
 		int _width = 0;
 		int _height = 0;
 		glfwGetWindowSize(window, &_width, &_height);
-
-		printf("SWAPCHAIN IMAGE IDX: %i\n", swapchain_image_idx);
 
 		if (_width != 0 && _height != 0) {//otherwise it's minimized
 			if (_width != width || _height != height) {//window is resized
@@ -417,6 +411,26 @@ int main(void) {
 					swapchain_images, &renderpass, attachment_descriptions, &subpass, framebuffers
 				);
 			}
+
+			VkSemaphore current_image_acquired_semaphore = VK_NULL_HANDLE;
+
+			shCreateSemaphores(
+				device,//device
+				1,//semaphore_count
+				&current_image_acquired_semaphore//p_semaphores
+			);
+
+			shAcquireSwapchainImage(
+				device,//device
+				swapchain,//swapchain
+				UINT64_MAX,//timeout_ns
+				current_image_acquired_semaphore,//acquired_signal_semaphore
+				VK_NULL_HANDLE,//acquired_signal_fence
+				&swapchain_image_idx,//p_swapchain_image_index
+				&swapchain_suboptimal//p_swapchain_suboptimal
+			);
+
+			image_acquired_semaphores[swapchain_image_idx] = current_image_acquired_semaphore;
 			
 			shWaitForFences(
 				device,//device
@@ -431,16 +445,6 @@ int main(void) {
 				device,//device
 				1,//fence_count
 				&graphics_cmd_fences[swapchain_image_idx]//p_fences
-			);
-
-			shAcquireSwapchainImage(
-				device,//device
-				swapchain,//swapchain
-				UINT64_MAX,//timeout_ns
-				image_acquired_semaphores[swapchain_image_idx],//acquired_signal_semaphore
-				VK_NULL_HANDLE,//acquired_signal_fence
-				&swapchain_image_idx,//p_swapchain_image_index
-				&swapchain_suboptimal//p_swapchain_suboptimal
 			);
 
 			shBeginCommandBuffer(graphics_cmd_buffers[swapchain_image_idx]);
@@ -489,12 +493,13 @@ int main(void) {
 
 			//(resized_window == 1) && (resized_window = 0);
 			swapchain_image_idx = (swapchain_image_idx + 1) % swapchain_image_count;
+
+			shDestroySemaphores(device, 1, &current_image_acquired_semaphore);
+
 		}
 	}
 
 	shWaitDeviceIdle(device);
-
-	shDestroySemaphores(device, swapchain_image_count, image_acquired_semaphores);
 
 	shDestroySemaphores(device, swapchain_image_count, graphics_queue_finished_semaphores);
 
