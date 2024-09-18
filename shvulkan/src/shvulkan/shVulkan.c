@@ -1546,11 +1546,11 @@ uint8_t shAcquireSwapchainImage(
 	shVkError(p_swapchain_image_index == NULL,           "invalid swapchain image index memory", return 0);
 	shVkError(p_swapchain_suboptimal  == NULL,           "invalid swapchain suboptimal memory",  return 0);
 
-	//shVkError(
-	//	acquired_signal_semaphore == VK_NULL_HANDLE && acquired_signal_fence == VK_NULL_HANDLE, 
-	//	"semaphore and fence are both VK_NULL_HANDLE", 
-	//	return 0
-	//);
+	shVkError(
+		acquired_signal_semaphore == VK_NULL_HANDLE && acquired_signal_fence == VK_NULL_HANDLE, 
+		"semaphore and fence are both VK_NULL_HANDLE", 
+		return 0
+	);
 
 	VkResult r = vkAcquireNextImageKHR(
 		device,
