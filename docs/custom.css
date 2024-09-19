@@ -1,0 +1,93 @@
+html.dark-mode {
+
+    --font-family          : Segoe UI, arial, times, serif;
+    --font-family-monospace: ui-monospace, monospace;
+
+    --primary-color      : rgb(0, 255, 255);
+    --primary-dark-color : rgb(0, 180, 180);
+    --primary-light-color: rgb(128, 255, 255);
+
+    --page-background-color          : rgb(0, 0, 0);
+    --page-foreground-color          : rgb(255, 255, 255);
+    --page-secondary-foreground-color: rgb(200, 200, 200);
+
+    --menu-focus-background    : var(--primary-color);
+    --menu-focus-foreground    : var(--page-background-color);
+    --menu-selected-background : var(--page-background-color);
+
+    --separator-color : rgb(10, 10, 10);
+
+    --content-maxwidth: 1200px;
+
+    --tablehead-background: rgb( 10,  10,  10);
+    --tablehead-foreground: var(--page-foreground-color);
+
+    --toc-background: var(--tablehead-background);
+    --toc-foreground: var(--page-foreground-color);
+
+    --code-background: var(--page-background-color);
+    --code-foreground: var(--primary-color);
+
+    --fragment-background: var(--tablehead-background);
+    --fragment-foreground: var(--page-foreground-color);
+
+    --side-nav-background          : var(--page-background-color);
+    --side-nav-foreground          : var(--page-foreground-color);
+    --side-nav-arrow-opacity       : 0.5;
+    --side-nav-arrow-hover-opacity : 1.0;
+
+    --searchbar-width: 350px;
+
+    --webkit-scrollbar-size    : 7px;
+    --webkit-scrollbar-padding : 4px;
+    --webkit-scrollbar-color   : rgb(20, 20, 20);
+
+    --animation-duration: 0.2s
+}
+
+html.light-mode {
+
+    --font-family          : Segoe UI, arial, times, serif;
+    --font-family-monospace: ui-monospace, monospace;
+
+    --primary-color      : rgb(0, 200, 200);
+    --primary-dark-color : rgb(0, 180, 180);
+    --primary-light-color: rgb(128, 255, 255);
+
+    --page-background-color          : rgb(255, 255, 255);
+    --page-foreground-color          : rgb(0, 0, 0);
+    --page-secondary-foreground-color: rgb(30, 30, 30);
+
+    --menu-focus-background    : var(--primary-color);
+    --menu-focus-foreground    : var(--page-foreground-color);
+    --menu-selected-background : var(--page-background-color);
+
+    --separator-color : rgb(245, 245, 245);
+
+    --content-maxwidth: 1200px;
+
+    --tablehead-background: rgb(255, 255, 255);
+    --tablehead-foreground: var(--page-foreground-color);
+
+    --toc-background: var(--tablehead-background);
+    --toc-foreground: var(--page-foreground-color);
+
+    --code-background: var(--page-background-color);
+    --code-foreground: var(--primary-color);
+
+    --fragment-background: var(--tablehead-background);
+    --fragment-foreground: var(--page-foreground-color);
+
+    --side-nav-background          : var(--page-background-color);
+    --side-nav-foreground          : var(--page-foreground-color);
+    --side-nav-arrow-opacity       : 0.5;
+    --side-nav-arrow-hover-opacity : 1.0;
+
+    --searchbar-width: 350px;
+
+    --webkit-scrollbar-size    : 7px;
+    --webkit-scrollbar-padding : 4px;
+    --webkit-scrollbar-color   : rgb(100, 100, 100);
+
+    --animation-duration: 0.2s
+}

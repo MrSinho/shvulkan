@@ -1,0 +1,34 @@
+PROJECT_NAME           = "shvulkan"
+PROJECT_BRIEF          = by mrsinho.
+PROJECT_NUMBER         = ${SH_VULKAN_VERSION}
+PROJECT_LOGO           = 
+
+USE_MDFILE_AS_MAINPAGE = ${SH_VULKAN_ROOT_DIR}/README.md
+
+OUTPUT_DIRECTORY       = docs
+INPUT                  = ${SH_VULKAN_ROOT_DIR}/shvulkan/include ${SH_VULKAN_ROOT_DIR}/README.md ${SH_VULKAN_ROOT_DIR}/docs/src/install.md ${SH_VULKAN_ROOT_DIR}/docs/src/clear_color_example.md ${SH_VULKAN_ROOT_DIR}/docs/src/scene_example.md ${SH_VULKAN_ROOT_DIR}/docs/src/compute_example.md ${SH_VULKAN_ROOT_DIR}/.shci/linux/log.md ${SH_VULKAN_ROOT_DIR}/.shci/windows/log.md 
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+HAVE_DOT               = NO
+HIDE_UNDOC_MEMBERS     = YES
+GENERATE_HTML          = YES
+GENERATE_XML           = YES
+GENERATE_LATEX         = YES
+USE_MATHJAX            = YES
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+OPTIMIZE_OUTPUT_FOR_C  = YES
+STRIP_CODE_COMMENTS    = NO
+
+IMAGE_PATH             = ${SH_VULKAN_ROOT_DIR}/docs/media ${SH_VULKAN_ROOT_DIR}/.shci/linux ${SH_VULKAN_ROOT_DIR}/.shci/windows
+
+HTML_COLORSTYLE        = LIGHT
+HTML_EXTRA_STYLESHEET  = ${SH_VULKAN_ROOT_DIR}/docs/doxygen-awesome-css/doxygen-awesome.css ${SH_VULKAN_ROOT_DIR}/docs/custom.css
+HTML_EXTRA_FILES       = ${SH_VULKAN_ROOT_DIR}/docs/doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js ${SH_VULKAN_ROOT_DIR}/docs/doxygen-awesome-css/doxygen-awesome-interactive-toc.js ${SH_VULKAN_ROOT_DIR}/docs/doxygen-awesome-css/doxygen-awesome-paragraph-link.js ${SH_VULKAN_ROOT_DIR}/docs/doxygen-awesome-css/doxygen-awesome-tabs.js ${SH_VULKAN_ROOT_DIR}/docs/doxygen-awesome-css/doxygen-awesome-darkmode-toggle.js
+
+HTML_HEADER            = ${SH_VULKAN_ROOT_DIR}/docs/header.html
+
+HTML_COLORSTYLE_HUE    = 209
+HTML_COLORSTYLE_SAT    = 255
+HTML_COLORSTYLE_GAMMA  = 113

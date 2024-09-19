@@ -585,7 +585,7 @@ void setupPipeline(
 
 	uint32_t shader_size = 0;
 	char* shader_code = readBinary(
-		"../examples/shaders/bin/power.comp.spv",
+		"../../examples/shaders/bin/power.comp.spv",
 		&shader_size
 	);
 

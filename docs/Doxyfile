@@ -1,0 +1,34 @@
+PROJECT_NAME           = "shvulkan"
+PROJECT_BRIEF          = by mrsinho.
+PROJECT_NUMBER         = pre-release
+PROJECT_LOGO           = 
+
+USE_MDFILE_AS_MAINPAGE = C:/_home/desktop/github/shvulkan/README.md
+
+OUTPUT_DIRECTORY       = docs
+INPUT                  = C:/_home/desktop/github/shvulkan/shvulkan/include C:/_home/desktop/github/shvulkan/README.md C:/_home/desktop/github/shvulkan/docs/src/install.md C:/_home/desktop/github/shvulkan/docs/src/clear_color_example.md C:/_home/desktop/github/shvulkan/docs/src/scene_example.md C:/_home/desktop/github/shvulkan/docs/src/compute_example.md C:/_home/desktop/github/shvulkan/.shci/linux/log.md C:/_home/desktop/github/shvulkan/.shci/windows/log.md 
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+HAVE_DOT               = NO
+HIDE_UNDOC_MEMBERS     = YES
+GENERATE_HTML          = YES
+GENERATE_XML           = YES
+GENERATE_LATEX         = YES
+USE_MATHJAX            = YES
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+OPTIMIZE_OUTPUT_FOR_C  = YES
+STRIP_CODE_COMMENTS    = NO
+
+IMAGE_PATH             = C:/_home/desktop/github/shvulkan/docs/media C:/_home/desktop/github/shvulkan/.shci/linux C:/_home/desktop/github/shvulkan/.shci/windows
+
+HTML_COLORSTYLE        = LIGHT
+HTML_EXTRA_STYLESHEET  = C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome.css C:/_home/desktop/github/shvulkan/docs/custom.css
+HTML_EXTRA_FILES       = C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-interactive-toc.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-paragraph-link.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-tabs.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-darkmode-toggle.js
+
+HTML_HEADER            = C:/_home/desktop/github/shvulkan/docs/header.html
+
+HTML_COLORSTYLE_HUE    = 209
+HTML_COLORSTYLE_SAT    = 255
+HTML_COLORSTYLE_GAMMA  = 113

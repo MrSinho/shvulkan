@@ -1,5 +1,6 @@
 function PREREQUISITES {
     sudo apt -y update
+    sudo apt install -y pkg-config libxkbcommon-dev
     sudo apt install -y libvulkan-dev libvulkan1
     sudo apt install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
     sudo apt install -y libwayland-dev

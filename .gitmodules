@@ -4,3 +4,6 @@
 [submodule ".shci/shci"]
 	path = .shci/shci
 	url = https://github.com/mrsinho/shci
+[submodule "docs/doxygen-awesome-css"]
+	path = docs/doxygen-awesome-css
+	url = https://github.com/jothepro/doxygen-awesome-css.git

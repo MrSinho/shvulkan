@@ -1179,7 +1179,7 @@ void createPipeline(
 
 	uint32_t shader_size = 0;
 	char* shader_code = readBinary(
-		"../examples/shaders/bin/mesh.vert.spv",
+		"../../examples/shaders/bin/mesh.vert.spv",
 		&shader_size
 	);
 
@@ -1198,7 +1198,7 @@ void createPipeline(
 	);
 
 	shader_code = readBinary(
-		"../examples/shaders/bin/mesh.frag.spv",
+		"../../examples/shaders/bin/mesh.frag.spv",
 		&shader_size
 	);
 

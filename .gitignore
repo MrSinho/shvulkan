@@ -61,3 +61,7 @@ bin/*
 
 release-windows/*
 release-linux/*
+
+docs/html/*
+docs/xml/*
+docs/latex/*

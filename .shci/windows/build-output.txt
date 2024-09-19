@@ -1,16 +1,20 @@
--- Selecting Windows SDK version 10.0.22000.0 to target Windows 10.0.22621.
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26120.
 -- shvulkan message: found Vulkan
--- shvulkan message: Vulkan_INCLUDE_DIR: D:/lib/VulkanSDK/1.3.250.0/Include
--- shvulkan message: Vulkan_LIBRARY:     D:/lib/VulkanSDK/1.3.250.0/Lib/vulkan-1.lib
--- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+-- shvulkan message: Vulkan_INCLUDE_DIR: C:/_lib/vulkan-sdk/1.3.283.0/Include
+-- shvulkan message: Vulkan_LIBRARY:     C:/_lib/vulkan-sdk/1.3.283.0/Lib/vulkan-1.lib
+-- Found Doxygen: C:/Program Files/doxygen/bin/doxygen.exe (found version "1.12.0") found components: doxygen missing components: dot
+-- Configuring C:/_home/desktop/github/shvulkan/docs/Doxyfile from C:/_home/desktop/github/shvulkan/docs/Doxyfile.in
+-- Creating custom docs command: C:/Program Files/doxygen/bin/doxygen.exe C:/_home/desktop/github/shvulkan/docs/Doxyfile
 -- Including Win32 support
--- Configuring done (1.1s)
--- Generating done (1.2s)
--- Build files have been written to: D:/home/desktop/GitHub/shvulkan/windows
-MSBuild version 17.6.3+07e294721 for .NET Framework
+-- Found Doxygen: C:/Program Files/doxygen/bin/doxygen.exe (found version "1.12.0") found components: doxygen 
+-- Configuring done (1.0s)
+-- Generating done (1.4s)
+-- Build files have been written to: C:/_home/desktop/github/shvulkan/windows
+Versione di MSBuild 17.11.2+c078802d4 per .NET Framework
 
-  glfw.vcxproj -> D:\home\desktop\GitHub\shvulkan\windows\examples\external\glfw\src\Debug\glfw3.lib
-  shvulkan.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan.lib
-  shvulkan-clear-color.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan-clear-color.exe
-  shvulkan-compute-power-numbers.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan-compute-power-numbers.exe
-  shvulkan-scene.vcxproj -> D:\home\desktop\GitHub\shvulkan\bin\Debug\shvulkan-scene.exe
+  glfw.vcxproj -> C:\_home\desktop\github\shvulkan\windows\examples\external\glfw\src\Debug\glfw3.lib
+  shvulkan.vcxproj -> C:\_home\desktop\github\shvulkan\bin\windows\Debug\shvulkan.lib
+  shvulkan-clear-color.vcxproj -> C:\_home\desktop\github\shvulkan\bin\windows\Debug\shvulkan-clear-color.exe
+  shvulkan-compute-power-numbers.vcxproj -> C:\_home\desktop\github\shvulkan\bin\windows\Debug\shvulkan-compute-power-numbers.exe
+  scene.c
+  shvulkan-scene.vcxproj -> C:\_home\desktop\github\shvulkan\bin\windows\Debug\shvulkan-scene.exe
