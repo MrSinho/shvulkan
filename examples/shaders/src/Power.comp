@@ -1,18 +1,16 @@
 #version 450
 
-#define INVOCATION_X_COUNT 16
-#define INVOCATION_Y_COUNT 4
+#define INVOCATION_X_COUNT 64
+#define INVOCATION_Y_COUNT 1
 #define INVOCATION_Z_COUNT 1
 
 //
-//TOTAL OF 16 * 4 * 1 PARALLEL COMPUTATION UNITS/INVOCATIONS = 64
-//64 is multiple of 32 and 64, which leads to performance
-//improvements to Nvidia and AMD cards
+//TOTAL OF 64 * 1 * 1 PARALLEL INVOCATIONS/THREADS = 64
 //
 layout (
-    local_size_x = INVOCATION_X_COUNT, 
-    local_size_y = INVOCATION_Y_COUNT, 
-    local_size_z = INVOCATION_Z_COUNT
+    local_size_x = INVOCATION_X_COUNT, //size of x workgroup
+    local_size_y = INVOCATION_Y_COUNT, //size of y workgroup
+    local_size_z = INVOCATION_Z_COUNT  //size of z workgroup
 ) in;
 
 layout(std430, set = 0, binding = 0) buffer _src {
@@ -26,7 +24,7 @@ layout(std430, set = 1, binding = 0) buffer _test {
 void main() {
 
     //the invocation id is the computational unit index
-    uint input_id = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y;
+    uint input_id = gl_GlobalInvocationID.x;
 
     float val = src.values[input_id];    
     src.values[input_id] = pow(val, 2) * test.factor;
