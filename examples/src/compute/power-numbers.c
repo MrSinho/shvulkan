@@ -39,21 +39,20 @@ float inputs[INPUT_COUNT] = { 0 };
 float factor = 1.0f;
 
 //
-//NUMBER OF PARALLEL UNITS
-//you would prefer a multiple of 64 which is multiple of 32 and 64
-//-> performance boos for Nvidia and AMD gpus
+//NUMBER OF INVOCATIONS OR THREADS must be equal to the invocations defined in the compute shader as layout(local_size_x...y...z)in
 //
-#define INVOCATION_X_COUNT 16
-#define INVOCATION_Y_COUNT 4
+#define INVOCATION_X_COUNT 64
+#define INVOCATION_Y_COUNT 1
 #define INVOCATION_Z_COUNT 1
 
 
 //
-//THE SIZE OF X Y WORKGROUPS
+//THE SIZE OF X Y Z WORKGROUPS (each workgroup contains a number of invocations defined in the compute shader as layout(local_size_x...y...z)in
 //
-#define WORKGROUP_X_SIZE (INPUT_COUNT / INVOCATION_X_COUNT) // = 64 / 16 = 4
-#define WORKGROUP_Y_SIZE (INPUT_COUNT / INVOCATION_Y_COUNT) // = 64 / 4  = 16
-#define WORKGROUP_Z_SIZE 1
+#define X_WORKGROUPS_COUNT 1 // = 1 x workgroup * 64 x invocations = 64 invocations ---| 
+#define Y_WORKGROUPS_COUNT 1 // = 1 y workgroup * 1  y invocation  = 1  invocation     |--> 64 * 1 * 1 total invocations
+#define Z_WORKGROUPS_COUNT 1 // = 1 z workgroup * 1  z invocation  = 1  invocation  ---|
+
 
 
 //
@@ -214,11 +213,27 @@ int main(void) {
 		p_pipeline_pool//p_pipeline_pool
 	);
 
+
 	//
-	//OPERATION CHAIN
+	//RECORD COMMAND BUFFER FOR BINDING PIPELINE
 	//
 	shResetFences(device, 1, &fence);
 	shBeginCommandBuffer(cmd_buffer);
+
+	//
+	//SET UP MEMORY BARRIER BEFORE SHADER READS THE BUFFER (to ensure data has been copied)
+	//
+	shSetBufferMemoryBarrier(
+		device,//device
+		cmd_buffer,//cmd_buffer
+		device_local_buffer,//buffer
+		VK_ACCESS_HOST_WRITE_BIT,//access_before_barrier
+		VK_ACCESS_SHADER_READ_BIT,//access_after_barrier
+		compute_queue_family_index,//performing_queue_family_index_before_barrier
+		compute_queue_family_index,//performing_queue_family_index_after_barrier
+		VK_PIPELINE_STAGE_HOST_BIT,//pipeline_stage_before_barrier
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT//pipeline_stage_after_barrier
+	);
 
 	//
 	//BIND COMPUTE PIPELINE BEFORE DOING ANYTHING DIFFERENT FROM SETUP
@@ -248,9 +263,24 @@ int main(void) {
 	//
 	shCmdDispatch(
 		cmd_buffer, 
-		WORKGROUP_X_SIZE, 
-		WORKGROUP_Y_SIZE, 
+		1, 
+		1, 
 		1
+	);
+
+	//
+	//CREATE BARRIER TO ENSURE THAT SHADER WRITE OPERATIONS ARE FINISHED BEFORE BUFFER IS READ BACK FOR COPY
+	//
+	shSetBufferMemoryBarrier(
+		device,
+		cmd_buffer,
+		device_local_buffer,
+		VK_ACCESS_SHADER_WRITE_BIT,
+		VK_ACCESS_TRANSFER_READ_BIT,
+		compute_queue_family_index,
+		compute_queue_family_index,
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+		VK_PIPELINE_STAGE_HOST_BIT
 	);
 
 	//
@@ -284,7 +314,6 @@ int main(void) {
 		UINT64_MAX//timeout_ns
 	);
 
-	
 	//
 	//COPY DEVICE LOCAL BUFFER (NOW STORING OUTPUTS) TO STAGING BUFFER (HOST VISIBLE)
 	//
@@ -301,6 +330,20 @@ int main(void) {
 		staging_buffer//dst_buffer
 	);
 
+	//
+	// CREATE BARRIER TO ENSURE THAT BUFFER COPY IS FINISHED BEFORE HOST READING FROM IT
+	//
+	shSetBufferMemoryBarrier(
+		device,
+		cmd_buffer,
+		staging_buffer,
+		VK_ACCESS_TRANSFER_WRITE_BIT,
+		VK_ACCESS_HOST_READ_BIT,
+		compute_queue_family_index,
+		compute_queue_family_index,
+		VK_PIPELINE_STAGE_TRANSFER_BIT,
+		VK_PIPELINE_STAGE_HOST_BIT
+	);
 	shEndCommandBuffer(cmd_buffer);
 
 	shQueueSubmit(
@@ -326,7 +369,6 @@ int main(void) {
 	//
 	//READ OUTPUT VALUES FROM STAGING MEMORY
 	//
-
 	float outputs[OUTPUT_COUNT];
 
 	shReadMemory(
@@ -463,6 +505,7 @@ void writeMemory(
 	//COPY STAGING BUFFER TO DEVICE LOCAL MEMORY
 	//
 	shResetFences(device, 1, &fence);
+
 	shBeginCommandBuffer(cmd_buffer);
 	
 	shCopyBuffer(
