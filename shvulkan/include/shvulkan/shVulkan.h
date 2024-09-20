@@ -1465,6 +1465,35 @@ extern uint8_t shClearImageMemory(
 );
 
 /**
+ * @brief Creates a buffer memory barrier
+ *
+ * This function creates a buffer memory barrier to synchronize buffer memory access (e.g. read, write, transfer).
+ *
+ * @param device Valid Vulkan device.
+ * @param cmd_buffer Valid Vulkan command buffer.
+ * @param buffer Valid Vulkan buffer (target of the barrier).
+ * @param access_before_barrier Memory access flag before the barrier.
+ * @param access_after_barrier Memory access flag sfter the barrier.
+ * @param performing_queue_family_index_before_barrier Performing queue family index before the barrier.
+ * @param performing_queue_family_index_after_barrier Performing queue family index before the barrier.
+ * @param pipeline_stage_before_barrier Pipeline stage flag before the barrier.
+ * @param pipeline_stage_after_barrier Pipeline stage flag after the barrier.
+ * 
+ * @return 1 if successful, 0 otherwise.
+ */
+extern uint8_t shSetBufferMemoryBarrier(
+	VkDevice             device,
+	VkCommandBuffer      cmd_buffer,
+	VkBuffer             buffer,
+	VkAccessFlags        access_before_barrier,
+	VkAccessFlags        access_after_barrier,
+	uint32_t             performing_queue_family_index_before_barrier,
+	uint32_t             performing_queue_family_index_after_barrier,
+	VkPipelineStageFlags pipeline_stage_before_barrier,
+	VkPipelineStageFlags pipeline_stage_after_barrier
+);
+
+/**
  * @brief Retrieves memory budget properties for a Vulkan physical device.
  * 
  * This function retrieves memory budget properties for a Vulkan physical device.

@@ -164,25 +164,25 @@ uint8_t shCreateInstance(
 	);
 
 	VkApplicationInfo application_info = {
-		VK_STRUCTURE_TYPE_APPLICATION_INFO, //sType;
-		VK_NULL_HANDLE,                     //pNext;
-		application_name,                   //pApplicationName;
-		VK_MAKE_VERSION(0, 1, 0),           //applicationVersion;
-		engine_name,                        //pEngineName;
-		VK_MAKE_VERSION(0, 1, 0),           //engineVersion;
-		api_version,                        //apiVersion;
+		.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+		.pNext              = VK_NULL_HANDLE,                    
+		.pApplicationName   = application_name,                  
+		.applicationVersion = VK_MAKE_VERSION(0, 1, 0),          
+		.pEngineName        = engine_name,                       
+		.engineVersion      = VK_MAKE_VERSION(0, 1, 0),          
+		.apiVersion         = api_version,                       
 	};
 
 
 	VkInstanceCreateInfo instance_create_info = {
-		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,	//sType;
-		VK_NULL_HANDLE,                                   //pNext;
-		0,                                      //flags;
-		&application_info,                      //pApplicationInfo;
-		0,                                      //enabledLayerCount;
-		VK_NULL_HANDLE,                                   //ppEnabledLayerNames;
-		extension_count,                        //enabledExtensionCount;
-		pp_extension_names                      //ppEnabledExtensionNames;
+		.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+		.pNext                   = VK_NULL_HANDLE,                        
+		.flags                   = 0,                                     
+		.pApplicationInfo        = &application_info,                     
+		.enabledLayerCount       = 0,                                     
+		.ppEnabledLayerNames     = VK_NULL_HANDLE,                        
+		.enabledExtensionCount   = extension_count,                       
+		.ppEnabledExtensionNames = pp_extension_names                     
 	};
 
 	if (enable_validation_layers) {
@@ -484,12 +484,12 @@ uint8_t shQueryForDeviceQueueInfo(
 	VkDeviceQueueCreateFlagBits flags = protected ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
 
 	VkDeviceQueueCreateInfo device_queue_info = {
-		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                       //pNext;
-		flags,                                      //flags;
-		queue_family_index,                         //queueFamilyIndex;
-		queue_count,                                //queueCount;
-		p_queue_priorities                          //pQueuePriorities;	
+		.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		.pNext            = VK_NULL_HANDLE,                            
+		.flags            = flags,                                     
+		.queueFamilyIndex = queue_family_index,                        
+		.queueCount       = queue_count,                               
+		.pQueuePriorities = p_queue_priorities                         
 	};
 	
 	(*p_device_queue_info) = device_queue_info;
@@ -512,16 +512,16 @@ uint8_t shSetLogicalDevice(
 	shVkError(p_device_queue_infos   == VK_NULL_HANDLE,                 "invalid device queue infos memory",   return 0);
 
 	VkDeviceCreateInfo device_create_info = {
-		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,   //sType;
-		VK_NULL_HANDLE,                         //pNext;
-		0,                                      //flags;
-		device_queue_count,                     //queueCreateInfoCount;
-		p_device_queue_infos,                   //pQueueCreateInfos;
-		0,                                      //enabledLayerCount;
-		VK_NULL_HANDLE,                         //ppEnabledLayerNames;
-		extension_count,                        //enabledExtensionCount;
-		(const char* const*)pp_extension_names, //ppEnabledExtensionNames;
-		VK_NULL_HANDLE                          //pEnabledFeatures;
+		.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,   //sType;
+		.pNext                   = VK_NULL_HANDLE,                         //pNext;
+		.flags                   = 0,                                      //flags;
+		.queueCreateInfoCount    = device_queue_count,                     //queueCreateInfoCount;
+		.pQueueCreateInfos       = p_device_queue_infos,                   //pQueueCreateInfos;
+		.enabledLayerCount       = 0,                                      //enabledLayerCount;
+		.ppEnabledLayerNames     = VK_NULL_HANDLE,                         //ppEnabledLayerNames;
+		.enabledExtensionCount   = extension_count,                        //enabledExtensionCount;
+		.ppEnabledExtensionNames = (const char* const*)pp_extension_names, //ppEnabledExtensionNames;
+		.pEnabledFeatures        = VK_NULL_HANDLE                          //pEnabledFeatures;
 	};
 	
 	shVkResultError(
@@ -667,27 +667,30 @@ uint8_t shCreateSwapchain(
 	
 
 	VkSwapchainCreateInfoKHR swapchain_create_info = {
-		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,  //sType;
-		VK_NULL_HANDLE,                                         //pNext;
-		0,                                            //flags;
-		surface,                                      //surface;
-		_swapchain_image_count,                       //minImageCount;
-		surface_format.format,                        //imageFormat;
-		surface_format.colorSpace,                    //imageColorSpace;
-		(VkExtent2D) {
-			surface_capabilities.currentExtent.width,
-			surface_capabilities.currentExtent.height
-		},                                            //imageExtent;
-		1,                                            //imageArrayLayers;
-		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,          //imageUsage;
-		image_sharing_mode,                           //imageSharingMode;
-		0,                                            //queueFamilyIndexCount;
-		VK_NULL_HANDLE,                                         //pQueueFamilyIndices;
-		surface_capabilities.currentTransform,        //preTransform;
-		composite_alpha,                              //compositeAlpha;
-		present_mode,                                 //presentMode;
-		1,                                            //clipped;
-		0,                                            //oldSwapchain;
+
+		.sType           = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR, //sType;
+		.pNext           = VK_NULL_HANDLE,                              //pNext;
+		.flags           = 0,                                           //flags;
+		.surface         = surface,                                     //surface;
+		.minImageCount   = _swapchain_image_count,                      //minImageCount;
+		.imageFormat     = surface_format.format,                       //imageFormat;
+		.imageColorSpace = surface_format.colorSpace,                   //imageColorSpace;
+
+		.imageExtent     = (VkExtent2D) {
+		                       surface_capabilities.currentExtent.width,
+		                       surface_capabilities.currentExtent.height
+		},                                                               //imageExtent;
+
+		.imageArrayLayers      = 1,                                      //imageArrayLayers;
+		.imageUsage            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,    //imageUsage;
+		.imageSharingMode      = image_sharing_mode,                     //imageSharingMode;
+		.queueFamilyIndexCount = 0,                                      //queueFamilyIndexCount;
+		.pQueueFamilyIndices   = VK_NULL_HANDLE,                         //pQueueFamilyIndices;
+		.preTransform          = surface_capabilities.currentTransform,  //preTransform;
+		.compositeAlpha        = composite_alpha,                        //compositeAlpha;
+		.presentMode           = present_mode,                           //presentMode;
+		.clipped               = 1,                                      //clipped;
+		.oldSwapchain          = 0,                                      //oldSwapchain;
 	};
 
 	shVkResultError(
@@ -777,22 +780,22 @@ uint8_t shCreateImageView(
 	shVkError(p_image_view == VK_NULL_HANDLE, "invalid image view memory", return 0);
 
 	VkImageSubresourceRange subresource_range = {
-		image_aspect, //aspectMask
-		0,            //baseMipLevel;
-		mip_levels,   //levelCount;
-		0,            //baseArrayLayer;
-		1             //layerCount;
+		.aspectMask     = image_aspect, //aspectMask
+		.baseMipLevel   = 0,            //baseMipLevel;
+		.levelCount     = mip_levels,   //levelCount;
+		.baseArrayLayer = 0,            //baseArrayLayer;
+		.layerCount     = 1             //layerCount;
 	};
 	
 	VkImageViewCreateInfo image_view_create_info = {
-			VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,   //sType;
-			VK_NULL_HANDLE,                                       //pNext;
-			0,                                          //flags;
-			image,                                      //image;
-			view_type,                                  //viewType;
-			format,                                     //format;
-			VK_COMPONENT_SWIZZLE_IDENTITY,              //components;
-			0,                                          //subresourceRange
+		.sType            = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, //sType;
+		.pNext            = VK_NULL_HANDLE,                           //pNext;
+		.flags            = 0,                                        //flags;
+		.image            = image,                                    //image;
+		.viewType         = view_type,                                //viewType;
+		.format           = format,                                   //format;
+		.components       = VK_COMPONENT_SWIZZLE_IDENTITY,            //components;
+		.subresourceRange = 0,                                        //subresourceRange
 	};
 	image_view_create_info.subresourceRange = subresource_range;
 
@@ -865,11 +868,11 @@ uint8_t shAllocateCommandBuffers(
 	shVkError(p_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
 	
 	VkCommandBufferAllocateInfo cmd_buffer_allocate_info = {
-		VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,	//sType;
-		VK_NULL_HANDLE,											//pNext;
-		cmd_pool,										//commandPool;
-		VK_COMMAND_BUFFER_LEVEL_PRIMARY,				//level;
-		cmd_buffer_count								//commandBufferCount;
+		.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, //sType;
+		.pNext              = VK_NULL_HANDLE,                                 //pNext;
+		.commandPool        = cmd_pool,										  //commandPool;
+		.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,				  //level;
+		.commandBufferCount = cmd_buffer_count								  //commandBufferCount;
 	};
 
 	shVkResultError(
@@ -895,15 +898,15 @@ uint8_t shCreateRenderpassAttachment(
 	shVkError(p_attachment_description == VK_NULL_HANDLE, "invalid attachment description memory", return 0);
 	
 	VkAttachmentDescription attachment_description = {
-		0,                       //flags;
-		format,                  //format;
-		sample_count,            //samples;
-		load_treatment,          //loadOp;
-		store_treatment,         //storeOp;
-		stencil_load_treatment,  //stencilLoadOp;
-		stencil_store_treatment, //stencilStoreOp;
-		initial_layout,          //initialLayout;
-		final_layout,            //finalLayout;
+		.flags          = 0,                       //flags;
+		.format         = format,                  //format;
+		.samples        = sample_count,            //samples;
+		.loadOp         = load_treatment,          //loadOp;
+		.storeOp        = store_treatment,         //storeOp;
+		.stencilLoadOp  = stencil_load_treatment,  //stencilLoadOp;
+		.stencilStoreOp = stencil_store_treatment, //stencilStoreOp;
+		.initialLayout  = initial_layout,          //initialLayout;
+		.finalLayout    = final_layout,            //finalLayout;
 	};
 
 	(*p_attachment_description) = attachment_description;
@@ -919,8 +922,8 @@ uint8_t shCreateRenderpassAttachmentReference(
 	shVkError(p_attachment_reference == VK_NULL_HANDLE, "invalid attachment reference memory", return 0);
 
 	VkAttachmentReference attachment_reference = {
-		attachment_idx, //attachment;
-		layout          //layout;
+		.attachment = attachment_idx, //attachment;
+		.layout     = layout          //layout;
 	};
 
 	(*p_attachment_reference) = attachment_reference;
@@ -959,16 +962,16 @@ uint8_t shCreateSubpass(
 	);
 
 	VkSubpassDescription subpass_description = {
-		0,                                    //flags;
-		bind_point,                           //pipelineBindPoint;
-		input_attachment_count,               //inputAttachmentCount;
-		p_input_attachments_reference,        //pInputAttachments;
-		color_attachment_count,               //colorAttachmentCount;
-		p_color_attachments_reference,        //pColorAttachments;
-		p_resolve_attachment_reference,       //pResolveAttachments;
-		p_depth_stencil_attachment_reference, //pDepthStencilAttachment;
-		preserve_attachment_count,            //preserveAttachmentCount;
-		p_preserve_attachments                //pPreserveAttachments;
+		.flags                   = 0,                                    //flags;
+		.pipelineBindPoint       = bind_point,                           //pipelineBindPoint;
+		.inputAttachmentCount    = input_attachment_count,               //inputAttachmentCount;
+		.pInputAttachments       = p_input_attachments_reference,        //pInputAttachments;
+		.colorAttachmentCount    = color_attachment_count,               //colorAttachmentCount;
+		.pColorAttachments       = p_color_attachments_reference,        //pColorAttachments;
+		.pResolveAttachments     = p_resolve_attachment_reference,       //pResolveAttachments;
+		.pDepthStencilAttachment = p_depth_stencil_attachment_reference, //pDepthStencilAttachment;
+		.preserveAttachmentCount = preserve_attachment_count,            //preserveAttachmentCount;
+		.pPreserveAttachments    = p_preserve_attachments                //pPreserveAttachments;
 	};
 
 	if (p_subpass != VK_NULL_HANDLE) {
@@ -994,15 +997,15 @@ uint8_t shCreateRenderpass(
 	shVkError(p_renderpass               == VK_NULL_HANDLE,  "invalid renderpass memory",               return 0);
 
 	VkRenderPassCreateInfo renderpass_create_info = {
-		VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                            //pNext;
-		0,                                         //flags;
-        attachment_count,                          //attachmentCount;
-        p_attachments_descriptions,                //pAttachments;
-        subpass_count,                             //subpassCount;
-        p_subpasses,                               //pSubpasses;
-        0,                                         //dependencyCount;
-        VK_NULL_HANDLE                             //pDependencies;
+		.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, //sType;
+		.pNext           = VK_NULL_HANDLE,                            //pNext;
+		.flags           = 0,                                         //flags;
+		.attachmentCount = attachment_count,                          //attachmentCount;
+		.pAttachments    = p_attachments_descriptions,                //pAttachments;
+		.subpassCount    = subpass_count,                             //subpassCount;
+		.pSubpasses      = p_subpasses,                               //pSubpasses;
+		.dependencyCount = 0,                                         //dependencyCount;
+		.pDependencies   = VK_NULL_HANDLE                             //pDependencies;
 	};
 
 	shVkResultError(
@@ -1043,15 +1046,15 @@ uint8_t shCreateFramebuffer(
 	);
 
 	VkFramebufferCreateInfo framebuffer_create_info = {
-		VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                      //pNext;
-		flags,                                     //flags;
-		renderpass,                                //renderPass;
-		image_view_count,                          //attachmentCount;
-		p_image_views,                             //pAttachments;
-		x,                                         //width;
-		y,                                         //height;
-		z                                          //layers;
+		.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, //sType;
+		.pNext           = VK_NULL_HANDLE,                            //pNext;
+		.flags           = flags,                                     //flags;
+		.renderPass      = renderpass,                                //renderPass;
+		.attachmentCount = image_view_count,                          //attachmentCount;
+		.pAttachments    = p_image_views,                             //pAttachments;
+		.width           = x,                                         //width;
+		.height          = y,                                         //height;
+		.layers          = z                                          //layers;
 	};
 	
 	shVkResultError(
@@ -1254,10 +1257,10 @@ uint8_t shBeginCommandBuffer(
 	shVkError(cmd_buffer == VK_NULL_HANDLE, "invalid command buffer", return 0);
 
 	VkCommandBufferBeginInfo command_buffer_begin_info = {
-		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		VK_NULL_HANDLE,
-		0,
-		VK_NULL_HANDLE
+		.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext            = VK_NULL_HANDLE,
+		.flags            = 0,
+		.pInheritanceInfo = VK_NULL_HANDLE
 	};
 
 	shVkResultError(
@@ -1314,15 +1317,15 @@ uint8_t shQueueSubmit(
 	shVkError(queue == VK_NULL_HANDLE,			"invalid queue",					return 0);
 
 	VkSubmitInfo submit_info = {
-			VK_STRUCTURE_TYPE_SUBMIT_INFO, //sType;
-			VK_NULL_HANDLE,                          //pNext;
-			semaphores_to_wait_for_count,  //waitSemaphoreCount;
-			p_semaphores_to_wait_for,      //pWaitSemaphores;
-			&wait_stage,                   //pWaitDstStageMask;
-			cmd_buffer_count,              //commandBufferCount;
-			p_cmd_buffers,                 //pCommandBuffers;
-			signal_semaphore_count,        //signalSemaphoreCount;
-			p_signal_semaphores            //pSignalSemaphores;
+		.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO, //sType;
+		.pNext                = VK_NULL_HANDLE,                //pNext;
+		.waitSemaphoreCount   = semaphores_to_wait_for_count,  //waitSemaphoreCount;
+		.pWaitSemaphores      = p_semaphores_to_wait_for,      //pWaitSemaphores;
+		.pWaitDstStageMask    = &wait_stage,                   //pWaitDstStageMask;
+		.commandBufferCount   = cmd_buffer_count,              //commandBufferCount;
+		.pCommandBuffers      = p_cmd_buffers,                 //pCommandBuffers;
+		.signalSemaphoreCount = signal_semaphore_count,        //signalSemaphoreCount;
+		.pSignalSemaphores    = p_signal_semaphores            //pSignalSemaphores;
 	};
 
 	shVkResultError(
@@ -1358,9 +1361,9 @@ uint8_t shCreateFences(
 	VkFenceCreateFlags flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 
 	VkFenceCreateInfo fence_create_info = {
-		VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                //pNext;
-		flags                                //flags;
+		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, //sType;
+		.pNext = VK_NULL_HANDLE,                      //pNext;
+		.flags = flags                                //flags;
 	};
 
 	for (uint32_t fence_idx = 0; fence_idx < fence_count; fence_idx++) {
@@ -1383,9 +1386,9 @@ uint8_t shCreateSemaphores(
 	shVkError(p_semaphores    == VK_NULL_HANDLE, "invalid semaphores memory", return 0);
 
 	VkSemaphoreCreateInfo semaphore_create_info = {
-		VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                          //pNext;
-		0                                        //flags;
+		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, //sType;
+		.pNext = VK_NULL_HANDLE,                          //pNext;
+		.flags = 0                                        //flags;
 	};
 
 	for (uint32_t semaphore_idx = 0; semaphore_idx < semaphore_count; semaphore_idx++) {
@@ -1516,12 +1519,12 @@ uint8_t shWaitForSemaphores(
 	shVkError(p_semaphores_values == VK_NULL_HANDLE, "invalid semaphores values memory", return 0);
 
 	VkSemaphoreWaitInfo semaphore_wait_info = {
-		VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO,
-		VK_NULL_HANDLE,
-		wait_for_all ? 0 : VK_SEMAPHORE_WAIT_ANY_BIT,
-		semaphore_count,
-		p_semaphores,
-		p_semaphores_values
+		.sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO,
+		.pNext          = VK_NULL_HANDLE,
+		.flags          = wait_for_all ? 0 : VK_SEMAPHORE_WAIT_ANY_BIT,
+		.semaphoreCount = semaphore_count,
+		.pSemaphores    = p_semaphores,
+		.pValues        = p_semaphores_values
 	};
 
 	shVkResultError(
@@ -1594,18 +1597,18 @@ uint8_t shBeginRenderpass(
 	);
 
 	VkRect2D render_area = {
-		{ render_offset_x, render_offset_y },
-		{ render_size_x,   render_size_y   }
+		.offset = { render_offset_x, render_offset_y },
+		.extent = { render_size_x,   render_size_y   }
 	};
 
 	VkRenderPassBeginInfo renderpass_begin_info = {
-		VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, //sType;
-		VK_NULL_HANDLE,                                     //pNext;
-		renderpass,                               //renderPass;
-		framebuffer,                              //framebuffer;
-		render_area,                              //renderArea;
-		clear_value_count,                        //clearValueCount;
-		p_clear_values                            //pClearValues;
+		.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, //sType;
+		.pNext           = VK_NULL_HANDLE,                           //pNext;
+		.renderPass      = renderpass,                               //renderPass;
+		.framebuffer     = framebuffer,                              //framebuffer;
+		.renderArea      = render_area,                              //renderArea;
+		.clearValueCount = clear_value_count,                        //clearValueCount;
+		.pClearValues    = p_clear_values                            //pClearValues;
 	};
 
 	vkCmdBeginRenderPass(
@@ -1682,14 +1685,14 @@ uint8_t shQueuePresentSwapchainImage(
 	VkResult swapchain_result = VK_SUCCESS;
 
 	VkPresentInfoKHR present_info = {
-		VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		VK_NULL_HANDLE,
-		semaphores_to_wait_for_count,
-		p_semaphores_to_wait_for,
-		1,
-		&swapchain,
-		&swapchain_image_idx,
-		&swapchain_result
+		.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+		.pNext              = VK_NULL_HANDLE,
+		.waitSemaphoreCount = semaphores_to_wait_for_count,
+		.pWaitSemaphores    = p_semaphores_to_wait_for,
+		.swapchainCount     = 1,
+		.pSwapchains        = &swapchain,
+		.pImageIndices      = &swapchain_image_idx,
+		.pResults           = &swapchain_result
 	};
 
 	shVkResultError(
@@ -1720,14 +1723,14 @@ uint8_t shCreateBuffer(
 	shVkError(size     == 0,    "invalid buffer size",   return 0);
 
 	VkBufferCreateInfo buffer_create_info = {
-		VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                 //pNext;
-		0,                                    //flags;
-		(VkDeviceSize)size,                   //size;
-		usage,                                //usage;
-		sharing_mode,                         //sharingMode;
-		0,                                    //queueFamilyIndexCount;
-		VK_NULL_HANDLE                                  //pQueueFamilyIndices;
+		.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, //sType;
+		.pNext                 = VK_NULL_HANDLE,                       //pNext;
+		.flags                 = 0,                                    //flags;
+		.size                  = (VkDeviceSize)size,                   //size;
+		.usage                 = usage,                                //usage;
+		.sharingMode           = sharing_mode,                         //sharingMode;
+		.queueFamilyIndexCount = 0,                                    //queueFamilyIndexCount;
+		.pQueueFamilyIndices   = VK_NULL_HANDLE                        //pQueueFamilyIndices;
 	};
 
 	shVkResultError(
@@ -1746,10 +1749,10 @@ uint8_t shAllocateBufferMemory(
 	VkMemoryPropertyFlags property_flags,
 	VkDeviceMemory*       p_memory
 ) {
-	shVkError(device			== VK_NULL_HANDLE, "invalid device handle",			return 0);
-	shVkError(physical_device	== VK_NULL_HANDLE, "invalid physical device memory",	return 0);
-	shVkError(buffer			== VK_NULL_HANDLE, "invalid buffer pointer",			return 0);
-	shVkError(p_memory			== VK_NULL_HANDLE, "invalid device memory pointer",	return 0);
+	shVkError(device          == VK_NULL_HANDLE, "invalid device handle",          return 0);
+	shVkError(physical_device == VK_NULL_HANDLE, "invalid physical device memory", return 0);
+	shVkError(buffer          == VK_NULL_HANDLE, "invalid buffer pointer",         return 0);
+	shVkError(p_memory        == VK_NULL_HANDLE, "invalid device memory pointer",  return 0);
 
 	uint32_t memory_type_index = 0;
 	shGetMemoryType(device, physical_device, property_flags, &memory_type_index);
@@ -1758,10 +1761,10 @@ uint8_t shAllocateBufferMemory(
 	vkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
 
 	VkMemoryAllocateInfo memory_allocate_info = {
-		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,	//sType;
-		VK_NULL_HANDLE,									//pNext;
-		memory_requirements.size,				//allocationSize;
-		memory_type_index						//memoryTypeIndex;
+		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,	//sType;
+		.pNext           = VK_NULL_HANDLE,                         //pNext;
+		.allocationSize  = memory_requirements.size,               //allocationSize;
+		.memoryTypeIndex = memory_type_index                       //memoryTypeIndex;
 	};
 
 	shVkResultError(
@@ -1786,12 +1789,12 @@ uint8_t shCopyBuffer(
 	shVkError(size                == 0,    "invalid copy size",          return 0);
 	shVkError(dst_buffer          == VK_NULL_HANDLE, "invalid destination buffer", return 0);
 
-
 	VkBufferCopy region = {
-		src_offset,
-		dst_offset,
-		size
+		.srcOffset = src_offset,
+		.dstOffset = dst_offset,
+		.size      = size
 	};
+
 	vkCmdCopyBuffer(
 		transfer_cmd_buffer, 
 		src_buffer, 
@@ -2027,24 +2030,26 @@ uint8_t shCreateImage(
 	shVkError(p_image      == VK_NULL_HANDLE, "invalid image memory",    return 0);
 
 	VkExtent3D image_extent = {
-		x, y, z
+		.width  = x,
+		.height = y,
+		.depth  = z
 	};
 
 	VkImageCreateInfo image_create_info = {
-		VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, //sType;			
-		VK_NULL_HANDLE,                                //pNext;
-		0,                                   //flags;
-		type,                                //imageType;
-		format,                              //format;
-		image_extent,                        //extent;
-		mip_levels,                          //mipLevels;
-		1,                                   //arrayLayers;
-		sample_count,                        //samples;
-		image_tiling,                        //tiling;
-		usage,                               //usage;
-		VK_SHARING_MODE_EXCLUSIVE,           //sharingMode;
-		0,                                   //queueFamilyIndexCount;
-		VK_NULL_HANDLE                                 //pQueueFamilyIndices;
+		.sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, //sType;			
+		.pNext                 = VK_NULL_HANDLE,                      //pNext;
+		.flags                 = 0,                                   //flags;
+		.imageType             = type,                                //imageType;
+		.format                = format,                              //format;
+		.extent                = image_extent,                        //extent;
+		.mipLevels             = mip_levels,                          //mipLevels;
+		.arrayLayers           = 1,                                   //arrayLayers;
+		.samples               = sample_count,                        //samples;
+		.tiling                = image_tiling,                        //tiling;
+		.usage                 = usage,                               //usage;
+		.sharingMode           = VK_SHARING_MODE_EXCLUSIVE,           //sharingMode;
+		.queueFamilyIndexCount = 0,                                   //queueFamilyIndexCount;
+		.pQueueFamilyIndices   = VK_NULL_HANDLE                       //pQueueFamilyIndices;
 	};
 	shVkResultError(
 		vkCreateImage(device, &image_create_info, VK_NULL_HANDLE, p_image),
@@ -2078,10 +2083,10 @@ uint8_t shAllocateImageMemory(
 	);
 
 	VkMemoryAllocateInfo memory_allocate_info = {
-		VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		VK_NULL_HANDLE,
-		memory_requirements.size,
-		memory_type_index
+		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		.pNext           = VK_NULL_HANDLE,
+		.allocationSize  = memory_requirements.size,
+		.memoryTypeIndex = memory_type_index
 	};
 
 	shVkResultError(
@@ -2133,6 +2138,48 @@ uint8_t shClearImageMemory(
 	return 0;
 }
 
+uint8_t shSetBufferMemoryBarrier(
+	VkDevice        device,
+	VkCommandBuffer cmd_buffer,
+	VkBuffer        buffer,
+	VkAccessFlags   access_before_barrier,
+	VkAccessFlags   access_after_barrier,
+	uint32_t        performing_queue_family_index_before_barrier,
+	uint32_t        performing_queue_family_index_after_barrier,
+	VkPipelineStageFlags pipeline_stage_before_barrier,
+	VkPipelineStageFlags pipeline_stage_after_barrier
+) {
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(buffer == VK_NULL_HANDLE, "invalid buffer memory", return 0);
+
+	VkBufferMemoryBarrier barrier = {
+		.sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+		.pNext               = NULL,
+		.srcAccessMask       = access_before_barrier,
+		.dstAccessMask       = access_after_barrier,
+		.srcQueueFamilyIndex = performing_queue_family_index_before_barrier,
+		.dstQueueFamilyIndex = performing_queue_family_index_after_barrier,
+		.buffer              = buffer,
+		.offset              = 0,
+		.size                = VK_WHOLE_SIZE
+	};
+
+	vkCmdPipelineBarrier(
+		cmd_buffer,//commandBuffer
+		pipeline_stage_before_barrier,//srcStageMask
+		pipeline_stage_after_barrier,//dstStageMask
+		0,//dependencyFlags
+		0,//memoryBarrierCount
+		NULL,//pMemoryBarriers
+		1,//bufferMemoryBarrierCount
+		&barrier,//pBufferMemoryBarriers
+		0,//imageMemoryBarrierCount
+		NULL//pImageMemoryBarriers
+	);
+
+	return 1;
+}
+
 uint8_t shGetMemoryBudgetProperties(
 	VkPhysicalDevice                           physical_device,
 	VkPhysicalDeviceMemoryBudgetPropertiesEXT* p_memory_budget_properties
@@ -2142,13 +2189,13 @@ uint8_t shGetMemoryBudgetProperties(
 
 
 	VkPhysicalDeviceMemoryBudgetPropertiesEXT memory_budget_properties = {
-		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
-		VK_NULL_HANDLE
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+		.pNext = VK_NULL_HANDLE
 	};
 
 	VkPhysicalDeviceMemoryProperties2 memory_properties_2 = {
-		VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-		&memory_budget_properties,
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
+		.pNext = &memory_budget_properties,
 	};
 	vkGetPhysicalDeviceMemoryProperties2(physical_device, &memory_properties_2);
 
@@ -2208,9 +2255,9 @@ uint8_t shSetVertexBinding(
 	shVkError(p_vertex_input_binding == VK_NULL_HANDLE, "invalid vertex input binding memory", return 0);
 
 	VkVertexInputBindingDescription vertex_input_binding = {
-		binding,
-		size,
-		input_rate
+		.binding   = binding,
+		.stride    = size,
+		.inputRate = input_rate
 	};
 
 	(*p_vertex_input_binding) = vertex_input_binding;
@@ -2228,10 +2275,10 @@ uint8_t shSetVertexAttribute(
 	shVkError(p_vertex_input_attribute == VK_NULL_HANDLE, "invalid vertex input attribute memory", return 0);
 	
 	VkVertexInputAttributeDescription vertex_input_attribute = {
-		location,
-		binding,
-		format,
-		offset
+		.location = location,
+		.binding  = binding,
+		.format   = format,
+		.offset   = offset
 	};
 
 	(*p_vertex_input_attribute) = vertex_input_attribute;
@@ -2246,17 +2293,17 @@ uint8_t shSetVertexInputState(
 	VkVertexInputAttributeDescription*    p_vertex_attributes, 
 	VkPipelineVertexInputStateCreateInfo* p_vertex_input_state
 ) {
-	VkPipelineVertexInputStateCreateInfo vertexInput = {
-		VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                                      //pNext;
-		0,                                                         //flags;
-		vertex_binding_count,                                      //vertexBindingDescriptionCount;
-		p_vertex_bindings,                                         //pVertexBindingDescriptions;
-		vertex_attribute_count,                                    //vertexAttributeDescriptionCount;
-		p_vertex_attributes,                                       //pVertexAttributeDescriptions;
+	VkPipelineVertexInputStateCreateInfo vertex_input = {
+		.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, //sType;
+		.pNext                           = VK_NULL_HANDLE,                                            //pNext;
+		.flags                           = 0,                                                         //flags;
+		.vertexBindingDescriptionCount   = vertex_binding_count,                                      //vertexBindingDescriptionCount;
+		.pVertexBindingDescriptions      = p_vertex_bindings,                                         //pVertexBindingDescriptions;
+		.vertexAttributeDescriptionCount = vertex_attribute_count,                                    //vertexAttributeDescriptionCount;
+		.pVertexAttributeDescriptions    = p_vertex_attributes,                                       //pVertexAttributeDescriptions;
 	};
 
-	*p_vertex_input_state = vertexInput;
+	*p_vertex_input_state = vertex_input;
 
     return 1;
 }
@@ -2268,15 +2315,15 @@ uint8_t shCreateInputAssembly(
 ) {
 	shVkError(p_input_assembly == VK_NULL_HANDLE, "invalid input assembly state memory", return 0);
 
-	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {
-		VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,	//sType;
-		VK_NULL_HANDLE,															//pNext;
-		0,																//flags;
-		primitive_topology,												//topology;
-		primitive_restart_enable										//primitiveRestartEnable;
+	VkPipelineInputAssemblyStateCreateInfo input_assembly_state = {
+		.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, //sType;
+		.pNext                  = VK_NULL_HANDLE,                                              //pNext;
+		.flags                  = 0,                                                           //flags;
+		.topology               = primitive_topology,                                          //topology;
+		.primitiveRestartEnable = primitive_restart_enable                                     //primitiveRestartEnable;
 	};		
 
-	*p_input_assembly = inputAssemblyStateCreateInfo;
+	*p_input_assembly = input_assembly_state;
 
     return 1;
 }
@@ -2288,23 +2335,23 @@ uint8_t shCreateRasterizer(
 ) {
 	shVkError(p_rasterizer == VK_NULL_HANDLE, "invalid rasterizer memory", return 0);
 
-	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {
-		VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                                       //pNext;
-		0,                                                          //flags;
-		VK_FALSE,                                                   //depthClampEnable;
-		VK_FALSE,                                                   //rasterizerDiscardEnable;
-		polygon_mode,                                               //polygonMode;
-		cull_mode,                                                  //cullMode
-		VK_FRONT_FACE_CLOCKWISE,                                    //frontFace
-		VK_FALSE,                                                   //depthBiasEnable 
-		0.0f,                                                       //depthBiasConstantFactor;
-		0.0f,                                                       //depthBiasClamp;
-		0.0f,                                                       //depthBiasSlopeFactor; 
-		1.0f                                                        //lineWidth;
+	VkPipelineRasterizationStateCreateInfo rasterization_state = {
+		.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, //sType;
+		.pNext                   = VK_NULL_HANDLE,                                             //pNext;
+		.flags                   = 0,                                                          //flags;
+		.depthClampEnable        = VK_FALSE,                                                   //depthClampEnable;
+		.rasterizerDiscardEnable = VK_FALSE,                                                   //rasterizerDiscardEnable;
+		.polygonMode             = polygon_mode,                                               //polygonMode;
+		.cullMode                = cull_mode,                                                  //cullMode
+		.frontFace               = VK_FRONT_FACE_CLOCKWISE,                                    //frontFace
+		.depthBiasEnable         = VK_FALSE,                                                   //depthBiasEnable 
+		.depthBiasConstantFactor = 0.0f,                                                       //depthBiasConstantFactor;
+		.depthBiasClamp          = 0.0f,                                                       //depthBiasClamp;
+		.depthBiasSlopeFactor    = 0.0f,                                                       //depthBiasSlopeFactor; 
+		.lineWidth               = 1.0f                                                        //lineWidth;
 	};
 
-	*p_rasterizer = rasterizationStateCreateInfo;
+	*p_rasterizer = rasterization_state;
 
     return 1;
 }
@@ -2319,19 +2366,19 @@ uint8_t shSetMultisampleState(
 
 	VkBool32 sample_shading_enable = min_sample_shading_size == 0.0f ? VK_FALSE : VK_TRUE;
 
-	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {
-		VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                                     //pNext;
-		0,                                                        //flags;
-		sample_count,                                             //rasterizationSamples;
-		sample_shading_enable,                                    //sampleShadingEnable;
-		min_sample_shading_size,                                  //minSampleShading;
-		VK_NULL_HANDLE,                                                     //pSampleMask;
-		VK_FALSE,                                                 //alphaToCoverageEnable;
-		VK_FALSE                                                  //alphaToOneEnable;
+	VkPipelineMultisampleStateCreateInfo multisample_state = {
+		.sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, //sType;
+		.pNext                 = VK_NULL_HANDLE,                                           //pNext;
+		.flags                 = 0,                                                        //flags;
+		.rasterizationSamples  = sample_count,                                             //rasterizationSamples;
+		.sampleShadingEnable   = sample_shading_enable,                                    //sampleShadingEnable;
+		.minSampleShading      = min_sample_shading_size,                                  //minSampleShading;
+		.pSampleMask           = VK_NULL_HANDLE,                                           //pSampleMask;
+		.alphaToCoverageEnable = VK_FALSE,                                                 //alphaToCoverageEnable;
+		.alphaToOneEnable      = VK_FALSE                                                  //alphaToOneEnable;
 	};
 
-	*p_multisample_state = multisampleStateCreateInfo;
+	*p_multisample_state = multisample_state;
 
     return 1;
 }
@@ -2349,46 +2396,40 @@ uint8_t shSetViewport(
 	VkRect2D*                          p_scissors, 
 	VkPipelineViewportStateCreateInfo* p_viewport_state
 ) {
-	shVkError(viewport_width   == 0,    "invalid viewport width",         return 0);
-	shVkError(viewport_height  == 0,    "invalid viewport height",        return 0);
+	shVkError(viewport_width   == 0,              "invalid viewport width",         return 0);
+	shVkError(viewport_height  == 0,              "invalid viewport height",        return 0);
 	shVkError(p_viewport       == VK_NULL_HANDLE, "invalid viewport memory",        return 0);
-	shVkError(scissors_width   == 0,    "invalid scissors width",         return 0);
-	shVkError(scissors_height  == 0,    "invalid scissors height",        return 0);
+	shVkError(scissors_width   == 0,              "invalid scissors width",         return 0);
+	shVkError(scissors_height  == 0,              "invalid scissors height",        return 0);
 	shVkError(p_scissors       == VK_NULL_HANDLE, "invalid scissors memory",        return 0);
 	shVkError(p_viewport_state == VK_NULL_HANDLE, "invalid viewport state pointer", return 0);
 
 	VkViewport viewport = {
-		(float)viewport_pos_x,  //x; 
-		(float)viewport_pos_y,  //y;
-		(float)viewport_width,  //width;
-		(float)viewport_height, //height;
-		0.0f, 					//minDepth;
-		1.0f					//maxDepth;
+		.x        = (float)viewport_pos_x,  //x; 
+		.y        = (float)viewport_pos_y,  //y;
+		.width    = (float)viewport_width,  //width;
+		.height   = (float)viewport_height, //height;
+		.minDepth = 0.0f,                   //minDepth;
+		.maxDepth = 1.0f                    //maxDepth;
 	};
 
 	(*p_viewport) = viewport;
 
 	VkRect2D scissors = {
-		{
-			scissors_pos_x, 
-			scissors_pos_y
-		},                   //offset
-		{
-			scissors_width, 
-			scissors_height
-		}                   //extent
+		.offset = { scissors_pos_x, scissors_pos_y  },
+		.extent = {	scissors_width, scissors_height	}
 	};
 
 	(*p_scissors) = scissors;
 
 	VkPipelineViewportStateCreateInfo viewport_state_create_info = {
-		VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                                  //pNext;
-		0,                                                     //flags;
-		1,                                                     //viewportCount;
-		p_viewport,                                            //pViewports;
-		1,                                                     //scissorCount;
-		p_scissors                                             //pScissors;
+		.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, //sType;
+		.pNext         = VK_NULL_HANDLE,                                        //pNext;
+		.flags         = 0,                                                     //flags;
+		.viewportCount = 1,                                                     //viewportCount;
+		.pViewports    = p_viewport,                                            //pViewports;
+		.scissorCount  = 1,                                                     //scissorCount;
+		.pScissors     = p_scissors                                             //pScissors;
 	};
 
 	*p_viewport_state = viewport_state_create_info;
@@ -2407,24 +2448,26 @@ uint8_t shColorBlendSettings(
 	shVkError(p_color_blend_state             == VK_NULL_HANDLE, "invalid color blend state memory",             return 0);
 	
 	VkPipelineColorBlendAttachmentState color_blend_attachment_state = {
-		VK_FALSE,                  //blendEnable;
-		VK_BLEND_FACTOR_ONE,       //srcColorBlendFactor;
-		VK_BLEND_FACTOR_ZERO,      //dstColorBlendFactor;
-		VK_BLEND_OP_ADD,           //colorBlendOp;
-		VK_BLEND_FACTOR_ONE,       //srcAlphaBlendFactor;
-		VK_BLEND_FACTOR_ZERO,      //dstAlphaBlendFactor;
-		VK_BLEND_OP_ADD,           //alphaBlendOp;
-		VK_COLOR_COMPONENT_R_BIT |
-		VK_COLOR_COMPONENT_G_BIT |
-		VK_COLOR_COMPONENT_B_BIT |
-		VK_COLOR_COMPONENT_A_BIT   //colorWriteMask;
+		.blendEnable         = VK_FALSE,                  //blendEnable;
+		.srcColorBlendFactor = VK_BLEND_FACTOR_ONE,       //srcColorBlendFactor;
+		.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,      //dstColorBlendFactor;
+		.colorBlendOp        = VK_BLEND_OP_ADD,           //colorBlendOp;
+		.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,       //srcAlphaBlendFactor;
+		.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,      //dstAlphaBlendFactor;
+		.alphaBlendOp        = VK_BLEND_OP_ADD,           //alphaBlendOp;
+		.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT |
+		                       VK_COLOR_COMPONENT_G_BIT |
+		                       VK_COLOR_COMPONENT_B_BIT |
+		                       VK_COLOR_COMPONENT_A_BIT   //colorWriteMask;
 	};
+
 	if (enable_alpha_blending) {
 		color_blend_attachment_state.blendEnable         = VK_TRUE;
 
 		color_blend_attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
 		color_blend_attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	}
+
 	if (enable_color_blending) {
 		color_blend_attachment_state.blendEnable         = VK_TRUE;
 
@@ -2437,14 +2480,14 @@ uint8_t shColorBlendSettings(
 	}
 
 	VkPipelineColorBlendStateCreateInfo color_blend_state_create_info = {
-		VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, //sType
-		VK_NULL_HANDLE,                                           //pNext
-		0,                                                        //flags
-		VK_FALSE,                                                 //logicOpEnable
-		VK_LOGIC_OP_COPY,                                         //logicOp
-		subpass_color_attachment_count,                           //attachmentCount
-		p_color_blend_attachment_states,                          //pAttachments
-		{0.0f, 0.0f, 0.0f}                                        //blendConstants
+		.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, //sType
+		.pNext           = VK_NULL_HANDLE,                                           //pNext
+		.flags           = 0,                                                        //flags
+		.logicOpEnable   = VK_FALSE,                                                 //logicOpEnable
+		.logicOp         = VK_LOGIC_OP_COPY,                                         //logicOp
+		.attachmentCount = subpass_color_attachment_count,                           //attachmentCount
+		.pAttachments    = p_color_blend_attachment_states,                          //pAttachments
+		.blendConstants  = {0.0f, 0.0f, 0.0f}                                        //blendConstants
 	};
 
 	(*p_color_blend_state) = color_blend_state_create_info;
@@ -2464,11 +2507,11 @@ uint8_t shCreateShaderModule(
 	shVkError(p_shader_module == VK_NULL_HANDLE, "invalid shader module memory",      return 0);
 
 	VkShaderModuleCreateInfo shader_module_create_info = {
-		VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                        //pNext;
-		0,                                           //flags;
-		size,                                        //codeSize;
-		(uint32_t*)(code)                            //pCode;
+		.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, //sType;
+		.pNext    = VK_NULL_HANDLE,                              //pNext;
+		.flags    = 0,                                           //flags;
+		.codeSize = size,                                        //codeSize;
+		.pCode    = (uint32_t*)(code)                            //pCode;
 	};
 
 	shVkResultError(
@@ -2487,13 +2530,13 @@ uint8_t shCreateShaderStage(
 	shVkError(p_shader_stage == VK_NULL_HANDLE, "invalid shader stage memory", return 0);
 
 	VkPipelineShaderStageCreateInfo shader_stage_create_info = {
-		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                                //pNext;
-		0,                                                   //flags;
-		shader_stage_flag,                                   //stage;
-		shader_module,                                       //module;
-		"main",                                              //pName;
-		VK_NULL_HANDLE,                                                //pSpecializationInfo;
+		.sType               = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, //sType;
+		.pNext               = VK_NULL_HANDLE,                                      //pNext;
+		.flags               = 0,                                                   //flags;
+		.stage               = shader_stage_flag,                                   //stage;
+		.module              = shader_module,                                       //module;
+		.pName               = "main",                                              //pName;
+		.pSpecializationInfo = VK_NULL_HANDLE,                                      //pSpecializationInfo;
 	};
 
 	(*p_shader_stage) = shader_stage_create_info;
@@ -2507,13 +2550,13 @@ uint8_t shSetPushConstants(
 	uint32_t             size, 
 	VkPushConstantRange* p_push_constant_range
 ) {
-	shVkError(size                  == 0, "invalid push constant size",            return 0);
+	shVkError(size                  == 0,              "invalid push constant size",         return 0);
 	shVkError(p_push_constant_range == VK_NULL_HANDLE, "invalid push constant range memory", return 0);
 	
 	VkPushConstantRange push_constant_range = {
-		shader_stage, //stageFlags;
-		offset,       //offset;
-		size,         //size;
+		.stageFlags = shader_stage, //stageFlags;
+		.offset     = offset,       //offset;
+		.size       = size,         //size;
 	};
 
 	(*p_push_constant_range) = push_constant_range;
@@ -2533,11 +2576,11 @@ uint8_t shCreateDescriptorSetLayoutBinding(
 	shVkError(p_binding            == VK_NULL_HANDLE, "invalid descriptor set layout binding memory", return 0);
 
 	VkDescriptorSetLayoutBinding descriptor_set_layout_binding = {
-		binding,              //binding;
-		descriptor_type,      //descriptorType
-		descriptor_set_count, //descriptorCount;
-		shader_stage,         //stageFlags;
-		VK_NULL_HANDLE        //pImmutableSamplers;
+		.binding            = binding,              //binding;
+		.descriptorType     = descriptor_type,      //descriptorType
+		.descriptorCount    = descriptor_set_count, //descriptorCount;
+		.stageFlags         = shader_stage,         //stageFlags;
+		.pImmutableSamplers = VK_NULL_HANDLE        //pImmutableSamplers;
 	};
 
 	*p_binding = descriptor_set_layout_binding;
@@ -2556,11 +2599,11 @@ uint8_t shCreateDescriptorSetLayout(
 	shVkError(p_descriptor_set_layout == VK_NULL_HANDLE, "invalid descriptor set layout memory",          return 0);
 
 	VkDescriptorSetLayoutCreateInfo descriptor_set_layout_create_info = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                      //pNext;
-		0,                                                   //flags;
-		binding_count,                                       //bindingCount;
-		p_bindings                                           //pBindings;
+		.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, //sType;
+		.pNext        = VK_NULL_HANDLE,                                      //pNext;
+		.flags        = 0,                                                   //flags;
+		.bindingCount = binding_count,                                       //bindingCount;
+		.pBindings    = p_bindings                                           //pBindings;
 	};
 
 	shVkResultError(
@@ -2589,12 +2632,12 @@ uint8_t shCreateDescriptorPool(
 	}
 
 	VkDescriptorPoolCreateInfo descriptor_pool_create_info = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                //pNext;
-		0,                                             //flags;
-		max_sets,                                      //maxSets;
-		pool_size_count,                               //poolSizeCount;
-		p_pool_sizes                                   //pPoolSizes;
+		.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, //sType;
+		.pNext         = VK_NULL_HANDLE,                                //pNext;
+		.flags         = 0,                                             //flags;
+		.maxSets       = max_sets,                                      //maxSets;
+		.poolSizeCount = pool_size_count,                               //poolSizeCount;
+		.pPoolSizes    = p_pool_sizes                                   //pPoolSizes;
 	};
 
 	shVkResultError(
@@ -2616,9 +2659,9 @@ uint8_t shSetDescriptorBufferInfo(
 	shVkError(p_buffer_info == VK_NULL_HANDLE, "invalid descriptor set buffer info memory", return 0);
 
 	VkDescriptorBufferInfo buffer_info = {
-		buffer,        //buffer;
-		buffer_offset, //offset;
-		buffer_size,   //range;
+		.buffer = buffer,        //buffer;
+		.offset = buffer_offset, //offset;
+		.range  = buffer_size,   //range;
 	};
 
 	(*p_buffer_info) = buffer_info;
@@ -2646,11 +2689,11 @@ uint8_t shAllocateDescriptorSetUnits(
 	shVkError(p_write_descriptor_sets   == VK_NULL_HANDLE, "invalid write descriptor sets memory",   return 0);
 
 	VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, //sType;
-		VK_NULL_HANDLE,                                 //pNext;
-		descriptor_pool,                                //descriptorPool;
-		descriptor_set_unit_count,                      //descriptorSetCount;
-		p_descriptor_set_layouts                        //pSetLayouts;
+		.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, //sType;
+		.pNext              = VK_NULL_HANDLE,                                 //pNext;
+		.descriptorPool     = descriptor_pool,                                //descriptorPool;
+		.descriptorSetCount = descriptor_set_unit_count,                      //descriptorSetCount;
+		.pSetLayouts        = p_descriptor_set_layouts                        //pSetLayouts;
 	};
 	shVkResultError(
 		vkAllocateDescriptorSets(device, &descriptor_set_allocate_info, p_descriptor_sets),
@@ -2659,16 +2702,16 @@ uint8_t shAllocateDescriptorSetUnits(
 
 	for (uint32_t set_unit_idx = 0; set_unit_idx < descriptor_set_unit_count; set_unit_idx++) {
 		VkWriteDescriptorSet write_descriptor_set = {
-			VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, //sType;
-			VK_NULL_HANDLE,                         //pNext;
-			p_descriptor_sets[set_unit_idx],        //dstSet;
-			binding,                                //dstBinding
-			0,                                      //dstArrayElement;
-			1,                                      //descriptorCount;
-			descriptor_type,                        //descriptorType
-			VK_NULL_HANDLE,                         //pImageInfo;
-			&p_buffer_infos[set_unit_idx],          //pBufferInfo;
-			VK_NULL_HANDLE							//pTexelBufferView;
+			.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, //sType;
+			.pNext            = VK_NULL_HANDLE,                         //pNext;
+			.dstSet           = p_descriptor_sets[set_unit_idx],        //dstSet;
+			.dstBinding       = binding,                                //dstBinding
+			.dstArrayElement  = 0,                                      //dstArrayElement;
+			.descriptorCount  = 1,                                      //descriptorCount;
+			.descriptorType   = descriptor_type,                        //descriptorType
+			.pImageInfo       = VK_NULL_HANDLE,                         //pImageInfo;
+			.pBufferInfo      = &p_buffer_infos[set_unit_idx],          //pBufferInfo;
+			.pTexelBufferView = VK_NULL_HANDLE							//pTexelBufferView;
 		};
 		p_write_descriptor_sets[set_unit_idx] = write_descriptor_set;
 	}
@@ -2701,13 +2744,13 @@ uint8_t shCreatePipelineLayout(
 
 
 	VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
-		VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                //pNext;
-		0,                                             //flags;
-		src_descriptor_set_layout_count,               //setLayoutCount;
-		p_src_descriptor_set_layouts,                  //pSetLayouts;
-		push_constant_range_count,                     //pushConstantRangeCount;
-		p_push_constants_range                         //pPushConstantRanges;
+		.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, //sType;
+		.pNext                  = VK_NULL_HANDLE,                                //pNext;
+		.flags                  = 0,                                             //flags;
+		.setLayoutCount         = src_descriptor_set_layout_count,               //setLayoutCount;
+		.pSetLayouts            = p_src_descriptor_set_layouts,                  //pSetLayouts;
+		.pushConstantRangeCount = push_constant_range_count,                     //pushConstantRangeCount;
+		.pPushConstantRanges    = p_push_constants_range                         //pPushConstantRanges;
 	};
 
 	shVkResultError(
@@ -2728,40 +2771,40 @@ uint8_t shSetupGraphicsPipeline(
 	shVkError(p_pipeline  == VK_NULL_HANDLE, "invalid graphics pipeline memory", return 0);
 
 	VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
-		VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                                       //pNext;
-		0,                                                          //flags;
-		VK_TRUE,                                                    //depthTestEnable;
-		VK_TRUE,                                                    //depthWriteEnable;
-		VK_COMPARE_OP_LESS,                                         //depthCompareOp;
-		VK_FALSE,                                                   //depthBoundsTestEnable;
-		VK_FALSE,                                                   //stencilTestEnable;
-		0,                                                          //front;
-		0,                                                          //back;
-		0.0f,                                                       //minDepthBounds;
-		1.0f                                                        //maxDepthBounds;
+		.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, //sType;
+		.pNext                 = VK_NULL_HANDLE,                                             //pNext;
+		.flags                 = 0,                                                          //flags;
+		.depthTestEnable       = VK_TRUE,                                                    //depthTestEnable;
+		.depthWriteEnable      = VK_TRUE,                                                    //depthWriteEnable;
+		.depthCompareOp        = VK_COMPARE_OP_LESS,                                         //depthCompareOp;
+		.depthBoundsTestEnable = VK_FALSE,                                                   //depthBoundsTestEnable;
+		.stencilTestEnable     = VK_FALSE,                                                   //stencilTestEnable;
+		.front                 = 0,                                                          //front;
+		.back                  = 0,                                                          //back;
+		.minDepthBounds        = 0.0f,                                                       //minDepthBounds;
+		.maxDepthBounds        = 1.0f                                                        //maxDepthBounds;
 	};
 
 	VkGraphicsPipelineCreateInfo graphics_pipeline_create_info = {
-		VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, //sType;
-		VK_NULL_HANDLE,                                            //pNext;
-		0,                                               //flags;
-		p_pipeline->shader_module_count,                 //stageCount;
-		p_pipeline->shader_stages,                       //pStages;
-		&p_pipeline->vertex_input_state_info,            //pVertexInputState;
-		& p_pipeline->input_assembly,                    //pInputAssemblyState;
-		VK_NULL_HANDLE,                                            //pTessellationState;
-		&p_pipeline->viewport_state,                     //pViewportState;
-		&p_pipeline->rasterizer,                         //pRasterizationState;
-		&p_pipeline->multisample_state_info,             //pMultisampleState;
-		&depth_stencil_state_create_info,                //pDepthStencilState;
-		&p_pipeline->color_blend_state,                  //pColorBlendState;
-		VK_NULL_HANDLE,                                            //pDynamicState;
-		p_pipeline->pipeline_layout,                     //layout;
-		renderpass,                                      //renderPass;
-		0,                                               //subpass;
-		0,                                               //basePipelineHandle;
-		0                                                //basePipelineIndex;
+		.sType                = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, //sType;
+		.pNext                = VK_NULL_HANDLE,                                  //pNext;
+		.flags                = 0,                                               //flags;
+		.stageCount           = p_pipeline->shader_module_count,                 //stageCount;
+		.pStages              = p_pipeline->shader_stages,                       //pStages;
+		.pVertexInputState    = &p_pipeline->vertex_input_state_info,            //pVertexInputState;
+		.pInputAssemblyState  = &p_pipeline->input_assembly,                     //pInputAssemblyState;
+		.pTessellationState   = VK_NULL_HANDLE,                                  //pTessellationState;
+		.pViewportState       = &p_pipeline->viewport_state,                     //pViewportState;
+		.pRasterizationState  = &p_pipeline->rasterizer,                         //pRasterizationState;
+		.pMultisampleState    = &p_pipeline->multisample_state_info,             //pMultisampleState;
+		.pDepthStencilState   = &depth_stencil_state_create_info,                //pDepthStencilState;
+		.pColorBlendState     = &p_pipeline->color_blend_state,                  //pColorBlendState;
+		.pDynamicState        = VK_NULL_HANDLE,                                  //pDynamicState;
+		.layout               = p_pipeline->pipeline_layout,                     //layout;
+		.renderPass           = renderpass,                                      //renderPass;
+		.subpass              = 0,                                               //subpass;
+		.basePipelineHandle   = 0,                                               //basePipelineHandle;
+		.basePipelineIndex    = 0                                                //basePipelineIndex;
 	};
 
 	shVkResultError(
@@ -2857,11 +2900,11 @@ uint8_t shSetupComputePipeline(
 	shVkError(p_pipeline == VK_NULL_HANDLE, "invalid compute pipeline pointer", return 0);
 
 	VkComputePipelineCreateInfo pipeline_create_info = {
-		VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-		VK_NULL_HANDLE,
-		0,
-		p_pipeline->shader_stages[0],
-		p_pipeline->pipeline_layout,
+		.sType  =  VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+		.pNext  =  VK_NULL_HANDLE,
+		.flags  =  0,
+		.stage  =  p_pipeline->shader_stages[0],
+		.layout =  p_pipeline->pipeline_layout,
 	};
 
 	shVkResultError(
@@ -3387,8 +3430,8 @@ uint8_t shPipelinePoolCreateDescriptorPool(
 	shVkError(descriptor_count == 0,              "invvalid descriptor count",    return 0);
 
 	VkDescriptorPoolSize pool_size = {
-		descriptor_type,
-		descriptor_count
+		.type            = descriptor_type,
+		.descriptorCount = descriptor_count
 	};
 
 	shVkError(
