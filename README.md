@@ -22,11 +22,3 @@ The examples are frequently being tested on Windows 11, Linux Mint (virtual mach
 
 ---
 
-# To do
- * texture examples (graphics and plain data)
- * Error/debug/info logging to file
- * read spirv assembly (not sure about this)
- * ray tracing example
-
----
-
