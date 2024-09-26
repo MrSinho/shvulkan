@@ -140,7 +140,7 @@ extern uint8_t shFindValidationLayer(
  * @param engine_name The name of the engine.
  * @param enable_validation_layers Flag to enable (1) or disable (0) validation layers.
  * @param extension_count Number of Vulkan extensions to enable.
- * @param pp_extension_names Valid array of extension names to enable.
+ * @param pp_extension_names Valid array of extension names to enable, if required.
  * @param api_version The Vulkan API version to use.
  * @param p_instance Valid destination pointer to the newly created VkInstance.
  * 
