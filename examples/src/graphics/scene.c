@@ -274,7 +274,6 @@ int main(void) {
 		instance,//instance,
 		surface,//surface,
 		VK_QUEUE_GRAPHICS_BIT |
-		VK_QUEUE_COMPUTE_BIT |
 		VK_QUEUE_TRANSFER_BIT,//requirements,
 		&physical_device,//p_physical_device,
 		&physical_device_properties,//p_physical_device_properties,
@@ -513,7 +512,7 @@ int main(void) {
 		width, height, 1,
 		VK_FORMAT_D32_SFLOAT,
 		1, sample_count,
-	VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 		VK_SHARING_MODE_EXCLUSIVE,
 		&depth_image
