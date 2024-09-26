@@ -554,6 +554,388 @@ uint8_t shGetDeviceQueues(
 	return 1;
 }
 
+uint8_t shCheckSupportedDeviceColorFormat(
+	VkPhysicalDevice physical_device,
+	VkFormat         format,
+	uint8_t*         p_color_attachment_supported
+) {
+	shVkError(physical_device              == NULL,                "invalid physical device memory",               return 0);
+	shVkError(format                       == VK_FORMAT_UNDEFINED, "invalid color format",                         return 0);
+	shVkError(p_color_attachment_supported == NULL,                "invalid color attachment support byte memory", return 0);
+
+	VkFormatProperties format_properties = { 0 };
+
+	vkGetPhysicalDeviceFormatProperties(physical_device, format, &format_properties);
+
+	if (format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) {
+		(*p_color_attachment_supported) = 1;
+	}
+	
+	return 1;
+}
+
+uint8_t shFindSupportedDeviceColorFormats(
+	VkPhysicalDevice        physical_device,
+	uint32_t                min_channel_count,
+	uint32_t                max_channel_count,
+	uint32_t                min_channel_size,
+	uint32_t                max_channel_size,
+	ShImageChannelTypeFlags channel_types,
+	uint32_t*               p_supported_format_count,
+	VkFormat*               p_supported_formats,
+	uint32_t*               p_channels_count,
+	uint32_t*               p_single_channels_sizes,
+	uint32_t*               p_channels_types
+) {
+	shVkError(physical_device              == NULL, "invalid physical device memory",         return 0);
+	shVkError(p_supported_format_count     == NULL, "invalid supported format count pointer", return 0);
+	shVkError(p_supported_formats          == NULL, "invalid supported formats memory",       return 0);
+	shVkError(p_single_channels_sizes      == NULL, "invalid channels sizes memory",          return 0);
+	shVkError(p_channels_count             == NULL, "invalid channels count memory",          return 0);
+	shVkError(p_channels_types             == NULL, "invalid channels types memort",          return 0);
+
+	VkFormat color_formats[SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = {
+
+			VK_FORMAT_R8_UNORM,
+			VK_FORMAT_R8G8_UNORM,
+			VK_FORMAT_R8G8B8_UNORM,
+			VK_FORMAT_R8G8B8A8_UNORM,
+
+			VK_FORMAT_R8_SNORM,
+			VK_FORMAT_R8G8_SNORM,
+			VK_FORMAT_R8G8B8_SNORM,
+			VK_FORMAT_R8G8B8A8_SNORM,
+
+
+			VK_FORMAT_R16_UNORM,
+			VK_FORMAT_R16G16_UNORM,
+			VK_FORMAT_R16G16B16_UNORM,
+			VK_FORMAT_R16G16B16A16_UNORM,
+
+			VK_FORMAT_R16_SNORM,
+			VK_FORMAT_R16G16_SNORM,
+			VK_FORMAT_R16G16B16_SNORM,
+			VK_FORMAT_R16G16B16A16_SNORM,
+
+			VK_FORMAT_R16_SFLOAT,
+			VK_FORMAT_R16G16_SFLOAT,
+			VK_FORMAT_R16G16B16_SFLOAT,
+			VK_FORMAT_R16G16B16A16_SFLOAT,
+
+
+			VK_FORMAT_R32_UINT,
+			VK_FORMAT_R32G32_UINT,
+			VK_FORMAT_R32G32B32_UINT,
+			VK_FORMAT_R32G32B32A32_UINT,
+
+			VK_FORMAT_R32_SINT,
+			VK_FORMAT_R32G32_SINT,
+			VK_FORMAT_R32G32B32_SINT,
+			VK_FORMAT_R32G32B32A32_SINT,
+
+			VK_FORMAT_R32_SFLOAT,
+			VK_FORMAT_R32G32_SFLOAT,
+			VK_FORMAT_R32G32B32_SFLOAT,
+			VK_FORMAT_R32G32B32A32_SFLOAT,
+
+
+			VK_FORMAT_R64_UINT,
+			VK_FORMAT_R64G64_UINT,
+			VK_FORMAT_R64G64B64_UINT,
+			VK_FORMAT_R64G64B64A64_UINT,
+
+			VK_FORMAT_R64_SINT,
+			VK_FORMAT_R64G64_SINT,
+			VK_FORMAT_R64G64B64_SINT,
+			VK_FORMAT_R64G64B64A64_SINT,
+
+			VK_FORMAT_R64_SFLOAT,
+			VK_FORMAT_R64G64_SFLOAT,
+			VK_FORMAT_R64G64B64_SFLOAT,
+			VK_FORMAT_R64G64B64A64_SFLOAT,
+	};
+
+	VkFormat supported_color_formats[SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = {
+		
+		VK_FORMAT_R8_UNORM,
+		VK_FORMAT_R8G8_UNORM,
+		VK_FORMAT_R8G8B8_UNORM,
+		VK_FORMAT_R8G8B8A8_UNORM,
+	
+		VK_FORMAT_R8_SNORM,
+		VK_FORMAT_R8G8_SNORM,
+		VK_FORMAT_R8G8B8_SNORM,
+		VK_FORMAT_R8G8B8A8_SNORM,
+	
+	
+		VK_FORMAT_R16_UNORM,
+		VK_FORMAT_R16G16_UNORM,
+		VK_FORMAT_R16G16B16_UNORM,
+		VK_FORMAT_R16G16B16A16_UNORM,
+	
+		VK_FORMAT_R16_SNORM,
+		VK_FORMAT_R16G16_SNORM,
+		VK_FORMAT_R16G16B16_SNORM,
+		VK_FORMAT_R16G16B16A16_SNORM,
+	
+		VK_FORMAT_R16_SFLOAT,
+		VK_FORMAT_R16G16_SFLOAT,
+		VK_FORMAT_R16G16B16_SFLOAT,
+		VK_FORMAT_R16G16B16A16_SFLOAT,
+	
+	
+		VK_FORMAT_R32_UINT,
+		VK_FORMAT_R32G32_UINT,
+		VK_FORMAT_R32G32B32_UINT,
+		VK_FORMAT_R32G32B32A32_UINT,
+	
+		VK_FORMAT_R32_SINT,
+		VK_FORMAT_R32G32_SINT,
+		VK_FORMAT_R32G32B32_SINT,
+		VK_FORMAT_R32G32B32A32_SINT,
+	
+		VK_FORMAT_R32_SFLOAT,
+		VK_FORMAT_R32G32_SFLOAT,
+		VK_FORMAT_R32G32B32_SFLOAT,
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+	
+	
+		VK_FORMAT_R64_UINT,
+		VK_FORMAT_R64G64_UINT,
+		VK_FORMAT_R64G64B64_UINT,
+		VK_FORMAT_R64G64B64A64_UINT,
+	
+		VK_FORMAT_R64_SINT,
+		VK_FORMAT_R64G64_SINT,
+		VK_FORMAT_R64G64B64_SINT,
+		VK_FORMAT_R64G64B64A64_SINT,
+	
+		VK_FORMAT_R64_SFLOAT,
+		VK_FORMAT_R64G64_SFLOAT,
+		VK_FORMAT_R64G64B64_SFLOAT,
+		VK_FORMAT_R64G64B64A64_SFLOAT,
+	};
+	
+	uint32_t channels_sizes[SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = {
+		1,//VK_FORMAT_R8_UNORM
+		1,//VK_FORMAT_R8G8_UNORM
+		1,//VK_FORMAT_R8G8B8_UNORM
+		1,//VK_FORMAT_R8G8B8A8_UNORM
+	
+		1,//VK_FORMAT_R8_SNORM
+		1,//VK_FORMAT_R8G8_SNORM
+		1,//VK_FORMAT_R8G8B8_SNORM
+		1,//VK_FORMAT_R8G8B8A8_SNORM
+	
+	
+		2,//VK_FORMAT_R16_UINT
+		2,//VK_FORMAT_R16G16_UINT
+		2,//VK_FORMAT_R16G16B16_UINT
+		2,//VK_FORMAT_R16G16B16A16_UINT
+	
+		2,//VK_FORMAT_R16_SINT
+		2,//VK_FORMAT_R16G16_SINT
+		2,//VK_FORMAT_R16G16B16_SINT
+		2,//VK_FORMAT_R16G16B16A16_SINT
+	
+		2,//VK_FORMAT_R16_SFLOAT
+		2,//VK_FORMAT_R16G16_SFLOAT
+		2,//VK_FORMAT_R16G16B16_SFLOAT
+		2,//VK_FORMAT_R16G16B16A16_SFLOAT
+	
+	
+		4,//VK_FORMAT_R32_UINT
+		4,//VK_FORMAT_R32G32_UINT
+		4,//VK_FORMAT_R32G32B32_UINT
+		4,//VK_FORMAT_R32G32B32A32_UINT
+	
+		4,//VK_FORMAT_R32_SINT
+		4,//VK_FORMAT_R32G32_SINT
+		4,//VK_FORMAT_R32G32B32_SINT
+		4,//VK_FORMAT_R32G32B32A32_SINT
+	
+		4,//VK_FORMAT_R32_SFLOAT
+		4,//VK_FORMAT_R32G32_SFLOAT
+		4,//VK_FORMAT_R32G32B32_SFLOAT
+		4,//VK_FORMAT_R32G32B32A32_SFLOAT
+	
+	
+		8,//VK_FORMAT_R64_UINT
+		8,//VK_FORMAT_R64G64_UINT
+		8,//VK_FORMAT_R64G64B64_UINT
+		8,//VK_FORMAT_R64G64B64A64_UINT
+	
+		8,//VK_FORMAT_R64_SINT
+		8,//VK_FORMAT_R64G64_SINT
+		8,//VK_FORMAT_R64G64B64_SINT
+		8,//VK_FORMAT_R64G64B64A64_SINT
+	
+		8,//VK_FORMAT_R64_SFLOAT
+		8,//VK_FORMAT_R64G64_SFLOAT
+		8,//VK_FORMAT_R64G64B64_SFLOAT
+		8,//VK_FORMAT_R64G64B64A64_SFLOAT
+	};
+	
+	uint32_t channels_count[SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = {
+		1,//VK_FORMAT_R8_UNORM
+		2,//VK_FORMAT_R8G8_UNORM
+		3,//VK_FORMAT_R8G8B8_UNORM
+		4,//VK_FORMAT_R8G8B8A8_UNORM
+	
+		1,//VK_FORMAT_R8_SNORM
+		2,//VK_FORMAT_R8G8_SNORM
+		3,//VK_FORMAT_R8G8B8_SNORM
+		4,//VK_FORMAT_R8G8B8A8_SNORM
+	
+	
+		1,//VK_FORMAT_R16_UINT
+		2,//VK_FORMAT_R16G16_UINT
+		3,//VK_FORMAT_R16G16B16_UINT
+		4,//VK_FORMAT_R16G16B16A16_UINT
+	
+		1,//VK_FORMAT_R16_SINT
+		2,//VK_FORMAT_R16G16_SINT
+		3,//VK_FORMAT_R16G16B16_SINT
+		4,//VK_FORMAT_R16G16B16A16_SINT
+	
+		1,//VK_FORMAT_R16_SFLOAT
+		2,//VK_FORMAT_R16G16_SFLOAT
+		3,//VK_FORMAT_R16G16B16_SFLOAT
+		4,//VK_FORMAT_R16G16B16A16_SFLOAT
+	
+	
+		1,//VK_FORMAT_R32_UINT
+		2,//VK_FORMAT_R32G32_UINT
+		3,//VK_FORMAT_R32G32B32_UINT
+		4,//VK_FORMAT_R32G32B32A32_UINT
+	
+		1,//VK_FORMAT_R32_SINT
+		2,//VK_FORMAT_R32G32_SINT
+		3,//VK_FORMAT_R32G32B32_SINT
+		4,//VK_FORMAT_R32G32B32A32_SINT
+	
+		1,//VK_FORMAT_R32_SFLOAT
+		2,//VK_FORMAT_R32G32_SFLOAT
+		3,//VK_FORMAT_R32G32B32_SFLOAT
+		4,//VK_FORMAT_R32G32B32A32_SFLOAT
+	
+	
+		1,//VK_FORMAT_R64_UINT
+		2,//VK_FORMAT_R64G64_UINT
+		3,//VK_FORMAT_R64G64B64_UINT
+		4,//VK_FORMAT_R64G64B64A64_UINT
+	
+		1,//VK_FORMAT_R64_SINT
+		2,//VK_FORMAT_R64G64_SINT
+		3,//VK_FORMAT_R64G64B64_SINT
+		4,//VK_FORMAT_R64G64B64A64_SINT
+	
+		1,//VK_FORMAT_R64_SFLOAT
+		2,//VK_FORMAT_R64G64_SFLOAT
+		3,//VK_FORMAT_R64G64B64_SFLOAT
+		4,//VK_FORMAT_R64G64B64A64_SFLOAT
+	};
+
+	uint8_t channels_types[SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = {
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R8_UNORM
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R8G8_UNORM
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R8G8B8_UNORM
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R8G8B8A8_UNORM
+	
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R8_SNORM
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R8G8_SNORM
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R8G8B8_SNORM
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R8G8B8A8_SNORM
+	
+
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R16_UNORM
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R16G16_UNORM
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R16G16B16_UNORM
+		SH_IMAGE_CHANNEL_TYPE_UNORM,//VK_FORMAT_R16G16B16A16_UNORM
+	
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R16_SNORM
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R16G16_SNORM
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R16G16B16_SNORM
+		SH_IMAGE_CHANNEL_TYPE_SNORM,//VK_FORMAT_R16G16B16A16_SNORM
+	
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R16_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R16G16_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R16G16B16_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R16G16B16A16_SFLOAT
+	
+	
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R32_UINT
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R32G32_UINT
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R32G32B32_UINT
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R32G32B32A32_UINT
+	
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R32_SINT
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R32G32_SINT
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R32G32B32_SINT
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R32G32B32A32_SINT
+	
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R32_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R32G32_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R32G32B32_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R32G32B32A32_SFLOAT
+	
+	
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R64_UINT
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R64G64_UINT
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R64G64B64_UINT
+		SH_IMAGE_CHANNEL_TYPE_UINT,//VK_FORMAT_R64G64B64A64_UINT
+	
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R64_SINT
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R64G64_SINT
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R64G64B64_SINT
+		SH_IMAGE_CHANNEL_TYPE_SINT,//VK_FORMAT_R64G64B64A64_SINT
+	
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R64_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R64G64_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R64G64B64_SFLOAT
+		SH_IMAGE_CHANNEL_TYPE_SFLOAT,//VK_FORMAT_R64G64B64A64_SFLOAT
+	};
+
+	uint32_t supported_format_count = 0;
+	VkFormat r_supported_formats [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = { 0 };
+	uint32_t r_channels_count    [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = { 0 };
+	uint32_t r_channels_sizes    [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = { 0 };
+	uint8_t  r_channels_types    [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES] = { 0 };
+
+	for (uint32_t format_idx = 0; format_idx < SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES; format_idx++) {
+		
+		VkFormat format         = color_formats [format_idx];
+		uint32_t channel_count  = channels_count[format_idx];
+		uint32_t channel_size   = channels_sizes[format_idx];
+		uint8_t  _channel_type  = channels_types[format_idx];
+
+		uint8_t  supported     = 0;
+		
+		shCheckSupportedDeviceColorFormat(physical_device, format, &supported);
+
+		if (
+			(supported) && 
+			(channel_count >= min_channel_count && channel_count <= max_channel_count) &&
+			(channel_size >= min_channel_size && channel_size <= max_channel_size) &&
+			(channel_types & _channel_type)
+		) {
+			r_supported_formats     [supported_format_count] = format;
+			r_channels_count        [supported_format_count] = channel_count;
+			r_channels_sizes        [supported_format_count] = channel_size;
+			r_channels_types        [supported_format_count] = _channel_type;
+			supported_format_count++;
+		}
+	}
+
+	(*p_supported_format_count) = supported_format_count;
+	memcpy(p_supported_formats,     r_supported_formats, supported_format_count * sizeof(VkFormat));
+	memcpy(p_channels_count,        r_channels_count,    supported_format_count * 4);
+	memcpy(p_single_channels_sizes, r_channels_sizes,    supported_format_count * 4);
+	memcpy(p_channels_types,        r_channels_types,    supported_format_count * 1);
+
+	return 1;
+}
+
 uint8_t shCreateSwapchain(
 	VkDevice                 device, 
 	VkPhysicalDevice         physical_device,
@@ -1493,7 +1875,7 @@ uint8_t shWaitForFences(
 	uint64_t timeout_ns
 ) {
 	shVkError(device      == VK_NULL_HANDLE, "invalid command buffer memory", return 0);
-	shVkError(fence_count == 0,    "invalid fence count",           return 0);
+	shVkError(fence_count == 0,              "invalid fence count",           return 0);
 	shVkError(p_fences    == VK_NULL_HANDLE, "invalid fences memory",         return 0);
 
 	shVkResultError(
@@ -1781,12 +2163,12 @@ uint8_t shCopyBuffer(
 	VkBuffer        src_buffer,
 	uint32_t        src_offset,
 	uint32_t        dst_offset,
-	uint32_t        size,
+	uint64_t        size,
 	VkBuffer        dst_buffer
 ) {
 	shVkError(transfer_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer",     return 0);
 	shVkError(src_buffer          == VK_NULL_HANDLE, "invalid source buffer",      return 0);
-	shVkError(size                == 0,    "invalid copy size",          return 0);
+	shVkError(size                == 0,              "invalid copy size",          return 0);
 	shVkError(dst_buffer          == VK_NULL_HANDLE, "invalid destination buffer", return 0);
 
 	VkBufferCopy region = {
@@ -1801,6 +2183,62 @@ uint8_t shCopyBuffer(
 		dst_buffer, 
 		1, 
 		&region
+	);
+
+	return 1;
+}
+
+uint8_t shCopyImage(
+	VkCommandBuffer    transfer_cmd_buffer,
+	uint32_t           width,
+	uint32_t           height,
+	VkImageAspectFlags src_image_aspect,
+	VkImageAspectFlags dst_image_aspect,
+	VkImage            src_image,
+	VkImage            dst_image
+) {
+	shVkError(transfer_cmd_buffer == VK_NULL_HANDLE, "invalid command buffer",    return 0);
+	shVkError(width               == 0,              "invalid copy width",        return 0);
+	shVkError(height              == 0,              "invalid copy height",       return 0);
+	shVkError(src_image           == VK_NULL_HANDLE, "invalid source image",      return 0);
+	shVkError(dst_image           == VK_NULL_HANDLE, "invalid destination image", return 0);
+
+	VkImageSubresourceLayers src_subresource = {
+		.aspectMask     = src_image_aspect,
+		.mipLevel       = 0,
+		.baseArrayLayer = 0,
+		.layerCount     = 1 
+	};
+	
+	VkImageSubresourceLayers dst_subresource = {
+		.aspectMask = dst_image_aspect,
+		.mipLevel = 0,
+		.baseArrayLayer = 0,
+		.layerCount = 1
+	};
+	
+	VkExtent3D copy_extent = {
+		.width  = width,
+		.height = height,
+		.depth  = 1
+	};
+	
+	VkImageCopy image_copy_region = {
+		.srcSubresource = src_subresource,
+		.srcOffset      = 0,
+		.dstSubresource = dst_subresource,
+		.dstOffset      = 0,
+		.extent         = copy_extent,
+	};
+	
+	vkCmdCopyImage(
+		transfer_cmd_buffer,//commandBuffer
+		src_image,//srcImage
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,//srcImageLayout
+		dst_image,//dstImage
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,//dstImageLayout
+		1,//regionCount
+		&image_copy_region//pRegions
 	);
 
 	return 1;
@@ -1945,20 +2383,58 @@ uint8_t shReadMemory(
 	VkDevice       device,
 	VkDeviceMemory memory,
 	uint32_t       offset,
-	uint32_t       data_size,
-	void*          p_data
+	uint64_t       data_size,
+	void**         pp_map_data,
+	void*          p_dst_data
 ) {
-	shVkError(device    == VK_NULL_HANDLE, "invalid device memory", return 0);
-	shVkError(memory    == VK_NULL_HANDLE, "invalid memory",        return 0);
-	shVkError(data_size == 0,    "invalid data size",     return 0);
-	shVkError(p_data == VK_NULL_HANDLE,    "invalid memory buffer", return 0);
-
-	void* data;
-	shVkResultError(
-		vkMapMemory(device, memory, offset, data_size, 0, &data),
-		"error mapping memory", return 0
+	shVkError(device      == VK_NULL_HANDLE, "invalid device memory",  return 0);
+	shVkError(memory      == VK_NULL_HANDLE, "invalid memory",         return 0);
+	shVkError(data_size   == 0,              "invalid read data size", return 0);
+	
+	shVkError(
+		pp_map_data == NULL && p_dst_data == NULL,
+		"both map pointer and dst heap pointer are invalid",
+		return 0
 	);
-	memcpy(p_data, data, (size_t)data_size);
+
+	void* data = NULL;
+	
+	if (pp_map_data != NULL) {
+		shVkResultError(
+			vkMapMemory(device, memory, offset, data_size, 0, pp_map_data),
+			"error mapping memory", 
+			return 0
+		);
+
+		if (p_dst_data != NULL) {
+			memcpy(p_dst_data, pp_map_data, (size_t)data_size);
+			vkUnmapMemory(device, memory);
+		}
+	}
+	else {
+
+		shVkResultError(
+			vkMapMemory(device, memory, offset, data_size, 0, &data),
+			"error mapping memory", 
+			return 0
+		);
+
+		if (p_dst_data != NULL) {
+			memcpy(p_dst_data, data, (size_t)data_size);
+			vkUnmapMemory(device, memory);
+		}
+	}
+
+	return 1;
+}
+
+uint8_t shUnmapMemory(
+	VkDevice       device,
+	VkDeviceMemory memory
+) {
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory",  return 0);
+	shVkError(memory == VK_NULL_HANDLE, "invalid memory",         return 0);
+	
 	vkUnmapMemory(device, memory);
 
 	return 1;
@@ -2022,11 +2498,11 @@ uint8_t shCreateImage(
 	VkImage*              p_image
 ) {
 	shVkError(device       == VK_NULL_HANDLE, "invalid device memory",   return 0);
-	shVkError(x            == 0,    "invalid image x size",    return 0);
-	shVkError(y            == 0,    "invalid image y size",    return 0);
-	shVkError(z            == 0,    "invalid image z size",    return 0);
-	shVkError(mip_levels   == 0,    "invalid mip level count", return 0);
-	shVkError(sample_count == 0,    "invalid sample count",    return 0);
+	shVkError(x            == 0,              "invalid image x size",    return 0);
+	shVkError(y            == 0,              "invalid image y size",    return 0);
+	shVkError(z            == 0,              "invalid image z size",    return 0);
+	shVkError(mip_levels   == 0,              "invalid mip level count", return 0);
+	shVkError(sample_count == 0,              "invalid sample count",    return 0);
 	shVkError(p_image      == VK_NULL_HANDLE, "invalid image memory",    return 0);
 
 	VkExtent3D image_extent = {
@@ -2047,10 +2523,11 @@ uint8_t shCreateImage(
 		.samples               = sample_count,                        //samples;
 		.tiling                = image_tiling,                        //tiling;
 		.usage                 = usage,                               //usage;
-		.sharingMode           = VK_SHARING_MODE_EXCLUSIVE,           //sharingMode;
+		.sharingMode           = sharing_mode,                        //sharingMode;
 		.queueFamilyIndexCount = 0,                                   //queueFamilyIndexCount;
 		.pQueueFamilyIndices   = VK_NULL_HANDLE                       //pQueueFamilyIndices;
 	};
+
 	shVkResultError(
 		vkCreateImage(device, &image_create_info, VK_NULL_HANDLE, p_image),
 		"error creating image", 
@@ -2138,14 +2615,41 @@ uint8_t shClearImageMemory(
 	return 0;
 }
 
+uint8_t shGetImageSubresourceLayout(
+	VkDevice             device,
+	VkImage              image,
+	VkImageAspectFlags   image_aspect_mask,
+	VkSubresourceLayout* p_subresource_layout
+) {
+
+	VkImageSubresource image_subresource = { 
+		.aspectMask = image_aspect_mask,
+		.mipLevel   = 0,
+		.arrayLayer = 0 
+	};
+
+	VkSubresourceLayout image_subresource_layout = { 0 };
+
+	vkGetImageSubresourceLayout(
+		device,//device
+		image,//image
+		&image_subresource,//pSubresource
+		&image_subresource_layout//pLayout
+	);
+
+	(*p_subresource_layout) = image_subresource_layout;
+
+	return 1;
+}
+
 uint8_t shSetBufferMemoryBarrier(
-	VkDevice        device,
-	VkCommandBuffer cmd_buffer,
-	VkBuffer        buffer,
-	VkAccessFlags   access_before_barrier,
-	VkAccessFlags   access_after_barrier,
-	uint32_t        performing_queue_family_index_before_barrier,
-	uint32_t        performing_queue_family_index_after_barrier,
+	VkDevice             device,
+	VkCommandBuffer      cmd_buffer,
+	VkBuffer             buffer,
+	VkAccessFlags        access_before_barrier,
+	VkAccessFlags        access_after_barrier,
+	uint32_t             performing_queue_family_index_before_barrier,
+	uint32_t             performing_queue_family_index_after_barrier,
 	VkPipelineStageFlags pipeline_stage_before_barrier,
 	VkPipelineStageFlags pipeline_stage_after_barrier
 ) {
@@ -2175,6 +2679,60 @@ uint8_t shSetBufferMemoryBarrier(
 		&barrier,//pBufferMemoryBarriers
 		0,//imageMemoryBarrierCount
 		NULL//pImageMemoryBarriers
+	);
+
+	return 1;
+}
+
+uint8_t shSetImageMemoryBarrier(
+	VkDevice             device,
+	VkCommandBuffer      cmd_buffer,
+	VkImage              image,
+	VkImageAspectFlags   image_aspect_mask,
+	VkAccessFlags        access_before_barrier,
+	VkAccessFlags        access_after_barrier,
+	VkImageLayout        image_layout_before_barrier,
+	VkImageLayout        image_layout_after_barrier,
+	uint32_t             performing_queue_family_index_before_barrier,
+	uint32_t             performing_queue_family_index_after_barrier,
+	VkPipelineStageFlags pipeline_stage_before_barrier,
+	VkPipelineStageFlags pipeline_stage_after_barrier
+) {
+	shVkError(device == VK_NULL_HANDLE, "invalid device memory", return 0);
+	shVkError(image  == VK_NULL_HANDLE, "invalid image memory",  return 0);
+
+	VkImageSubresourceRange subresouce_range = {
+		.aspectMask     = image_aspect_mask,
+		.baseMipLevel   = 0,
+		.levelCount     = 1,
+		.baseArrayLayer = 0,
+		.layerCount     = 1
+	};
+	
+	VkImageMemoryBarrier barrier = {
+		.sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		.pNext               = NULL,
+		.srcAccessMask       = access_before_barrier,
+		.dstAccessMask       = access_after_barrier,
+		.oldLayout           = image_layout_before_barrier,
+		.newLayout           = image_layout_after_barrier,
+		.srcQueueFamilyIndex = performing_queue_family_index_before_barrier,
+		.dstQueueFamilyIndex = performing_queue_family_index_after_barrier,
+		.image               = image,
+		.subresourceRange    = subresouce_range
+	};
+	
+	vkCmdPipelineBarrier(
+		cmd_buffer,//commandBuffer
+		pipeline_stage_before_barrier,//srcStageMask
+		pipeline_stage_after_barrier,//dstStageMask
+		0,//dependencyFlags
+		0,//memoryBarrierCount
+		NULL,//pMemoryBarriers
+		0,//bufferMemoryBarrierCount
+		NULL,//pBufferMemoryBarriers
+		1,//imageMemoryBarrierCount
+		&barrier//pImageMemoryBarriers
 	);
 
 	return 1;

@@ -218,7 +218,7 @@ extern uint8_t shGetQueueFamilySurfaceSupport(
  * surface capabilities, and required device features. Then it retrieves vital information about the GPU.
  * 
  * @param instance Valid Vulkan instance.
- * @param surface Valid surface for presentation support.
+ * @param surface Valid surface if presentation support is required, otherwise it can be set as `VK_NULL_HANDLE`.
  * @param requirements Queue family requirements (VkQueueFlags).
  * @param p_physical_device Valid destination pointer to the selected Vulkan physical device.
  * @param p_physical_device_properties Valid destination pointer to the properties of the selected physical device.
@@ -338,6 +338,42 @@ extern uint8_t shGetDeviceQueues(
 	uint32_t  queue_count,
 	uint32_t* p_queue_family_indices,
 	VkQueue*  p_queues
+);
+
+//TODO
+extern uint8_t shCheckSupportedDeviceColorFormat(
+	VkPhysicalDevice physical_device,
+	VkFormat         format,
+	uint8_t*         p_color_attachment_supported
+);
+
+#define SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES 44
+#define SH_FORMAT_UINT      0
+#define SH_FORMAT_SINT      1
+#define SH_FORMAT_SFLOAT    2
+#define SH_FORMAT_UNDEFINED 3
+
+typedef enum ShImageChannelTypeFlags {
+	SH_IMAGE_CHANNEL_TYPE_UNORM     = 1 << 0,
+	SH_IMAGE_CHANNEL_TYPE_SNORM     = 1 << 1,
+	SH_IMAGE_CHANNEL_TYPE_UINT      = 1 << 2,
+	SH_IMAGE_CHANNEL_TYPE_SINT      = 1 << 3,
+	SH_IMAGE_CHANNEL_TYPE_SFLOAT    = 1 << 4,
+	SH_IMAGE_CHANNEL_TYPE_UNDEFINED = UINT32_MAX,
+} ShImageChannelTypeFlags;
+
+extern uint8_t shFindSupportedDeviceColorFormats(
+	VkPhysicalDevice        physical_device,
+	uint32_t                min_channel_count,
+	uint32_t                max_channel_count,
+	uint32_t                min_channel_size,
+	uint32_t                max_channel_size,
+	ShImageChannelTypeFlags channel_types,
+	uint32_t*               p_supported_format_count,
+	VkFormat*               p_supported_formats,
+	uint32_t*               p_channels_count,
+	uint32_t*               p_single_channels_sizes,
+	uint32_t*               p_channels_types
 );
 
 /**
@@ -1263,7 +1299,7 @@ extern uint8_t shCopyBuffer(
 	VkBuffer        src_buffer,
 	uint32_t        src_offset,
 	uint32_t        dst_offset,
-	uint32_t        size,
+	uint64_t        size,
 	VkBuffer        dst_buffer
 );
 
@@ -1294,6 +1330,17 @@ uint8_t shCopyBufferRegions(
 	VkBuffer        dst_buffer
 );
 
+//TODO DOCUMENTATION
+uint8_t shCopyImage(
+	VkCommandBuffer    transfer_cmd_buffer,
+	uint32_t           width,
+	uint32_t           height,
+	VkImageAspectFlags src_image_aspect,
+	VkImageAspectFlags dst_image_aspect,
+	VkImage            src_image,
+	VkImage            dst_image
+);
+
 /**
  * @brief Binds a Vulkan buffer to a specified memory offset.
  * 
@@ -1313,6 +1360,8 @@ extern uint8_t shBindBufferMemory(
 	VkDeviceMemory buffer_memory
 );
 
+
+//TODO
 /**
  * @brief Reads data from a Vulkan memory object.
  * 
@@ -1330,8 +1379,15 @@ extern uint8_t shReadMemory(
 	VkDevice       device,
 	VkDeviceMemory memory,
 	uint32_t       offset,
-	uint32_t       data_size,
-	void*          p_data
+	uint64_t       data_size,
+	void**         pp_map_data,
+	void*          p_dst_data
+);
+
+//TODO documentation
+extern uint8_t shUnmapMemory(
+	VkDevice       device,
+	VkDeviceMemory memory
 );
 
 /**
@@ -1464,6 +1520,14 @@ extern uint8_t shClearImageMemory(
 	VkDeviceMemory image_memory
 );
 
+//TODO documentation
+extern uint8_t shGetImageSubresourceLayout(
+	VkDevice             device,
+	VkImage              image,
+	VkImageAspectFlags   image_aspect_mask,
+	VkSubresourceLayout* p_subresource_layout
+);
+
 /**
  * @brief Creates a buffer memory barrier
  *
@@ -1487,6 +1551,41 @@ extern uint8_t shSetBufferMemoryBarrier(
 	VkBuffer             buffer,
 	VkAccessFlags        access_before_barrier,
 	VkAccessFlags        access_after_barrier,
+	uint32_t             performing_queue_family_index_before_barrier,
+	uint32_t             performing_queue_family_index_after_barrier,
+	VkPipelineStageFlags pipeline_stage_before_barrier,
+	VkPipelineStageFlags pipeline_stage_after_barrier
+);
+
+/**
+ * @brief Creates an image memory barrier
+ *
+ * This function creates an image memory barrier to synchronize image memory access (e.g. read, write, transfer).
+ *
+ * @param device Valid Vulkan device.
+ * @param cmd_buffer Valid Vulkan command buffer.
+ * @param image Valid Vulkan image (target of the barrier).
+ * @param image_aspect_mask Target image aspect mask.
+ * @param access_before_barrier Memory access flag before the barrier.
+ * @param access_after_barrier Memory access flag sfter the barrier.
+ * @param image_layout_before_barrier Image layout before the barrier.
+ * @param image_layout_after_barrier Image layout before the barrier.
+ * @param performing_queue_family_index_before_barrier Performing queue family index before the barrier.
+ * @param performing_queue_family_index_after_barrier Performing queue family index before the barrier.
+ * @param pipeline_stage_before_barrier Pipeline stage flag before the barrier.
+ * @param pipeline_stage_after_barrier Pipeline stage flag after the barrier.
+ *
+ * @return 1 if successful, 0 otherwise.
+ */
+extern uint8_t shSetImageMemoryBarrier(
+	VkDevice             device,
+	VkCommandBuffer      cmd_buffer,
+	VkImage              image,
+	VkImageAspectFlags   image_aspect_mask,
+	VkAccessFlags        access_before_barrier,
+	VkAccessFlags        access_after_barrier,
+	VkImageLayout        image_layout_before_barrier,
+	VkImageLayout        image_layout_after_barrier,
 	uint32_t             performing_queue_family_index_before_barrier,
 	uint32_t             performing_queue_family_index_after_barrier,
 	VkPipelineStageFlags pipeline_stage_before_barrier,
