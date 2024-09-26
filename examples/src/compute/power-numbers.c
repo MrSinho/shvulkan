@@ -280,7 +280,7 @@ int main(void) {
 		compute_queue_family_index,
 		compute_queue_family_index,
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-		VK_PIPELINE_STAGE_HOST_BIT
+		VK_PIPELINE_STAGE_TRANSFER_BIT
 	);
 
 	//
@@ -344,6 +344,7 @@ int main(void) {
 		VK_PIPELINE_STAGE_TRANSFER_BIT,
 		VK_PIPELINE_STAGE_HOST_BIT
 	);
+
 	shEndCommandBuffer(cmd_buffer);
 
 	shQueueSubmit(
@@ -376,7 +377,8 @@ int main(void) {
 		staging_memory,//memory
 		0,//offset
 		sizeof(outputs),//data_size
-		outputs//p_data
+		NULL,//pp_map_data
+		outputs//p_dst_data
 	);
 	
 	//
