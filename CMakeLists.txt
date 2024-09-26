@@ -3,8 +3,8 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
 
-set(SH_VULKAN_VERSION      "pre-release")
-set(SH_VULKAN_ROOT_DIR     ${CMAKE_CURRENT_SOURCE_DIR})
+set(SH_VULKAN_VERSION  "pre-release")
+set(SH_VULKAN_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 
