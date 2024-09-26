@@ -490,6 +490,8 @@ int main(void) {
 	vvoSetupServer(&vvo, uri);
 
 	printf("Hosting stream server at %s\n", uri);
+	printf("For a single image capture, go to %s/static-image\n", uri);
+	printf("For a stream of multiple frames, go to %s/vvoStream\n", uri);
 
 	while (1) {
 		vvoPollEvents(&vvo);
