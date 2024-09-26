@@ -38,3 +38,29 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 | SH_VULKAN_ROOT_DIR             | Absolute path to the root of the repository directory  |
 | SH_VULKAN_BINARIES_DIR         | Absolute path to the output binaries directory         |
 
+## Embed shvulkan with your C/C++ projects
+
+To link to the `shvulkan` library with CMake:
+
+```cmake
+if (NOT TARGET shvulkan)
+
+set(SH_VULKAN_ROOT_DIR     path/to/shvulkan/root/directory)
+set(SH_VULKAN_BINARIES_DIR path/your/binaries/directory)
+
+include(${SH_VULKAN_ROOT_DIR}/shvulkan/shvulkan.cmake)
+build_shvulkan()
+
+endif()
+
+# [...]
+
+target_link_libraries(app PUBLIC shvulkan)
+
+```
+
+Then, include the `shVulkan.h` header file:
+
+```c
+#include <shvulkan/shVulkan.h">
+```

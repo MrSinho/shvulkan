@@ -6,7 +6,7 @@ PROJECT_LOGO           =
 USE_MDFILE_AS_MAINPAGE = ${SH_VULKAN_ROOT_DIR}/README.md
 
 OUTPUT_DIRECTORY       = docs
-INPUT                  = ${SH_VULKAN_ROOT_DIR}/shvulkan/include ${SH_VULKAN_ROOT_DIR}/README.md ${SH_VULKAN_ROOT_DIR}/docs/src/install.md ${SH_VULKAN_ROOT_DIR}/docs/src/clear_color_example.md ${SH_VULKAN_ROOT_DIR}/docs/src/scene_example.md ${SH_VULKAN_ROOT_DIR}/docs/src/compute_example.md ${SH_VULKAN_ROOT_DIR}/.shci/linux/log.md ${SH_VULKAN_ROOT_DIR}/.shci/windows/log.md 
+INPUT                  = ${SH_VULKAN_ROOT_DIR}/shvulkan/include ${SH_VULKAN_ROOT_DIR}/README.md ${SH_VULKAN_ROOT_DIR}/docs/src/build.md ${SH_VULKAN_ROOT_DIR}/docs/src/clear_color_example.md ${SH_VULKAN_ROOT_DIR}/docs/src/scene_example.md ${SH_VULKAN_ROOT_DIR}/docs/src/compute_example.md ${SH_VULKAN_ROOT_DIR}/.shci/linux/log.md ${SH_VULKAN_ROOT_DIR}/.shci/windows/log.md 
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 HAVE_DOT               = NO
