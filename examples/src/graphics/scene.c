@@ -728,6 +728,8 @@ int main(void) {
 			p_colors[0] = 0.1f;
 			p_colors[1] = 0.1f;
 			p_colors[2] = 0.1f;
+			p_colors[3] = 1.0f;
+
 
 			clear_values[1].depthStencil.depth = 1.0f;
 

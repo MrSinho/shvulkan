@@ -115,8 +115,6 @@ int main(void) {
 	VkFormat                         swapchain_image_format                           = 0;
 	uint32_t                         swapchain_image_count                            = 0;
 																	                  
-	uint32_t                         sample_count                                     = 0;
-																	                  
 	VkAttachmentDescription          swapchain_attachment                             = { 0 };
 	VkAttachmentReference            swapchain_attachment_reference                   = { 0 };
 	VkSubpassDescription             subpass                                          = { 0 };
@@ -303,14 +301,6 @@ int main(void) {
 		);
 	}
 
-	shCombineMaxSamples(
-		physical_device_properties,//physical_device_properties
-		64,//sample_count 
-		1,//combine_color_sample 
-		1,//combine_depth_sample 
-		&sample_count//p_sample_count
-	);
-
 	shCreateRenderpassAttachment(
 		swapchain_image_format,//format
 		1,//sample_count
@@ -453,6 +443,7 @@ int main(void) {
 			p_colors[0] = (float)sin(glfwGetTime());
 			p_colors[1] = (float)cos(glfwGetTime());
 			p_colors[2] = (float)tan(glfwGetTime());
+			p_colors[3] = 1.0f;
 
 			shBeginRenderpass(
 				graphics_cmd_buffers[swapchain_image_idx],//graphics_cmd_buffer
