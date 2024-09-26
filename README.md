@@ -60,4 +60,4 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 
 ## Examples
 
-`shvulkan` ships with one [`compute example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/compute/power-numbers.c), one graphics [`clear color example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/clear-color.c), one graphics [`scene example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/scene.c) 
+`shvulkan` ships with one [`compute example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/compute/power-numbers.c), one graphics [`clear color example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/clear-color.c), one graphics [`scene example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/scene.c) and a [`headless scene`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/clear-color.c) graphics example, which instead of presenting images to the screen it streams the graphics output with an http server. 
