@@ -8,6 +8,16 @@ option(SH_VULKAN_VK_INCLUDE_DIRS CACHE include_dirs)
 
 
 
+if (NOT DEFINED SH_VULKAN_BINARIES_DIR)
+message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_BINARIES_DIR")
+endif()
+
+if (NOT DEFINED SH_VULKAN_ROOT_DIR)
+message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_ROOT_DIR")
+endif()
+
+
+
 function(build_shvulkan)
 
 find_package(Vulkan REQUIRED)
