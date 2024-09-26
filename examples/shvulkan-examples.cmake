@@ -41,7 +41,7 @@ target_link_libraries(shvulkan-scene       PUBLIC shvulkan glfw)
 elseif (UNIX)
 target_link_libraries(shvulkan-clear-color    PUBLIC shvulkan glfw X11 libm)
 target_link_libraries(shvulkan-scene          PUBLIC shvulkan glfw X11 libm)
-target_link_libraries(shvulkan-headless-scene libm)
+target_link_libraries(shvulkan-headless-scene PUBLIC libm)
 endif(WIN32)
 
 set_target_properties(
