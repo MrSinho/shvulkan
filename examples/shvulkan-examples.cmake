@@ -17,19 +17,23 @@ function(build_shvulkan_examples)
 
 add_subdirectory(${SH_VULKAN_ROOT_DIR}/examples/external/glfw)
 
+if (NOT TARGET vvo)
 set(VVO_BINARIES_DIR ${SH_VULKAN_BINARIES_DIR})
 set(VVO_ROOT_DIR     ${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs)
 include(${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs/vvo/vvo.cmake)
-
 build_vvo()
+endif()
 
-add_executable(shvulkan-compute-power-numbers examples/src/compute/power-numbers.c)
-add_executable(shvulkan-clear-color           examples/src/graphics/clear-color.c)
-add_executable(shvulkan-scene                 examples/src/graphics/scene.c)
-add_executable(shvulkan-headless              examples/src/graphics/headless.c)
+
+add_executable(shvulkan-compute-power-numbers ${SH_VULKAN_ROOT_DIR}/examples/src/compute/power-numbers.c)
+add_executable(shvulkan-clear-color           ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/clear-color.c)
+add_executable(shvulkan-scene                 ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/scene.c)
+#add_executable(shvulkan-headless              ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/headless.c)
+add_executable(shvulkan-headless-scene        ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/headless-scene.c)
 
 target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
-target_link_libraries(shvulkan-headless PUBLIC shvulkan vulkan-virtual-outputs)
+#target_link_libraries(shvulkan-headless              PUBLIC shvulkan vvo)
+target_link_libraries(shvulkan-headless-scene        PUBLIC shvulkan vvo)
 
 if (WIN32)
 target_link_libraries(shvulkan-clear-color PUBLIC shvulkan glfw)
@@ -43,7 +47,8 @@ set_target_properties(
     shvulkan-compute-power-numbers 
     shvulkan-clear-color 
     shvulkan-scene
-    shvulkan-headless
+    #shvulkan-headless
+    shvulkan-headless-scene
 
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY      ${SH_VULKAN_BINARIES_DIR}
