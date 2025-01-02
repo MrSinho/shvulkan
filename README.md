@@ -82,7 +82,7 @@ target_link_libraries(app PUBLIC shvulkan)
 Then, include the `shVulkan.h` header file:
 
 ```c
-#include <shvulkan/shVulkan.h">
+#include <shvulkan/shVulkan.h>
 ```
 
 ## Examples
