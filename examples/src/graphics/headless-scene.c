@@ -485,13 +485,16 @@ int main(void) {
 
 	uint32_t swapchain_image_idx  = 0;//always will be if headless
 
-	char* uri = "127.0.0.1:8002";
+	char* root_uri         = "127.0.0.1:8002";
+	char* static_image_uri = "/static-image";
+	char* png_uri          = "/output.png";
+	char* stream_uri       = "/stream";
+	vvoSetupServer(&vvo, root_uri, static_image_uri, png_uri, stream_uri);
 
-	vvoSetupServer(&vvo, uri);
-
-	printf("Hosting stream server at %s\n", uri);
-	printf("For a single image capture, go to %s/static-image\n", uri);
-	printf("For a stream of multiple frames, go to %s/vvoStream\n", uri);
+	printf("Hosting stream server at %s\n", root_uri);
+	printf("For a single image capture, go to %s%s\n", root_uri, static_image_uri);
+	printf("For a downloadable png, go to %s%s\n", root_uri, png_uri);
+	printf("For a stream of multiple frames, go to %s%s\n", root_uri, stream_uri);
 
 	while (1) {
 		vvoPollEvents(&vvo);
