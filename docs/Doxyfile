@@ -3,10 +3,10 @@ PROJECT_BRIEF          = by mrsinho.
 PROJECT_NUMBER         = pre-release
 PROJECT_LOGO           = 
 
-USE_MDFILE_AS_MAINPAGE = C:/_home/desktop/github/shvulkan/README.md
+USE_MDFILE_AS_MAINPAGE = /home/sinho/Desktop/Github/shvulkan/README.md
 
 OUTPUT_DIRECTORY       = docs
-INPUT                  = C:/_home/desktop/github/shvulkan/shvulkan/include C:/_home/desktop/github/shvulkan/README.md C:/_home/desktop/github/shvulkan/docs/src/build.md C:/_home/desktop/github/shvulkan/docs/src/clear_color_example.md C:/_home/desktop/github/shvulkan/docs/src/scene_example.md C:/_home/desktop/github/shvulkan/docs/src/compute_example.md C:/_home/desktop/github/shvulkan/.shci/linux/log.md C:/_home/desktop/github/shvulkan/.shci/windows/log.md 
+INPUT                  = /home/sinho/Desktop/Github/shvulkan/shvulkan/include /home/sinho/Desktop/Github/shvulkan/README.md /home/sinho/Desktop/Github/shvulkan/docs/src/build.md /home/sinho/Desktop/Github/shvulkan/docs/src/clear_color_example.md /home/sinho/Desktop/Github/shvulkan/docs/src/scene_example.md /home/sinho/Desktop/Github/shvulkan/docs/src/compute_example.md /home/sinho/Desktop/Github/shvulkan/.shci/linux/log.md /home/sinho/Desktop/Github/shvulkan/.shci/windows/log.md 
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 HAVE_DOT               = NO
@@ -21,13 +21,13 @@ FULL_SIDEBAR           = NO
 OPTIMIZE_OUTPUT_FOR_C  = YES
 STRIP_CODE_COMMENTS    = NO
 
-IMAGE_PATH             = C:/_home/desktop/github/shvulkan/docs/media C:/_home/desktop/github/shvulkan/.shci/linux C:/_home/desktop/github/shvulkan/.shci/windows
+IMAGE_PATH             = /home/sinho/Desktop/Github/shvulkan/docs/media /home/sinho/Desktop/Github/shvulkan/.shci/linux /home/sinho/Desktop/Github/shvulkan/.shci/windows
 
 HTML_COLORSTYLE        = LIGHT
-HTML_EXTRA_STYLESHEET  = C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome.css C:/_home/desktop/github/shvulkan/docs/custom.css
-HTML_EXTRA_FILES       = C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-interactive-toc.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-paragraph-link.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-tabs.js C:/_home/desktop/github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-darkmode-toggle.js
+HTML_EXTRA_STYLESHEET  = /home/sinho/Desktop/Github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome.css /home/sinho/Desktop/Github/shvulkan/docs/custom.css
+HTML_EXTRA_FILES       = /home/sinho/Desktop/Github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js /home/sinho/Desktop/Github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-interactive-toc.js /home/sinho/Desktop/Github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-paragraph-link.js /home/sinho/Desktop/Github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-tabs.js /home/sinho/Desktop/Github/shvulkan/docs/doxygen-awesome-css/doxygen-awesome-darkmode-toggle.js
 
-HTML_HEADER            = C:/_home/desktop/github/shvulkan/docs/header.html
+HTML_HEADER            = /home/sinho/Desktop/Github/shvulkan/docs/header.html
 
 HTML_COLORSTYLE_HUE    = 209
 HTML_COLORSTYLE_SAT    = 255
