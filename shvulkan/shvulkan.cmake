@@ -3,11 +3,6 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
 
-option(SH_VULKAN_VK_SDK_PATH     CACHE sdk_path)
-option(SH_VULKAN_VK_INCLUDE_DIRS CACHE include_dirs)
-
-
-
 if (NOT DEFINED SH_VULKAN_BINARIES_DIR)
 message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_BINARIES_DIR")
 endif()
@@ -20,7 +15,15 @@ endif()
 
 function(build_shvulkan)
 
-find_package(Vulkan REQUIRED)
+find_package(Vulkan)
+
+if (NOT DEFINED Vulkan_INCLUDE_DIR)
+message(FATAL_ERROR "shvulkan cmake error: missing Vulkan_INCLUDE_DIR")
+endif()
+
+if (NOT DEFINED Vulkan_LIBRARY)
+message(FATAL_ERROR "shvulkan cmake error: missing Vulkan_LIBRARY")
+endif()
 
 message(STATUS "shvulkan message: found Vulkan")
 message(STATUS "shvulkan message: Vulkan_INCLUDE_DIR: ${Vulkan_INCLUDE_DIR}")

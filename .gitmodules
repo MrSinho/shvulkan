@@ -10,3 +10,24 @@
 [submodule "examples/external/vulkan-virtual-outputs"]
 	path = examples/external/vulkan-virtual-outputs
 	url = https://github.com/mrsinho/vulkan-virtual-outputs.git
+[submodule "examples/external/libxinerama"]
+	path = examples/external/libxinerama
+	url = https://gitlab.freedesktop.org/xorg/lib/libxinerama
+[submodule "examples/external/libxi"]
+	path = examples/external/libxi
+	url = https://gitlab.freedesktop.org/xorg/lib/libxi
+[submodule "examples/external/libxext"]
+	path = examples/external/libxext
+	url = https://gitlab.freedesktop.org/xorg/lib/libxext
+[submodule "examples/external/libxkbcommon"]
+	path = examples/external/libxkbcommon
+	url = https://github.com/xkbcommon/libxkbcommon
+[submodule "examples/external/libx11"]
+	path = examples/external/libx11
+	url = https://gitlab.freedesktop.org/xorg/lib/libx11
+[submodule "examples/external/libxcursor"]
+	path = examples/external/libxcursor
+	url = https://gitlab.freedesktop.org/xorg/lib/libxcursor
+[submodule "examples/external/libxrandr"]
+	path = examples/external/libxrandr
+	url = https://gitlab.freedesktop.org/xorg/lib/libxrandr

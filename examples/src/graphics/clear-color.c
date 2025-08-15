@@ -74,11 +74,7 @@ int main(void) {
 	GLFWwindow*  window                   = glfwCreateWindow(width, height, "vulkan clear color", NULL, NULL);
 	const char** pp_instance_extensions   = glfwGetRequiredInstanceExtensions(&instance_extension_count);
 
-#ifdef _WIN32
 	glfwSetWindowSizeLimits(window, 400, 300, GLFW_DONT_CARE, GLFW_DONT_CARE);
-#else
-	glfwSetWindowSizeLimits(window, width, height, width, height);//X11 is so problematic
-#endif//_WIN32
 
 	VkInstance                       instance                                         = VK_NULL_HANDLE;
 											                                          
@@ -177,7 +173,9 @@ int main(void) {
 	shGetPhysicalDeviceSurfaceCapabilities(
 		physical_device,//physical_device
 		surface,//surface
-		&surface_capabilities//p_surface_capabilities
+		&surface_capabilities,//p_surface_capabilities,
+		width,//clamp_current_extent_width_value
+		height//clamp_current_extent_height_value
 	);
 
 	float default_queue_priority = 1.0f;
@@ -235,6 +233,7 @@ int main(void) {
 	shCreateSwapchain(
 		device,//device
 		physical_device,//physical_device
+		surface_capabilities,//surface_capabilities
 		surface,//surface
 		VK_FORMAT_R8G8B8_UNORM,//image_format
 		&swapchain_image_format,//p_image_format
@@ -546,12 +545,18 @@ void resizeWindow(
 	shDestroySwapchain(device, *p_swapchain);
 	shDestroySurface(instance, *p_surface);
 
+	int new_width  = 0;
+	int new_height = 0;
+
 	glfwCreateWindowSurface(instance, window, VK_NULL_HANDLE, p_surface);
+	glfwGetFramebufferSize(window, &new_width, &new_height);
+
 	shGetPhysicalDeviceSurfaceSupport(physical_device, graphics_queue_family_index, *p_surface, NULL);//graphics support already checked
-	shGetPhysicalDeviceSurfaceCapabilities(physical_device, *p_surface, p_surface_capabilities);
+	shGetPhysicalDeviceSurfaceCapabilities(physical_device, *p_surface, p_surface_capabilities, new_width, new_height);
 	shCreateSwapchain(
 		device,
 		physical_device,
+		*p_surface_capabilities,
 		*p_surface,
 		(*p_swapchain_image_format),
 		p_swapchain_image_format,
@@ -568,7 +573,7 @@ void resizeWindow(
 	shCreateRenderpass(device, RENDERPASS_ATTACHMENT_COUNT, p_attachment_descriptions, 1, p_subpass, p_renderpass);
 	for (uint32_t i = 0; i < (*p_swapchain_image_count); i++) {
 		VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { p_swapchain_image_views[i] };
-		shCreateFramebuffer(device, *p_renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, width, height, 1, &p_framebuffers[i]);
+		shCreateFramebuffer(device, *p_renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, new_width, new_width, 1, &p_framebuffers[i]);
 	}
 }
 

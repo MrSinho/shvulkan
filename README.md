@@ -3,9 +3,11 @@
 ![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
 [![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
 
+### ![Vulkan](https://a11ybadges.com/badge?logo=vulkan)
+
 [TOC]
 
-`shvulkan` is a lightweight and flexible wrapper around the Vulkan API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.
+`shvulkan` is a lightweight and flexible wrapper around the Vulkan® API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.
 
 ![](./docs/media/alpha-blending.png)
 
@@ -27,6 +29,10 @@ The examples are frequently being tested on Windows 11, Linux Mint (virtual mach
 
 Open the terminal and run the following commands:
 
+![Windows](https://a11ybadges.com/badge?logo=windows) ![Debian](https://a11ybadges.com/badge?logo=debian)
+
+Tested on Win32 and X11.
+
 ```bash
 git clone --recursive https://github.com/mrsinho/shvulkan.git
 cd shvulkan
@@ -35,6 +41,23 @@ cd build
 cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..
 cmake --build .
 ```
+
+![NixOS](https://a11ybadges.com/badge?logo=nixos)
+
+Tested on X11 and Wayland graphics servers. The Nix flake lets the system choose the default windowing system.
+
+> [!WARNING]
+> While testing with Wayland revealed no issues, there are some resizing issues when using X11.
+
+```bash
+git clone --recursive https://github.com/mrsinho/shvulkan.git
+cd shvulkan
+nix develop --command bash # enter the flake environment
+cd bin/linux
+./shvulkan-clear-color & ./shvulkan-scene & ./shvulkan-compute-power-numbers
+```
+
+![NixOS Wayland](./docs/media/nixos-wayland-scene.png)
 
 ---
 

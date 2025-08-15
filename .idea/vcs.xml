@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/.shci/shci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/docs/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/glfw" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libx11" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libxcursor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libxext" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libxi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libxinerama" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libxkbcommon" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/libxrandr" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/.shci/shci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/docs/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/.shci/shci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/docs/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/glfw" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/.shci/shci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/docs/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/.shci/shci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/docs/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/glfw" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/.shci/shci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/docs/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/stb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/shvulkan/examples/external/vulkan-virtual-outputs/externals/stb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/external/vulkan-virtual-outputs/externals/stb" vcs="Git" />
+  </component>
+</project>

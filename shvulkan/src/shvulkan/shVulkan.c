@@ -455,7 +455,9 @@ uint8_t shGetPhysicalDeviceSurfaceSupport(
 uint8_t shGetPhysicalDeviceSurfaceCapabilities(
 	VkPhysicalDevice          physical_device,
 	VkSurfaceKHR              surface,
-	VkSurfaceCapabilitiesKHR* p_surface_capabilities
+	VkSurfaceCapabilitiesKHR* p_surface_capabilities,
+	uint32_t                  clamp_current_extent_width_value,
+	uint32_t                  clamp_current_extent_height_value
 ) {
 	shVkError(physical_device        == VK_NULL_HANDLE, "invalid physical device memory",      return 0);
 	shVkError(surface                == VK_NULL_HANDLE, "invalid surface memory",              return 0);
@@ -466,6 +468,11 @@ uint8_t shGetPhysicalDeviceSurfaceCapabilities(
 		"failed getting physical device surface capabilities",
 		return 0
 	);
+
+	if (p_surface_capabilities->currentExtent.width == UINT32_MAX || p_surface_capabilities->currentExtent.height == UINT32_MAX) {
+		p_surface_capabilities->currentExtent.width  = clamp_current_extent_width_value;
+		p_surface_capabilities->currentExtent.height = clamp_current_extent_height_value;
+	}
 
 	return 1;
 }
@@ -939,6 +946,7 @@ uint8_t shFindSupportedDeviceColorFormats(
 uint8_t shCreateSwapchain(
 	VkDevice                 device, 
 	VkPhysicalDevice         physical_device,
+	VkSurfaceCapabilitiesKHR surface_capabilities,
 	VkSurfaceKHR             surface,
 	VkFormat                 image_format,
 	VkFormat*                p_image_format,
@@ -957,8 +965,6 @@ uint8_t shCreateSwapchain(
 	VkSurfaceFormatKHR       surface_formats[SH_MAX_STACK_DEVICE_SURFACE_FORMAT_COUNT] = { 0 };
 	uint8_t                  format_found                                              =   0  ;
 	VkSurfaceFormatKHR       surface_format                                            = { 0 };
-
-	VkSurfaceCapabilitiesKHR surface_capabilities                                      = { 0 };
 	VkCompositeAlphaFlagsKHR composite_alpha                                           =   0  ;
 
 	shVkResultError(
@@ -987,12 +993,6 @@ uint8_t shCreateSwapchain(
 	if (!format_found) {
 		surface_format = surface_formats[0];
 	}
-
-	shVkResultError(
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &surface_capabilities),
-		"failed getting surface capabilities",
-		return 0
-	);
 
 	_swapchain_image_count = swapchain_image_count;
 	if (_swapchain_image_count < surface_capabilities.minImageCount) {
@@ -1419,10 +1419,10 @@ uint8_t shCreateFramebuffer(
 	VkFramebufferCreateFlags flags = 0;
 
 	if (image_view_count == 0) {
-		flags = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT;
+		flags |= VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT;
 	}
 
-	shVkError(image_view_count != 0 && p_image_views == VK_NULL_HANDLE, 
+	shVkError(image_view_count != 0 && p_image_views == VK_NULL_HANDLE,
 		"invalid image views memory", 
 		return 0
 	);

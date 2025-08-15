@@ -266,13 +266,17 @@ extern uint8_t shGetPhysicalDeviceSurfaceSupport(
  * @param physical_device Valid physical device.
  * @param surface Valid Vulkan surface to query capabilities for.
  * @param p_surface_capabilities Valid destination pointer to a structure where the surface capabilities will be stored.
- * 
+ * @param clamp_current_extent_width_value Fixed current extent width value when vkGetPhysicalDeviceSurfaceCapabilitiesKHR writes UINT32_MAX (this might happen when using Wayland)
+ * @param clamp_current_extent_height_value Fixed current extent height value when vkGetPhysicalDeviceSurfaceCapabilitiesKHR writes UINT32_MAX (this might happen when using Wayland)
+ *
  * @return 1 if successful, 0 otherwise.
  */
 extern uint8_t shGetPhysicalDeviceSurfaceCapabilities(
 	VkPhysicalDevice          physical_device,
 	VkSurfaceKHR              surface,
-	VkSurfaceCapabilitiesKHR* p_surface_capabilities
+	VkSurfaceCapabilitiesKHR* p_surface_capabilities,
+	uint32_t                  clamp_current_extent_width_value,
+	uint32_t                  clamp_current_extent_height_value
 );
 
 /**
@@ -383,6 +387,7 @@ extern uint8_t shFindSupportedDeviceColorFormats(
  * 
  * @param device Valid Vulkan device.
  * @param physical_device Valid Vulkan physical device.
+ * @param surface_capabilities Surface capabilities struct.
  * @param surface Valid Vulkan surface.
  * @param image_format Format of the images in the swapchain.
  * @param p_image_format Valid destination pointer to the format of the swapchain images.
@@ -399,6 +404,7 @@ extern uint8_t shFindSupportedDeviceColorFormats(
 extern uint8_t shCreateSwapchain(
 	VkDevice                 device,
 	VkPhysicalDevice         physical_device,
+	VkSurfaceCapabilitiesKHR surface_capabilities,
 	VkSurfaceKHR             surface,
 	VkFormat                 image_format,
 	VkFormat*                p_image_format,
