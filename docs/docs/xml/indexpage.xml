@@ -18,7 +18,7 @@
 </para>
 <para><image type="html" name="https://img.shields.io/github/license/mrsinho/shvulkan?style=for-the-badge" inline="yes"></image>
 </para>
-<para><ulink url="https://mrsinho.github.io/shvulkan-docs/md__c_1_2__home_2desktop_2github_2shvulkan_2docs_2src_2build.html"><image type="html" name="https://img.shields.io/badge/API%20Documentation-2C4AA8?style=for-the-badge&amp;logo=doxygen&amp;logoColor=white" alt="Doxygen" inline="yes"></image>
+<para><ulink url="https://mrsinho.github.io/shvulkan-docs/index.html"><image type="html" name="https://img.shields.io/badge/API%20Documentation-2C4AA8?style=for-the-badge&amp;logo=doxygen&amp;logoColor=white" alt="Doxygen" inline="yes"></image>
 </ulink></para>
 <para><computeroutput>shvulkan</computeroutput> is a lightweight and flexible wrapper around the Vulkan® API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.</para>
 <para><image type="html" name="alpha-blending.png"></image>
