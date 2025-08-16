@@ -18,4 +18,5 @@ jobs:
         # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: nix develop
+    - run: nix flake check
     - run: echo "Build completed successfully"
