@@ -12,6 +12,8 @@
 
 ![](https://img.shields.io/github/license/mrsinho/shvulkan?style=for-the-badge)
 
+[![Doxygen](https://img.shields.io/badge/API%20Documentation-2C4AA8?style=for-the-badge&logo=doxygen&logoColor=white)]()
+
 
 [TOC]
 

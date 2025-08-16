@@ -1,7 +1,7 @@
 # Scene Example
 
-![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
-[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
+![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-white?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
+[![](https://img.shields.io/badge/GitHub_repository-white?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
 
 [TOC]
 
@@ -9,7 +9,7 @@
 
 This more complex example starts with the definition of vertex data for two shapes: a quadrilateral and a triangle. These vertex buffers are represented by arrays of floating-point numbers, where each vertex is described by its position and texture coordinates (which are not going to be used but have been set up for demonstration). Additionally, a series of transformation matrices for instancing are defined, enabling the efficient rendering of multiple instances of the same geometry in different positions and orientations.
 
-![](./../media/alpha-blending.png)
+![](./../media/nixos-wayland-scene.png)
 
 The setup also includes an array for indices, which specifies the order in which vertices are used to form primitives, allowing for indexed drawing of the quadrilateral. Lighting information is provided, specifying the light's position and color. The code also includes a projection-view matrix to handle transformations within the scene.
 
