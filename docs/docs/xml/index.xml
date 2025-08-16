@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.13.2" xml:lang="en-US">
+  <compound refid="structShVkPipeline" kind="struct"><name>ShVkPipeline</name>
+    <member refid="structShVkPipeline_1ab15f5afcb70bd5de3bd81864f91e6696" kind="variable"><name>vertex_binding_count</name></member>
+    <member refid="structShVkPipeline_1aa84cc8e3346535780ed784f1b1e3eff0" kind="variable"><name>vertex_bindings</name></member>
+    <member refid="structShVkPipeline_1a4bf1195a1791c2f791d4e53e8c027a4a" kind="variable"><name>vertex_attribute_count</name></member>
+    <member refid="structShVkPipeline_1a8f91185da88f6d227a68f78f1bafdcc6" kind="variable"><name>vertex_attributes</name></member>
+    <member refid="structShVkPipeline_1a7d4ad01c7eaeb9c39e97af0cee13a27f" kind="variable"><name>vertex_input_state_info</name></member>
+    <member refid="structShVkPipeline_1a3ba1efefe5508c9d32cca9255b639880" kind="variable"><name>input_assembly</name></member>
+    <member refid="structShVkPipeline_1abf55b198ee4e8f6a9a151f2f3b267ed0" kind="variable"><name>shader_module_count</name></member>
+    <member refid="structShVkPipeline_1a639990891b28c27427634459eae4bff1" kind="variable"><name>shader_modules</name></member>
+    <member refid="structShVkPipeline_1ad9cae3ad8a53d8f40d1014e464515131" kind="variable"><name>shader_stage_count</name></member>
+    <member refid="structShVkPipeline_1a9a99c1efbbf1990be7adc2a90707c3c0" kind="variable"><name>shader_stages</name></member>
+    <member refid="structShVkPipeline_1a31ff7de998830c8719bd291ab456df28" kind="variable"><name>push_constant_range</name></member>
+    <member refid="structShVkPipeline_1ad7da5701d508803f048e09b182963bbc" kind="variable"><name>rasterizer</name></member>
+    <member refid="structShVkPipeline_1aad91d82a780898fc535f4e05855d275c" kind="variable"><name>viewport</name></member>
+    <member refid="structShVkPipeline_1a58e92f5c9b13ee41f0d7b31ec5f17b56" kind="variable"><name>scissors</name></member>
+    <member refid="structShVkPipeline_1a992e59e59ca02700bda9f894b8ccc594" kind="variable"><name>viewport_state</name></member>
+    <member refid="structShVkPipeline_1adb2024e7d365784112d5d2b71151045b" kind="variable"><name>color_blend_attachment_states</name></member>
+    <member refid="structShVkPipeline_1a550bf5819b0e2e89a5698b10bddda680" kind="variable"><name>color_blend_state</name></member>
+    <member refid="structShVkPipeline_1acc77818ae1d69bfb4661d128194f450e" kind="variable"><name>multisample_state_info</name></member>
+    <member refid="structShVkPipeline_1ae7fc91a99f5fb3c8a5a286d2b3e503a9" kind="variable"><name>pipeline_layout</name></member>
+    <member refid="structShVkPipeline_1a3c654e3648932d192409fda6a2ed376e" kind="variable"><name>pipeline</name></member>
+  </compound>
+  <compound refid="structShVkPipelinePool" kind="struct"><name>ShVkPipelinePool</name>
+    <member refid="structShVkPipelinePool_1a2962a50ebae3d5528ea23495226bae09" kind="variable"><name>pipelines</name></member>
+    <member refid="structShVkPipelinePool_1a3480c44626bf99b7acfe53b665d36d31" kind="variable"><name>descriptor_set_layout_binding_count</name></member>
+    <member refid="structShVkPipelinePool_1a9447ed40daae9c9da08931c9b629c89d" kind="variable"><name>src_descriptor_set_layout_count</name></member>
+    <member refid="structShVkPipelinePool_1a33fa4229ab2a3dbfa87f02a4340e9d46" kind="variable"><name>descriptor_pool_count</name></member>
+    <member refid="structShVkPipelinePool_1a1f5f31efc7c51baeecdb481f70604a3d" kind="variable"><name>descriptor_count</name></member>
+    <member refid="structShVkPipelinePool_1a44913df897a0de7876e3bf6d3415387a" kind="variable"><name>write_descriptor_set_count</name></member>
+    <member refid="structShVkPipelinePool_1a570b3e878163a4413defd7cf4ddd627b" kind="variable"><name>descriptor_set_unit_count</name></member>
+    <member refid="structShVkPipelinePool_1ab9fca16ebe9b204799c6c9e964b801a9" kind="variable"><name>descriptor_set_layout_bindings</name></member>
+    <member refid="structShVkPipelinePool_1a0df46032ec731978c983a8956bbcdb86" kind="variable"><name>descriptor_set_layouts</name></member>
+    <member refid="structShVkPipelinePool_1a2b3928a1b4a6082ad92413632adbd896" kind="variable"><name>descriptor_pools</name></member>
+    <member refid="structShVkPipelinePool_1a9b14e9cc6fbff4a1fc2aea96c21b8c98" kind="variable"><name>descriptor_sets</name></member>
+    <member refid="structShVkPipelinePool_1adc616b02e045ac43a6a3fae274a84cc5" kind="variable"><name>descriptor_buffer_infos</name></member>
+    <member refid="structShVkPipelinePool_1abcd4de99b9f4e7101819f61932ebd256" kind="variable"><name>write_descriptor_sets</name></member>
+  </compound>
+  <compound refid="linux_2log_8md" kind="file"><name>log.md</name>
+  </compound>
+  <compound refid="windows_2log_8md" kind="file"><name>log.md</name>
+  </compound>
+  <compound refid="build_8md" kind="file"><name>build.md</name>
+  </compound>
+  <compound refid="clear__color__example_8md" kind="file"><name>clear_color_example.md</name>
+  </compound>
+  <compound refid="compute__example_8md" kind="file"><name>compute_example.md</name>
+  </compound>
+  <compound refid="scene__example_8md" kind="file"><name>scene_example.md</name>
+  </compound>
+  <compound refid="README_8md" kind="file"><name>README.md</name>
+  </compound>
+  <compound refid="shVulkan_8h" kind="file"><name>shVulkan.h</name>
+    <member refid="shVulkan_8h_1a3058eadcecb21906098604fd79c65214" kind="define"><name>SH_TRUE</name></member>
+    <member refid="shVulkan_8h_1a4f2eaae3258ecc9d23c25a434fff37f7" kind="define"><name>SH_FALSE</name></member>
+    <member refid="shVulkan_8h_1a120255f73dec43695afdb8cb3dbfc016" kind="define"><name>VK_MAKE_API_VERSION</name></member>
+    <member refid="shVulkan_8h_1a4df49a295649705c30fe92316487464b" kind="define"><name>shVkError</name></member>
+    <member refid="shVulkan_8h_1a7fef53e61a3d62b029fe8746f3628dce" kind="define"><name>shVkResultError</name></member>
+    <member refid="shVulkan_8h_1a0a9fade4c0cfb2d73ef085d0423c78fd" kind="define"><name>SH_MAX_STACK_VALIDATION_LAYER_COUNT</name></member>
+    <member refid="shVulkan_8h_1a5be727609c1dd4aa8c921b26565e9d71" kind="define"><name>SH_MAX_STACK_QUEUE_FAMILY_COUNT</name></member>
+    <member refid="shVulkan_8h_1a35f7035eab91fd6de9da8ed60af612e2" kind="define"><name>SH_MAX_STACK_PHYSICAL_DEVICE_COUNT</name></member>
+    <member refid="shVulkan_8h_1ad0ce09fa6507dd577db1ff4d4609d21c" kind="define"><name>SH_MAX_STACK_QUEUE_COUNT</name></member>
+    <member refid="shVulkan_8h_1ad78f8180c37d24de5dbaa868aaf45258" kind="define"><name>SH_MAX_STACK_DEVICE_SURFACE_FORMAT_COUNT</name></member>
+    <member refid="shVulkan_8h_1a31c43c37127b14c5326878d99876b344" kind="define"><name>SH_MAX_STACK_SURFACE_PRESENT_MODE_COUNT</name></member>
+    <member refid="shVulkan_8h_1a383c4ece797ce47ba36a2d5242c546e3" kind="define"><name>SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES</name></member>
+    <member refid="shVulkan_8h_1a00e2240a35539bfbf65ca7c69dcb31b0" kind="define"><name>SH_FORMAT_UINT</name></member>
+    <member refid="shVulkan_8h_1aa92949a61b4a5a9503ca98e8a0e12dda" kind="define"><name>SH_FORMAT_SINT</name></member>
+    <member refid="shVulkan_8h_1a95c9d9d5c140d5730146622702bc14f9" kind="define"><name>SH_FORMAT_SFLOAT</name></member>
+    <member refid="shVulkan_8h_1a2386429c07139c95076e828f3e58bdfe" kind="define"><name>SH_FORMAT_UNDEFINED</name></member>
+    <member refid="shVulkan_8h_1af5b3da538ae24e044689f28fe523a42a" kind="define"><name>SH_VEC1_SIGNED_FLOAT</name></member>
+    <member refid="shVulkan_8h_1ae4499e0115203b2c721bfbc53176d35a" kind="define"><name>SH_VEC2_SIGNED_FLOAT</name></member>
+    <member refid="shVulkan_8h_1a929ba4d5d4ae88889ff14a262d5ac887" kind="define"><name>SH_VEC3_SIGNED_FLOAT</name></member>
+    <member refid="shVulkan_8h_1a46252a0e328f725b1ec724a70d273550" kind="define"><name>SH_VEC4_SIGNED_FLOAT</name></member>
+    <member refid="shVulkan_8h_1a1b119c02978356e404ef7b56f735d45e" kind="define"><name>SH_VEC1_SIGNED_DOUBLE</name></member>
+    <member refid="shVulkan_8h_1acc71d2945b9cffcf4ca604d40ab4fb7a" kind="define"><name>SH_VEC2_SIGNED_DOUBLE</name></member>
+    <member refid="shVulkan_8h_1a71dcc53dda823ce72126717fb19f3de9" kind="define"><name>SH_VEC3_SIGNED_DOUBLE</name></member>
+    <member refid="shVulkan_8h_1aa4df58eba0840a5b9337779861fb6000" kind="define"><name>SH_VEC4_SIGNED_DOUBLE</name></member>
+    <member refid="shVulkan_8h_1a3ece1ee5bc23c10f269f51e18694e8a3" kind="define"><name>SH_VEC1_SIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1aada6c6ed20fea872700b1f4363a734a6" kind="define"><name>SH_VEC2_SIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1a129e6896cacf696df6178fd16446d712" kind="define"><name>SH_VEC3_SIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1a6ad0039c5e5894ac26a305d703e2d68f" kind="define"><name>SH_VEC4_SIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1a8d88110d9c717a0e20e04430248a7e01" kind="define"><name>SH_VEC1_UNSIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1a409b9943400664388340a3caec93a312" kind="define"><name>SH_VEC2_UNSIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1ae2bc14332982a606ddc247cfe10b022d" kind="define"><name>SH_VEC3_UNSIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1aa3cc5d5fcfb8f5e437957939b75f2940" kind="define"><name>SH_VEC4_UNSIGNED_INT</name></member>
+    <member refid="shVulkan_8h_1a0b14c396b38b2d7c69ecfe8728516203" kind="define"><name>SH_VEC1_UNSIGNED_LONG</name></member>
+    <member refid="shVulkan_8h_1acca44d5469689461dee1111ff1bec388" kind="define"><name>SH_VEC2_UNSIGNED_LONG</name></member>
+    <member refid="shVulkan_8h_1a3d262f8a5f1f9ac1cba54ca21d86e3d5" kind="define"><name>SH_VEC3_UNSIGNED_LONG</name></member>
+    <member refid="shVulkan_8h_1aa8f38bc72a2e0f7fd1720cf986bbcf1d" kind="define"><name>SH_VEC4_UNSIGNED_LONG</name></member>
+    <member refid="shVulkan_8h_1ad386ce3d06b9300c9d6cbcb221ec1ee9" kind="define"><name>SH_MAX_STACK_BUFFER_REGION_COUNT</name></member>
+    <member refid="shVulkan_8h_1af673c20336c080a49187acd6fa18cf84" kind="define"><name>SH_MAX_PIPELINE_VERTEX_BINDING_COUNT</name></member>
+    <member refid="shVulkan_8h_1a091b1cecf2c3862ae534b7c1300282a9" kind="define"><name>SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT</name></member>
+    <member refid="shVulkan_8h_1aee56f29993961649cc353e2cfeafe8f8" kind="define"><name>SH_MAX_PIPELINE_SHADER_STAGE_COUNT</name></member>
+    <member refid="shVulkan_8h_1a379e54073774df0b0209554206c0c3e4" kind="define"><name>SH_MAX_PIPELINE_SUBPASS_COLOR_ATTACHMENT_COUNT</name></member>
+    <member refid="shVulkan_8h_1ae192b45b4a12b020b42e796770fc4f63" kind="define"><name>SH_PIPELINE_POOL_MAX_PIPELINE_COUNT</name></member>
+    <member refid="shVulkan_8h_1a43176634bb725eea98ba3eb733bbcd7d" kind="define"><name>SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT</name></member>
+    <member refid="shVulkan_8h_1a9d9930a12e5728bf56b05fcbef6f9a0c" kind="define"><name>shAllocatePipelinePool</name></member>
+    <member refid="shVulkan_8h_1a7dcc542b5415675c48a7196d3ae241f2" kind="define"><name>shFreePipelinePool</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1" kind="enum"><name>ShImageChannelTypeFlags</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1a86b9e1f5698d22f0c949d5b6c0134721" kind="enumvalue"><name>SH_IMAGE_CHANNEL_TYPE_UNORM</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1a85faeb403a26c3901d493710e866e28a" kind="enumvalue"><name>SH_IMAGE_CHANNEL_TYPE_SNORM</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1a977bde39d93f048e5437aa3b82e0101e" kind="enumvalue"><name>SH_IMAGE_CHANNEL_TYPE_UINT</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1a9d8cf9d654e66965d1c901cfa31c5666" kind="enumvalue"><name>SH_IMAGE_CHANNEL_TYPE_SINT</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1a39ca6190179b0a04aa18b99608a33220" kind="enumvalue"><name>SH_IMAGE_CHANNEL_TYPE_SFLOAT</name></member>
+    <member refid="shVulkan_8h_1a9d7f7eadebd45156134f5a2742d6e6e1a979ee9012146f1ca54b23d5df12f903a" kind="enumvalue"><name>SH_IMAGE_CHANNEL_TYPE_UNDEFINED</name></member>
+    <member refid="shVulkan_8h_1aaccfb38ea85b91664878d2596ec39da1" kind="typedef"><name>ShImageChannelTypeFlags</name></member>
+    <member refid="shVulkan_8h_1adaa31bc1ed7627ffa2cd0a8415230dfa" kind="typedef"><name>ShVkPipeline</name></member>
+    <member refid="shVulkan_8h_1a50e29521dee75adcd4c4007570df5103" kind="typedef"><name>ShVkPipelinePool</name></member>
+    <member refid="shVulkan_8h_1ab10f609829185e735e0612e8c2a23445" kind="function"><name>shTranslateVkResult</name></member>
+    <member refid="shVulkan_8h_1a6268c936f366c9a3a1748c3d1982d95c" kind="function"><name>shFindValidationLayer</name></member>
+    <member refid="shVulkan_8h_1ae0f3ac928ce24f74c536af3964286ce1" kind="function"><name>shCreateInstance</name></member>
+    <member refid="shVulkan_8h_1aa325b8ce04eab87640435bfb6792f20b" kind="function"><name>shGetPhysicalDeviceQueueFamilies</name></member>
+    <member refid="shVulkan_8h_1a014a677f98233893f4fcf7633d564e8a" kind="function"><name>shGetQueueFamilySurfaceSupport</name></member>
+    <member refid="shVulkan_8h_1a3664134ede0952d4a20ba825696072e9" kind="function"><name>shSelectPhysicalDevice</name></member>
+    <member refid="shVulkan_8h_1a32980fffc92087836a90e945025add26" kind="function"><name>shGetPhysicalDeviceSurfaceSupport</name></member>
+    <member refid="shVulkan_8h_1a2a8aab0d5301eac3a95bd60385dcb141" kind="function"><name>shGetPhysicalDeviceSurfaceCapabilities</name></member>
+    <member refid="shVulkan_8h_1a614467100219d688afecfac1bf5a8522" kind="function"><name>shQueryForDeviceQueueInfo</name></member>
+    <member refid="shVulkan_8h_1aacba1b9a04a3ecf4cf5041908c6bfd5f" kind="function"><name>shSetLogicalDevice</name></member>
+    <member refid="shVulkan_8h_1ae7c6c9c1c42d68b7a822aa800e0ff2da" kind="function"><name>shGetDeviceQueues</name></member>
+    <member refid="shVulkan_8h_1ab93ee8c746906227e234a79e7ed91e44" kind="function"><name>shCheckSupportedDeviceColorFormat</name></member>
+    <member refid="shVulkan_8h_1a22a002d56c6d4e2093298afec80eaac4" kind="function"><name>shFindSupportedDeviceColorFormats</name></member>
+    <member refid="shVulkan_8h_1ab5ebb51aaf4d84d3636c3e858e2cbc81" kind="function"><name>shCreateSwapchain</name></member>
+    <member refid="shVulkan_8h_1a1bc1c3ad7fc0f2a7ad52bfc283edf57d" kind="function"><name>shCombineMaxSamples</name></member>
+    <member refid="shVulkan_8h_1a4e5e210ebde2ee1a8695d27af5d030ae" kind="function"><name>shGetSwapchainImages</name></member>
+    <member refid="shVulkan_8h_1ab26128a90f271e61dd3da44c60002972" kind="function"><name>shCreateImageView</name></member>
+    <member refid="shVulkan_8h_1a29319ccf723bb92c0b25612c65f4e914" kind="function"><name>shCreateSwapchainImageViews</name></member>
+    <member refid="shVulkan_8h_1abb14c0eb648a4fc8dd6ad54a664c8a66" kind="function"><name>shCreateCommandPool</name></member>
+    <member refid="shVulkan_8h_1ad66c57365878b51eb09068509ed13207" kind="function"><name>shAllocateCommandBuffers</name></member>
+    <member refid="shVulkan_8h_1ad2559948a94ebe5e470544324802f4a8" kind="function"><name>shCreateRenderpassAttachment</name></member>
+    <member refid="shVulkan_8h_1a19028144387eb3a72335bb7e3a884ce1" kind="function"><name>shCreateRenderpassAttachmentReference</name></member>
+    <member refid="shVulkan_8h_1a57487fd38b85621eef744f36e2287516" kind="function"><name>shCreateSubpass</name></member>
+    <member refid="shVulkan_8h_1a258c1642c763d6f157d4a1fdaa49a82e" kind="function"><name>shCreateRenderpass</name></member>
+    <member refid="shVulkan_8h_1a291f5b0f8e182a85026f963afa2271f4" kind="function"><name>shCreateFramebuffer</name></member>
+    <member refid="shVulkan_8h_1a221d955d6c62b516c8b2b8fadd912275" kind="function"><name>shWaitDeviceIdle</name></member>
+    <member refid="shVulkan_8h_1aeb246f0e807addb550fff82f8d26223a" kind="function"><name>shDestroySwapchain</name></member>
+    <member refid="shVulkan_8h_1abfb12ee8df4b8599f6f01fe31ed65f6b" kind="function"><name>shDestroyFramebuffers</name></member>
+    <member refid="shVulkan_8h_1a8ad928e11f2e7c5dad11b1a284c2755c" kind="function"><name>shDestroyImageViews</name></member>
+    <member refid="shVulkan_8h_1a8d467c1ac1ad2ffbe2adda1c47370ed7" kind="function"><name>shDestroySurface</name></member>
+    <member refid="shVulkan_8h_1a3d4ea1b86540f76b65e6a8c5f2c4c026" kind="function"><name>shDestroyCommandBuffers</name></member>
+    <member refid="shVulkan_8h_1ab0d0697b43c84db7e1d9cb136ff91b6f" kind="function"><name>shDestroyCommandPool</name></member>
+    <member refid="shVulkan_8h_1a19fb63823338c43b4ee7d6daf5737b9b" kind="function"><name>shDestroyRenderpass</name></member>
+    <member refid="shVulkan_8h_1a64cfc5776d06bf298077c4a31277d4f0" kind="function"><name>shDestroyDevice</name></member>
+    <member refid="shVulkan_8h_1a397935deaec415b4a18e1e67cd639ac0" kind="function"><name>shDestroyInstance</name></member>
+    <member refid="shVulkan_8h_1ace9dee2233a899d9d8b2aefe486cd0ab" kind="function"><name>shResetCommandBuffer</name></member>
+    <member refid="shVulkan_8h_1af3ffeb76f326f881c2df916234f30977" kind="function"><name>shBeginCommandBuffer</name></member>
+    <member refid="shVulkan_8h_1a3f8daf6ad33feb4fd115203fe4030949" kind="function"><name>shEndCommandBuffer</name></member>
+    <member refid="shVulkan_8h_1a82bed9cc5fef0693730d125c51b806fb" kind="function"><name>shCmdDispatch</name></member>
+    <member refid="shVulkan_8h_1a6cd1a448b2b9710567e2f12d35459109" kind="function"><name>shQueueSubmit</name></member>
+    <member refid="shVulkan_8h_1af404871916d00d12ff9244341000f0e4" kind="function"><name>shWaitForQueue</name></member>
+    <member refid="shVulkan_8h_1a60a84381f852cc747db662c564c3f5e5" kind="function"><name>shCreateFences</name></member>
+    <member refid="shVulkan_8h_1a82904fc4fffa81dfe9b466b4e93c63ef" kind="function"><name>shCreateSemaphores</name></member>
+    <member refid="shVulkan_8h_1a025ccfbc53b3f2bf00a1d2f5290e115d" kind="function"><name>shDestroyFences</name></member>
+    <member refid="shVulkan_8h_1a3785756a9434af94314db3ef872155ec" kind="function"><name>shDestroySemaphores</name></member>
+    <member refid="shVulkan_8h_1a9e3b777a9bded7b6d683ab4d334dc120" kind="function"><name>shResetFences</name></member>
+    <member refid="shVulkan_8h_1aa961040591408bda2df704229f53b10c" kind="function"><name>shResetSemaphores</name></member>
+    <member refid="shVulkan_8h_1ac7b90bc8d4b8f2781770c3c3ac05019f" kind="function"><name>shWaitForFences</name></member>
+    <member refid="shVulkan_8h_1aaebc8f285804dcc9a4f74910abc2db73" kind="function"><name>shWaitForSemaphores</name></member>
+    <member refid="shVulkan_8h_1a3d82b550f662b158986c904a1c6da096" kind="function"><name>shAcquireSwapchainImage</name></member>
+    <member refid="shVulkan_8h_1a5889c0098b69fbc2c3fe5df27c4fddc9" kind="function"><name>shBeginRenderpass</name></member>
+    <member refid="shVulkan_8h_1a14f8d9475ccb027ba58437108db87fa4" kind="function"><name>shEndRenderpass</name></member>
+    <member refid="shVulkan_8h_1a24a57e0a73cc90e2a1c099f8042b4ef1" kind="function"><name>shDraw</name></member>
+    <member refid="shVulkan_8h_1a0b30f274286f7d3f9feeb898a22d9320" kind="function"><name>shDrawIndexed</name></member>
+    <member refid="shVulkan_8h_1a1ebf776806cb2ee99ab0a86b075da8ac" kind="function"><name>shQueuePresentSwapchainImage</name></member>
+    <member refid="shVulkan_8h_1a8f8a64418cda82169cdd2978899e1f98" kind="function"><name>shCreateBuffer</name></member>
+    <member refid="shVulkan_8h_1a2a807a098afaf45caff7964250e912f5" kind="function"><name>shGetMemoryType</name></member>
+    <member refid="shVulkan_8h_1ab059596a5bf5ae02d5063cf821b506e5" kind="function"><name>shAllocateBufferMemory</name></member>
+    <member refid="shVulkan_8h_1a88908f30187bab0ff08d3afbc84458cc" kind="function"><name>shCopyBuffer</name></member>
+    <member refid="shVulkan_8h_1a1758a4d7503f4ea20d470d189edb8e3b" kind="function"><name>shCopyBufferRegions</name></member>
+    <member refid="shVulkan_8h_1ac3bf1d2ca1b1ce2cf8673df951fb2bf6" kind="function"><name>shCopyImage</name></member>
+    <member refid="shVulkan_8h_1af810507ba72a2201519c71fc1a1f2125" kind="function"><name>shBindBufferMemory</name></member>
+    <member refid="shVulkan_8h_1aa823fb95bcc1b79a23394046e2566d41" kind="function"><name>shReadMemory</name></member>
+    <member refid="shVulkan_8h_1a1907762caa24a7af9c85a0a511b004f2" kind="function"><name>shUnmapMemory</name></member>
+    <member refid="shVulkan_8h_1a2e99eee8a784324373dac95ff82580bc" kind="function"><name>shWriteMemory</name></member>
+    <member refid="shVulkan_8h_1aed51494291a04145494c15eb5531f09d" kind="function"><name>shClearBufferMemory</name></member>
+    <member refid="shVulkan_8h_1a94fdd493b11aa6605d0e7d138facf2dd" kind="function"><name>shCreateImage</name></member>
+    <member refid="shVulkan_8h_1ac05cd94a0e91ce7b4cfc81f596b45795" kind="function"><name>shAllocateImageMemory</name></member>
+    <member refid="shVulkan_8h_1a915b19160bec4ae84922a6faad52f53c" kind="function"><name>shBindImageMemory</name></member>
+    <member refid="shVulkan_8h_1ad4fdc1d058c2e8566b99c570a8eb8915" kind="function"><name>shClearImageMemory</name></member>
+    <member refid="shVulkan_8h_1a49de1107c7467d37458ba5c127a6d479" kind="function"><name>shGetImageSubresourceLayout</name></member>
+    <member refid="shVulkan_8h_1a7526501d7f3603d2cb7b091903e4ef9c" kind="function"><name>shSetBufferMemoryBarrier</name></member>
+    <member refid="shVulkan_8h_1a7fd95337f254d38f196f61644502efb4" kind="function"><name>shSetImageMemoryBarrier</name></member>
+    <member refid="shVulkan_8h_1a7a7a14e234bf694e7c36e180f87bef56" kind="function"><name>shGetMemoryBudgetProperties</name></member>
+    <member refid="shVulkan_8h_1a745c59da40b16dd65f5758131b0f9c93" kind="function"><name>shBindVertexBuffers</name></member>
+    <member refid="shVulkan_8h_1a3165c83fc15953d791d54657e409ecbe" kind="function"><name>shBindIndexBuffer</name></member>
+    <member refid="shVulkan_8h_1a8dea157965ef7c15756861378f365a32" kind="function"><name>shSetVertexBinding</name></member>
+    <member refid="shVulkan_8h_1a0e42de138dec02dde8a7d4ed461f1ddd" kind="function"><name>shSetVertexAttribute</name></member>
+    <member refid="shVulkan_8h_1afd3c6410a22fbd6e6d4f70cc6e26cc88" kind="function"><name>shSetVertexInputState</name></member>
+    <member refid="shVulkan_8h_1abc592ad965aba075719deba78df655f2" kind="function"><name>shCreateInputAssembly</name></member>
+    <member refid="shVulkan_8h_1a4a26ddd78725c18aa6ebe67e499dae93" kind="function"><name>shCreateRasterizer</name></member>
+    <member refid="shVulkan_8h_1a8a64121d076fb62d995e3c5255490a0c" kind="function"><name>shSetMultisampleState</name></member>
+    <member refid="shVulkan_8h_1a81ecc375fe999c39151dcf33c7e08bc5" kind="function"><name>shSetViewport</name></member>
+    <member refid="shVulkan_8h_1add573bacc9913a1f3f3ec051847be17f" kind="function"><name>shColorBlendSettings</name></member>
+    <member refid="shVulkan_8h_1ab476e60d13e9dc556c9f3731e08b0f2b" kind="function"><name>shCreateShaderModule</name></member>
+    <member refid="shVulkan_8h_1a8b60f182c3ba1ef5aebfc5bb94e6b092" kind="function"><name>shCreateShaderStage</name></member>
+    <member refid="shVulkan_8h_1a37c2f43e5d40ef599a5191b41731c1fe" kind="function"><name>shSetPushConstants</name></member>
+    <member refid="shVulkan_8h_1a2db25bc95c340c14063103bd71c831e5" kind="function"><name>shCreateDescriptorSetLayoutBinding</name></member>
+    <member refid="shVulkan_8h_1afb91ea9f9819414ce5f3af63c76e5039" kind="function"><name>shCreateDescriptorSetLayout</name></member>
+    <member refid="shVulkan_8h_1a1c2c35ec1695abf9f1269fda64b15f67" kind="function"><name>shCreateDescriptorPool</name></member>
+    <member refid="shVulkan_8h_1a30575079b2b0f495e5b9723769d5f400" kind="function"><name>shSetDescriptorBufferInfo</name></member>
+    <member refid="shVulkan_8h_1a6473b6e9dbfd903423d3123ecd99a368" kind="function"><name>shAllocateDescriptorSetUnits</name></member>
+    <member refid="shVulkan_8h_1a6ecd476f729741cf79f4717faaf254fd" kind="function"><name>shCreatePipelineLayout</name></member>
+    <member refid="shVulkan_8h_1aacca6c63e8d9eca4f1b614dcddfe1175" kind="function"><name>shDestroyDescriptorPool</name></member>
+    <member refid="shVulkan_8h_1a0daea4207984dc19a6b543434bd7c914" kind="function"><name>shDestroyDescriptorSetLayout</name></member>
+    <member refid="shVulkan_8h_1aa06684f677c30ac2cf9ec0b3fdf01141" kind="function"><name>shDestroyShaderModule</name></member>
+    <member refid="shVulkan_8h_1a9cafdf7d71914ed332e3f924fa8859dd" kind="function"><name>shDestroyPipelineLayout</name></member>
+    <member refid="shVulkan_8h_1aad21ff1c031b22232fa2c0144c09ec23" kind="function"><name>shDestroyPipeline</name></member>
+    <member refid="shVulkan_8h_1accfddf1bd263be71d7c1443e8fccb46d" kind="function"><name>shClearPipeline</name></member>
+    <member refid="shVulkan_8h_1a03ada39e7867acde1679ce5539217748" kind="function"><name>shPipelineSetVertexBinding</name></member>
+    <member refid="shVulkan_8h_1ae90245e6e6ff5b8b4863823baa989669" kind="function"><name>shPipelineSetVertexAttribute</name></member>
+    <member refid="shVulkan_8h_1a969ece0688800efffd597ff7516d3c7b" kind="function"><name>shPipelineSetVertexInputState</name></member>
+    <member refid="shVulkan_8h_1a2dced04d99a306fb094c16394fdb3681" kind="function"><name>shPipelineCreateInputAssembly</name></member>
+    <member refid="shVulkan_8h_1ab10ea59844b6c8721f338d08ee00d904" kind="function"><name>shPipelineCreateRasterizer</name></member>
+    <member refid="shVulkan_8h_1ad434628a85b50f5d67dfafec0d396716" kind="function"><name>shPipelineSetMultisampleState</name></member>
+    <member refid="shVulkan_8h_1a26da8e1e1cf3811793e575adfb6d4c65" kind="function"><name>shPipelineSetViewport</name></member>
+    <member refid="shVulkan_8h_1a2a91f52a5861799e19e633b407c595de" kind="function"><name>shPipelineColorBlendSettings</name></member>
+    <member refid="shVulkan_8h_1a40c30c864957c9a6db42cdf33a8c713d" kind="function"><name>shPipelineCreateShaderModule</name></member>
+    <member refid="shVulkan_8h_1a16517098e1929c8c9aed82a32215e59f" kind="function"><name>shPipelineCreateShaderStage</name></member>
+    <member refid="shVulkan_8h_1a2d54f31a8d660c249ad8aaf6dc9387a9" kind="function"><name>shPipelineSetPushConstants</name></member>
+    <member refid="shVulkan_8h_1a58630d16e24d088a665b11dafb24b580" kind="function"><name>shPipelineCreateLayout</name></member>
+    <member refid="shVulkan_8h_1a2def89aedf1649c0101e6e0bd222cc9f" kind="function"><name>shSetupComputePipeline</name></member>
+    <member refid="shVulkan_8h_1a06203a29c7b28da913af4c6fc007135a" kind="function"><name>shSetupGraphicsPipeline</name></member>
+    <member refid="shVulkan_8h_1a25a42e29b5ccc4c171f14ea43686c06c" kind="function"><name>shPipelinePushConstants</name></member>
+    <member refid="shVulkan_8h_1ab50dff5db70f602423d2f2ac4f3b69f6" kind="function"><name>shBindPipeline</name></member>
+    <member refid="shVulkan_8h_1ae521fee6b7010640e7b4cc2f9be8670b" kind="function"><name>shPipelineBindDescriptorSetUnits</name></member>
+    <member refid="shVulkan_8h_1a5a2d1666d635e1fedbc6a2f39b26fe21" kind="function"><name>shPipelineDestroyShaderModules</name></member>
+    <member refid="shVulkan_8h_1a910f2e68388bb2620f5173aef5f470f1" kind="function"><name>shPipelineDestroyLayout</name></member>
+    <member refid="shVulkan_8h_1a69bc1e4c6dd7f51afee92a76983b52f6" kind="function"><name>shPipelinePoolCreateDescriptorSetLayoutBinding</name></member>
+    <member refid="shVulkan_8h_1a2cff372c4f8726b124bb4c70706af07d" kind="function"><name>shPipelinePoolCreateDescriptorSetLayout</name></member>
+    <member refid="shVulkan_8h_1ad50f750a6e479f1188d3d27d82163f4e" kind="function"><name>shPipelinePoolCopyDescriptorSetLayout</name></member>
+    <member refid="shVulkan_8h_1ab5045b342ed0bcad88c9e95ff87df6c5" kind="function"><name>shPipelinePoolCreateDescriptorPool</name></member>
+    <member refid="shVulkan_8h_1a47b7854828dcf2d0a8cfdbabe1e1d1c8" kind="function"><name>shPipelinePoolAllocateDescriptorSetUnits</name></member>
+    <member refid="shVulkan_8h_1a5487bb274e93182c0a8b4452479fe0d6" kind="function"><name>shPipelinePoolSetDescriptorBufferInfos</name></member>
+    <member refid="shVulkan_8h_1a3a5f03c10a589c5cef2e0eeaa8a785d0" kind="function"><name>shPipelinePoolDestroyDescriptorSetLayouts</name></member>
+    <member refid="shVulkan_8h_1a93419ab7fff4fbc0b26a471fa384a563" kind="function"><name>shPipelinePoolDestroyDescriptorPools</name></member>
+    <member refid="shVulkan_8h_1aa9fb1a7b0e06ac4543f75298c0ca4fdb" kind="function"><name>shPipelinePoolUpdateDescriptorSetUnits</name></member>
+  </compound>
+  <compound refid="md_src_2build" kind="page"><name>md_src_2build</name>
+  </compound>
+  <compound refid="md_src_2clear__color__example" kind="page"><name>md_src_2clear__color__example</name>
+  </compound>
+  <compound refid="md_src_2scene__example" kind="page"><name>md_src_2scene__example</name>
+  </compound>
+  <compound refid="md_src_2compute__example" kind="page"><name>md_src_2compute__example</name>
+  </compound>
+  <compound refid="md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log" kind="page"><name>md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log</name>
+  </compound>
+  <compound refid="md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2windows_2log" kind="page"><name>md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2windows_2log</name>
+  </compound>
+  <compound refid="dir_094cdc85b9a92a399939e4cc51e18eea" kind="dir"><name>/home/sinho/Desktop/Github/shvulkan/.shci</name>
+  </compound>
+  <compound refid="dir_10789972245f5c80e51f025284adfc41" kind="dir"><name>/home/sinho/Desktop/Github/shvulkan/shvulkan/include</name>
+  </compound>
+  <compound refid="dir_239c999c88d56158f0eb18b634e30a18" kind="dir"><name>/home/sinho/Desktop/Github/shvulkan/.shci/linux</name>
+  </compound>
+  <compound refid="dir_6cdfa0f715bfd10d7d13766ec6223bc4" kind="dir"><name>/home/sinho/Desktop/Github/shvulkan/shvulkan</name>
+  </compound>
+  <compound refid="dir_e5b66ad0e23d4c6005677875a27b21ad" kind="dir"><name>/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan</name>
+  </compound>
+  <compound refid="dir_248832ff8517b5b7d5da1a6bc8750d99" kind="dir"><name>src</name>
+  </compound>
+  <compound refid="dir_aed01192c04d12aa3474445d801c4af4" kind="dir"><name>/home/sinho/Desktop/Github/shvulkan/.shci/windows</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

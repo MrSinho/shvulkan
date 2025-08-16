@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="md_src_2clear__color__example" kind="page">
+    <compoundname>md_src_2clear__color__example</compoundname>
+    <title>Clear Color Example</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md_src_2clear__color__example_1autotoc_md15"/></para>
+<para><image type="html" name="https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&amp;logo=&amp;logoColor=white&amp;labelColor=990042" inline="yes"></image>
+ <ulink url="https://github.com/mrsinho/shvulkan"><image type="html" name="https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black" inline="yes"></image>
+</ulink></para>
+<para>Setting up a Vulkan application involves several critical steps to ensure proper configuration and resource management for rendering. <ulink url="https://github.com/MrSinho/shvulkan/blob/main/examples/src/graphics/clear-color.c">This example (<computeroutput>shvulkan-clear-color</computeroutput>)</ulink> outlines the process from instance creation to frame presentation, integrating the various components and their roles.</para>
+<para><image type="html" name="../media/clear_color_green.png" inline="yes"></image>
+</para>
+<sect1 id="md_src_2clear__color__example_1autotoc_md16_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md16">
+<title>Instance and Surface Creation</title><para>The Vulkan setup begins with creating a Vulkan instance using the <computeroutput>shCreateInstance</computeroutput> function. This step establishes the connection between the application and the Vulkan library, specifying the application and engine names, enabling validation layers for debugging, and defining required extensions and API versions. Following the instance creation, a window surface is created via <computeroutput>glfwCreateWindowSurface</computeroutput>. This surface allows Vulkan to render content to a window, interfacing directly with the windowing system.</para>
+</sect2></sect1>
+<sect1 id="md_src_2clear__color__example_1autotoc_md17_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md17">
+<title>Physical Device and Queue Setup</title><para>Once the instance and surface are ready, the next step is selecting a suitable physical device (GPU). This is accomplished through <computeroutput>shSelectPhysicalDevice</computeroutput>, which evaluates the GPU&apos;s capabilities to ensure it supports the necessary operations for graphics, compute, and transfer. The function retrieves important details about the device, including its properties, features, and memory attributes.</para>
+<para>Subsequently, the <computeroutput>shGetPhysicalDeviceQueueFamilies</computeroutput> function identifies the queue families supported by the device. These queues are critical for managing rendering, presentation, compute, and transfer tasks. Based on the indices retrieved for graphics and presentation queues, device queue creation is handled by <computeroutput>shQueryForDeviceQueueInfo</computeroutput>, which sets up the appropriate VkDeviceQueueCreateInfo structures.</para>
+</sect2></sect1>
+<sect1 id="md_src_2clear__color__example_1autotoc_md18_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md18">
+<title>Logical Device and Queues</title><para>With the queue information in hand, <computeroutput>shSetLogicalDevice</computeroutput> creates the logical device. This device acts as an abstraction layer over the physical GPU, allowing the application to submit commands and manage resources. The logical device is configured with the necessary extensions and queue information to support the application&apos;s needs. Once the logical device is created, <computeroutput>shGetDeviceQueues</computeroutput> retrieves the actual queues for graphics and presentation, ensuring that commands can be submitted and images presented as required.</para>
+</sect2></sect1>
+<sect1 id="md_src_2clear__color__example_1autotoc_md19_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md19">
+<title>Swapchain and Command Buffers</title><para>The swapchain is created using <computeroutput>shCreateSwapchain</computeroutput>, which manages the presentation of images to the screen. This process involves specifying the format, the number of images, and the sharing mode. The swapchain is essential for rendering content and displaying it on the window surface.</para>
+<para>To manage command execution, <computeroutput>shCreateCommandPool</computeroutput> establishes command pools for graphics and potentially presentation tasks. Command buffers are then allocated with shAllocateCommandBuffers, which are used to record rendering commands. If the graphics and presentation queue families are different, separate command pools are created; otherwise, the same pool is used for both tasks.</para>
+</sect2></sect1>
+<sect1 id="md_src_2clear__color__example_1autotoc_md20_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md20">
+<title>Synchronization and Resources</title><para>Synchronization between command submissions and image presentation is handled by <computeroutput>shCreateFences</computeroutput>, which creates fences to signal when commands are complete. <computeroutput>shGetSwapchainImages</computeroutput> retrieves the images from the swapchain, and <computeroutput>shCreateImageView</computeroutput> creates image views for these swapchain images, defining how they are accessed during rendering.</para>
+</sect2></sect1>
+<sect1 id="md_src_2clear__color__example_1autotoc_md21_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md21">
+<title>Renderpass and Framebuffers</title><para>The setup concludes with the creation of a renderpass and associated framebuffers. <computeroutput>shCombineMaxSamples</computeroutput> determines the maximum number of samples for anti-aliasing. <computeroutput>shCreateRenderpass</computeroutput> configures the renderpass, defining attachments, subpasses, and their layouts. Finally, <computeroutput>shCreateFramebuffer</computeroutput> creates framebuffers for each swapchain image, linking them with the renderpass to facilitate rendering to the screen.</para>
+</sect2></sect1>
+<sect1 id="md_src_2clear__color__example_1autotoc_md22_1s1"><sect2 id="md_src_2clear__color__example_1autotoc_md22">
+<title>Main Loop Analysis</title><para>The main loop of a Vulkan application is a critical section that manages rendering and presentation. It continuously updates the window content and handles various events. Here’s a breakdown of the process:</para>
+<para><itemizedlist>
+<listitem><para><bold>Event Handling and Window Resize</bold>. At the start of each loop iteration, the function <computeroutput>glfwPollEvents</computeroutput> is called to process any pending events, such as user inputs or window system events. Following this, the window size is queried with <computeroutput>glfwGetWindowSize</computeroutput>. If the window is not minimized (i.e., width and height are non-zero), the loop checks if the window has been resized. If so, it invokes resizeWindow to reconfigure the swapchain, surface, and related resources to match the new dimensions. This function updates the swapchain and other resources to ensure they align with the current window size and aspect ratio. The swapchain_image_idx is reset to 0 to start using the new swapchain images. Additionally, if the swapchain has become suboptimal (e.g., due to the window size change or other factors affecting performance), resizeWindow is called again to address these issues and restore optimal performance.</para>
+</listitem><listitem><para><bold>Synchronization and Command Buffer Management</bold>. Once the window is properly resized, the loop proceeds to handle synchronization and command submission. It begins by creating a semaphore (current_image_acquired_semaphore) for signaling when the image from the swapchain is acquired. <computeroutput>shAcquireSwapchainImage</computeroutput> is then called to acquire an image from the swapchain. This function also checks if the swapchain is suboptimal and updates the swapchain_image_idx to point to the acquired image. The loop then waits for fences associated with the command buffers of the currently acquired image to ensure that previous commands have finished execution. This is achieved through <computeroutput>shWaitForFences</computeroutput>, followed by resetting the fences with <computeroutput>shResetFences</computeroutput> to prepare them for the next frame.</para>
+</listitem><listitem><para><bold>Command Recording and Rendering</bold>. The command buffer for the current image is started using <computeroutput>shBeginCommandBuffer</computeroutput>. Rendering commands are recorded into this command buffer, starting with clearing the framebuffer. The clear color is dynamically calculated based on the current time, creating a visually dynamic effect. The renderpass is then initiated with <computeroutput>shBeginRenderpass</computeroutput>, specifying the clear values and the framebuffer. After recording the rendering commands, the renderpass is ended with <computeroutput>shEndRenderpass</computeroutput>, and the command buffer is finalized with <computeroutput>shEndCommandBuffer</computeroutput>.</para>
+</listitem><listitem><para><bold>Queue Submission and Presentation</bold>. The completed command buffer is submitted to the graphics queue using shQueueSubmit. This function specifies the command buffer, waits for the acquisition semaphore, and signals another semaphore (graphics_queue_finished_semaphores) when the command execution is complete. After submission, the <computeroutput>shQueuePresentSwapchainImage</computeroutput> function presents the rendered image to the screen using the presentation queue. It waits for the graphics queue semaphore to ensure that rendering is completed before presenting the image.</para>
+</listitem><listitem><para><bold>Cleanup</bold>. Finally, the temporary semaphore (<computeroutput>current_image_acquired_semaphore</computeroutput>) is destroyed to free up resources.</para>
+</listitem></itemizedlist>
+</para>
+<para><image type="html" name="../media/clear_color_green.png" inline="yes"></image>
+ </para>
+</sect2></sect1>
+    </detaileddescription>
+    <location file="src/clear_color_example.md"/>
+  </compounddef>
+</doxygen>

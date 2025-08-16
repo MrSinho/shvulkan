@@ -1,7 +1,7 @@
 # shvulkan
 
-![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-white?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
-[![](https://img.shields.io/badge/GitHub_repository-white?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
+![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
+[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
 
 ![](https://img.shields.io/github/commit-activity/t/mrsinho/shvulkan?style=for-the-badge&label=Total%20commits&color=ac162c)
 ![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&label=Nix%20flake%20check&labelColor=grey)
@@ -12,7 +12,7 @@
 
 ![](https://img.shields.io/github/license/mrsinho/shvulkan?style=for-the-badge)
 
-[![Doxygen](https://img.shields.io/badge/API%20Documentation-2C4AA8?style=for-the-badge&logo=doxygen&logoColor=white)]()
+[![Doxygen](https://img.shields.io/badge/API%20Documentation-2C4AA8?style=for-the-badge&logo=doxygen&logoColor=white)](https://mrsinho.github.io/shvulkan-docs/index.html)
 
 
 [TOC]

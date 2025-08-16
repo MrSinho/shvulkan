@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log" kind="page">
+    <compoundname>md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log</compoundname>
+    <title>Linux build logs</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log_1autotoc_md34"/></para>
+<para><image type="html" name="linux-exit-code.svg"></image>
+ <image type="latex" name="linux-exit-code.svg"></image>
+ <image type="rtf" name="linux-exit-code.svg"></image>
+ <image type="docbook" name="linux-exit-code.svg"></image>
+ <image type="xml" name="linux-exit-code.svg"></image>
+</para>
+<para><programlisting><codeline><highlight class="normal">system<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>Linux</highlight></codeline>
+<codeline><highlight class="normal">version<sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>#1<sp/>SMP<sp/>Fri<sp/>Mar<sp/>29<sp/>23:14:13<sp/>UTC<sp/>2024</highlight></codeline>
+<codeline><highlight class="normal">platform<sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.35</highlight></codeline>
+<codeline><highlight class="normal">processor<sp/><sp/><sp/><sp/><sp/>:<sp/>x86_64</highlight></codeline>
+<codeline><highlight class="normal">min<sp/>frequency<sp/>:<sp/>0.0<sp/>MHz</highlight></codeline>
+<codeline><highlight class="normal">max<sp/>frequency<sp/>:<sp/>0.0<sp/>MHz</highlight></codeline>
+<codeline><highlight class="normal">cores<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>4</highlight></codeline>
+</programlisting></para>
+<para>build ran for <computeroutput>85.29 s</computeroutput> and terminated with exit code <computeroutput>0</computeroutput></para>
+<para><hruler/>
+</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">function<sp/>PREREQUISITES<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>sudo<sp/>apt<sp/>-y<sp/>update</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>sudo<sp/>apt<sp/>install<sp/>-y<sp/>pkg-config<sp/>libxkbcommon-dev</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>sudo<sp/>apt<sp/>install<sp/>-y<sp/>libvulkan-dev<sp/>libvulkan1</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>sudo<sp/>apt<sp/>install<sp/>-y<sp/>libx11-dev<sp/>libxrandr-dev<sp/>libxinerama-dev<sp/>libxcursor-dev<sp/>libxi-dev</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>sudo<sp/>apt<sp/>install<sp/>-y<sp/>libwayland-dev</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>sudo<sp/>apt<sp/>install<sp/>-y<sp/>gcc<sp/>cmake<sp/>make<sp/>libc6-dev</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">PREREQUISITES<sp/>&gt;<sp/>.shci/linux/prerequisites-output.txt</highlight></codeline>
+</programlisting></para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">Hit:1<sp/>http://archive.ubuntu.com/ubuntu<sp/>jammy<sp/>InRelease</highlight></codeline>
+<codeline><highlight class="normal">Hit:2<sp/>http://archive.ubuntu.com/ubuntu<sp/>jammy-updates<sp/>InRelease</highlight></codeline>
+<codeline><highlight class="normal">Hit:3<sp/>http://archive.ubuntu.com/ubuntu<sp/>jammy-backports<sp/>InRelease</highlight></codeline>
+<codeline><highlight class="normal">Hit:4<sp/>http://security.ubuntu.com/ubuntu<sp/>jammy-security<sp/>InRelease</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>package<sp/>lists...</highlight></codeline>
+<codeline><highlight class="normal">Building<sp/>dependency<sp/>tree...</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>state<sp/>information...</highlight></codeline>
+<codeline><highlight class="normal">4<sp/>packages<sp/>can<sp/>be<sp/>upgraded.<sp/>Run<sp/>&apos;apt<sp/>list<sp/>--upgradable&apos;<sp/>to<sp/>see<sp/>them.</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>package<sp/>lists...</highlight></codeline>
+<codeline><highlight class="normal">Building<sp/>dependency<sp/>tree...</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>state<sp/>information...</highlight></codeline>
+<codeline><highlight class="normal">libxkbcommon-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(1.4.0-1).</highlight></codeline>
+<codeline><highlight class="normal">pkg-config<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(0.29.2-1ubuntu3).</highlight></codeline>
+<codeline><highlight class="normal">0<sp/>upgraded,<sp/>0<sp/>newly<sp/>installed,<sp/>0<sp/>to<sp/>remove<sp/>and<sp/>4<sp/>not<sp/>upgraded.</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>package<sp/>lists...</highlight></codeline>
+<codeline><highlight class="normal">Building<sp/>dependency<sp/>tree...</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>state<sp/>information...</highlight></codeline>
+<codeline><highlight class="normal">libvulkan-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(1.3.204.1-2).</highlight></codeline>
+<codeline><highlight class="normal">libvulkan1<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(1.3.204.1-2).</highlight></codeline>
+<codeline><highlight class="normal">0<sp/>upgraded,<sp/>0<sp/>newly<sp/>installed,<sp/>0<sp/>to<sp/>remove<sp/>and<sp/>4<sp/>not<sp/>upgraded.</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>package<sp/>lists...</highlight></codeline>
+<codeline><highlight class="normal">Building<sp/>dependency<sp/>tree...</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>state<sp/>information...</highlight></codeline>
+<codeline><highlight class="normal">libxcursor-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(1:1.2.0-2build4).</highlight></codeline>
+<codeline><highlight class="normal">libxi-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(2:1.8-1build1).</highlight></codeline>
+<codeline><highlight class="normal">libxinerama-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(2:1.1.4-3).</highlight></codeline>
+<codeline><highlight class="normal">libxrandr-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(2:1.5.2-1build1).</highlight></codeline>
+<codeline><highlight class="normal">libx11-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(2:1.7.5-1ubuntu0.3).</highlight></codeline>
+<codeline><highlight class="normal">0<sp/>upgraded,<sp/>0<sp/>newly<sp/>installed,<sp/>0<sp/>to<sp/>remove<sp/>and<sp/>4<sp/>not<sp/>upgraded.</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>package<sp/>lists...</highlight></codeline>
+<codeline><highlight class="normal">Building<sp/>dependency<sp/>tree...</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>state<sp/>information...</highlight></codeline>
+<codeline><highlight class="normal">libwayland-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(1.20.0-1ubuntu0.1).</highlight></codeline>
+<codeline><highlight class="normal">0<sp/>upgraded,<sp/>0<sp/>newly<sp/>installed,<sp/>0<sp/>to<sp/>remove<sp/>and<sp/>4<sp/>not<sp/>upgraded.</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>package<sp/>lists...</highlight></codeline>
+<codeline><highlight class="normal">Building<sp/>dependency<sp/>tree...</highlight></codeline>
+<codeline><highlight class="normal">Reading<sp/>state<sp/>information...</highlight></codeline>
+<codeline><highlight class="normal">gcc<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(4:11.2.0-1ubuntu1).</highlight></codeline>
+<codeline><highlight class="normal">make<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(4.3-4.1build1).</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(3.22.1-1ubuntu1.22.04.2).</highlight></codeline>
+<codeline><highlight class="normal">libc6-dev<sp/>is<sp/>already<sp/>the<sp/>newest<sp/>version<sp/>(2.35-0ubuntu3.8).</highlight></codeline>
+<codeline><highlight class="normal">0<sp/>upgraded,<sp/>0<sp/>newly<sp/>installed,<sp/>0<sp/>to<sp/>remove<sp/>and<sp/>4<sp/>not<sp/>upgraded.</highlight></codeline>
+</programlisting></para>
+<para><hruler/>
+</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">function<sp/>BUILD<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mkdir<sp/>linux</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>cd<sp/>linux</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">BUILD<sp/>&gt;<sp/>.shci/linux/build-output.txt</highlight></codeline>
+</programlisting></para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">--<sp/>shvulkan<sp/>message:<sp/>found<sp/>Vulkan</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>shvulkan<sp/>message:<sp/>Vulkan_INCLUDE_DIR:<sp/>/usr/include</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>shvulkan<sp/>message:<sp/>Vulkan_LIBRARY:<sp/><sp/><sp/><sp/><sp/>/usr/lib/x86_64-linux-gnu/libvulkan.so</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Could<sp/>NOT<sp/>find<sp/>Doxygen<sp/>(missing:<sp/>DOXYGEN_EXECUTABLE)<sp/></highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Including<sp/>Wayland<sp/>support</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Including<sp/>X11<sp/>support</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Checking<sp/>for<sp/>modules<sp/>&apos;wayland-client&gt;=0.2.7;wayland-cursor&gt;=0.2.7;wayland-egl&gt;=0.2.7;xkbcommon&gt;=0.5.0&apos;</highlight></codeline>
+<codeline><highlight class="normal">--<sp/><sp/><sp/>Found<sp/>wayland-client,<sp/>version<sp/>1.20.0</highlight></codeline>
+<codeline><highlight class="normal">--<sp/><sp/><sp/>Found<sp/>wayland-cursor,<sp/>version<sp/>1.20.0</highlight></codeline>
+<codeline><highlight class="normal">--<sp/><sp/><sp/>Found<sp/>wayland-egl,<sp/>version<sp/>18.1.0</highlight></codeline>
+<codeline><highlight class="normal">--<sp/><sp/><sp/>Found<sp/>xkbcommon,<sp/>version<sp/>1.4.0</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Could<sp/>NOT<sp/>find<sp/>Doxygen<sp/>(missing:<sp/>DOXYGEN_EXECUTABLE)<sp/></highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Documentation<sp/>generation<sp/>requires<sp/>Doxygen<sp/>1.9.8<sp/>or<sp/>later</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Configuring<sp/>done</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Generating<sp/>done</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>Build<sp/>files<sp/>have<sp/>been<sp/>written<sp/>to:<sp/>/mnt/c/_home/desktop/github/shvulkan/linux</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>1%]<sp/>Building<sp/>C<sp/>object<sp/>CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVulkan.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>3%]<sp/>Linking<sp/>C<sp/>static<sp/>library<sp/>../bin/linux/libshvulkan.a</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>3%]<sp/>Built<sp/>target<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>5%]<sp/>Building<sp/>C<sp/>object<sp/>CMakeFiles/shvulkan-compute-power-numbers.dir/examples/src/compute/power-numbers.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>7%]<sp/>Linking<sp/>C<sp/>executable<sp/>../bin/linux/shvulkan-compute-power-numbers</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>7%]<sp/>Built<sp/>target<sp/>shvulkan-compute-power-numbers</highlight></codeline>
+<codeline><highlight class="normal">[<sp/><sp/>9%]<sp/>Generating<sp/>xdg-shell-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>11%]<sp/>Generating<sp/>fractional-scale-v1-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>13%]<sp/>Generating<sp/>fractional-scale-v1-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>15%]<sp/>Generating<sp/>idle-inhibit-unstable-v1-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>16%]<sp/>Generating<sp/>idle-inhibit-unstable-v1-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>18%]<sp/>Generating<sp/>pointer-constraints-unstable-v1-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>20%]<sp/>Generating<sp/>pointer-constraints-unstable-v1-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>22%]<sp/>Generating<sp/>relative-pointer-unstable-v1-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>24%]<sp/>Generating<sp/>relative-pointer-unstable-v1-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>26%]<sp/>Generating<sp/>viewporter-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>28%]<sp/>Generating<sp/>viewporter-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>30%]<sp/>Generating<sp/>wayland-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>32%]<sp/>Generating<sp/>wayland-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>33%]<sp/>Generating<sp/>xdg-activation-v1-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>35%]<sp/>Generating<sp/>xdg-activation-v1-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>37%]<sp/>Generating<sp/>xdg-decoration-unstable-v1-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>39%]<sp/>Generating<sp/>xdg-decoration-unstable-v1-client-protocol.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>41%]<sp/>Generating<sp/>xdg-shell-client-protocol-code.h</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>43%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/context.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>45%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/init.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>47%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/input.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>49%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/monitor.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>50%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/platform.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>52%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/vulkan.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>54%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/window.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>56%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/egl_context.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>58%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>60%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/null_init.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>62%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/null_monitor.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>64%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/null_window.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>66%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/null_joystick.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>67%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/posix_module.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>69%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/posix_time.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>71%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/posix_thread.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>73%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>75%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/x11_monitor.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>77%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/x11_window.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>79%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/xkb_unicode.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>81%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/glx_context.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>83%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/wl_init.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>84%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/wl_monitor.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>86%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/wl_window.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>88%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/linux_joystick.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>90%]<sp/>Building<sp/>C<sp/>object<sp/>examples/external/glfw/src/CMakeFiles/glfw.dir/posix_poll.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>92%]<sp/>Linking<sp/>C<sp/>static<sp/>library<sp/>libglfw3.a</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>92%]<sp/>Built<sp/>target<sp/>glfw</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>94%]<sp/>Building<sp/>C<sp/>object<sp/>CMakeFiles/shvulkan-clear-color.dir/examples/src/graphics/clear-color.c.o</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>96%]<sp/>Linking<sp/>C<sp/>executable<sp/>../bin/linux/shvulkan-clear-color</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>96%]<sp/>Built<sp/>target<sp/>shvulkan-clear-color</highlight></codeline>
+<codeline><highlight class="normal">[<sp/>98%]<sp/>Building<sp/>C<sp/>object<sp/>CMakeFiles/shvulkan-scene.dir/examples/src/graphics/scene.c.o</highlight></codeline>
+<codeline><highlight class="normal">[100%]<sp/>Linking<sp/>C<sp/>executable<sp/>../bin/linux/shvulkan-scene</highlight></codeline>
+<codeline><highlight class="normal">[100%]<sp/>Built<sp/>target<sp/>shvulkan-scene</highlight></codeline>
+</programlisting></para>
+<para><hruler/>
+</para>
+<para>build ran for <computeroutput>85.29 s</computeroutput> and terminated with exit code <computeroutput>0</computeroutput></para>
+<para><hruler/>
+ </para>
+    </detaileddescription>
+    <location file="/home/sinho/Desktop/Github/shvulkan/.shci/linux/log.md"/>
+  </compounddef>
+</doxygen>

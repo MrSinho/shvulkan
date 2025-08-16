@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structShVkPipelinePool" kind="struct" language="C++" prot="public">
+    <compoundname>ShVkPipelinePool</compoundname>
+    <includes refid="shVulkan_8h" local="no">shVulkan.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structShVkPipelinePool_1a2962a50ebae3d5528ea23495226bae09" prot="public" static="no" mutable="no">
+        <type><ref refid="structShVkPipeline" kindref="compound">ShVkPipeline</ref></type>
+        <definition>ShVkPipeline ShVkPipelinePool::pipelines[SH_PIPELINE_POOL_MAX_PIPELINE_COUNT]</definition>
+        <argsstring>[SH_PIPELINE_POOL_MAX_PIPELINE_COUNT]</argsstring>
+        <name>pipelines</name>
+        <qualifiedname>ShVkPipelinePool::pipelines</qualifiedname>
+        <briefdescription>
+<para>Array of Vulkan pipelines managed by the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2513" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2513" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a3480c44626bf99b7acfe53b665d36d31" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipelinePool::descriptor_set_layout_binding_count</definition>
+        <argsstring></argsstring>
+        <name>descriptor_set_layout_binding_count</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_set_layout_binding_count</qualifiedname>
+        <briefdescription>
+<para>Total number of descriptor set layout bindings in the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2515" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2515" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a9447ed40daae9c9da08931c9b629c89d" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipelinePool::src_descriptor_set_layout_count</definition>
+        <argsstring></argsstring>
+        <name>src_descriptor_set_layout_count</name>
+        <qualifiedname>ShVkPipelinePool::src_descriptor_set_layout_count</qualifiedname>
+        <briefdescription>
+<para>Number of source descriptor set layouts for copying or setup. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2516" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2516" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a33fa4229ab2a3dbfa87f02a4340e9d46" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipelinePool::descriptor_pool_count</definition>
+        <argsstring></argsstring>
+        <name>descriptor_pool_count</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_pool_count</qualifiedname>
+        <briefdescription>
+<para>Total number of descriptor pools created and managed by the pool. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2517" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2517" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a1f5f31efc7c51baeecdb481f70604a3d" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipelinePool::descriptor_count</definition>
+        <argsstring></argsstring>
+        <name>descriptor_count</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_count</qualifiedname>
+        <briefdescription>
+<para>Combined total of all descriptors in the descriptor pools. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2518" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2518" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a44913df897a0de7876e3bf6d3415387a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipelinePool::write_descriptor_set_count</definition>
+        <argsstring></argsstring>
+        <name>write_descriptor_set_count</name>
+        <qualifiedname>ShVkPipelinePool::write_descriptor_set_count</qualifiedname>
+        <briefdescription>
+<para>Total number of write descriptor sets used for updates. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2519" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2519" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a570b3e878163a4413defd7cf4ddd627b" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipelinePool::descriptor_set_unit_count</definition>
+        <argsstring></argsstring>
+        <name>descriptor_set_unit_count</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_set_unit_count</qualifiedname>
+        <briefdescription>
+<para>Number of descriptor set units, equal to write_descriptor_set_count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2520" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2520" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1ab9fca16ebe9b204799c6c9e964b801a9" prot="public" static="no" mutable="no">
+        <type>VkDescriptorSetLayoutBinding</type>
+        <definition>VkDescriptorSetLayoutBinding ShVkPipelinePool::descriptor_set_layout_bindings[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</argsstring>
+        <name>descriptor_set_layout_bindings</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_set_layout_bindings</qualifiedname>
+        <briefdescription>
+<para>Descriptor set layout bindings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2522" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2522" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a0df46032ec731978c983a8956bbcdb86" prot="public" static="no" mutable="no">
+        <type>VkDescriptorSetLayout</type>
+        <definition>VkDescriptorSetLayout ShVkPipelinePool::descriptor_set_layouts[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</argsstring>
+        <name>descriptor_set_layouts</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_set_layouts</qualifiedname>
+        <briefdescription>
+<para>Descriptor set layouts. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2524" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2524" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a2b3928a1b4a6082ad92413632adbd896" prot="public" static="no" mutable="no">
+        <type>VkDescriptorPool</type>
+        <definition>VkDescriptorPool ShVkPipelinePool::descriptor_pools[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</argsstring>
+        <name>descriptor_pools</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_pools</qualifiedname>
+        <briefdescription>
+<para>Descriptor pools. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2526" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2526" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1a9b14e9cc6fbff4a1fc2aea96c21b8c98" prot="public" static="no" mutable="no">
+        <type>VkDescriptorSet</type>
+        <definition>VkDescriptorSet ShVkPipelinePool::descriptor_sets[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</argsstring>
+        <name>descriptor_sets</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_sets</qualifiedname>
+        <briefdescription>
+<para>Descriptor sets. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2528" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2528" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1adc616b02e045ac43a6a3fae274a84cc5" prot="public" static="no" mutable="no">
+        <type>VkDescriptorBufferInfo</type>
+        <definition>VkDescriptorBufferInfo ShVkPipelinePool::descriptor_buffer_infos[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</argsstring>
+        <name>descriptor_buffer_infos</name>
+        <qualifiedname>ShVkPipelinePool::descriptor_buffer_infos</qualifiedname>
+        <briefdescription>
+<para>Descriptor buffer info. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2530" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2530" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipelinePool_1abcd4de99b9f4e7101819f61932ebd256" prot="public" static="no" mutable="no">
+        <type>VkWriteDescriptorSet</type>
+        <definition>VkWriteDescriptorSet ShVkPipelinePool::write_descriptor_sets[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_POOL_DESCRIPTOR_COUNT]</argsstring>
+        <name>write_descriptor_sets</name>
+        <qualifiedname>ShVkPipelinePool::write_descriptor_sets</qualifiedname>
+        <briefdescription>
+<para>Write descriptor sets. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2532" column="30" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2532" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents a collection of Vulkan pipeline objects and their related resources. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure holds arrays of Vulkan pipelines, descriptor set layouts, descriptor pools, and other related resources required to manage and use Vulkan pipelines in a pipeline pool. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>ShVkPipeline</label>
+        <link refid="structShVkPipeline"/>
+      </node>
+      <node id="1">
+        <label>ShVkPipelinePool</label>
+        <link refid="structShVkPipelinePool"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pipelines</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2512" column="1" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2512" bodyend="2534"/>
+    <listofallmembers>
+      <member refid="structShVkPipelinePool_1adc616b02e045ac43a6a3fae274a84cc5" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_buffer_infos</name></member>
+      <member refid="structShVkPipelinePool_1a1f5f31efc7c51baeecdb481f70604a3d" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_count</name></member>
+      <member refid="structShVkPipelinePool_1a33fa4229ab2a3dbfa87f02a4340e9d46" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_pool_count</name></member>
+      <member refid="structShVkPipelinePool_1a2b3928a1b4a6082ad92413632adbd896" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_pools</name></member>
+      <member refid="structShVkPipelinePool_1a3480c44626bf99b7acfe53b665d36d31" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_set_layout_binding_count</name></member>
+      <member refid="structShVkPipelinePool_1ab9fca16ebe9b204799c6c9e964b801a9" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_set_layout_bindings</name></member>
+      <member refid="structShVkPipelinePool_1a0df46032ec731978c983a8956bbcdb86" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_set_layouts</name></member>
+      <member refid="structShVkPipelinePool_1a570b3e878163a4413defd7cf4ddd627b" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_set_unit_count</name></member>
+      <member refid="structShVkPipelinePool_1a9b14e9cc6fbff4a1fc2aea96c21b8c98" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>descriptor_sets</name></member>
+      <member refid="structShVkPipelinePool_1a2962a50ebae3d5528ea23495226bae09" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>pipelines</name></member>
+      <member refid="structShVkPipelinePool_1a9447ed40daae9c9da08931c9b629c89d" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>src_descriptor_set_layout_count</name></member>
+      <member refid="structShVkPipelinePool_1a44913df897a0de7876e3bf6d3415387a" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>write_descriptor_set_count</name></member>
+      <member refid="structShVkPipelinePool_1abcd4de99b9f4e7101819f61932ebd256" prot="public" virt="non-virtual"><scope>ShVkPipelinePool</scope><name>write_descriptor_sets</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,267 @@
+\doxysection{Sh\+Vk\+Pipeline Struct Reference}
+\hypertarget{structShVkPipeline}{}\label{structShVkPipeline}\index{ShVkPipeline@{ShVkPipeline}}
+
+
+Structure representing a Vulkan pipeline.  
+
+
+
+
+{\ttfamily \#include $<$sh\+Vulkan.\+h$>$}
+
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipeline_ab15f5afcb70bd5de3bd81864f91e6696}{vertex\+\_\+binding\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Number of vertex bindings. \end{DoxyCompactList}\item 
+Vk\+Vertex\+Input\+Binding\+Description \mbox{\hyperlink{structShVkPipeline_aa84cc8e3346535780ed784f1b1e3eff0}{vertex\+\_\+bindings}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_af673c20336c080a49187acd6fa18cf84}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+VERTEX\+\_\+\+BINDING\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of vertex input bindings. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipeline_a4bf1195a1791c2f791d4e53e8c027a4a}{vertex\+\_\+attribute\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Number of vertex attributes. \end{DoxyCompactList}\item 
+Vk\+Vertex\+Input\+Attribute\+Description \mbox{\hyperlink{structShVkPipeline_a8f91185da88f6d227a68f78f1bafdcc6}{vertex\+\_\+attributes}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a091b1cecf2c3862ae534b7c1300282a9}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+VERTEX\+\_\+\+ATTRIBUTE\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of vertex input attributes. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Vertex\+Input\+State\+Create\+Info \mbox{\hyperlink{structShVkPipeline_a7d4ad01c7eaeb9c39e97af0cee13a27f}{vertex\+\_\+input\+\_\+state\+\_\+info}}
+\begin{DoxyCompactList}\small\item\em Vertex input state information. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Input\+Assembly\+State\+Create\+Info \mbox{\hyperlink{structShVkPipeline_a3ba1efefe5508c9d32cca9255b639880}{input\+\_\+assembly}}
+\begin{DoxyCompactList}\small\item\em Input assembly state information. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipeline_abf55b198ee4e8f6a9a151f2f3b267ed0}{shader\+\_\+module\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Number of shader modules. \end{DoxyCompactList}\item 
+Vk\+Shader\+Module \mbox{\hyperlink{structShVkPipeline_a639990891b28c27427634459eae4bff1}{shader\+\_\+modules}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_aee56f29993961649cc353e2cfeafe8f8}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+SHADER\+\_\+\+STAGE\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of shader modules. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipeline_ad9cae3ad8a53d8f40d1014e464515131}{shader\+\_\+stage\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Number of shader stages. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Shader\+Stage\+Create\+Info \mbox{\hyperlink{structShVkPipeline_a9a99c1efbbf1990be7adc2a90707c3c0}{shader\+\_\+stages}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_aee56f29993961649cc353e2cfeafe8f8}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+SHADER\+\_\+\+STAGE\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of shader stage create info. \end{DoxyCompactList}\item 
+Vk\+Push\+Constant\+Range \mbox{\hyperlink{structShVkPipeline_a31ff7de998830c8719bd291ab456df28}{push\+\_\+constant\+\_\+range}}
+\begin{DoxyCompactList}\small\item\em Push constant range information. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Rasterization\+State\+Create\+Info \mbox{\hyperlink{structShVkPipeline_ad7da5701d508803f048e09b182963bbc}{rasterizer}}
+\begin{DoxyCompactList}\small\item\em Rasterizer state information. \end{DoxyCompactList}\item 
+Vk\+Viewport \mbox{\hyperlink{structShVkPipeline_aad91d82a780898fc535f4e05855d275c}{viewport}}
+\begin{DoxyCompactList}\small\item\em Viewport information. \end{DoxyCompactList}\item 
+Vk\+Rect2D \mbox{\hyperlink{structShVkPipeline_a58e92f5c9b13ee41f0d7b31ec5f17b56}{scissors}}
+\begin{DoxyCompactList}\small\item\em Scissor rectangle information. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Viewport\+State\+Create\+Info \mbox{\hyperlink{structShVkPipeline_a992e59e59ca02700bda9f894b8ccc594}{viewport\+\_\+state}}
+\begin{DoxyCompactList}\small\item\em Viewport state information. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Color\+Blend\+Attachment\+State \mbox{\hyperlink{structShVkPipeline_adb2024e7d365784112d5d2b71151045b}{color\+\_\+blend\+\_\+attachment\+\_\+states}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a379e54073774df0b0209554206c0c3e4}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+SUBPASS\+\_\+\+COLOR\+\_\+\+ATTACHMENT\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of color blend attachment states. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Color\+Blend\+State\+Create\+Info \mbox{\hyperlink{structShVkPipeline_a550bf5819b0e2e89a5698b10bddda680}{color\+\_\+blend\+\_\+state}}
+\begin{DoxyCompactList}\small\item\em Color blend state information. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Multisample\+State\+Create\+Info \mbox{\hyperlink{structShVkPipeline_acc77818ae1d69bfb4661d128194f450e}{multisample\+\_\+state\+\_\+info}}
+\begin{DoxyCompactList}\small\item\em Multisample state information. \end{DoxyCompactList}\item 
+Vk\+Pipeline\+Layout \mbox{\hyperlink{structShVkPipeline_ae7fc91a99f5fb3c8a5a286d2b3e503a9}{pipeline\+\_\+layout}}
+\begin{DoxyCompactList}\small\item\em Vulkan pipeline layout. \end{DoxyCompactList}\item 
+Vk\+Pipeline \mbox{\hyperlink{structShVkPipeline_a3c654e3648932d192409fda6a2ed376e}{pipeline}}
+\begin{DoxyCompactList}\small\item\em Vulkan pipeline. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure representing a Vulkan pipeline. 
+
+This structure holds all the necessary state and configuration for creating and managing a Vulkan pipeline. 
+
+\doxysubsection{Field Documentation}
+\Hypertarget{structShVkPipeline_adb2024e7d365784112d5d2b71151045b}\index{ShVkPipeline@{ShVkPipeline}!color\_blend\_attachment\_states@{color\_blend\_attachment\_states}}
+\index{color\_blend\_attachment\_states@{color\_blend\_attachment\_states}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{color\_blend\_attachment\_states}{color\_blend\_attachment\_states}}
+{\footnotesize\ttfamily \label{structShVkPipeline_adb2024e7d365784112d5d2b71151045b} 
+Vk\+Pipeline\+Color\+Blend\+Attachment\+State Sh\+Vk\+Pipeline\+::color\+\_\+blend\+\_\+attachment\+\_\+states\mbox{[}\mbox{\hyperlink{shVulkan_8h_a379e54073774df0b0209554206c0c3e4}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+SUBPASS\+\_\+\+COLOR\+\_\+\+ATTACHMENT\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Array of color blend attachment states. 
+
+\Hypertarget{structShVkPipeline_a550bf5819b0e2e89a5698b10bddda680}\index{ShVkPipeline@{ShVkPipeline}!color\_blend\_state@{color\_blend\_state}}
+\index{color\_blend\_state@{color\_blend\_state}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{color\_blend\_state}{color\_blend\_state}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a550bf5819b0e2e89a5698b10bddda680} 
+Vk\+Pipeline\+Color\+Blend\+State\+Create\+Info Sh\+Vk\+Pipeline\+::color\+\_\+blend\+\_\+state}
+
+
+
+Color blend state information. 
+
+\Hypertarget{structShVkPipeline_a3ba1efefe5508c9d32cca9255b639880}\index{ShVkPipeline@{ShVkPipeline}!input\_assembly@{input\_assembly}}
+\index{input\_assembly@{input\_assembly}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{input\_assembly}{input\_assembly}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a3ba1efefe5508c9d32cca9255b639880} 
+Vk\+Pipeline\+Input\+Assembly\+State\+Create\+Info Sh\+Vk\+Pipeline\+::input\+\_\+assembly}
+
+
+
+Input assembly state information. 
+
+\Hypertarget{structShVkPipeline_acc77818ae1d69bfb4661d128194f450e}\index{ShVkPipeline@{ShVkPipeline}!multisample\_state\_info@{multisample\_state\_info}}
+\index{multisample\_state\_info@{multisample\_state\_info}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{multisample\_state\_info}{multisample\_state\_info}}
+{\footnotesize\ttfamily \label{structShVkPipeline_acc77818ae1d69bfb4661d128194f450e} 
+Vk\+Pipeline\+Multisample\+State\+Create\+Info Sh\+Vk\+Pipeline\+::multisample\+\_\+state\+\_\+info}
+
+
+
+Multisample state information. 
+
+\Hypertarget{structShVkPipeline_a3c654e3648932d192409fda6a2ed376e}\index{ShVkPipeline@{ShVkPipeline}!pipeline@{pipeline}}
+\index{pipeline@{pipeline}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{pipeline}{pipeline}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a3c654e3648932d192409fda6a2ed376e} 
+Vk\+Pipeline Sh\+Vk\+Pipeline\+::pipeline}
+
+
+
+Vulkan pipeline. 
+
+\Hypertarget{structShVkPipeline_ae7fc91a99f5fb3c8a5a286d2b3e503a9}\index{ShVkPipeline@{ShVkPipeline}!pipeline\_layout@{pipeline\_layout}}
+\index{pipeline\_layout@{pipeline\_layout}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{pipeline\_layout}{pipeline\_layout}}
+{\footnotesize\ttfamily \label{structShVkPipeline_ae7fc91a99f5fb3c8a5a286d2b3e503a9} 
+Vk\+Pipeline\+Layout Sh\+Vk\+Pipeline\+::pipeline\+\_\+layout}
+
+
+
+Vulkan pipeline layout. 
+
+\Hypertarget{structShVkPipeline_a31ff7de998830c8719bd291ab456df28}\index{ShVkPipeline@{ShVkPipeline}!push\_constant\_range@{push\_constant\_range}}
+\index{push\_constant\_range@{push\_constant\_range}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{push\_constant\_range}{push\_constant\_range}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a31ff7de998830c8719bd291ab456df28} 
+Vk\+Push\+Constant\+Range Sh\+Vk\+Pipeline\+::push\+\_\+constant\+\_\+range}
+
+
+
+Push constant range information. 
+
+\Hypertarget{structShVkPipeline_ad7da5701d508803f048e09b182963bbc}\index{ShVkPipeline@{ShVkPipeline}!rasterizer@{rasterizer}}
+\index{rasterizer@{rasterizer}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{rasterizer}{rasterizer}}
+{\footnotesize\ttfamily \label{structShVkPipeline_ad7da5701d508803f048e09b182963bbc} 
+Vk\+Pipeline\+Rasterization\+State\+Create\+Info Sh\+Vk\+Pipeline\+::rasterizer}
+
+
+
+Rasterizer state information. 
+
+\Hypertarget{structShVkPipeline_a58e92f5c9b13ee41f0d7b31ec5f17b56}\index{ShVkPipeline@{ShVkPipeline}!scissors@{scissors}}
+\index{scissors@{scissors}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{scissors}{scissors}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a58e92f5c9b13ee41f0d7b31ec5f17b56} 
+Vk\+Rect2D Sh\+Vk\+Pipeline\+::scissors}
+
+
+
+Scissor rectangle information. 
+
+\Hypertarget{structShVkPipeline_abf55b198ee4e8f6a9a151f2f3b267ed0}\index{ShVkPipeline@{ShVkPipeline}!shader\_module\_count@{shader\_module\_count}}
+\index{shader\_module\_count@{shader\_module\_count}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{shader\_module\_count}{shader\_module\_count}}
+{\footnotesize\ttfamily \label{structShVkPipeline_abf55b198ee4e8f6a9a151f2f3b267ed0} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+::shader\+\_\+module\+\_\+count}
+
+
+
+Number of shader modules. 
+
+\Hypertarget{structShVkPipeline_a639990891b28c27427634459eae4bff1}\index{ShVkPipeline@{ShVkPipeline}!shader\_modules@{shader\_modules}}
+\index{shader\_modules@{shader\_modules}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{shader\_modules}{shader\_modules}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a639990891b28c27427634459eae4bff1} 
+Vk\+Shader\+Module Sh\+Vk\+Pipeline\+::shader\+\_\+modules\mbox{[}\mbox{\hyperlink{shVulkan_8h_aee56f29993961649cc353e2cfeafe8f8}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+SHADER\+\_\+\+STAGE\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Array of shader modules. 
+
+\Hypertarget{structShVkPipeline_ad9cae3ad8a53d8f40d1014e464515131}\index{ShVkPipeline@{ShVkPipeline}!shader\_stage\_count@{shader\_stage\_count}}
+\index{shader\_stage\_count@{shader\_stage\_count}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{shader\_stage\_count}{shader\_stage\_count}}
+{\footnotesize\ttfamily \label{structShVkPipeline_ad9cae3ad8a53d8f40d1014e464515131} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+::shader\+\_\+stage\+\_\+count}
+
+
+
+Number of shader stages. 
+
+\Hypertarget{structShVkPipeline_a9a99c1efbbf1990be7adc2a90707c3c0}\index{ShVkPipeline@{ShVkPipeline}!shader\_stages@{shader\_stages}}
+\index{shader\_stages@{shader\_stages}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{shader\_stages}{shader\_stages}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a9a99c1efbbf1990be7adc2a90707c3c0} 
+Vk\+Pipeline\+Shader\+Stage\+Create\+Info Sh\+Vk\+Pipeline\+::shader\+\_\+stages\mbox{[}\mbox{\hyperlink{shVulkan_8h_aee56f29993961649cc353e2cfeafe8f8}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+SHADER\+\_\+\+STAGE\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Array of shader stage create info. 
+
+\Hypertarget{structShVkPipeline_a4bf1195a1791c2f791d4e53e8c027a4a}\index{ShVkPipeline@{ShVkPipeline}!vertex\_attribute\_count@{vertex\_attribute\_count}}
+\index{vertex\_attribute\_count@{vertex\_attribute\_count}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{vertex\_attribute\_count}{vertex\_attribute\_count}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a4bf1195a1791c2f791d4e53e8c027a4a} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+::vertex\+\_\+attribute\+\_\+count}
+
+
+
+Number of vertex attributes. 
+
+\Hypertarget{structShVkPipeline_a8f91185da88f6d227a68f78f1bafdcc6}\index{ShVkPipeline@{ShVkPipeline}!vertex\_attributes@{vertex\_attributes}}
+\index{vertex\_attributes@{vertex\_attributes}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{vertex\_attributes}{vertex\_attributes}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a8f91185da88f6d227a68f78f1bafdcc6} 
+Vk\+Vertex\+Input\+Attribute\+Description Sh\+Vk\+Pipeline\+::vertex\+\_\+attributes\mbox{[}\mbox{\hyperlink{shVulkan_8h_a091b1cecf2c3862ae534b7c1300282a9}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+VERTEX\+\_\+\+ATTRIBUTE\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Array of vertex input attributes. 
+
+\Hypertarget{structShVkPipeline_ab15f5afcb70bd5de3bd81864f91e6696}\index{ShVkPipeline@{ShVkPipeline}!vertex\_binding\_count@{vertex\_binding\_count}}
+\index{vertex\_binding\_count@{vertex\_binding\_count}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{vertex\_binding\_count}{vertex\_binding\_count}}
+{\footnotesize\ttfamily \label{structShVkPipeline_ab15f5afcb70bd5de3bd81864f91e6696} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+::vertex\+\_\+binding\+\_\+count}
+
+
+
+Number of vertex bindings. 
+
+\Hypertarget{structShVkPipeline_aa84cc8e3346535780ed784f1b1e3eff0}\index{ShVkPipeline@{ShVkPipeline}!vertex\_bindings@{vertex\_bindings}}
+\index{vertex\_bindings@{vertex\_bindings}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{vertex\_bindings}{vertex\_bindings}}
+{\footnotesize\ttfamily \label{structShVkPipeline_aa84cc8e3346535780ed784f1b1e3eff0} 
+Vk\+Vertex\+Input\+Binding\+Description Sh\+Vk\+Pipeline\+::vertex\+\_\+bindings\mbox{[}\mbox{\hyperlink{shVulkan_8h_af673c20336c080a49187acd6fa18cf84}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+VERTEX\+\_\+\+BINDING\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Array of vertex input bindings. 
+
+\Hypertarget{structShVkPipeline_a7d4ad01c7eaeb9c39e97af0cee13a27f}\index{ShVkPipeline@{ShVkPipeline}!vertex\_input\_state\_info@{vertex\_input\_state\_info}}
+\index{vertex\_input\_state\_info@{vertex\_input\_state\_info}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{vertex\_input\_state\_info}{vertex\_input\_state\_info}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a7d4ad01c7eaeb9c39e97af0cee13a27f} 
+Vk\+Pipeline\+Vertex\+Input\+State\+Create\+Info Sh\+Vk\+Pipeline\+::vertex\+\_\+input\+\_\+state\+\_\+info}
+
+
+
+Vertex input state information. 
+
+\Hypertarget{structShVkPipeline_aad91d82a780898fc535f4e05855d275c}\index{ShVkPipeline@{ShVkPipeline}!viewport@{viewport}}
+\index{viewport@{viewport}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{viewport}{viewport}}
+{\footnotesize\ttfamily \label{structShVkPipeline_aad91d82a780898fc535f4e05855d275c} 
+Vk\+Viewport Sh\+Vk\+Pipeline\+::viewport}
+
+
+
+Viewport information. 
+
+\Hypertarget{structShVkPipeline_a992e59e59ca02700bda9f894b8ccc594}\index{ShVkPipeline@{ShVkPipeline}!viewport\_state@{viewport\_state}}
+\index{viewport\_state@{viewport\_state}!ShVkPipeline@{ShVkPipeline}}
+\doxysubsubsection{\texorpdfstring{viewport\_state}{viewport\_state}}
+{\footnotesize\ttfamily \label{structShVkPipeline_a992e59e59ca02700bda9f894b8ccc594} 
+Vk\+Pipeline\+Viewport\+State\+Create\+Info Sh\+Vk\+Pipeline\+::viewport\+\_\+state}
+
+
+
+Viewport state information. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/sinho/\+Desktop/\+Github/shvulkan/shvulkan/include/shvulkan/\mbox{\hyperlink{shVulkan_8h}{sh\+Vulkan.\+h}}\end{DoxyCompactItemize}

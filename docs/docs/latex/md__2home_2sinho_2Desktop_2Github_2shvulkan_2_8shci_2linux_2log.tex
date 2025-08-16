@@ -1,0 +1,198 @@
+\chapter{Linux build logs}
+\hypertarget{md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log}{}\label{md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log}\index{Linux build logs@{Linux build logs}}
+\label{md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log_autotoc_md34}%
+\Hypertarget{md__2home_2sinho_2Desktop_2Github_2shvulkan_2_8shci_2linux_2log_autotoc_md34}%
+
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{linux-exit-code.svg}}
+\end{DoxyImageNoCaption}
+   
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{system\ \ \ \ \ \ \ \ :\ Linux}
+\DoxyCodeLine{version\ \ \ \ \ \ \ :\ \#1\ SMP\ Fri\ Mar\ 29\ 23:14:13\ UTC\ 2024}
+\DoxyCodeLine{platform\ \ \ \ \ \ :\ Linux-\/5.15.153.1-\/microsoft-\/standard-\/WSL2-\/x86\_64-\/with-\/glibc2.35}
+\DoxyCodeLine{processor\ \ \ \ \ :\ x86\_64}
+\DoxyCodeLine{min\ frequency\ :\ 0.0\ MHz}
+\DoxyCodeLine{max\ frequency\ :\ 0.0\ MHz}
+\DoxyCodeLine{cores\ \ \ \ \ \ \ \ \ :\ 4}
+
+\end{DoxyCode}
+
+
+build ran for {\ttfamily 85.\+29 s} and terminated with exit code {\ttfamily 0}
+
+\DoxyHorRuler{0}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{function\ PREREQUISITES\ \{}
+\DoxyCodeLine{\ \ \ \ sudo\ apt\ -\/y\ update}
+\DoxyCodeLine{\ \ \ \ sudo\ apt\ install\ -\/y\ pkg-\/config\ libxkbcommon-\/dev}
+\DoxyCodeLine{\ \ \ \ sudo\ apt\ install\ -\/y\ libvulkan-\/dev\ libvulkan1}
+\DoxyCodeLine{\ \ \ \ sudo\ apt\ install\ -\/y\ libx11-\/dev\ libxrandr-\/dev\ libxinerama-\/dev\ libxcursor-\/dev\ libxi-\/dev}
+\DoxyCodeLine{\ \ \ \ sudo\ apt\ install\ -\/y\ libwayland-\/dev}
+\DoxyCodeLine{\ \ \ \ sudo\ apt\ install\ -\/y\ gcc\ cmake\ make\ libc6-\/dev}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{PREREQUISITES\ >\ .shci/linux/prerequisites-\/output.txt}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Hit:1\ http://archive.ubuntu.com/ubuntu\ jammy\ InRelease}
+\DoxyCodeLine{Hit:2\ http://archive.ubuntu.com/ubuntu\ jammy-\/updates\ InRelease}
+\DoxyCodeLine{Hit:3\ http://archive.ubuntu.com/ubuntu\ jammy-\/backports\ InRelease}
+\DoxyCodeLine{Hit:4\ http://security.ubuntu.com/ubuntu\ jammy-\/security\ InRelease}
+\DoxyCodeLine{Reading\ package\ lists...}
+\DoxyCodeLine{Building\ dependency\ tree...}
+\DoxyCodeLine{Reading\ state\ information...}
+\DoxyCodeLine{4\ packages\ can\ be\ upgraded.\ Run\ 'apt\ list\ -\/-\/upgradable'\ to\ see\ them.}
+\DoxyCodeLine{Reading\ package\ lists...}
+\DoxyCodeLine{Building\ dependency\ tree...}
+\DoxyCodeLine{Reading\ state\ information...}
+\DoxyCodeLine{libxkbcommon-\/dev\ is\ already\ the\ newest\ version\ (1.4.0-\/1).}
+\DoxyCodeLine{pkg-\/config\ is\ already\ the\ newest\ version\ (0.29.2-\/1ubuntu3).}
+\DoxyCodeLine{0\ upgraded,\ 0\ newly\ installed,\ 0\ to\ remove\ and\ 4\ not\ upgraded.}
+\DoxyCodeLine{Reading\ package\ lists...}
+\DoxyCodeLine{Building\ dependency\ tree...}
+\DoxyCodeLine{Reading\ state\ information...}
+\DoxyCodeLine{libvulkan-\/dev\ is\ already\ the\ newest\ version\ (1.3.204.1-\/2).}
+\DoxyCodeLine{libvulkan1\ is\ already\ the\ newest\ version\ (1.3.204.1-\/2).}
+\DoxyCodeLine{0\ upgraded,\ 0\ newly\ installed,\ 0\ to\ remove\ and\ 4\ not\ upgraded.}
+\DoxyCodeLine{Reading\ package\ lists...}
+\DoxyCodeLine{Building\ dependency\ tree...}
+\DoxyCodeLine{Reading\ state\ information...}
+\DoxyCodeLine{libxcursor-\/dev\ is\ already\ the\ newest\ version\ (1:1.2.0-\/2build4).}
+\DoxyCodeLine{libxi-\/dev\ is\ already\ the\ newest\ version\ (2:1.8-\/1build1).}
+\DoxyCodeLine{libxinerama-\/dev\ is\ already\ the\ newest\ version\ (2:1.1.4-\/3).}
+\DoxyCodeLine{libxrandr-\/dev\ is\ already\ the\ newest\ version\ (2:1.5.2-\/1build1).}
+\DoxyCodeLine{libx11-\/dev\ is\ already\ the\ newest\ version\ (2:1.7.5-\/1ubuntu0.3).}
+\DoxyCodeLine{0\ upgraded,\ 0\ newly\ installed,\ 0\ to\ remove\ and\ 4\ not\ upgraded.}
+\DoxyCodeLine{Reading\ package\ lists...}
+\DoxyCodeLine{Building\ dependency\ tree...}
+\DoxyCodeLine{Reading\ state\ information...}
+\DoxyCodeLine{libwayland-\/dev\ is\ already\ the\ newest\ version\ (1.20.0-\/1ubuntu0.1).}
+\DoxyCodeLine{0\ upgraded,\ 0\ newly\ installed,\ 0\ to\ remove\ and\ 4\ not\ upgraded.}
+\DoxyCodeLine{Reading\ package\ lists...}
+\DoxyCodeLine{Building\ dependency\ tree...}
+\DoxyCodeLine{Reading\ state\ information...}
+\DoxyCodeLine{gcc\ is\ already\ the\ newest\ version\ (4:11.2.0-\/1ubuntu1).}
+\DoxyCodeLine{make\ is\ already\ the\ newest\ version\ (4.3-\/4.1build1).}
+\DoxyCodeLine{cmake\ is\ already\ the\ newest\ version\ (3.22.1-\/1ubuntu1.22.04.2).}
+\DoxyCodeLine{libc6-\/dev\ is\ already\ the\ newest\ version\ (2.35-\/0ubuntu3.8).}
+\DoxyCodeLine{0\ upgraded,\ 0\ newly\ installed,\ 0\ to\ remove\ and\ 4\ not\ upgraded.}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{function\ BUILD\ \{}
+\DoxyCodeLine{\ \ \ \ mkdir\ linux}
+\DoxyCodeLine{\ \ \ \ cd\ linux}
+\DoxyCodeLine{\ \ \ \ cmake\ -\/DSH\_VULKAN\_BUILD\_EXAMPLES=ON\ ..}
+\DoxyCodeLine{\ \ \ \ cmake\ -\/-\/build\ .}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{BUILD\ >\ .shci/linux/build-\/output.txt}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{-\/-\/\ shvulkan\ message:\ found\ Vulkan}
+\DoxyCodeLine{-\/-\/\ shvulkan\ message:\ Vulkan\_INCLUDE\_DIR:\ /usr/include}
+\DoxyCodeLine{-\/-\/\ shvulkan\ message:\ Vulkan\_LIBRARY:\ \ \ \ \ /usr/lib/x86\_64-\/linux-\/gnu/libvulkan.so}
+\DoxyCodeLine{-\/-\/\ Could\ NOT\ find\ Doxygen\ (missing:\ DOXYGEN\_EXECUTABLE)\ }
+\DoxyCodeLine{-\/-\/\ Including\ Wayland\ support}
+\DoxyCodeLine{-\/-\/\ Including\ X11\ support}
+\DoxyCodeLine{-\/-\/\ Checking\ for\ modules\ 'wayland-\/client>=0.2.7;wayland-\/cursor>=0.2.7;wayland-\/egl>=0.2.7;xkbcommon>=0.5.0'}
+\DoxyCodeLine{-\/-\/\ \ \ Found\ wayland-\/client,\ version\ 1.20.0}
+\DoxyCodeLine{-\/-\/\ \ \ Found\ wayland-\/cursor,\ version\ 1.20.0}
+\DoxyCodeLine{-\/-\/\ \ \ Found\ wayland-\/egl,\ version\ 18.1.0}
+\DoxyCodeLine{-\/-\/\ \ \ Found\ xkbcommon,\ version\ 1.4.0}
+\DoxyCodeLine{-\/-\/\ Could\ NOT\ find\ Doxygen\ (missing:\ DOXYGEN\_EXECUTABLE)\ }
+\DoxyCodeLine{-\/-\/\ Documentation\ generation\ requires\ Doxygen\ 1.9.8\ or\ later}
+\DoxyCodeLine{-\/-\/\ Configuring\ done}
+\DoxyCodeLine{-\/-\/\ Generating\ done}
+\DoxyCodeLine{-\/-\/\ Build\ files\ have\ been\ written\ to:\ /mnt/c/\_home/desktop/github/shvulkan/linux}
+\DoxyCodeLine{[\ \ 1\%]\ Building\ C\ object\ CMakeFiles/shvulkan.dir/shvulkan/src/shvulkan/shVulkan.c.o}
+\DoxyCodeLine{[\ \ 3\%]\ Linking\ C\ static\ library\ ../bin/linux/libshvulkan.a}
+\DoxyCodeLine{[\ \ 3\%]\ Built\ target\ shvulkan}
+\DoxyCodeLine{[\ \ 5\%]\ Building\ C\ object\ CMakeFiles/shvulkan-\/compute-\/power-\/numbers.dir/examples/src/compute/power-\/numbers.c.o}
+\DoxyCodeLine{[\ \ 7\%]\ Linking\ C\ executable\ ../bin/linux/shvulkan-\/compute-\/power-\/numbers}
+\DoxyCodeLine{[\ \ 7\%]\ Built\ target\ shvulkan-\/compute-\/power-\/numbers}
+\DoxyCodeLine{[\ \ 9\%]\ Generating\ xdg-\/shell-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 11\%]\ Generating\ fractional-\/scale-\/v1-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 13\%]\ Generating\ fractional-\/scale-\/v1-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 15\%]\ Generating\ idle-\/inhibit-\/unstable-\/v1-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 16\%]\ Generating\ idle-\/inhibit-\/unstable-\/v1-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 18\%]\ Generating\ pointer-\/constraints-\/unstable-\/v1-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 20\%]\ Generating\ pointer-\/constraints-\/unstable-\/v1-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 22\%]\ Generating\ relative-\/pointer-\/unstable-\/v1-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 24\%]\ Generating\ relative-\/pointer-\/unstable-\/v1-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 26\%]\ Generating\ viewporter-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 28\%]\ Generating\ viewporter-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 30\%]\ Generating\ wayland-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 32\%]\ Generating\ wayland-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 33\%]\ Generating\ xdg-\/activation-\/v1-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 35\%]\ Generating\ xdg-\/activation-\/v1-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 37\%]\ Generating\ xdg-\/decoration-\/unstable-\/v1-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 39\%]\ Generating\ xdg-\/decoration-\/unstable-\/v1-\/client-\/protocol.h}
+\DoxyCodeLine{[\ 41\%]\ Generating\ xdg-\/shell-\/client-\/protocol-\/code.h}
+\DoxyCodeLine{[\ 43\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/context.c.o}
+\DoxyCodeLine{[\ 45\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/init.c.o}
+\DoxyCodeLine{[\ 47\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/input.c.o}
+\DoxyCodeLine{[\ 49\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/monitor.c.o}
+\DoxyCodeLine{[\ 50\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/platform.c.o}
+\DoxyCodeLine{[\ 52\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/vulkan.c.o}
+\DoxyCodeLine{[\ 54\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/window.c.o}
+\DoxyCodeLine{[\ 56\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/egl\_context.c.o}
+\DoxyCodeLine{[\ 58\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/osmesa\_context.c.o}
+\DoxyCodeLine{[\ 60\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/null\_init.c.o}
+\DoxyCodeLine{[\ 62\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/null\_monitor.c.o}
+\DoxyCodeLine{[\ 64\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/null\_window.c.o}
+\DoxyCodeLine{[\ 66\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/null\_joystick.c.o}
+\DoxyCodeLine{[\ 67\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/posix\_module.c.o}
+\DoxyCodeLine{[\ 69\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/posix\_time.c.o}
+\DoxyCodeLine{[\ 71\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/posix\_thread.c.o}
+\DoxyCodeLine{[\ 73\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/x11\_init.c.o}
+\DoxyCodeLine{[\ 75\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/x11\_monitor.c.o}
+\DoxyCodeLine{[\ 77\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/x11\_window.c.o}
+\DoxyCodeLine{[\ 79\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/xkb\_unicode.c.o}
+\DoxyCodeLine{[\ 81\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/glx\_context.c.o}
+\DoxyCodeLine{[\ 83\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/wl\_init.c.o}
+\DoxyCodeLine{[\ 84\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/wl\_monitor.c.o}
+\DoxyCodeLine{[\ 86\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/wl\_window.c.o}
+\DoxyCodeLine{[\ 88\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/linux\_joystick.c.o}
+\DoxyCodeLine{[\ 90\%]\ Building\ C\ object\ examples/external/glfw/src/CMakeFiles/glfw.dir/posix\_poll.c.o}
+\DoxyCodeLine{[\ 92\%]\ Linking\ C\ static\ library\ libglfw3.a}
+\DoxyCodeLine{[\ 92\%]\ Built\ target\ glfw}
+\DoxyCodeLine{[\ 94\%]\ Building\ C\ object\ CMakeFiles/shvulkan-\/clear-\/color.dir/examples/src/graphics/clear-\/color.c.o}
+\DoxyCodeLine{[\ 96\%]\ Linking\ C\ executable\ ../bin/linux/shvulkan-\/clear-\/color}
+\DoxyCodeLine{[\ 96\%]\ Built\ target\ shvulkan-\/clear-\/color}
+\DoxyCodeLine{[\ 98\%]\ Building\ C\ object\ CMakeFiles/shvulkan-\/scene.dir/examples/src/graphics/scene.c.o}
+\DoxyCodeLine{[100\%]\ Linking\ C\ executable\ ../bin/linux/shvulkan-\/scene}
+\DoxyCodeLine{[100\%]\ Built\ target\ shvulkan-\/scene}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+
+
+build ran for {\ttfamily 85.\+29 s} and terminated with exit code {\ttfamily 0}
+
+\DoxyHorRuler{0}
+ 

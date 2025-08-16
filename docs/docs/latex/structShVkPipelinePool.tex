@@ -1,0 +1,183 @@
+\doxysection{Sh\+Vk\+Pipeline\+Pool Struct Reference}
+\hypertarget{structShVkPipelinePool}{}\label{structShVkPipelinePool}\index{ShVkPipelinePool@{ShVkPipelinePool}}
+
+
+Represents a collection of Vulkan pipeline objects and their related resources.  
+
+
+
+
+{\ttfamily \#include $<$sh\+Vulkan.\+h$>$}
+
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structShVkPipeline}{Sh\+Vk\+Pipeline}} \mbox{\hyperlink{structShVkPipelinePool_a2962a50ebae3d5528ea23495226bae09}{pipelines}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_ae192b45b4a12b020b42e796770fc4f63}{SH\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of Vulkan pipelines managed by the pool. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipelinePool_a3480c44626bf99b7acfe53b665d36d31}{descriptor\+\_\+set\+\_\+layout\+\_\+binding\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Total number of descriptor set layout bindings in the pool. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipelinePool_a9447ed40daae9c9da08931c9b629c89d}{src\+\_\+descriptor\+\_\+set\+\_\+layout\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Number of source descriptor set layouts for copying or setup. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipelinePool_a33fa4229ab2a3dbfa87f02a4340e9d46}{descriptor\+\_\+pool\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Total number of descriptor pools created and managed by the pool. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipelinePool_a1f5f31efc7c51baeecdb481f70604a3d}{descriptor\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Combined total of all descriptors in the descriptor pools. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipelinePool_a44913df897a0de7876e3bf6d3415387a}{write\+\_\+descriptor\+\_\+set\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Total number of write descriptor sets used for updates. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structShVkPipelinePool_a570b3e878163a4413defd7cf4ddd627b}{descriptor\+\_\+set\+\_\+unit\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Number of descriptor set units, equal to write\+\_\+descriptor\+\_\+set\+\_\+count. \end{DoxyCompactList}\item 
+Vk\+Descriptor\+Set\+Layout\+Binding \mbox{\hyperlink{structShVkPipelinePool_ab9fca16ebe9b204799c6c9e964b801a9}{descriptor\+\_\+set\+\_\+layout\+\_\+bindings}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Descriptor set layout bindings. \end{DoxyCompactList}\item 
+Vk\+Descriptor\+Set\+Layout \mbox{\hyperlink{structShVkPipelinePool_a0df46032ec731978c983a8956bbcdb86}{descriptor\+\_\+set\+\_\+layouts}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Descriptor set layouts. \end{DoxyCompactList}\item 
+Vk\+Descriptor\+Pool \mbox{\hyperlink{structShVkPipelinePool_a2b3928a1b4a6082ad92413632adbd896}{descriptor\+\_\+pools}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Descriptor pools. \end{DoxyCompactList}\item 
+Vk\+Descriptor\+Set \mbox{\hyperlink{structShVkPipelinePool_a9b14e9cc6fbff4a1fc2aea96c21b8c98}{descriptor\+\_\+sets}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Descriptor sets. \end{DoxyCompactList}\item 
+Vk\+Descriptor\+Buffer\+Info \mbox{\hyperlink{structShVkPipelinePool_adc616b02e045ac43a6a3fae274a84cc5}{descriptor\+\_\+buffer\+\_\+infos}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Descriptor buffer info. \end{DoxyCompactList}\item 
+Vk\+Write\+Descriptor\+Set \mbox{\hyperlink{structShVkPipelinePool_abcd4de99b9f4e7101819f61932ebd256}{write\+\_\+descriptor\+\_\+sets}} \mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Write descriptor sets. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a collection of Vulkan pipeline objects and their related resources. 
+
+This structure holds arrays of Vulkan pipelines, descriptor set layouts, descriptor pools, and other related resources required to manage and use Vulkan pipelines in a pipeline pool. 
+
+\doxysubsection{Field Documentation}
+\Hypertarget{structShVkPipelinePool_adc616b02e045ac43a6a3fae274a84cc5}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_buffer\_infos@{descriptor\_buffer\_infos}}
+\index{descriptor\_buffer\_infos@{descriptor\_buffer\_infos}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_buffer\_infos}{descriptor\_buffer\_infos}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_adc616b02e045ac43a6a3fae274a84cc5} 
+Vk\+Descriptor\+Buffer\+Info Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+buffer\+\_\+infos\mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Descriptor buffer info. 
+
+\Hypertarget{structShVkPipelinePool_a1f5f31efc7c51baeecdb481f70604a3d}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_count@{descriptor\_count}}
+\index{descriptor\_count@{descriptor\_count}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_count}{descriptor\_count}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a1f5f31efc7c51baeecdb481f70604a3d} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+count}
+
+
+
+Combined total of all descriptors in the descriptor pools. 
+
+\Hypertarget{structShVkPipelinePool_a33fa4229ab2a3dbfa87f02a4340e9d46}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_pool\_count@{descriptor\_pool\_count}}
+\index{descriptor\_pool\_count@{descriptor\_pool\_count}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_pool\_count}{descriptor\_pool\_count}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a33fa4229ab2a3dbfa87f02a4340e9d46} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+pool\+\_\+count}
+
+
+
+Total number of descriptor pools created and managed by the pool. 
+
+\Hypertarget{structShVkPipelinePool_a2b3928a1b4a6082ad92413632adbd896}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_pools@{descriptor\_pools}}
+\index{descriptor\_pools@{descriptor\_pools}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_pools}{descriptor\_pools}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a2b3928a1b4a6082ad92413632adbd896} 
+Vk\+Descriptor\+Pool Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+pools\mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Descriptor pools. 
+
+\Hypertarget{structShVkPipelinePool_a3480c44626bf99b7acfe53b665d36d31}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_set\_layout\_binding\_count@{descriptor\_set\_layout\_binding\_count}}
+\index{descriptor\_set\_layout\_binding\_count@{descriptor\_set\_layout\_binding\_count}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_set\_layout\_binding\_count}{descriptor\_set\_layout\_binding\_count}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a3480c44626bf99b7acfe53b665d36d31} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+set\+\_\+layout\+\_\+binding\+\_\+count}
+
+
+
+Total number of descriptor set layout bindings in the pool. 
+
+\Hypertarget{structShVkPipelinePool_ab9fca16ebe9b204799c6c9e964b801a9}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_set\_layout\_bindings@{descriptor\_set\_layout\_bindings}}
+\index{descriptor\_set\_layout\_bindings@{descriptor\_set\_layout\_bindings}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_set\_layout\_bindings}{descriptor\_set\_layout\_bindings}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_ab9fca16ebe9b204799c6c9e964b801a9} 
+Vk\+Descriptor\+Set\+Layout\+Binding Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+set\+\_\+layout\+\_\+bindings\mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Descriptor set layout bindings. 
+
+\Hypertarget{structShVkPipelinePool_a0df46032ec731978c983a8956bbcdb86}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_set\_layouts@{descriptor\_set\_layouts}}
+\index{descriptor\_set\_layouts@{descriptor\_set\_layouts}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_set\_layouts}{descriptor\_set\_layouts}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a0df46032ec731978c983a8956bbcdb86} 
+Vk\+Descriptor\+Set\+Layout Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+set\+\_\+layouts\mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Descriptor set layouts. 
+
+\Hypertarget{structShVkPipelinePool_a570b3e878163a4413defd7cf4ddd627b}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_set\_unit\_count@{descriptor\_set\_unit\_count}}
+\index{descriptor\_set\_unit\_count@{descriptor\_set\_unit\_count}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_set\_unit\_count}{descriptor\_set\_unit\_count}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a570b3e878163a4413defd7cf4ddd627b} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+set\+\_\+unit\+\_\+count}
+
+
+
+Number of descriptor set units, equal to write\+\_\+descriptor\+\_\+set\+\_\+count. 
+
+\Hypertarget{structShVkPipelinePool_a9b14e9cc6fbff4a1fc2aea96c21b8c98}\index{ShVkPipelinePool@{ShVkPipelinePool}!descriptor\_sets@{descriptor\_sets}}
+\index{descriptor\_sets@{descriptor\_sets}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{descriptor\_sets}{descriptor\_sets}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a9b14e9cc6fbff4a1fc2aea96c21b8c98} 
+Vk\+Descriptor\+Set Sh\+Vk\+Pipeline\+Pool\+::descriptor\+\_\+sets\mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Descriptor sets. 
+
+\Hypertarget{structShVkPipelinePool_a2962a50ebae3d5528ea23495226bae09}\index{ShVkPipelinePool@{ShVkPipelinePool}!pipelines@{pipelines}}
+\index{pipelines@{pipelines}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{pipelines}{pipelines}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a2962a50ebae3d5528ea23495226bae09} 
+\mbox{\hyperlink{structShVkPipeline}{Sh\+Vk\+Pipeline}} Sh\+Vk\+Pipeline\+Pool\+::pipelines\mbox{[}\mbox{\hyperlink{shVulkan_8h_ae192b45b4a12b020b42e796770fc4f63}{SH\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Array of Vulkan pipelines managed by the pool. 
+
+\Hypertarget{structShVkPipelinePool_a9447ed40daae9c9da08931c9b629c89d}\index{ShVkPipelinePool@{ShVkPipelinePool}!src\_descriptor\_set\_layout\_count@{src\_descriptor\_set\_layout\_count}}
+\index{src\_descriptor\_set\_layout\_count@{src\_descriptor\_set\_layout\_count}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{src\_descriptor\_set\_layout\_count}{src\_descriptor\_set\_layout\_count}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a9447ed40daae9c9da08931c9b629c89d} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+Pool\+::src\+\_\+descriptor\+\_\+set\+\_\+layout\+\_\+count}
+
+
+
+Number of source descriptor set layouts for copying or setup. 
+
+\Hypertarget{structShVkPipelinePool_a44913df897a0de7876e3bf6d3415387a}\index{ShVkPipelinePool@{ShVkPipelinePool}!write\_descriptor\_set\_count@{write\_descriptor\_set\_count}}
+\index{write\_descriptor\_set\_count@{write\_descriptor\_set\_count}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{write\_descriptor\_set\_count}{write\_descriptor\_set\_count}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_a44913df897a0de7876e3bf6d3415387a} 
+uint32\+\_\+t Sh\+Vk\+Pipeline\+Pool\+::write\+\_\+descriptor\+\_\+set\+\_\+count}
+
+
+
+Total number of write descriptor sets used for updates. 
+
+\Hypertarget{structShVkPipelinePool_abcd4de99b9f4e7101819f61932ebd256}\index{ShVkPipelinePool@{ShVkPipelinePool}!write\_descriptor\_sets@{write\_descriptor\_sets}}
+\index{write\_descriptor\_sets@{write\_descriptor\_sets}!ShVkPipelinePool@{ShVkPipelinePool}}
+\doxysubsubsection{\texorpdfstring{write\_descriptor\_sets}{write\_descriptor\_sets}}
+{\footnotesize\ttfamily \label{structShVkPipelinePool_abcd4de99b9f4e7101819f61932ebd256} 
+Vk\+Write\+Descriptor\+Set Sh\+Vk\+Pipeline\+Pool\+::write\+\_\+descriptor\+\_\+sets\mbox{[}\mbox{\hyperlink{shVulkan_8h_a43176634bb725eea98ba3eb733bbcd7d}{SH\+\_\+\+MAX\+\_\+\+PIPELINE\+\_\+\+POOL\+\_\+\+DESCRIPTOR\+\_\+\+COUNT}}\mbox{]}}
+
+
+
+Write descriptor sets. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/sinho/\+Desktop/\+Github/shvulkan/shvulkan/include/shvulkan/\mbox{\hyperlink{shVulkan_8h}{sh\+Vulkan.\+h}}\end{DoxyCompactItemize}

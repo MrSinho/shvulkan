@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="md_src_2compute__example" kind="page">
+    <compoundname>md_src_2compute__example</compoundname>
+    <title>Compute Example</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md_src_2compute__example_1autotoc_md28"/></para>
+<para><image type="html" name="https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&amp;logo=&amp;logoColor=white&amp;labelColor=990042" inline="yes"></image>
+ <ulink url="https://github.com/mrsinho/shvulkan"><image type="html" name="https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black" inline="yes"></image>
+</ulink></para>
+<para>The compute example demonstrates the setup and execution of a Vulkan-based compute shader application. The application starts by initializing Vulkan components, including creating an instance, selecting a physical device, and setting up a logical device with a compute queue. A command pool and command buffer are also created to handle command submissions.</para>
+<sect1 id="md_src_2compute__example_1autotoc_md29">
+<title>Memory Allocation</title><para>The primary objective of this application is to perform computations using a compute shader. The application first prepares memory by setting up staging and device-local buffers. The staging buffer is used for host-visible memory, allowing the CPU to write data to it. This data includes an array of input values and a factor. This buffer is then copied to a device-local buffer, which is optimized for GPU access.</para>
+</sect1>
+<sect1 id="md_src_2compute__example_1autotoc_md30">
+<title>Compute Pipeline</title><para>Next, the compute pipeline is set up. This involves defining descriptor sets and layout bindings, creating and setting up shader modules, and configuring the compute pipeline. The compute shader is responsible for performing operations on the input data. In this example, the shader is designed to square the input values.</para>
+</sect1>
+<sect1 id="md_src_2compute__example_1autotoc_md31">
+<title>Compute Queue Submission</title><para>Once the pipeline is ready, the application records commands into the command buffer. This includes binding the compute pipeline and descriptor sets, and dispatching compute work to the GPU. After recording, the command buffer is submitted to the compute queue, and the application waits for the operations to complete.</para>
+</sect1>
+<sect1 id="md_src_2compute__example_1autotoc_md32">
+<title>GPU Memory reading and cleanup</title><para>After the computation, the application copies the results from the device-local buffer back to the staging buffer. This allows the CPU to access and read the results of the computation. The final step involves reading the output values from the staging buffer and printing them to the console.</para>
+<para>The application concludes by cleaning up resources, including destroying Vulkan objects and freeing allocated memory.</para>
+</sect1>
+<sect1 id="md_src_2compute__example_1autotoc_md33">
+<title>Terminal output</title><para><programlisting filename=".bash"><codeline><highlight class="normal">Compute<sp/>shader<sp/>inputs:</highlight></codeline>
+<codeline><highlight class="normal">0.000000</highlight></codeline>
+<codeline><highlight class="normal">1.000000</highlight></codeline>
+<codeline><highlight class="normal">2.000000</highlight></codeline>
+<codeline><highlight class="normal">3.000000</highlight></codeline>
+<codeline><highlight class="normal">4.000000</highlight></codeline>
+<codeline><highlight class="normal">5.000000</highlight></codeline>
+<codeline><highlight class="normal">6.000000</highlight></codeline>
+<codeline><highlight class="normal">7.000000</highlight></codeline>
+<codeline><highlight class="normal">8.000000</highlight></codeline>
+<codeline><highlight class="normal">9.000000</highlight></codeline>
+<codeline><highlight class="normal">10.000000</highlight></codeline>
+<codeline><highlight class="normal">11.000000</highlight></codeline>
+<codeline><highlight class="normal">12.000000</highlight></codeline>
+<codeline><highlight class="normal">13.000000</highlight></codeline>
+<codeline><highlight class="normal">14.000000</highlight></codeline>
+<codeline><highlight class="normal">15.000000</highlight></codeline>
+<codeline><highlight class="normal">16.000000</highlight></codeline>
+<codeline><highlight class="normal">17.000000</highlight></codeline>
+<codeline><highlight class="normal">18.000000</highlight></codeline>
+<codeline><highlight class="normal">19.000000</highlight></codeline>
+<codeline><highlight class="normal">20.000000</highlight></codeline>
+<codeline><highlight class="normal">21.000000</highlight></codeline>
+<codeline><highlight class="normal">22.000000</highlight></codeline>
+<codeline><highlight class="normal">23.000000</highlight></codeline>
+<codeline><highlight class="normal">24.000000</highlight></codeline>
+<codeline><highlight class="normal">25.000000</highlight></codeline>
+<codeline><highlight class="normal">26.000000</highlight></codeline>
+<codeline><highlight class="normal">27.000000</highlight></codeline>
+<codeline><highlight class="normal">28.000000</highlight></codeline>
+<codeline><highlight class="normal">29.000000</highlight></codeline>
+<codeline><highlight class="normal">30.000000</highlight></codeline>
+<codeline><highlight class="normal">31.000000</highlight></codeline>
+<codeline><highlight class="normal">32.000000</highlight></codeline>
+<codeline><highlight class="normal">33.000000</highlight></codeline>
+<codeline><highlight class="normal">34.000000</highlight></codeline>
+<codeline><highlight class="normal">35.000000</highlight></codeline>
+<codeline><highlight class="normal">36.000000</highlight></codeline>
+<codeline><highlight class="normal">37.000000</highlight></codeline>
+<codeline><highlight class="normal">38.000000</highlight></codeline>
+<codeline><highlight class="normal">39.000000</highlight></codeline>
+<codeline><highlight class="normal">40.000000</highlight></codeline>
+<codeline><highlight class="normal">41.000000</highlight></codeline>
+<codeline><highlight class="normal">42.000000</highlight></codeline>
+<codeline><highlight class="normal">43.000000</highlight></codeline>
+<codeline><highlight class="normal">44.000000</highlight></codeline>
+<codeline><highlight class="normal">45.000000</highlight></codeline>
+<codeline><highlight class="normal">46.000000</highlight></codeline>
+<codeline><highlight class="normal">47.000000</highlight></codeline>
+<codeline><highlight class="normal">48.000000</highlight></codeline>
+<codeline><highlight class="normal">49.000000</highlight></codeline>
+<codeline><highlight class="normal">50.000000</highlight></codeline>
+<codeline><highlight class="normal">51.000000</highlight></codeline>
+<codeline><highlight class="normal">52.000000</highlight></codeline>
+<codeline><highlight class="normal">53.000000</highlight></codeline>
+<codeline><highlight class="normal">54.000000</highlight></codeline>
+<codeline><highlight class="normal">55.000000</highlight></codeline>
+<codeline><highlight class="normal">56.000000</highlight></codeline>
+<codeline><highlight class="normal">57.000000</highlight></codeline>
+<codeline><highlight class="normal">58.000000</highlight></codeline>
+<codeline><highlight class="normal">59.000000</highlight></codeline>
+<codeline><highlight class="normal">60.000000</highlight></codeline>
+<codeline><highlight class="normal">61.000000</highlight></codeline>
+<codeline><highlight class="normal">62.000000</highlight></codeline>
+<codeline><highlight class="normal">63.000000</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Squaring<sp/>the<sp/>numbers...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Compute<sp/>shader<sp/>output<sp/>values:</highlight></codeline>
+<codeline><highlight class="normal">0.000000</highlight></codeline>
+<codeline><highlight class="normal">1.000000</highlight></codeline>
+<codeline><highlight class="normal">4.000000</highlight></codeline>
+<codeline><highlight class="normal">9.000000</highlight></codeline>
+<codeline><highlight class="normal">16.000000</highlight></codeline>
+<codeline><highlight class="normal">25.000000</highlight></codeline>
+<codeline><highlight class="normal">36.000000</highlight></codeline>
+<codeline><highlight class="normal">49.000000</highlight></codeline>
+<codeline><highlight class="normal">64.000000</highlight></codeline>
+<codeline><highlight class="normal">81.000000</highlight></codeline>
+<codeline><highlight class="normal">100.000000</highlight></codeline>
+<codeline><highlight class="normal">121.000000</highlight></codeline>
+<codeline><highlight class="normal">144.000000</highlight></codeline>
+<codeline><highlight class="normal">169.000000</highlight></codeline>
+<codeline><highlight class="normal">196.000000</highlight></codeline>
+<codeline><highlight class="normal">225.000000</highlight></codeline>
+<codeline><highlight class="normal">256.000000</highlight></codeline>
+<codeline><highlight class="normal">289.000000</highlight></codeline>
+<codeline><highlight class="normal">324.000000</highlight></codeline>
+<codeline><highlight class="normal">361.000000</highlight></codeline>
+<codeline><highlight class="normal">400.000000</highlight></codeline>
+<codeline><highlight class="normal">441.000000</highlight></codeline>
+<codeline><highlight class="normal">484.000000</highlight></codeline>
+<codeline><highlight class="normal">529.000000</highlight></codeline>
+<codeline><highlight class="normal">576.000000</highlight></codeline>
+<codeline><highlight class="normal">625.000000</highlight></codeline>
+<codeline><highlight class="normal">676.000000</highlight></codeline>
+<codeline><highlight class="normal">729.000000</highlight></codeline>
+<codeline><highlight class="normal">784.000000</highlight></codeline>
+<codeline><highlight class="normal">841.000000</highlight></codeline>
+<codeline><highlight class="normal">900.000000</highlight></codeline>
+<codeline><highlight class="normal">961.000000</highlight></codeline>
+<codeline><highlight class="normal">1024.000000</highlight></codeline>
+<codeline><highlight class="normal">1089.000000</highlight></codeline>
+<codeline><highlight class="normal">1156.000000</highlight></codeline>
+<codeline><highlight class="normal">1225.000000</highlight></codeline>
+<codeline><highlight class="normal">1296.000000</highlight></codeline>
+<codeline><highlight class="normal">1369.000000</highlight></codeline>
+<codeline><highlight class="normal">1444.000000</highlight></codeline>
+<codeline><highlight class="normal">1521.000000</highlight></codeline>
+<codeline><highlight class="normal">1600.000000</highlight></codeline>
+<codeline><highlight class="normal">1681.000000</highlight></codeline>
+<codeline><highlight class="normal">1764.000000</highlight></codeline>
+<codeline><highlight class="normal">1849.000000</highlight></codeline>
+<codeline><highlight class="normal">1936.000000</highlight></codeline>
+<codeline><highlight class="normal">2025.000000</highlight></codeline>
+<codeline><highlight class="normal">2116.000000</highlight></codeline>
+<codeline><highlight class="normal">2209.000000</highlight></codeline>
+<codeline><highlight class="normal">2304.000000</highlight></codeline>
+<codeline><highlight class="normal">2401.000000</highlight></codeline>
+<codeline><highlight class="normal">2500.000000</highlight></codeline>
+<codeline><highlight class="normal">2601.000000</highlight></codeline>
+<codeline><highlight class="normal">2704.000000</highlight></codeline>
+<codeline><highlight class="normal">2809.000000</highlight></codeline>
+<codeline><highlight class="normal">2916.000000</highlight></codeline>
+<codeline><highlight class="normal">3025.000000</highlight></codeline>
+<codeline><highlight class="normal">3136.000000</highlight></codeline>
+<codeline><highlight class="normal">3249.000000</highlight></codeline>
+<codeline><highlight class="normal">3364.000000</highlight></codeline>
+<codeline><highlight class="normal">3481.000000</highlight></codeline>
+<codeline><highlight class="normal">3600.000000</highlight></codeline>
+<codeline><highlight class="normal">3721.000000</highlight></codeline>
+<codeline><highlight class="normal">3844.000000</highlight></codeline>
+<codeline><highlight class="normal">3969.000000</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <location file="src/compute_example.md"/>
+  </compounddef>
+</doxygen>

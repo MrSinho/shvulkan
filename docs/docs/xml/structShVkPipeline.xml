@@ -1,0 +1,338 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structShVkPipeline" kind="struct" language="C++" prot="public">
+    <compoundname>ShVkPipeline</compoundname>
+    <includes refid="shVulkan_8h" local="no">shVulkan.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structShVkPipeline_1ab15f5afcb70bd5de3bd81864f91e6696" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipeline::vertex_binding_count</definition>
+        <argsstring></argsstring>
+        <name>vertex_binding_count</name>
+        <qualifiedname>ShVkPipeline::vertex_binding_count</qualifiedname>
+        <briefdescription>
+<para>Number of vertex bindings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2097" column="9" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2097" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1aa84cc8e3346535780ed784f1b1e3eff0" prot="public" static="no" mutable="no">
+        <type>VkVertexInputBindingDescription</type>
+        <definition>VkVertexInputBindingDescription ShVkPipeline::vertex_bindings[SH_MAX_PIPELINE_VERTEX_BINDING_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_VERTEX_BINDING_COUNT]</argsstring>
+        <name>vertex_bindings</name>
+        <qualifiedname>ShVkPipeline::vertex_bindings</qualifiedname>
+        <briefdescription>
+<para>Array of vertex input bindings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2098" column="32" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2098" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a4bf1195a1791c2f791d4e53e8c027a4a" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipeline::vertex_attribute_count</definition>
+        <argsstring></argsstring>
+        <name>vertex_attribute_count</name>
+        <qualifiedname>ShVkPipeline::vertex_attribute_count</qualifiedname>
+        <briefdescription>
+<para>Number of vertex attributes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2099" column="9" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2099" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a8f91185da88f6d227a68f78f1bafdcc6" prot="public" static="no" mutable="no">
+        <type>VkVertexInputAttributeDescription</type>
+        <definition>VkVertexInputAttributeDescription ShVkPipeline::vertex_attributes[SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_VERTEX_ATTRIBUTE_COUNT]</argsstring>
+        <name>vertex_attributes</name>
+        <qualifiedname>ShVkPipeline::vertex_attributes</qualifiedname>
+        <briefdescription>
+<para>Array of vertex input attributes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2100" column="34" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a7d4ad01c7eaeb9c39e97af0cee13a27f" prot="public" static="no" mutable="no">
+        <type>VkPipelineVertexInputStateCreateInfo</type>
+        <definition>VkPipelineVertexInputStateCreateInfo ShVkPipeline::vertex_input_state_info</definition>
+        <argsstring></argsstring>
+        <name>vertex_input_state_info</name>
+        <qualifiedname>ShVkPipeline::vertex_input_state_info</qualifiedname>
+        <briefdescription>
+<para>Vertex input state information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2101" column="37" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a3ba1efefe5508c9d32cca9255b639880" prot="public" static="no" mutable="no">
+        <type>VkPipelineInputAssemblyStateCreateInfo</type>
+        <definition>VkPipelineInputAssemblyStateCreateInfo ShVkPipeline::input_assembly</definition>
+        <argsstring></argsstring>
+        <name>input_assembly</name>
+        <qualifiedname>ShVkPipeline::input_assembly</qualifiedname>
+        <briefdescription>
+<para>Input assembly state information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2102" column="39" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1abf55b198ee4e8f6a9a151f2f3b267ed0" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipeline::shader_module_count</definition>
+        <argsstring></argsstring>
+        <name>shader_module_count</name>
+        <qualifiedname>ShVkPipeline::shader_module_count</qualifiedname>
+        <briefdescription>
+<para>Number of shader modules. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2104" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a639990891b28c27427634459eae4bff1" prot="public" static="no" mutable="no">
+        <type>VkShaderModule</type>
+        <definition>VkShaderModule ShVkPipeline::shader_modules[SH_MAX_PIPELINE_SHADER_STAGE_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_SHADER_STAGE_COUNT]</argsstring>
+        <name>shader_modules</name>
+        <qualifiedname>ShVkPipeline::shader_modules</qualifiedname>
+        <briefdescription>
+<para>Array of shader modules. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2105" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1ad9cae3ad8a53d8f40d1014e464515131" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t ShVkPipeline::shader_stage_count</definition>
+        <argsstring></argsstring>
+        <name>shader_stage_count</name>
+        <qualifiedname>ShVkPipeline::shader_stage_count</qualifiedname>
+        <briefdescription>
+<para>Number of shader stages. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2106" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a9a99c1efbbf1990be7adc2a90707c3c0" prot="public" static="no" mutable="no">
+        <type>VkPipelineShaderStageCreateInfo</type>
+        <definition>VkPipelineShaderStageCreateInfo ShVkPipeline::shader_stages[SH_MAX_PIPELINE_SHADER_STAGE_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_SHADER_STAGE_COUNT]</argsstring>
+        <name>shader_stages</name>
+        <qualifiedname>ShVkPipeline::shader_stages</qualifiedname>
+        <briefdescription>
+<para>Array of shader stage create info. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2107" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a31ff7de998830c8719bd291ab456df28" prot="public" static="no" mutable="no">
+        <type>VkPushConstantRange</type>
+        <definition>VkPushConstantRange ShVkPipeline::push_constant_range</definition>
+        <argsstring></argsstring>
+        <name>push_constant_range</name>
+        <qualifiedname>ShVkPipeline::push_constant_range</qualifiedname>
+        <briefdescription>
+<para>Push constant range information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2109" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1ad7da5701d508803f048e09b182963bbc" prot="public" static="no" mutable="no">
+        <type>VkPipelineRasterizationStateCreateInfo</type>
+        <definition>VkPipelineRasterizationStateCreateInfo ShVkPipeline::rasterizer</definition>
+        <argsstring></argsstring>
+        <name>rasterizer</name>
+        <qualifiedname>ShVkPipeline::rasterizer</qualifiedname>
+        <briefdescription>
+<para>Rasterizer state information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2111" column="39" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1aad91d82a780898fc535f4e05855d275c" prot="public" static="no" mutable="no">
+        <type>VkViewport</type>
+        <definition>VkViewport ShVkPipeline::viewport</definition>
+        <argsstring></argsstring>
+        <name>viewport</name>
+        <qualifiedname>ShVkPipeline::viewport</qualifiedname>
+        <briefdescription>
+<para>Viewport information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2113" column="11" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a58e92f5c9b13ee41f0d7b31ec5f17b56" prot="public" static="no" mutable="no">
+        <type>VkRect2D</type>
+        <definition>VkRect2D ShVkPipeline::scissors</definition>
+        <argsstring></argsstring>
+        <name>scissors</name>
+        <qualifiedname>ShVkPipeline::scissors</qualifiedname>
+        <briefdescription>
+<para>Scissor rectangle information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2114" column="9" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a992e59e59ca02700bda9f894b8ccc594" prot="public" static="no" mutable="no">
+        <type>VkPipelineViewportStateCreateInfo</type>
+        <definition>VkPipelineViewportStateCreateInfo ShVkPipeline::viewport_state</definition>
+        <argsstring></argsstring>
+        <name>viewport_state</name>
+        <qualifiedname>ShVkPipeline::viewport_state</qualifiedname>
+        <briefdescription>
+<para>Viewport state information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2115" column="34" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1adb2024e7d365784112d5d2b71151045b" prot="public" static="no" mutable="no">
+        <type>VkPipelineColorBlendAttachmentState</type>
+        <definition>VkPipelineColorBlendAttachmentState ShVkPipeline::color_blend_attachment_states[SH_MAX_PIPELINE_SUBPASS_COLOR_ATTACHMENT_COUNT]</definition>
+        <argsstring>[SH_MAX_PIPELINE_SUBPASS_COLOR_ATTACHMENT_COUNT]</argsstring>
+        <name>color_blend_attachment_states</name>
+        <qualifiedname>ShVkPipeline::color_blend_attachment_states</qualifiedname>
+        <briefdescription>
+<para>Array of color blend attachment states. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2117" column="36" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a550bf5819b0e2e89a5698b10bddda680" prot="public" static="no" mutable="no">
+        <type>VkPipelineColorBlendStateCreateInfo</type>
+        <definition>VkPipelineColorBlendStateCreateInfo ShVkPipeline::color_blend_state</definition>
+        <argsstring></argsstring>
+        <name>color_blend_state</name>
+        <qualifiedname>ShVkPipeline::color_blend_state</qualifiedname>
+        <briefdescription>
+<para>Color blend state information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2118" column="36" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1acc77818ae1d69bfb4661d128194f450e" prot="public" static="no" mutable="no">
+        <type>VkPipelineMultisampleStateCreateInfo</type>
+        <definition>VkPipelineMultisampleStateCreateInfo ShVkPipeline::multisample_state_info</definition>
+        <argsstring></argsstring>
+        <name>multisample_state_info</name>
+        <qualifiedname>ShVkPipeline::multisample_state_info</qualifiedname>
+        <briefdescription>
+<para>Multisample state information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2120" column="37" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1ae7fc91a99f5fb3c8a5a286d2b3e503a9" prot="public" static="no" mutable="no">
+        <type>VkPipelineLayout</type>
+        <definition>VkPipelineLayout ShVkPipeline::pipeline_layout</definition>
+        <argsstring></argsstring>
+        <name>pipeline_layout</name>
+        <qualifiedname>ShVkPipeline::pipeline_layout</qualifiedname>
+        <briefdescription>
+<para>Vulkan pipeline layout. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2122" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structShVkPipeline_1a3c654e3648932d192409fda6a2ed376e" prot="public" static="no" mutable="no">
+        <type>VkPipeline</type>
+        <definition>VkPipeline ShVkPipeline::pipeline</definition>
+        <argsstring></argsstring>
+        <name>pipeline</name>
+        <qualifiedname>ShVkPipeline::pipeline</qualifiedname>
+        <briefdescription>
+<para>Vulkan pipeline. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2123" column="41" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2123" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Structure representing a Vulkan pipeline. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This structure holds all the necessary state and configuration for creating and managing a Vulkan pipeline. </para>
+    </detaileddescription>
+    <location file="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" line="2095" column="1" bodyfile="/home/sinho/Desktop/Github/shvulkan/shvulkan/include/shvulkan/shVulkan.h" bodystart="2095" bodyend="2124"/>
+    <listofallmembers>
+      <member refid="structShVkPipeline_1adb2024e7d365784112d5d2b71151045b" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>color_blend_attachment_states</name></member>
+      <member refid="structShVkPipeline_1a550bf5819b0e2e89a5698b10bddda680" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>color_blend_state</name></member>
+      <member refid="structShVkPipeline_1a3ba1efefe5508c9d32cca9255b639880" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>input_assembly</name></member>
+      <member refid="structShVkPipeline_1acc77818ae1d69bfb4661d128194f450e" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>multisample_state_info</name></member>
+      <member refid="structShVkPipeline_1a3c654e3648932d192409fda6a2ed376e" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>pipeline</name></member>
+      <member refid="structShVkPipeline_1ae7fc91a99f5fb3c8a5a286d2b3e503a9" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>pipeline_layout</name></member>
+      <member refid="structShVkPipeline_1a31ff7de998830c8719bd291ab456df28" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>push_constant_range</name></member>
+      <member refid="structShVkPipeline_1ad7da5701d508803f048e09b182963bbc" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>rasterizer</name></member>
+      <member refid="structShVkPipeline_1a58e92f5c9b13ee41f0d7b31ec5f17b56" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>scissors</name></member>
+      <member refid="structShVkPipeline_1abf55b198ee4e8f6a9a151f2f3b267ed0" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>shader_module_count</name></member>
+      <member refid="structShVkPipeline_1a639990891b28c27427634459eae4bff1" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>shader_modules</name></member>
+      <member refid="structShVkPipeline_1ad9cae3ad8a53d8f40d1014e464515131" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>shader_stage_count</name></member>
+      <member refid="structShVkPipeline_1a9a99c1efbbf1990be7adc2a90707c3c0" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>shader_stages</name></member>
+      <member refid="structShVkPipeline_1a4bf1195a1791c2f791d4e53e8c027a4a" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>vertex_attribute_count</name></member>
+      <member refid="structShVkPipeline_1a8f91185da88f6d227a68f78f1bafdcc6" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>vertex_attributes</name></member>
+      <member refid="structShVkPipeline_1ab15f5afcb70bd5de3bd81864f91e6696" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>vertex_binding_count</name></member>
+      <member refid="structShVkPipeline_1aa84cc8e3346535780ed784f1b1e3eff0" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>vertex_bindings</name></member>
+      <member refid="structShVkPipeline_1a7d4ad01c7eaeb9c39e97af0cee13a27f" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>vertex_input_state_info</name></member>
+      <member refid="structShVkPipeline_1aad91d82a780898fc535f4e05855d275c" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>viewport</name></member>
+      <member refid="structShVkPipeline_1a992e59e59ca02700bda9f894b8ccc594" prot="public" virt="non-virtual"><scope>ShVkPipeline</scope><name>viewport_state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

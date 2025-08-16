@@ -1,7 +1,7 @@
 # Clear Color Example
 
-![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-white?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
-[![](https://img.shields.io/badge/GitHub_repository-white?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
+![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
+[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
 
 [TOC]
 

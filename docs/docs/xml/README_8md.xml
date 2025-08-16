@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="README_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>shvulkan</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&amp;logo=&amp;logoColor=white&amp;labelColor=990042)</highlight></codeline>
+<codeline><highlight class="normal">[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black)](https://github.com/mrsinho/shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/github/commit-activity/t/mrsinho/shvulkan?style=for-the-badge&amp;label=Total%20commits&amp;color=ac162c)</highlight></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/github/languages/code-size/mrsinho/shvulkan?style=for-the-badge&amp;labelColor=grey&amp;color=5277c3)</highlight></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/github/languages/top/mrsinho/shvulkan?style=for-the-badge&amp;label=C%20language%20coverage&amp;color=7d78f2)</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/github/license/mrsinho/shvulkan?style=for-the-badge)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[![Doxygen](https://img.shields.io/badge/API%20Documentation-2C4AA8?style=for-the-badge&amp;logo=doxygen&amp;logoColor=white)](https://mrsinho.github.io/shvulkan-docs/md__c_1_2__home_2desktop_2github_2shvulkan_2docs_2src_2build.html)</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[TOC]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`shvulkan`<sp/>is<sp/>a<sp/>lightweight<sp/>and<sp/>flexible<sp/>wrapper<sp/>around<sp/>the<sp/>Vulkan®<sp/>API<sp/>written<sp/>completely<sp/>in<sp/>C,<sp/>that<sp/>makes<sp/>it<sp/>easier<sp/>to<sp/>work<sp/>with<sp/>graphics<sp/>efficiently<sp/>without<sp/>writing<sp/>thousands<sp/>of<sp/>lines<sp/>of<sp/>code.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](./docs/media/alpha-blending.png)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">__Scene<sp/>example__:<sp/>*alfa<sp/>blending,<sp/>instancing<sp/>and<sp/>indexed<sp/>draw<sp/>calls<sp/>example.*</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](./docs/media/scene-headless-overview.png)</highlight></codeline>
+<codeline><highlight class="normal">__Headless<sp/>scene<sp/>example<sp/>using<sp/>[vulkan-virtual-outputs](https://github.com/mrsinho/vulkan-virtual-outputs)__:<sp/>*alfa<sp/>blending,<sp/>instancing<sp/>and<sp/>indexed<sp/>draw<sp/>calls<sp/>also<sp/>here,<sp/>but<sp/>the<sp/>images<sp/>are<sp/>streamed<sp/>in<sp/>an<sp/>http<sp/>server.*</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">---</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Build<sp/>status<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey)<sp/>![](https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&amp;logo=c&amp;logoColor=white&amp;labelColor=0AD0DF#.svg)</highlight></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/badge/Compatible_with_C%2b%2b-3CFADC?style=for-the-badge&amp;logo=c%2b%2b&amp;logoColor=white&amp;labelColor=0AD0DF#.svg)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>examples<sp/>are<sp/>frequently<sp/>being<sp/>tested<sp/>on<sp/>**Windows<sp/>11**,<sp/>**NixOS**<sp/>(with<sp/>Nix<sp/>flake),<sp/>**Linux<sp/>Mint**<sp/>(virtual<sp/>machine<sp/>and<sp/>pc)<sp/>with<sp/>different<sp/>compilers<sp/>(**MSVC**,<sp/>**gcc**),<sp/>hardware<sp/>configurations<sp/>(RX580<sp/>4GB<sp/>GDDR5,<sp/>Radeon<sp/>V<sp/>Carrizo<sp/>500MB)<sp/>and<sp/>windowing<sp/>systems<sp/>(**Win32**,<sp/>**X11**,<sp/>**Wayland**).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Clone<sp/>and<sp/>Build</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Open<sp/>the<sp/>terminal<sp/>and<sp/>run<sp/>the<sp/>following<sp/>commands:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![Windows](https://a11ybadges.com/badge?logo=windows)<sp/>![Debian](https://a11ybadges.com/badge?logo=debian)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Tested<sp/>on<sp/>Win32<sp/>and<sp/>X11.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">mkdir<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![NixOS](https://a11ybadges.com/badge?logo=nixos)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Tested<sp/>on<sp/>X11<sp/>and<sp/>Wayland<sp/>graphics<sp/>servers.<sp/>The<sp/>Nix<sp/>flake<sp/>lets<sp/>the<sp/>system<sp/>choose<sp/>the<sp/>default<sp/>windowing<sp/>system.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&gt;<sp/>[!WARNING]</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>While<sp/>testing<sp/>with<sp/>Wayland<sp/>revealed<sp/>no<sp/>issues,<sp/>there<sp/>are<sp/>some<sp/>resizing<sp/>issues<sp/>when<sp/>using<sp/>X11.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>develop<sp/>--command<sp/>bash<sp/>#<sp/>enter<sp/>the<sp/>flake<sp/>environment</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>bin/linux</highlight></codeline>
+<codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![NixOS<sp/>Wayland](./docs/media/nixos-wayland-scene.png)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">---</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>CMake<sp/>targets<sp/>and<sp/>variables</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">|<sp/>CMake<sp/>Target<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Type<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Configure<sp/>Flags<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|--------------------------------|-----------------|-----------------------------|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>library<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>/<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-docs<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Doxygen<sp/>outputs<sp/>|<sp/>/<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-clear-color<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>executable<sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>SH_VULKAN_BUILD_EXAMPLES=ON<sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-scene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>executable<sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>SH_VULKAN_BUILD_EXAMPLES=ON<sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-compute-example<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>executable<sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>SH_VULKAN_BUILD_EXAMPLES=ON<sp/>|</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>the<sp/>cmake<sp/>option<sp/>`SH_VULKAN_BUILD_EXAMPLES`<sp/>is<sp/>enabled,<sp/>the<sp/>additional<sp/>[`glfw`](https://github.com/glfw/glfw)<sp/>target<sp/>will<sp/>be<sp/>generated<sp/>as<sp/>a<sp/>static<sp/>library.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">|<sp/>CMake<sp/>Variable<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>About<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|--------------------------------|--------------------------------------------------------|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_VERSION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Version<sp/>of<sp/>the<sp/>`shvulkan`<sp/>library<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_ROOT_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>root<sp/>of<sp/>the<sp/>repository<sp/>directory<sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_BINARIES_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>output<sp/>binaries<sp/>directory<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">---</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Embed<sp/>shvulkan<sp/>with<sp/>your<sp/>C/C++<sp/>projects</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>link<sp/>to<sp/>the<sp/>`shvulkan`<sp/>library<sp/>with<sp/>CMake:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cmake</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(NOT<sp/>TARGET<sp/>shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">set(SH_VULKAN_ROOT_DIR<sp/><sp/><sp/><sp/><sp/>path/to/shvulkan/root/directory)</highlight></codeline>
+<codeline><highlight class="normal">set(SH_VULKAN_BINARIES_DIR<sp/>path/your/binaries/directory)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">include(${SH_VULKAN_ROOT_DIR}/shvulkan/shvulkan.cmake)</highlight></codeline>
+<codeline><highlight class="normal">build_shvulkan()</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">endif()</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>[...]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">target_link_libraries(app<sp/>PUBLIC<sp/>shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>include<sp/>the<sp/>`shVulkan.h`<sp/>header<sp/>file:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;shvulkan/shVulkan.h&gt;</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">`shvulkan`<sp/>ships<sp/>with<sp/>one<sp/>[`compute<sp/>example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/compute/power-numbers.c),<sp/>one<sp/>graphics<sp/>[`clear<sp/>color<sp/>example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/clear-color.c),<sp/>one<sp/>graphics<sp/>[`scene<sp/>example`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/scene.c)<sp/>and<sp/>a<sp/>[`headless<sp/>scene`](https://github.com/mrsinho/shvulkan/tree/main/examples/src/graphics/clear-color.c)<sp/>graphics<sp/>example,<sp/>which<sp/>instead<sp/>of<sp/>presenting<sp/>images<sp/>to<sp/>the<sp/>screen<sp/>it<sp/>streams<sp/>the<sp/>graphics<sp/>output<sp/>with<sp/>an<sp/>http<sp/>server.<sp/></highlight></codeline>
+    </programlisting>
+    <location file="/home/sinho/Desktop/Github/shvulkan/README.md"/>
+  </compounddef>
+</doxygen>

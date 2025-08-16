@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="clear__color__example_8md" kind="file" language="Markdown">
+    <compoundname>clear_color_example.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Clear<sp/>Color<sp/>Example</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&amp;logo=&amp;logoColor=white&amp;labelColor=990042)</highlight></codeline>
+<codeline><highlight class="normal">[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black)](https://github.com/mrsinho/shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[TOC]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Setting<sp/>up<sp/>a<sp/>Vulkan<sp/>application<sp/>involves<sp/>several<sp/>critical<sp/>steps<sp/>to<sp/>ensure<sp/>proper<sp/>configuration<sp/>and<sp/>resource<sp/>management<sp/>for<sp/>rendering.<sp/>[This<sp/>example<sp/>(`shvulkan-clear-color`)](https://github.com/MrSinho/shvulkan/blob/main/examples/src/graphics/clear-color.c)<sp/>outlines<sp/>the<sp/>process<sp/>from<sp/>instance<sp/>creation<sp/>to<sp/>frame<sp/>presentation,<sp/>integrating<sp/>the<sp/>various<sp/>components<sp/>and<sp/>their<sp/>roles.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](../media/clear_color_green.png)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Instance<sp/>and<sp/>Surface<sp/>Creation</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>Vulkan<sp/>setup<sp/>begins<sp/>with<sp/>creating<sp/>a<sp/>Vulkan<sp/>instance<sp/>using<sp/>the<sp/>`shCreateInstance`<sp/>function.<sp/>This<sp/>step<sp/>establishes<sp/>the<sp/>connection<sp/>between<sp/>the<sp/>application<sp/>and<sp/>the<sp/>Vulkan<sp/>library,<sp/>specifying<sp/>the<sp/>application<sp/>and<sp/>engine<sp/>names,<sp/>enabling<sp/>validation<sp/>layers<sp/>for<sp/>debugging,<sp/>and<sp/>defining<sp/>required<sp/>extensions<sp/>and<sp/>API<sp/>versions.<sp/>Following<sp/>the<sp/>instance<sp/>creation,<sp/>a<sp/>window<sp/>surface<sp/>is<sp/>created<sp/>via<sp/>`glfwCreateWindowSurface`.<sp/>This<sp/>surface<sp/>allows<sp/>Vulkan<sp/>to<sp/>render<sp/>content<sp/>to<sp/>a<sp/>window,<sp/>interfacing<sp/>directly<sp/>with<sp/>the<sp/>windowing<sp/>system.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Physical<sp/>Device<sp/>and<sp/>Queue<sp/>Setup</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Once<sp/>the<sp/>instance<sp/>and<sp/>surface<sp/>are<sp/>ready,<sp/>the<sp/>next<sp/>step<sp/>is<sp/>selecting<sp/>a<sp/>suitable<sp/>physical<sp/>device<sp/>(GPU).<sp/>This<sp/>is<sp/>accomplished<sp/>through<sp/>`shSelectPhysicalDevice`,<sp/>which<sp/>evaluates<sp/>the<sp/>GPU&apos;s<sp/>capabilities<sp/>to<sp/>ensure<sp/>it<sp/>supports<sp/>the<sp/>necessary<sp/>operations<sp/>for<sp/>graphics,<sp/>compute,<sp/>and<sp/>transfer.<sp/>The<sp/>function<sp/>retrieves<sp/>important<sp/>details<sp/>about<sp/>the<sp/>device,<sp/>including<sp/>its<sp/>properties,<sp/>features,<sp/>and<sp/>memory<sp/>attributes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Subsequently,<sp/>the<sp/>`shGetPhysicalDeviceQueueFamilies`<sp/>function<sp/>identifies<sp/>the<sp/>queue<sp/>families<sp/>supported<sp/>by<sp/>the<sp/>device.<sp/>These<sp/>queues<sp/>are<sp/>critical<sp/>for<sp/>managing<sp/>rendering,<sp/>presentation,<sp/>compute,<sp/>and<sp/>transfer<sp/>tasks.<sp/>Based<sp/>on<sp/>the<sp/>indices<sp/>retrieved<sp/>for<sp/>graphics<sp/>and<sp/>presentation<sp/>queues,<sp/>device<sp/>queue<sp/>creation<sp/>is<sp/>handled<sp/>by<sp/>`shQueryForDeviceQueueInfo`,<sp/>which<sp/>sets<sp/>up<sp/>the<sp/>appropriate<sp/>VkDeviceQueueCreateInfo<sp/>structures.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Logical<sp/>Device<sp/>and<sp/>Queues</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">With<sp/>the<sp/>queue<sp/>information<sp/>in<sp/>hand,<sp/>`shSetLogicalDevice`<sp/>creates<sp/>the<sp/>logical<sp/>device.<sp/>This<sp/>device<sp/>acts<sp/>as<sp/>an<sp/>abstraction<sp/>layer<sp/>over<sp/>the<sp/>physical<sp/>GPU,<sp/>allowing<sp/>the<sp/>application<sp/>to<sp/>submit<sp/>commands<sp/>and<sp/>manage<sp/>resources.<sp/>The<sp/>logical<sp/>device<sp/>is<sp/>configured<sp/>with<sp/>the<sp/>necessary<sp/>extensions<sp/>and<sp/>queue<sp/>information<sp/>to<sp/>support<sp/>the<sp/>application&apos;s<sp/>needs.<sp/>Once<sp/>the<sp/>logical<sp/>device<sp/>is<sp/>created,<sp/>`shGetDeviceQueues`<sp/>retrieves<sp/>the<sp/>actual<sp/>queues<sp/>for<sp/>graphics<sp/>and<sp/>presentation,<sp/>ensuring<sp/>that<sp/>commands<sp/>can<sp/>be<sp/>submitted<sp/>and<sp/>images<sp/>presented<sp/>as<sp/>required.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Swapchain<sp/>and<sp/>Command<sp/>Buffers</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>swapchain<sp/>is<sp/>created<sp/>using<sp/>`shCreateSwapchain`,<sp/>which<sp/>manages<sp/>the<sp/>presentation<sp/>of<sp/>images<sp/>to<sp/>the<sp/>screen.<sp/>This<sp/>process<sp/>involves<sp/>specifying<sp/>the<sp/>format,<sp/>the<sp/>number<sp/>of<sp/>images,<sp/>and<sp/>the<sp/>sharing<sp/>mode.<sp/>The<sp/>swapchain<sp/>is<sp/>essential<sp/>for<sp/>rendering<sp/>content<sp/>and<sp/>displaying<sp/>it<sp/>on<sp/>the<sp/>window<sp/>surface.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>manage<sp/>command<sp/>execution,<sp/>`shCreateCommandPool`<sp/>establishes<sp/>command<sp/>pools<sp/>for<sp/>graphics<sp/>and<sp/>potentially<sp/>presentation<sp/>tasks.<sp/>Command<sp/>buffers<sp/>are<sp/>then<sp/>allocated<sp/>with<sp/>shAllocateCommandBuffers,<sp/>which<sp/>are<sp/>used<sp/>to<sp/>record<sp/>rendering<sp/>commands.<sp/>If<sp/>the<sp/>graphics<sp/>and<sp/>presentation<sp/>queue<sp/>families<sp/>are<sp/>different,<sp/>separate<sp/>command<sp/>pools<sp/>are<sp/>created;<sp/>otherwise,<sp/>the<sp/>same<sp/>pool<sp/>is<sp/>used<sp/>for<sp/>both<sp/>tasks.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Synchronization<sp/>and<sp/>Resources</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Synchronization<sp/>between<sp/>command<sp/>submissions<sp/>and<sp/>image<sp/>presentation<sp/>is<sp/>handled<sp/>by<sp/>`shCreateFences`,<sp/>which<sp/>creates<sp/>fences<sp/>to<sp/>signal<sp/>when<sp/>commands<sp/>are<sp/>complete.<sp/>`shGetSwapchainImages`<sp/>retrieves<sp/>the<sp/>images<sp/>from<sp/>the<sp/>swapchain,<sp/>and<sp/>`shCreateImageView`<sp/>creates<sp/>image<sp/>views<sp/>for<sp/>these<sp/>swapchain<sp/>images,<sp/>defining<sp/>how<sp/>they<sp/>are<sp/>accessed<sp/>during<sp/>rendering.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Renderpass<sp/>and<sp/>Framebuffers</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>setup<sp/>concludes<sp/>with<sp/>the<sp/>creation<sp/>of<sp/>a<sp/>renderpass<sp/>and<sp/>associated<sp/>framebuffers.<sp/>`shCombineMaxSamples`<sp/>determines<sp/>the<sp/>maximum<sp/>number<sp/>of<sp/>samples<sp/>for<sp/>anti-aliasing.<sp/>`shCreateRenderpass`<sp/>configures<sp/>the<sp/>renderpass,<sp/>defining<sp/>attachments,<sp/>subpasses,<sp/>and<sp/>their<sp/>layouts.<sp/>Finally,<sp/>`shCreateFramebuffer`<sp/>creates<sp/>framebuffers<sp/>for<sp/>each<sp/>swapchain<sp/>image,<sp/>linking<sp/>them<sp/>with<sp/>the<sp/>renderpass<sp/>to<sp/>facilitate<sp/>rendering<sp/>to<sp/>the<sp/>screen.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Main<sp/>Loop<sp/>Analysis</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>main<sp/>loop<sp/>of<sp/>a<sp/>Vulkan<sp/>application<sp/>is<sp/>a<sp/>critical<sp/>section<sp/>that<sp/>manages<sp/>rendering<sp/>and<sp/>presentation.<sp/>It<sp/>continuously<sp/>updates<sp/>the<sp/>window<sp/>content<sp/>and<sp/>handles<sp/>various<sp/>events.<sp/>Here’s<sp/>a<sp/>breakdown<sp/>of<sp/>the<sp/>process:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>**Event<sp/>Handling<sp/>and<sp/>Window<sp/>Resize**.</highlight></codeline>
+<codeline><highlight class="normal">At<sp/>the<sp/>start<sp/>of<sp/>each<sp/>loop<sp/>iteration,<sp/>the<sp/>function<sp/>`glfwPollEvents`<sp/>is<sp/>called<sp/>to<sp/>process<sp/>any<sp/>pending<sp/>events,<sp/>such<sp/>as<sp/>user<sp/>inputs<sp/>or<sp/>window<sp/>system<sp/>events.<sp/>Following<sp/>this,<sp/>the<sp/>window<sp/>size<sp/>is<sp/>queried<sp/>with<sp/>`glfwGetWindowSize`.<sp/>If<sp/>the<sp/>window<sp/>is<sp/>not<sp/>minimized<sp/>(i.e.,<sp/>width<sp/>and<sp/>height<sp/>are<sp/>non-zero),<sp/>the<sp/>loop<sp/>checks<sp/>if<sp/>the<sp/>window<sp/>has<sp/>been<sp/>resized.<sp/>If<sp/>so,<sp/>it<sp/>invokes<sp/>resizeWindow<sp/>to<sp/>reconfigure<sp/>the<sp/>swapchain,<sp/>surface,<sp/>and<sp/>related<sp/>resources<sp/>to<sp/>match<sp/>the<sp/>new<sp/>dimensions.<sp/>This<sp/>function<sp/>updates<sp/>the<sp/>swapchain<sp/>and<sp/>other<sp/>resources<sp/>to<sp/>ensure<sp/>they<sp/>align<sp/>with<sp/>the<sp/>current<sp/>window<sp/>size<sp/>and<sp/>aspect<sp/>ratio.<sp/>The<sp/>swapchain_image_idx<sp/>is<sp/>reset<sp/>to<sp/>0<sp/>to<sp/>start<sp/>using<sp/>the<sp/>new<sp/>swapchain<sp/>images.</highlight></codeline>
+<codeline><highlight class="normal">Additionally,<sp/>if<sp/>the<sp/>swapchain<sp/>has<sp/>become<sp/>suboptimal<sp/>(e.g.,<sp/>due<sp/>to<sp/>the<sp/>window<sp/>size<sp/>change<sp/>or<sp/>other<sp/>factors<sp/>affecting<sp/>performance),<sp/>resizeWindow<sp/>is<sp/>called<sp/>again<sp/>to<sp/>address<sp/>these<sp/>issues<sp/>and<sp/>restore<sp/>optimal<sp/>performance.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>**Synchronization<sp/>and<sp/>Command<sp/>Buffer<sp/>Management**.</highlight></codeline>
+<codeline><highlight class="normal">Once<sp/>the<sp/>window<sp/>is<sp/>properly<sp/>resized,<sp/>the<sp/>loop<sp/>proceeds<sp/>to<sp/>handle<sp/>synchronization<sp/>and<sp/>command<sp/>submission.<sp/>It<sp/>begins<sp/>by<sp/>creating<sp/>a<sp/>semaphore<sp/>(current_image_acquired_semaphore)<sp/>for<sp/>signaling<sp/>when<sp/>the<sp/>image<sp/>from<sp/>the<sp/>swapchain<sp/>is<sp/>acquired.<sp/>`shAcquireSwapchainImage`<sp/>is<sp/>then<sp/>called<sp/>to<sp/>acquire<sp/>an<sp/>image<sp/>from<sp/>the<sp/>swapchain.<sp/>This<sp/>function<sp/>also<sp/>checks<sp/>if<sp/>the<sp/>swapchain<sp/>is<sp/>suboptimal<sp/>and<sp/>updates<sp/>the<sp/>swapchain_image_idx<sp/>to<sp/>point<sp/>to<sp/>the<sp/>acquired<sp/>image.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>loop<sp/>then<sp/>waits<sp/>for<sp/>fences<sp/>associated<sp/>with<sp/>the<sp/>command<sp/>buffers<sp/>of<sp/>the<sp/>currently<sp/>acquired<sp/>image<sp/>to<sp/>ensure<sp/>that<sp/>previous<sp/>commands<sp/>have<sp/>finished<sp/>execution.<sp/>This<sp/>is<sp/>achieved<sp/>through<sp/>`shWaitForFences`,<sp/>followed<sp/>by<sp/>resetting<sp/>the<sp/>fences<sp/>with<sp/>`shResetFences`<sp/>to<sp/>prepare<sp/>them<sp/>for<sp/>the<sp/>next<sp/>frame.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>**Command<sp/>Recording<sp/>and<sp/>Rendering**.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>command<sp/>buffer<sp/>for<sp/>the<sp/>current<sp/>image<sp/>is<sp/>started<sp/>using<sp/>`shBeginCommandBuffer`.<sp/>Rendering<sp/>commands<sp/>are<sp/>recorded<sp/>into<sp/>this<sp/>command<sp/>buffer,<sp/>starting<sp/>with<sp/>clearing<sp/>the<sp/>framebuffer.<sp/>The<sp/>clear<sp/>color<sp/>is<sp/>dynamically<sp/>calculated<sp/>based<sp/>on<sp/>the<sp/>current<sp/>time,<sp/>creating<sp/>a<sp/>visually<sp/>dynamic<sp/>effect.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>renderpass<sp/>is<sp/>then<sp/>initiated<sp/>with<sp/>`shBeginRenderpass`,<sp/>specifying<sp/>the<sp/>clear<sp/>values<sp/>and<sp/>the<sp/>framebuffer.<sp/>After<sp/>recording<sp/>the<sp/>rendering<sp/>commands,<sp/>the<sp/>renderpass<sp/>is<sp/>ended<sp/>with<sp/>`shEndRenderpass`,<sp/>and<sp/>the<sp/>command<sp/>buffer<sp/>is<sp/>finalized<sp/>with<sp/>`shEndCommandBuffer`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>**Queue<sp/>Submission<sp/>and<sp/>Presentation**.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>completed<sp/>command<sp/>buffer<sp/>is<sp/>submitted<sp/>to<sp/>the<sp/>graphics<sp/>queue<sp/>using<sp/>shQueueSubmit.<sp/>This<sp/>function<sp/>specifies<sp/>the<sp/>command<sp/>buffer,<sp/>waits<sp/>for<sp/>the<sp/>acquisition<sp/>semaphore,<sp/>and<sp/>signals<sp/>another<sp/>semaphore<sp/>(graphics_queue_finished_semaphores)<sp/>when<sp/>the<sp/>command<sp/>execution<sp/>is<sp/>complete.</highlight></codeline>
+<codeline><highlight class="normal">After<sp/>submission,<sp/>the<sp/>`shQueuePresentSwapchainImage`<sp/>function<sp/>presents<sp/>the<sp/>rendered<sp/>image<sp/>to<sp/>the<sp/>screen<sp/>using<sp/>the<sp/>presentation<sp/>queue.<sp/>It<sp/>waits<sp/>for<sp/>the<sp/>graphics<sp/>queue<sp/>semaphore<sp/>to<sp/>ensure<sp/>that<sp/>rendering<sp/>is<sp/>completed<sp/>before<sp/>presenting<sp/>the<sp/>image.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*<sp/>**Cleanup**.</highlight></codeline>
+<codeline><highlight class="normal">Finally,<sp/>the<sp/>temporary<sp/>semaphore<sp/>(`current_image_acquired_semaphore`)<sp/>is<sp/>destroyed<sp/>to<sp/>free<sp/>up<sp/>resources.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](../media/clear_color_green.png)</highlight></codeline>
+    </programlisting>
+    <location file="src/clear_color_example.md"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="build_8md" kind="file" language="Markdown">
+    <compoundname>build.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Build<sp/>shvulkan</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&amp;logo=&amp;logoColor=white&amp;labelColor=990042)</highlight></codeline>
+<codeline><highlight class="normal">[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black)](https://github.com/mrsinho/shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[TOC]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Clone<sp/>and<sp/>Build</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Open<sp/>the<sp/>terminal<sp/>and<sp/>run<sp/>the<sp/>following<sp/>commands:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![Windows](https://a11ybadges.com/badge?logo=windows)<sp/>![Debian](https://a11ybadges.com/badge?logo=debian)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Tested<sp/>on<sp/>Win32<sp/>and<sp/>X11.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">mkdir<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![NixOS](https://a11ybadges.com/badge?logo=nixos)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Tested<sp/>on<sp/>X11<sp/>and<sp/>Wayland<sp/>graphics<sp/>servers.<sp/>The<sp/>Nix<sp/>flake<sp/>lets<sp/>the<sp/>system<sp/>choose<sp/>the<sp/>default<sp/>windowing<sp/>system.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&gt;<sp/>[!WARNING]</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>While<sp/>testing<sp/>with<sp/>Wayland<sp/>revealed<sp/>no<sp/>issues,<sp/>there<sp/>are<sp/>some<sp/>resizing<sp/>issues<sp/>when<sp/>using<sp/>X11.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>develop<sp/>--command<sp/>bash<sp/>#<sp/>enter<sp/>the<sp/>flake<sp/>environment</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>bin/linux</highlight></codeline>
+<codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![NixOS<sp/>Wayland](../media/nixos-wayland-scene.png)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">---</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>CMake<sp/>targets<sp/>and<sp/>variables</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">|<sp/>CMake<sp/>Target<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Type<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Configure<sp/>Flags<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|--------------------------------|-----------------|-----------------------------|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>library<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>/<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-docs<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Doxygen<sp/>outputs<sp/>|<sp/>/<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-clear-color<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>executable<sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>SH_VULKAN_BUILD_EXAMPLES=ON<sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-scene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>executable<sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>SH_VULKAN_BUILD_EXAMPLES=ON<sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>shvulkan-compute-example<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>executable<sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>SH_VULKAN_BUILD_EXAMPLES=ON<sp/>|</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>the<sp/>cmake<sp/>option<sp/>`SH_VULKAN_BUILD_EXAMPLES`<sp/>is<sp/>enabled,<sp/>the<sp/>additional<sp/>[`glfw`](https://github.com/glfw/glfw)<sp/>target<sp/>will<sp/>be<sp/>generated<sp/>as<sp/>a<sp/>static<sp/>library.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">|<sp/>CMake<sp/>Variable<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>About<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|--------------------------------|--------------------------------------------------------|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_VERSION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Version<sp/>of<sp/>the<sp/>`shvulkan`<sp/>library<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_ROOT_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>root<sp/>of<sp/>the<sp/>repository<sp/>directory<sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_BINARIES_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>output<sp/>binaries<sp/>directory<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">---</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Embed<sp/>shvulkan<sp/>with<sp/>your<sp/>C/C++<sp/>projects</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>link<sp/>to<sp/>the<sp/>`shvulkan`<sp/>library<sp/>with<sp/>CMake:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```cmake</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(NOT<sp/>TARGET<sp/>shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">set(SH_VULKAN_ROOT_DIR<sp/><sp/><sp/><sp/><sp/>path/to/shvulkan/root/directory)</highlight></codeline>
+<codeline><highlight class="normal">set(SH_VULKAN_BINARIES_DIR<sp/>path/your/binaries/directory)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">include(${SH_VULKAN_ROOT_DIR}/shvulkan/shvulkan.cmake)</highlight></codeline>
+<codeline><highlight class="normal">build_shvulkan()</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">endif()</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>[...]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">target_link_libraries(app<sp/>PUBLIC<sp/>shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then,<sp/>include<sp/>the<sp/>`shVulkan.h`<sp/>header<sp/>file:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;shvulkan/shVulkan.h&gt;</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+    </programlisting>
+    <location file="src/build.md"/>
+  </compounddef>
+</doxygen>

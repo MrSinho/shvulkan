@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="compute__example_8md" kind="file" language="Markdown">
+    <compoundname>compute_example.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Compute<sp/>Example</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&amp;logo=&amp;logoColor=white&amp;labelColor=990042)</highlight></codeline>
+<codeline><highlight class="normal">[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black)](https://github.com/mrsinho/shvulkan)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[TOC]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>compute<sp/>example<sp/>demonstrates<sp/>the<sp/>setup<sp/>and<sp/>execution<sp/>of<sp/>a<sp/>Vulkan-based<sp/>compute<sp/>shader<sp/>application.<sp/>The<sp/>application<sp/>starts<sp/>by<sp/>initializing<sp/>Vulkan<sp/>components,<sp/>including<sp/>creating<sp/>an<sp/>instance,<sp/>selecting<sp/>a<sp/>physical<sp/>device,<sp/>and<sp/>setting<sp/>up<sp/>a<sp/>logical<sp/>device<sp/>with<sp/>a<sp/>compute<sp/>queue.<sp/>A<sp/>command<sp/>pool<sp/>and<sp/>command<sp/>buffer<sp/>are<sp/>also<sp/>created<sp/>to<sp/>handle<sp/>command<sp/>submissions.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Memory<sp/>Allocation</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>primary<sp/>objective<sp/>of<sp/>this<sp/>application<sp/>is<sp/>to<sp/>perform<sp/>computations<sp/>using<sp/>a<sp/>compute<sp/>shader.<sp/>The<sp/>application<sp/>first<sp/>prepares<sp/>memory<sp/>by<sp/>setting<sp/>up<sp/>staging<sp/>and<sp/>device-local<sp/>buffers.<sp/>The<sp/>staging<sp/>buffer<sp/>is<sp/>used<sp/>for<sp/>host-visible<sp/>memory,<sp/>allowing<sp/>the<sp/>CPU<sp/>to<sp/>write<sp/>data<sp/>to<sp/>it.<sp/>This<sp/>data<sp/>includes<sp/>an<sp/>array<sp/>of<sp/>input<sp/>values<sp/>and<sp/>a<sp/>factor.<sp/>This<sp/>buffer<sp/>is<sp/>then<sp/>copied<sp/>to<sp/>a<sp/>device-local<sp/>buffer,<sp/>which<sp/>is<sp/>optimized<sp/>for<sp/>GPU<sp/>access.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Compute<sp/>Pipeline</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Next,<sp/>the<sp/>compute<sp/>pipeline<sp/>is<sp/>set<sp/>up.<sp/>This<sp/>involves<sp/>defining<sp/>descriptor<sp/>sets<sp/>and<sp/>layout<sp/>bindings,<sp/>creating<sp/>and<sp/>setting<sp/>up<sp/>shader<sp/>modules,<sp/>and<sp/>configuring<sp/>the<sp/>compute<sp/>pipeline.<sp/>The<sp/>compute<sp/>shader<sp/>is<sp/>responsible<sp/>for<sp/>performing<sp/>operations<sp/>on<sp/>the<sp/>input<sp/>data.<sp/>In<sp/>this<sp/>example,<sp/>the<sp/>shader<sp/>is<sp/>designed<sp/>to<sp/>square<sp/>the<sp/>input<sp/>values.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Compute<sp/>Queue<sp/>Submission</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Once<sp/>the<sp/>pipeline<sp/>is<sp/>ready,<sp/>the<sp/>application<sp/>records<sp/>commands<sp/>into<sp/>the<sp/>command<sp/>buffer.<sp/>This<sp/>includes<sp/>binding<sp/>the<sp/>compute<sp/>pipeline<sp/>and<sp/>descriptor<sp/>sets,<sp/>and<sp/>dispatching<sp/>compute<sp/>work<sp/>to<sp/>the<sp/>GPU.<sp/>After<sp/>recording,<sp/>the<sp/>command<sp/>buffer<sp/>is<sp/>submitted<sp/>to<sp/>the<sp/>compute<sp/>queue,<sp/>and<sp/>the<sp/>application<sp/>waits<sp/>for<sp/>the<sp/>operations<sp/>to<sp/>complete.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>GPU<sp/>Memory<sp/>reading<sp/>and<sp/>cleanup</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">After<sp/>the<sp/>computation,<sp/>the<sp/>application<sp/>copies<sp/>the<sp/>results<sp/>from<sp/>the<sp/>device-local<sp/>buffer<sp/>back<sp/>to<sp/>the<sp/>staging<sp/>buffer.<sp/>This<sp/>allows<sp/>the<sp/>CPU<sp/>to<sp/>access<sp/>and<sp/>read<sp/>the<sp/>results<sp/>of<sp/>the<sp/>computation.<sp/>The<sp/>final<sp/>step<sp/>involves<sp/>reading<sp/>the<sp/>output<sp/>values<sp/>from<sp/>the<sp/>staging<sp/>buffer<sp/>and<sp/>printing<sp/>them<sp/>to<sp/>the<sp/>console.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>application<sp/>concludes<sp/>by<sp/>cleaning<sp/>up<sp/>resources,<sp/>including<sp/>destroying<sp/>Vulkan<sp/>objects<sp/>and<sp/>freeing<sp/>allocated<sp/>memory.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Terminal<sp/>output</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">Compute<sp/>shader<sp/>inputs:</highlight></codeline>
+<codeline><highlight class="normal">0.000000</highlight></codeline>
+<codeline><highlight class="normal">1.000000</highlight></codeline>
+<codeline><highlight class="normal">2.000000</highlight></codeline>
+<codeline><highlight class="normal">3.000000</highlight></codeline>
+<codeline><highlight class="normal">4.000000</highlight></codeline>
+<codeline><highlight class="normal">5.000000</highlight></codeline>
+<codeline><highlight class="normal">6.000000</highlight></codeline>
+<codeline><highlight class="normal">7.000000</highlight></codeline>
+<codeline><highlight class="normal">8.000000</highlight></codeline>
+<codeline><highlight class="normal">9.000000</highlight></codeline>
+<codeline><highlight class="normal">10.000000</highlight></codeline>
+<codeline><highlight class="normal">11.000000</highlight></codeline>
+<codeline><highlight class="normal">12.000000</highlight></codeline>
+<codeline><highlight class="normal">13.000000</highlight></codeline>
+<codeline><highlight class="normal">14.000000</highlight></codeline>
+<codeline><highlight class="normal">15.000000</highlight></codeline>
+<codeline><highlight class="normal">16.000000</highlight></codeline>
+<codeline><highlight class="normal">17.000000</highlight></codeline>
+<codeline><highlight class="normal">18.000000</highlight></codeline>
+<codeline><highlight class="normal">19.000000</highlight></codeline>
+<codeline><highlight class="normal">20.000000</highlight></codeline>
+<codeline><highlight class="normal">21.000000</highlight></codeline>
+<codeline><highlight class="normal">22.000000</highlight></codeline>
+<codeline><highlight class="normal">23.000000</highlight></codeline>
+<codeline><highlight class="normal">24.000000</highlight></codeline>
+<codeline><highlight class="normal">25.000000</highlight></codeline>
+<codeline><highlight class="normal">26.000000</highlight></codeline>
+<codeline><highlight class="normal">27.000000</highlight></codeline>
+<codeline><highlight class="normal">28.000000</highlight></codeline>
+<codeline><highlight class="normal">29.000000</highlight></codeline>
+<codeline><highlight class="normal">30.000000</highlight></codeline>
+<codeline><highlight class="normal">31.000000</highlight></codeline>
+<codeline><highlight class="normal">32.000000</highlight></codeline>
+<codeline><highlight class="normal">33.000000</highlight></codeline>
+<codeline><highlight class="normal">34.000000</highlight></codeline>
+<codeline><highlight class="normal">35.000000</highlight></codeline>
+<codeline><highlight class="normal">36.000000</highlight></codeline>
+<codeline><highlight class="normal">37.000000</highlight></codeline>
+<codeline><highlight class="normal">38.000000</highlight></codeline>
+<codeline><highlight class="normal">39.000000</highlight></codeline>
+<codeline><highlight class="normal">40.000000</highlight></codeline>
+<codeline><highlight class="normal">41.000000</highlight></codeline>
+<codeline><highlight class="normal">42.000000</highlight></codeline>
+<codeline><highlight class="normal">43.000000</highlight></codeline>
+<codeline><highlight class="normal">44.000000</highlight></codeline>
+<codeline><highlight class="normal">45.000000</highlight></codeline>
+<codeline><highlight class="normal">46.000000</highlight></codeline>
+<codeline><highlight class="normal">47.000000</highlight></codeline>
+<codeline><highlight class="normal">48.000000</highlight></codeline>
+<codeline><highlight class="normal">49.000000</highlight></codeline>
+<codeline><highlight class="normal">50.000000</highlight></codeline>
+<codeline><highlight class="normal">51.000000</highlight></codeline>
+<codeline><highlight class="normal">52.000000</highlight></codeline>
+<codeline><highlight class="normal">53.000000</highlight></codeline>
+<codeline><highlight class="normal">54.000000</highlight></codeline>
+<codeline><highlight class="normal">55.000000</highlight></codeline>
+<codeline><highlight class="normal">56.000000</highlight></codeline>
+<codeline><highlight class="normal">57.000000</highlight></codeline>
+<codeline><highlight class="normal">58.000000</highlight></codeline>
+<codeline><highlight class="normal">59.000000</highlight></codeline>
+<codeline><highlight class="normal">60.000000</highlight></codeline>
+<codeline><highlight class="normal">61.000000</highlight></codeline>
+<codeline><highlight class="normal">62.000000</highlight></codeline>
+<codeline><highlight class="normal">63.000000</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Squaring<sp/>the<sp/>numbers...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Compute<sp/>shader<sp/>output<sp/>values:</highlight></codeline>
+<codeline><highlight class="normal">0.000000</highlight></codeline>
+<codeline><highlight class="normal">1.000000</highlight></codeline>
+<codeline><highlight class="normal">4.000000</highlight></codeline>
+<codeline><highlight class="normal">9.000000</highlight></codeline>
+<codeline><highlight class="normal">16.000000</highlight></codeline>
+<codeline><highlight class="normal">25.000000</highlight></codeline>
+<codeline><highlight class="normal">36.000000</highlight></codeline>
+<codeline><highlight class="normal">49.000000</highlight></codeline>
+<codeline><highlight class="normal">64.000000</highlight></codeline>
+<codeline><highlight class="normal">81.000000</highlight></codeline>
+<codeline><highlight class="normal">100.000000</highlight></codeline>
+<codeline><highlight class="normal">121.000000</highlight></codeline>
+<codeline><highlight class="normal">144.000000</highlight></codeline>
+<codeline><highlight class="normal">169.000000</highlight></codeline>
+<codeline><highlight class="normal">196.000000</highlight></codeline>
+<codeline><highlight class="normal">225.000000</highlight></codeline>
+<codeline><highlight class="normal">256.000000</highlight></codeline>
+<codeline><highlight class="normal">289.000000</highlight></codeline>
+<codeline><highlight class="normal">324.000000</highlight></codeline>
+<codeline><highlight class="normal">361.000000</highlight></codeline>
+<codeline><highlight class="normal">400.000000</highlight></codeline>
+<codeline><highlight class="normal">441.000000</highlight></codeline>
+<codeline><highlight class="normal">484.000000</highlight></codeline>
+<codeline><highlight class="normal">529.000000</highlight></codeline>
+<codeline><highlight class="normal">576.000000</highlight></codeline>
+<codeline><highlight class="normal">625.000000</highlight></codeline>
+<codeline><highlight class="normal">676.000000</highlight></codeline>
+<codeline><highlight class="normal">729.000000</highlight></codeline>
+<codeline><highlight class="normal">784.000000</highlight></codeline>
+<codeline><highlight class="normal">841.000000</highlight></codeline>
+<codeline><highlight class="normal">900.000000</highlight></codeline>
+<codeline><highlight class="normal">961.000000</highlight></codeline>
+<codeline><highlight class="normal">1024.000000</highlight></codeline>
+<codeline><highlight class="normal">1089.000000</highlight></codeline>
+<codeline><highlight class="normal">1156.000000</highlight></codeline>
+<codeline><highlight class="normal">1225.000000</highlight></codeline>
+<codeline><highlight class="normal">1296.000000</highlight></codeline>
+<codeline><highlight class="normal">1369.000000</highlight></codeline>
+<codeline><highlight class="normal">1444.000000</highlight></codeline>
+<codeline><highlight class="normal">1521.000000</highlight></codeline>
+<codeline><highlight class="normal">1600.000000</highlight></codeline>
+<codeline><highlight class="normal">1681.000000</highlight></codeline>
+<codeline><highlight class="normal">1764.000000</highlight></codeline>
+<codeline><highlight class="normal">1849.000000</highlight></codeline>
+<codeline><highlight class="normal">1936.000000</highlight></codeline>
+<codeline><highlight class="normal">2025.000000</highlight></codeline>
+<codeline><highlight class="normal">2116.000000</highlight></codeline>
+<codeline><highlight class="normal">2209.000000</highlight></codeline>
+<codeline><highlight class="normal">2304.000000</highlight></codeline>
+<codeline><highlight class="normal">2401.000000</highlight></codeline>
+<codeline><highlight class="normal">2500.000000</highlight></codeline>
+<codeline><highlight class="normal">2601.000000</highlight></codeline>
+<codeline><highlight class="normal">2704.000000</highlight></codeline>
+<codeline><highlight class="normal">2809.000000</highlight></codeline>
+<codeline><highlight class="normal">2916.000000</highlight></codeline>
+<codeline><highlight class="normal">3025.000000</highlight></codeline>
+<codeline><highlight class="normal">3136.000000</highlight></codeline>
+<codeline><highlight class="normal">3249.000000</highlight></codeline>
+<codeline><highlight class="normal">3364.000000</highlight></codeline>
+<codeline><highlight class="normal">3481.000000</highlight></codeline>
+<codeline><highlight class="normal">3600.000000</highlight></codeline>
+<codeline><highlight class="normal">3721.000000</highlight></codeline>
+<codeline><highlight class="normal">3844.000000</highlight></codeline>
+<codeline><highlight class="normal">3969.000000</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+    </programlisting>
+    <location file="src/compute_example.md"/>
+  </compounddef>
+</doxygen>
