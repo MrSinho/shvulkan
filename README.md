@@ -1,9 +1,17 @@
 # shvulkan
 
-![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-3CFADC?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
-[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
+![](https://img.shields.io/badge/shvulkan%20|%20SINHO%20SOFTWORKS-white?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
+[![](https://img.shields.io/badge/GitHub_repository-white?style=for-the-badge&logo=github&logoColor=black)](https://github.com/mrsinho/shvulkan)
 
-### ![Vulkan](https://a11ybadges.com/badge?logo=vulkan)
+![](https://img.shields.io/github/commit-activity/t/mrsinho/shvulkan?style=for-the-badge&label=Total%20commits&color=ac162c)
+![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&label=Nix%20flake%20check&labelColor=grey)
+
+![](https://img.shields.io/github/languages/code-size/mrsinho/shvulkan?style=for-the-badge&labelColor=grey&color=5277c3)
+![](https://img.shields.io/github/languages/top/mrsinho/shvulkan?style=for-the-badge&label=C%20language%20coverage&color=7d78f2)
+
+
+![](https://img.shields.io/github/license/mrsinho/shvulkan?style=for-the-badge)
+
 
 [TOC]
 
@@ -18,12 +26,12 @@ __Headless scene example using [vulkan-virtual-outputs](https://github.com/mrsin
 
 ---
 
-## Build status
+## Build status 
 
-![](https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&logo=c&logoColor=white&labelColor=0AD0DF#.svg)
+![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&label=Nix%20flake%20check&labelColor=grey) ![](https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&logo=c&logoColor=white&labelColor=0AD0DF#.svg)
 ![](https://img.shields.io/badge/Compatible_with_C%2b%2b-3CFADC?style=for-the-badge&logo=c%2b%2b&logoColor=white&labelColor=0AD0DF#.svg)
 
-The examples are frequently being tested on Windows 11, Linux Mint (virtual machine and pc) with different compilers (MSVC, gcc), and hardware configurations (RX580 4GB GDDR5, Radeon V Carrizo 500MB).
+The examples are frequently being tested on **Windows 11**, **NixOS** (with Nix flake), **Linux Mint** (virtual machine and pc) with different compilers (**MSVC**, **gcc**), hardware configurations (RX580 4GB GDDR5, Radeon V Carrizo 500MB) and windowing systems (**Win32**, **X11**, **Wayland**).
 
 ## Clone and Build
 
