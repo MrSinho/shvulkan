@@ -53,9 +53,4 @@ set_target_properties(
     VS_DEBUGGER_WORKING_DIRECTORY ${SH_VULKAN_BIN_DIR}
 )
 
-install(
-    TARGETS shvulkan-compute-power-numbers shvulkan-clear-color shvulkan-scene shvulkan-headless-scene 
-    RUNTIME DESTINATION bin
-)
-
 endfunction()

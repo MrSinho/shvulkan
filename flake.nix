@@ -15,10 +15,11 @@
       shvulkan = (with pkgs; stdenv.mkDerivation {
           pname = "shvulkan";
           version = "0.1.0";
+          
           src = pkgs.fetchgit {
             url = "https://github.com/mrsinho/shvulkan";
             rev = "fd4f90196fa95bd960274acac349435aaeb4b66a";
-            sha256 = "d7rU3sbr6/u9cSiqPqMZAZAY5vWjR6nQdmU46Qjy8tA=";
+            sha256 = "d7rU3sbr6/u9cSiqPqMZAZAY5vWjR6nQdmU46Qjy8tA=";#dummy 0000000000000000000000000000000000000000000000000000
             fetchSubmodules = true;
           };
 
@@ -48,7 +49,7 @@
 
           cmakeFlags = [
             "-Wno-dev"
-
+            "-U'*'"
             "-DSH_VULKAN_BUILD_EXAMPLES=ON"
             
             "-DVulkan_INCLUDE_DIR=${pkgs.vulkan-headers}/include"
@@ -73,14 +74,15 @@
 
             "-DX11_Xshape_INCLUDE_PATH=examples/external/libxext/include"
           ];
+
           buildPhase = "
             make -j $NIX_BUILD_CORES
           ";
+
           installPhase = ''
-            mkdir -p $out/bin
-            mkdir -p $out/lib
-            cp $src/lib/shvulkan.a $out/lib/shvulkan.a
+            cp -r $TMP/shvulkan-fd4f901 $out
           '';
+
         }
       );
     in rec {
