@@ -7,8 +7,8 @@ function(build_shvulkan_docs)
 
 
 
-if (NOT DEFINED SH_VULKAN_BINARIES_DIR)
-message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_BINARIES_DIR")
+if (NOT DEFINED SH_VULKAN_DOCS_DIR)
+message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_DOCS_DIR")
 endif()
 
 if (NOT DEFINED SH_VULKAN_ROOT_DIR)
@@ -23,8 +23,8 @@ find_package(Doxygen)
 
 if (DOXYGEN_FOUND)
 
-    set(SH_VULKAN_DOXYFILESRC ${SH_VULKAN_ROOT_DIR}/docs/Doxyfile.in)
-    set(SH_VULKAN_DOXYFILEDST ${SH_VULKAN_ROOT_DIR}/docs/Doxyfile)
+    set(SH_VULKAN_DOXYFILESRC ${SH_VULKAN_DOCS_DIR}/Doxyfile.in)
+    set(SH_VULKAN_DOXYFILEDST ${SH_VULKAN_DOCS_DIR}/Doxyfile)
 
     message(STATUS "Configuring " ${SH_VULKAN_DOXYFILEDST} " from " ${SH_VULKAN_DOXYFILESRC})
 

@@ -8,11 +8,10 @@ set(SH_VULKAN_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 
+option(SH_VULKAN_LIB_DIR  CACHE OFF)
+option(SH_VULKAN_BIN_DIR  CACHE OFF)
+option(SH_VULKAN_DOCS_DIR CACHE OFF)
 
-
-option(SH_VULKAN_LIB_DIR    CACHE OFF)
-option(SH_VULKAN_BIN_DIR    CACHE OFF)
-option(SH_VULKAN_BUILD_DOCS CACHE OFF)
 
 
 if (NOT SH_VULKAN_LIB_DIR)
@@ -23,7 +22,9 @@ if (NOT SH_VULKAN_BIN_DIR)
 set(SH_VULKAN_BIN_DIR ${SH_VULKAN_ROOT_DIR}/bin)
 endif()
 
-
+if (NOT SH_VULKAN_DOCS_DIR)
+set(SH_VULKAN_DOCS_DIR ${SH_VULKAN_ROOT_DIR}/docs)
+endif()
 
 
 
@@ -31,15 +32,13 @@ project(shvulkan C)
 
 
 
-
-
-
 include(${SH_VULKAN_ROOT_DIR}/shvulkan/shvulkan.cmake)
-include(${SH_VULKAN_ROOT_DIR}/examples/shvulkan-examples.cmake)
 include(${SH_VULKAN_ROOT_DIR}/docs/shvulkan-docs.cmake)
+include(${SH_VULKAN_ROOT_DIR}/examples/shvulkan-examples.cmake)
 
 
 
+option(SH_VULKAN_BUILD_DOCS     CACHE OFF)
 option(SH_VULKAN_BUILD_EXAMPLES CACHE OFF)
 
 

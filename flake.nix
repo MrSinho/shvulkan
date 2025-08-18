@@ -18,8 +18,8 @@
 
           src = pkgs.fetchgit {
             url = "https://github.com/mrsinho/shvulkan";
-            rev = "fd4f90196fa95bd960274acac349435aaeb4b66a";
-            sha256 = "d7rU3sbr6/u9cSiqPqMZAZAY5vWjR6nQdmU46Qjy8tA=";#dummy 0000000000000000000000000000000000000000000000000000
+            rev = "0d30000e0c74bcfb089aa1f7c3e0f3dc5380176c";
+            sha256 = "2faQQzdU7MWIGhEobF0HwpHrQYiyul7GdUOQEOVftqM=";#dummy 0000000000000000000000000000000000000000000000000000
             fetchSubmodules = true;
           };
 
