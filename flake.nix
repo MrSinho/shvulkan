@@ -82,7 +82,7 @@
             doxygen
           '';
 
-          installPhase = '' # Starts from build directory (which is also equal to $PWD)
+          installPhase = '' # Starts from build directory (equal to $PWD)
             mkdir -p $out/lib
             mkdir -p $out/include
             mkdir -p $out/docs
