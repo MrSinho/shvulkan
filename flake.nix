@@ -15,11 +15,10 @@
       shvulkan = (with pkgs; stdenv.mkDerivation {
           pname = "shvulkan";
           version = "0.1.0";
-
           src = pkgs.fetchgit {
             url = "https://github.com/mrsinho/shvulkan";
-            rev = "941ec40f1121a7dcd01a68855300072b9f2cbf3b";
-            sha256 = "yD3Yr99HdiK38i2uQNnKsWPiigtk7c6MUOtzLRM9rAo=";
+            rev = "d35bbf31e51beeeefaeb455fe90a5c1253a2b405";
+            sha256 = "fupgY3IFB58TRSUGGZqUljn1KqZU1ry4tenyRRdnqfA=";
             fetchSubmodules = true;
           };
 
@@ -79,23 +78,91 @@
 
           buildPhase = '' # Starts from build directory
             make -j $NIX_BUILD_CORES
+            cd ../docs
+            doxygen
           '';
 
           installPhase = '' # Starts from build directory (which is also equal to $PWD)
-            cp -r $PWD/../ $out/
+            mkdir -p $out/lib
+            mkdir -p $out/include
+            mkdir -p $out/docs
+            cp -r $PWD/../lib              $out/
+            cp -r $PWD/../shvulkan/include $out/
+            cp -r $PWD/../docs/docs        $out/
+
+            # Copy examples binaries and shaders
+            mkdir -p $out/examples/bin
+            mkdir -p $out/examples/shaders/bin
+            cp -r $PWD/../examples/shaders/bin $out/examples/shaders/
+            cp -r $PWD/../bin/*                $out/examples/bin/
           '';
 
         }
       );
     in rec {
+
       defaultApp = flake-utils.lib.mkApp {
         drv = defaultPackage;
       };
+
       defaultPackage = shvulkan;
+
       devShell = pkgs.mkShell {
+
+        nativeBuildInputs = [
+          pkgs.cmake
+          pkgs.pkg-config
+          pkgs.clang
+        ];
+
         buildInputs = [
           shvulkan
+          pkgs.vulkan-tools
+          pkgs.vulkan-loader
+          pkgs.vulkan-helper
+          pkgs.vulkan-headers
+          pkgs.glfw-wayland
+          pkgs.wayland
+          pkgs.wayland-protocols
+          pkgs.wayland-scanner
+          pkgs.libxkbcommon
+          pkgs.xorg.libX11
+          pkgs.xorg.libXi
+          pkgs.xorg.libXrandr
+          pkgs.xorg.libXinerama
+          pkgs.xorg.libXcursor
+          pkgs.xorg.libXext
+          pkgs.doxygen
         ];
+
+        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ # Allows linking to shared libraries (e.g. through dlopen)
+          pkgs.wayland
+          pkgs.vulkan-loader
+          pkgs.libxkbcommon
+          pkgs.xorg.libX11
+          pkgs.xorg.libXrandr
+          pkgs.xorg.libXinerama
+          pkgs.xorg.libXcursor
+          pkgs.xorg.libXi
+          pkgs.xorg.libXext
+        ];
+
+        shellHook = '' # Only for development
+          export Vulkan_INCLUDE_DIR=${pkgs.vulkan-headers}/include
+          export Vulkan_LIBRARY=${pkgs.vulkan-loader}/lib/libvulkan.so
+
+          export X11_X11_LIB=${pkgs.xorg.libX11}/lib/libX11.so
+          export X11_Xrandr_LIB=${pkgs.xorg.libXrandr}/lib/libXrandr.so
+          export X11_Xinerama_LIB=${pkgs.xorg.libXinerama}/lib/libXinerama.so
+          export X11_Xkb_LIB=${pkgs.libxkbcommon}/lib/libxkbcommon.so
+          export X11_Xcursor_LIB=${pkgs.xorg.libXcursor}/lib/libXcursor.so
+          export X11_Xi_LIB=${pkgs.xorg.libXi}/lib/libXi.so
+          export X11_Xshape_LIB=${pkgs.xorg.libXext}/lib/libXext.so
+
+          export PKG_CONFIG_PATH=${pkgs.wayland}/lib/pkgconfig:${pkgs.wayland-protocols}/lib/pkgconfig:${pkgs.libxkbcommon}/lib/pkgconfig:${pkgs.xorg.libX11}/lib/pkgconfig:${pkgs.xorg.libXi}/lib/pkgconfig:${pkgs.xorg.libXrandr}/lib/pkgconfig:${pkgs.xorg.libXinerama}/lib/pkgconfig:${pkgs.xorg.libXcursor}/lib/pkgconfig
+
+        '';
+
       };
     }
   );
