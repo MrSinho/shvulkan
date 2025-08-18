@@ -10,8 +10,9 @@ set(SH_VULKAN_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 
-option(SH_VULKAN_LIB_DIR CACHE OFF)
-option(SH_VULKAN_BIN_DIR CACHE OFF)
+option(SH_VULKAN_LIB_DIR    CACHE OFF)
+option(SH_VULKAN_BIN_DIR    CACHE OFF)
+option(SH_VULKAN_BUILD_DOCS CACHE OFF)
 
 
 if (NOT SH_VULKAN_LIB_DIR)
@@ -46,7 +47,11 @@ option(SH_VULKAN_BUILD_EXAMPLES CACHE OFF)
 function(main)
 
 build_shvulkan()
+
+if (SH_VULKAN_BUILD_DOCS)
 build_shvulkan_docs()
+endif()
+
 if (SH_VULKAN_BUILD_EXAMPLES)
 build_shvulkan_examples()
 endif(SH_VULKAN_BUILD_EXAMPLES)

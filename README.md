@@ -62,9 +62,8 @@ Tested on X11 and Wayland graphics servers. The Nix flake lets the system choose
 ```bash
 git clone --recursive https://github.com/mrsinho/shvulkan.git
 cd shvulkan
-nix develop --command bash # enter the flake environment
-cd bin/linux
-./shvulkan-clear-color & ./shvulkan-scene & ./shvulkan-compute-power-numbers
+nix build
+nix develop --command bash
 ```
 
 ![NixOS Wayland](./docs/media/nixos-wayland-scene.png)

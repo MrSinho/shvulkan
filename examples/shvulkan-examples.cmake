@@ -3,8 +3,8 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
 
-if (NOT DEFINED SH_VULKAN_BINARIES_DIR)
-message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_BINARIES_DIR")
+if (NOT DEFINED SH_VULKAN_BIN_DIR)
+message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_BIN_DIR")
 endif()
 
 if (NOT DEFINED SH_VULKAN_ROOT_DIR)
@@ -18,8 +18,8 @@ function(build_shvulkan_examples)
 add_subdirectory(${SH_VULKAN_ROOT_DIR}/examples/external/glfw)
 
 if (NOT TARGET vvo)
-set(VVO_BINARIES_DIR ${SH_VULKAN_BINARIES_DIR})
-set(VVO_ROOT_DIR     ${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs)
+set(VVO_BINARIES_DIR ${SH_VULKAN_BIN_DIR})
+set(VVO_ROOT_DIR     ${SH_VULKAN_BIN_DIR}/examples/external/vulkan-virtual-outputs)
 include(${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs/vvo/vvo.cmake)
 build_vvo()
 endif()

@@ -15,7 +15,7 @@
       shvulkan = (with pkgs; stdenv.mkDerivation {
           pname = "shvulkan";
           version = "0.1.0";
-          
+
           src = pkgs.fetchgit {
             url = "https://github.com/mrsinho/shvulkan";
             rev = "fd4f90196fa95bd960274acac349435aaeb4b66a";
@@ -28,6 +28,7 @@
             clang
             cmake
           ];
+
           buildInputs = [
             pkgs.vulkan-tools
             pkgs.vulkan-loader
@@ -51,6 +52,7 @@
             "-Wno-dev"
             "-U'*'"
             "-DSH_VULKAN_BUILD_EXAMPLES=ON"
+            "-DSH_VULKAN_BUILD_DOCS=ON"
             
             "-DVulkan_INCLUDE_DIR=${pkgs.vulkan-headers}/include"
             "-DVulkan_LIBRARY=${pkgs.vulkan-loader}/lib/libvulkan.so"
@@ -75,12 +77,12 @@
             "-DX11_Xshape_INCLUDE_PATH=examples/external/libxext/include"
           ];
 
-          buildPhase = "
+          buildPhase = '' # Starts from build directory
             make -j $NIX_BUILD_CORES
-          ";
+          '';
 
-          installPhase = ''
-            cp -r $TMP/shvulkan-fd4f901 $out
+          installPhase = '' # Starts from build directory (which is also equal to $PWD)
+            cp -r $PWD/../ $out/
           '';
 
         }

@@ -13,9 +13,7 @@ jobs:
     - uses: cachix/cachix-action@v14
       with:
         name: mycache
-        # If you chose signing key for write access
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-        # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: nix build
     - run: nix flake check
