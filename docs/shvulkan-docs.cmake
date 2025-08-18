@@ -23,20 +23,20 @@ find_package(Doxygen)
 
 if (DOXYGEN_FOUND)
 
-    set(SH_VULKAN_DOXYFILESRC ${SH_VULKAN_DOCS_DIR}/Doxyfile.in)
-    set(SH_VULKAN_DOXYFILEDST ${SH_VULKAN_DOCS_DIR}/Doxyfile)
+    set(SH_VULKAN_DOXYFILE_SRC ${SH_VULKAN_DOCS_DIR}/Doxyfile.in)
+    set(SH_VULKAN_DOXYFILE_DST ${SH_VULKAN_DOCS_DIR}/Doxyfile)
 
-    message(STATUS "Configuring " ${SH_VULKAN_DOXYFILEDST} " from " ${SH_VULKAN_DOXYFILESRC})
+    message(STATUS "Configuring " ${SH_VULKAN_DOXYFILE_DST} " from " ${SH_VULKAN_DOXYFILE_SRC})
 
     configure_file(
-        ${SH_VULKAN_DOXYFILESRC} 
-        ${SH_VULKAN_DOXYFILEDST}
+        ${SH_VULKAN_DOXYFILE_SRC} 
+        ${SH_VULKAN_DOXYFILE_DST}
     )
 
-    message(STATUS "Creating custom docs command: " ${DOXYGEN_EXECUTABLE} " " ${SH_VULKAN_DOXYFILEDST})
+    message(STATUS "Creating custom docs command: " ${DOXYGEN_EXECUTABLE} " " ${SH_VULKAN_DOXYFILE_DST})
 
     add_custom_target(docs-shvulkan
-        COMMAND ${DOXYGEN_EXECUTABLE} ${SH_VULKAN_DOXYFILEDST}
+        COMMAND ${DOXYGEN_EXECUTABLE} ${SH_VULKAN_DOXYFILE_DST}
         WORKING_DIRECTORY ${SH_VULKAN_ROOT_DIR}
         COMMENT "Generating HTML documentation"
         VERBATIM

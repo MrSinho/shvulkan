@@ -53,6 +53,8 @@ dkms.conf
 
 .vs/*
 .vscode/*
+.idea/*
+.shci/*
 build/*
 windows/*
 linux/*
