@@ -57,7 +57,7 @@ build/*
 windows/*
 linux/*
 bin/*
-
+result/*
 
 release-windows/*
 release-linux/*

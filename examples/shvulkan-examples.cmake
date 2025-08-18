@@ -28,11 +28,9 @@ endif()
 add_executable(shvulkan-compute-power-numbers ${SH_VULKAN_ROOT_DIR}/examples/src/compute/power-numbers.c)
 add_executable(shvulkan-clear-color           ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/clear-color.c)
 add_executable(shvulkan-scene                 ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/scene.c)
-#add_executable(shvulkan-headless              ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/headless.c)
 add_executable(shvulkan-headless-scene        ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/headless-scene.c)
 
 target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
-#target_link_libraries(shvulkan-headless              PUBLIC shvulkan vvo)
 target_link_libraries(shvulkan-headless-scene        PUBLIC shvulkan vvo)
 
 if (WIN32)
@@ -48,12 +46,16 @@ set_target_properties(
     shvulkan-compute-power-numbers 
     shvulkan-clear-color 
     shvulkan-scene
-    #shvulkan-headless
     shvulkan-headless-scene
 
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY      ${SH_VULKAN_BINARIES_DIR}
     VS_DEBUGGER_WORKING_DIRECTORY ${SH_VULKAN_BINARIES_DIR}
+)
+
+install(
+    TARGETS shvulkan-compute-power-numbers shvulkan-clear-color shvulkan-scene shvulkan-headless-scene 
+    RUNTIME DESTINATION bin
 )
 
 endfunction()
