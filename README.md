@@ -87,7 +87,8 @@ If the cmake option `SH_VULKAN_BUILD_EXAMPLES` is enabled, the additional [`glfw
 |--------------------------------|--------------------------------------------------------|
 | SH_VULKAN_VERSION              | Version of the `shvulkan` library                      |
 | SH_VULKAN_ROOT_DIR             | Absolute path to the root of the repository directory  |
-| SH_VULKAN_BINARIES_DIR         | Absolute path to the output binaries directory         |
+| SH_VULKAN_LIB_DIR              | Absolute path to the output library directory          |
+| SH_VULKAN_BIN_DIR              | Absolute path to the output executable directory       |
 
 ---
 

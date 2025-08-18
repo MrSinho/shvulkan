@@ -79,6 +79,7 @@
           installPhase = ''
             mkdir -p $out/bin
             mkdir -p $out/lib
+            cp $src/lib/shvulkan.a $out/lib/shvulkan.a
           '';
         }
       );

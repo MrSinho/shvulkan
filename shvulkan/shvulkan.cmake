@@ -3,8 +3,8 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
 
-if (NOT DEFINED SH_VULKAN_BINARIES_DIR)
-message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_BINARIES_DIR")
+if (NOT DEFINED SH_VULKAN_LIB_DIR)
+message(FATAL_ERROR "shvulkan cmake error: missing SH_VULKAN_LIB_DIR")
 endif()
 
 if (NOT DEFINED SH_VULKAN_ROOT_DIR)
@@ -39,6 +39,6 @@ target_include_directories(shvulkan PUBLIC
 )
 
 target_link_libraries(shvulkan PUBLIC ${Vulkan_LIBRARY})
-set_target_properties(shvulkan PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${SH_VULKAN_BINARIES_DIR})
+set_target_properties(shvulkan PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${SH_VULKAN_LIB_DIR})
 
 endfunction()
