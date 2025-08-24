@@ -16,25 +16,25 @@
         "SH_VULKAN_BUILD_EXAMPLES": "ON",
         "SH_VULKAN_BUILD_DOCS": "ON",
 
-        "Vulkan_INCLUDE_DIR": "@VULKAN_HEADERS@/include",
-        "Vulkan_LIBRARY": "@VULKAN_LOADER@/lib/libvulkan.so",
+        "Vulkan_INCLUDE_DIR": "/nix/store/ffmw6737gmngn5ycnsna1dmg3ai19vc2-vulkan-headers-1.4.313.0/include",
+        "Vulkan_LIBRARY": "/nix/store/mcc5zsprwwrkxbvi2j1s2kvhfx9pk23a-vulkan-loader-1.4.313.0/lib/libvulkan.so",
 
         "X11_X11_INCLUDE_PATH": "examples/external/libx11/include",
-        "X11_X11_LIB": "@X11@/lib/libX11.so",
+        "X11_X11_LIB": "/nix/store/cc238fjs80avjnhfqi4l8gwflqa8lb10-libX11-1.8.12/lib/libX11.so",
 
         "X11_Xrandr_INCLUDE_PATH": "examples/external/libxrandr/include",
-        "X11_Xrandr_LIB": "@XRANDR@/lib/libXrandr.so",
+        "X11_Xrandr_LIB": "/nix/store/5r4dl3vqnzmrkxzsap3ww4lrddnmvhqf-libXrandr-1.5.4/lib/libXrandr.so",
 
         "X11_Xinerama_INCLUDE_PATH": "examples/external/libxinerama/include",
-        "X11_Xinerama_LIB": "@XINERAMA@/lib/libXinerama.so",
+        "X11_Xinerama_LIB": "/nix/store/zqj73l64x4wch2jwq5vcqmzgn4v8ydsp-libXinerama-1.1.5/lib/libXinerama.so",
 
         "X11_Xkb_INCLUDE_PATH": "examples/external/libxkbcommon/include",
 
         "X11_Xcursor_INCLUDE_PATH": "examples/external/libxcursor/include",
-        "X11_Xcursor_LIB": "@XCURSOR@/lib/libXcursor.so",
+        "X11_Xcursor_LIB": "/nix/store/49f9ygyss6s07qk2rmirbc54z2a1ly9x-libXcursor-1.2.3/lib/libXcursor.so",
 
         "X11_Xi_INCLUDE_PATH": "examples/external/libxi/include",
-        "X11_Xi_LIB": "@XI@/lib/libXi.so",
+        "X11_Xi_LIB": "/nix/store/j3qcscizwichpp93iy3ibxhkxnhqpg7s-libXi-1.8.2/lib/libXi.so",
 
         "X11_Xshape_INCLUDE_PATH": "examples/external/libxext/include"
       }

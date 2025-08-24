@@ -77,7 +77,7 @@ cd result/examples/bin
 | CMake Target                   | Type            | Configure Flags             |
 |--------------------------------|-----------------|-----------------------------|
 | shvulkan                       | library         | /                           |
-| shvulkan-docs                  | Doxygen outputs | /                           |
+| shvulkan-docs                  | Doxygen outputs | SH_VULKAN_BUILD_DOCS=ON     |
 | shvulkan-clear-color           | executable      | SH_VULKAN_BUILD_EXAMPLES=ON |
 | shvulkan-scene                 | executable      | SH_VULKAN_BUILD_EXAMPLES=ON |
 | shvulkan-compute-example       | executable      | SH_VULKAN_BUILD_EXAMPLES=ON |

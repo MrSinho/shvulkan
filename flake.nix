@@ -15,23 +15,22 @@
       shvulkan = (with pkgs; stdenv.mkDerivation {
           pname = "shvulkan";
           version = "0.1.0";
-          src = pkgs.stdenv.mkDerivation {
-            pname = "shvulkan";
-            version = "0.1.0";
-            src = ./.;
-            # … your build inputs …
-          };
-          #src = pkgs.fetchgit {
-          #  url = "https://github.com/mrsinho/shvulkan";
-          #  rev = "331e85f0f388dfbbb820ee4dd0b290a9f9c311fe";
-          #  sha256 = "AuidYsYxljkSPlh++TM0vZ/eKRMnAOkJg6vWFdUZoZk=";# dummy 0000000000000000000000000000000000000000000000000000
-          #  fetchSubmodules = true;
+          #src = pkgs.lib.cleanSourceWith {
+          #  src = ./.;
+          #  filter = path: type: true;  # include everything
           #};
+          src = pkgs.fetchgit {
+            url = "https://github.com/mrsinho/shvulkan";
+            rev = "331e85f0f388dfbbb820ee4dd0b290a9f9c311fe";
+            sha256 = "0000000000000000000000000000000000000000000000000000";# dummy 0000000000000000000000000000000000000000000000000000
+            fetchSubmodules = true;
+          };
 
           nativeBuildInputs = [
+            pkgs.cmake
+            pkgs.ninja
+            pkgs.clang
             pkgs.pkg-config
-            clang
-            cmake
           ];
 
           buildInputs = [
@@ -56,7 +55,7 @@
           cmakeFlags = [
             "-Wno-dev"
             "-U'*'"
-            "-DSH_VULKAN_BUILD_EXAMPLES=ON"
+            "-DSH_VULKAN_BUILD_EXAMPLES=ON"############
             "-DSH_VULKAN_BUILD_DOCS=ON"
             
             "-DVulkan_INCLUDE_DIR=${pkgs.vulkan-headers}/include"
@@ -80,22 +79,14 @@
             "-DX11_Xi_LIB=${pkgs.xorg.libXi}/lib/libXi.so"
 
             "-DX11_Xshape_INCLUDE_PATH=examples/external/libxext/include"
+
+            "-DPKG_CONFIG_PATH=${pkgs.wayland.dev}/lib/pkgconfig:${pkgs.wayland-protocols}/lib/pkgconfig:${pkgs.libxkbcommon.dev}/lib/pkgconfig:${pkgs.xorg.libX11}/lib/pkgconfig:${pkgs.xorg.libXi}/lib/pkgconfig:${pkgs.xorg.libXrandr}/lib/pkgconfig:${pkgs.xorg.libXinerama}/lib/pkgconfig:${pkgs.xorg.libXcursor}/lib/pkgconfig"
           ];
 
           buildPhase = '' # Starts from build directory
             make -j $NIX_BUILD_CORES
             cd ../docs
             doxygen
-
-            substitute ${./CMakePresets.json.in} $out/CMakePresets.json \
-              --subst-var-by VULKAN_HEADERS ${pkgs.vulkan-headers} \
-              --subst-var-by VULKAN_LOADER  ${pkgs.vulkan-loader} \
-              --subst-var-by X11            ${pkgs.xorg.libX11} \
-              --subst-var-by XRANDR         ${pkgs.xorg.libXrandr} \
-              --subst-var-by XINERAMA       ${pkgs.xorg.libXinerama} \
-              --subst-var-by XCURSOR        ${pkgs.xorg.libXcursor} \
-              --subst-var-by XI             ${pkgs.xorg.libXi} \
-              --subst-var-by XEXT           ${pkgs.xorg.libXext}
           '';
 
           installPhase = '' # Starts from build directory (equal to $PWD)
@@ -110,7 +101,7 @@
             mkdir -p $out/examples/bin
             mkdir -p $out/examples/shaders/bin
             cp -r $PWD/../examples/shaders/bin $out/examples/shaders/
-            cp -r $PWD/../bin/*                $out/examples/bin/
+            cp -r $PWD/../bin/examples/*       $out/examples/bin/
           '';
 
         }
@@ -126,8 +117,9 @@
 
         nativeBuildInputs = [
           pkgs.cmake
-          pkgs.pkg-config
+          pkgs.ninja
           pkgs.clang
+          pkgs.pkg-config
         ];
 
         buildInputs = [
@@ -151,8 +143,11 @@
         ];
 
         LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ # Allows linking to shared libraries (e.g. through dlopen)
-          pkgs.wayland
           pkgs.vulkan-loader
+          pkgs.glfw-wayland
+          pkgs.wayland
+          pkgs.wayland-protocols
+          pkgs.wayland-scanner
           pkgs.libxkbcommon
           pkgs.xorg.libX11
           pkgs.xorg.libXrandr
@@ -174,7 +169,22 @@
           export X11_Xi_LIB=${pkgs.xorg.libXi}/lib/libXi.so
           export X11_Xshape_LIB=${pkgs.xorg.libXext}/lib/libXext.so
 
-          export PKG_CONFIG_PATH=${pkgs.wayland}/lib/pkgconfig:${pkgs.wayland-protocols}/lib/pkgconfig:${pkgs.libxkbcommon}/lib/pkgconfig:${pkgs.xorg.libX11}/lib/pkgconfig:${pkgs.xorg.libXi}/lib/pkgconfig:${pkgs.xorg.libXrandr}/lib/pkgconfig:${pkgs.xorg.libXinerama}/lib/pkgconfig:${pkgs.xorg.libXcursor}/lib/pkgconfig
+          export PKG_CONFIG_PATH=${pkgs.wayland.dev}/lib/pkgconfig:${pkgs.wayland-protocols}/lib/pkgconfig:${pkgs.libxkbcommon.dev}/lib/pkgconfig:${pkgs.xorg.libX11}/lib/pkgconfig:${pkgs.xorg.libXi}/lib/pkgconfig:${pkgs.xorg.libXrandr}/lib/pkgconfig:${pkgs.xorg.libXinerama}/lib/pkgconfig:${pkgs.xorg.libXcursor}/lib/pkgconfig
+
+          substitute ./CMakePresets.json.in ./CMakePresets.json \
+            --subst-var-by VULKAN_HEADERS ${pkgs.vulkan-headers} \
+            --subst-var-by VULKAN_LOADER  ${pkgs.vulkan-loader} \
+            --subst-var-by X11            ${pkgs.xorg.libX11} \
+            --subst-var-by XRANDR         ${pkgs.xorg.libXrandr} \
+            --subst-var-by XINERAMA       ${pkgs.xorg.libXinerama} \
+            --subst-var-by XCURSOR        ${pkgs.xorg.libXcursor} \
+            --subst-var-by XI             ${pkgs.xorg.libXi} \
+            --subst-var-by XEXT           ${pkgs.xorg.libXext} \
+            --subst-var-by XKBCOMMON_DEV  ${pkgs.libxkbcommon.dev}\
+            \
+            --subst-var-by WAYLAND_DEV       ${pkgs.wayland.dev}\
+            --subst-var-by WAYLAND_PROTOCOLS ${pkgs.wayland-protocols}\
+
 
         '';
 

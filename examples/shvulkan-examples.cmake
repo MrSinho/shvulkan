@@ -49,8 +49,8 @@ set_target_properties(
     shvulkan-headless-scene
 
     PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY      ${SH_VULKAN_BIN_DIR}
-    VS_DEBUGGER_WORKING_DIRECTORY ${SH_VULKAN_BIN_DIR}
+    RUNTIME_OUTPUT_DIRECTORY      ${SH_VULKAN_BIN_DIR}/examples
+    VS_DEBUGGER_WORKING_DIRECTORY ${SH_VULKAN_BIN_DIR}/examples
 )
 
 endfunction()
