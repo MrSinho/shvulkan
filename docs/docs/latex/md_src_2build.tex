@@ -7,9 +7,9 @@
  \href{https://github.com/mrsinho/shvulkan}{\texttt{}}\hypertarget{md_src_2build_autotoc_md10}{}\doxysection{\texorpdfstring{Clone and Build}{Clone and Build}}\label{md_src_2build_autotoc_md10}
 Open the terminal and run the following commands\+:
 
- 
 
-Tested on Win32 and X11.
+
+Be sure to have installed the official \href{https://www.lunarg.com/vulkan-sdk/}{\texttt{Vulkan® SDK}} from LunarG, then run the following commands\+:
 
 
 \begin{DoxyCode}{0}
@@ -19,6 +19,45 @@ Tested on Win32 and X11.
 \DoxyCodeLine{cd\ build}
 \DoxyCodeLine{cmake\ -\/DSH\_VULKAN\_BUILD\_EXAMPLES=ON\ ..}
 \DoxyCodeLine{cmake\ -\/-\/build\ .}
+\DoxyCodeLine{}
+\DoxyCodeLine{cd\ bin/examples}
+\DoxyCodeLine{}
+\DoxyCodeLine{start\ shvulkan-\/clear-\/color}
+\DoxyCodeLine{start\ shvulkan-\/scene}
+\DoxyCodeLine{start\ shvulkan-\/compute-\/power-\/numbers}
+
+\end{DoxyCode}
+
+
+
+
+On Debian and similar distribution before building the project you first need to install some packages\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo\ add-\/apt-\/repository\ -\/y\ ppa:oibaf/graphics-\/drivers}
+\DoxyCodeLine{sudo\ apt\ update\ -\/y}
+\DoxyCodeLine{}
+\DoxyCodeLine{sudo\ apt\ install\ -\/yy\ libvulkan-\/dev\ libvulkan1\ vulkan-\/utils\ mesa-\/vulkan-\/drivers}
+\DoxyCodeLine{sudo\ apt\ install\ -\/yy\ libxrandr-\/dev\ libxinerama-\/dev\ libxcursor-\/dev\ libxi-\/dev}
+
+\end{DoxyCode}
+
+
+Now run these commands to build\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git\ clone\ -\/-\/recursive\ https://github.com/mrsinho/shvulkan.git}
+\DoxyCodeLine{cd\ shvulkan}
+\DoxyCodeLine{mkdir\ build}
+\DoxyCodeLine{cd\ build}
+\DoxyCodeLine{cmake\ -\/DSH\_VULKAN\_BUILD\_EXAMPLES=ON\ ..}
+\DoxyCodeLine{cmake\ -\/-\/build\ .}
+\DoxyCodeLine{}
+\DoxyCodeLine{cd\ bin/examples}
+\DoxyCodeLine{}
+\DoxyCodeLine{./shvulkan-\/clear-\/color\ \&\ ./shvulkan-\/scene\ \&\ ./shvulkan-\/compute-\/power-\/numbers}
 
 \end{DoxyCode}
 

@@ -13,15 +13,41 @@
 <sect1 id="md_src_2build_1autotoc_md10">
 <title>Clone and Build</title><para>Open the terminal and run the following commands:</para>
 <para><image type="html" name="https://a11ybadges.com/badge?logo=windows" alt="Windows" inline="yes"></image>
- <image type="html" name="https://a11ybadges.com/badge?logo=debian" alt="Debian" inline="yes"></image>
 </para>
-<para>Tested on Win32 and X11.</para>
+<para>Be sure to have installed the official <ulink url="https://www.lunarg.com/vulkan-sdk/">Vulkan® SDK</ulink> from LunarG, then run the following commands:</para>
 <para><programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
 <codeline><highlight class="normal">mkdir<sp/>build</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>build</highlight></codeline>
 <codeline><highlight class="normal">cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
 <codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">cd<sp/>bin/examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">start<sp/>shvulkan-clear-color</highlight></codeline>
+<codeline><highlight class="normal">start<sp/>shvulkan-scene</highlight></codeline>
+<codeline><highlight class="normal">start<sp/>shvulkan-compute-power-numbers</highlight></codeline>
+</programlisting></para>
+<para><image type="html" name="https://a11ybadges.com/badge?logo=debian" alt="Debian" inline="yes"></image>
+</para>
+<para>On Debian and similar distribution before building the project you first need to install some packages:</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">sudo<sp/>add-apt-repository<sp/>-y<sp/>ppa:oibaf/graphics-drivers</highlight></codeline>
+<codeline><highlight class="normal">sudo<sp/>apt<sp/>update<sp/>-y</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">sudo<sp/>apt<sp/>install<sp/>-yy<sp/>libvulkan-dev<sp/>libvulkan1<sp/>vulkan-utils<sp/>mesa-vulkan-drivers</highlight></codeline>
+<codeline><highlight class="normal">sudo<sp/>apt<sp/>install<sp/>-yy<sp/>libxrandr-dev<sp/>libxinerama-dev<sp/>libxcursor-dev<sp/>libxi-dev</highlight></codeline>
+</programlisting></para>
+<para>Now run these commands to build:</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">mkdir<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">cd<sp/>bin/examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
 </programlisting></para>
 <para><image type="html" name="https://a11ybadges.com/badge?logo=nixos" alt="NixOS" inline="yes"></image>
 </para>

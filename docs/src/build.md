@@ -9,9 +9,9 @@
 
 Open the terminal and run the following commands:
 
-![Windows](https://a11ybadges.com/badge?logo=windows) ![Debian](https://a11ybadges.com/badge?logo=debian)
+![Windows](https://a11ybadges.com/badge?logo=windows)
 
-Tested on Win32 and X11.
+Be sure to have installed the official [Vulkan® SDK](https://www.lunarg.com/vulkan-sdk/) from LunarG, then run the following commands:
 
 ```bash
 git clone --recursive https://github.com/mrsinho/shvulkan.git
@@ -20,7 +20,42 @@ mkdir build
 cd build
 cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..
 cmake --build .
+
+cd bin/examples
+
+start shvulkan-clear-color
+start shvulkan-scene
+start shvulkan-compute-power-numbers
+
 ```
+
+![Debian](https://a11ybadges.com/badge?logo=debian)
+
+On Debian and similar distribution before building the project you first need to install some packages:
+
+```bash
+sudo add-apt-repository -y ppa:oibaf/graphics-drivers
+sudo apt update -y
+
+sudo apt install -yy libvulkan-dev libvulkan1 vulkan-utils mesa-vulkan-drivers
+sudo apt install -yy libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+```
+
+Now run these commands to build:
+
+```bash
+git clone --recursive https://github.com/mrsinho/shvulkan.git
+cd shvulkan
+mkdir build
+cd build
+cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..
+cmake --build .
+
+cd bin/examples
+
+./shvulkan-clear-color & ./shvulkan-scene & ./shvulkan-compute-power-numbers
+```
+
 
 ![NixOS](https://a11ybadges.com/badge?logo=nixos)
 

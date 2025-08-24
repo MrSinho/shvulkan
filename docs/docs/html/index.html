@@ -143,14 +143,38 @@ Build status</h1>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
 Clone and Build</h1>
 <p>Open the terminal and run the following commands:</p>
-<p><img src="https://a11ybadges.com/badge?logo=windows" alt="Windows" class="inline"/> <img src="https://a11ybadges.com/badge?logo=debian" alt="Debian" class="inline"/></p>
-<p>Tested on Win32 and X11.</p>
+<p><img src="https://a11ybadges.com/badge?logo=windows" alt="Windows" class="inline"/></p>
+<p>Be sure to have installed the official <a href="https://www.lunarg.com/vulkan-sdk/">Vulkan® SDK</a> from LunarG, then run the following commands:</p>
 <div class="fragment"><div class="line">git clone --recursive https://github.com/mrsinho/shvulkan.git</div>
 <div class="line">cd shvulkan</div>
 <div class="line">mkdir build</div>
 <div class="line">cd build</div>
 <div class="line">cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..</div>
 <div class="line">cmake --build .</div>
+<div class="line"> </div>
+<div class="line">cd bin/examples</div>
+<div class="line"> </div>
+<div class="line">start shvulkan-clear-color</div>
+<div class="line">start shvulkan-scene</div>
+<div class="line">start shvulkan-compute-power-numbers</div>
+</div><!-- fragment --><p><img src="https://a11ybadges.com/badge?logo=debian" alt="Debian" class="inline"/></p>
+<p>On Debian and similar distribution before building the project you first need to install some packages:</p>
+<div class="fragment"><div class="line">sudo add-apt-repository -y ppa:oibaf/graphics-drivers</div>
+<div class="line">sudo apt update -y</div>
+<div class="line"> </div>
+<div class="line">sudo apt install -yy libvulkan-dev libvulkan1 vulkan-utils mesa-vulkan-drivers</div>
+<div class="line">sudo apt install -yy libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev</div>
+</div><!-- fragment --><p>Now run these commands to build:</p>
+<div class="fragment"><div class="line">git clone --recursive https://github.com/mrsinho/shvulkan.git</div>
+<div class="line">cd shvulkan</div>
+<div class="line">mkdir build</div>
+<div class="line">cd build</div>
+<div class="line">cmake -DSH_VULKAN_BUILD_EXAMPLES=ON ..</div>
+<div class="line">cmake --build .</div>
+<div class="line"> </div>
+<div class="line">cd bin/examples</div>
+<div class="line"> </div>
+<div class="line">./shvulkan-clear-color &amp; ./shvulkan-scene &amp; ./shvulkan-compute-power-numbers</div>
 </div><!-- fragment --><p><img src="https://a11ybadges.com/badge?logo=nixos" alt="NixOS" class="inline"/></p>
 <p>Tested on X11 and Wayland graphics servers. The Nix flake lets the system choose the default windowing system.</p>
 <dl class="section warning"><dt>Warning</dt><dd>While testing with Wayland revealed no issues, there are some resizing issues when using X11.</dd></dl>

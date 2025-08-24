@@ -48,9 +48,9 @@
 <codeline></codeline>
 <codeline><highlight class="normal">Open<sp/>the<sp/>terminal<sp/>and<sp/>run<sp/>the<sp/>following<sp/>commands:</highlight></codeline>
 <codeline></codeline>
-<codeline><highlight class="normal">![Windows](https://a11ybadges.com/badge?logo=windows)<sp/>![Debian](https://a11ybadges.com/badge?logo=debian)</highlight></codeline>
+<codeline><highlight class="normal">![Windows](https://a11ybadges.com/badge?logo=windows)</highlight></codeline>
 <codeline></codeline>
-<codeline><highlight class="normal">Tested<sp/>on<sp/>Win32<sp/>and<sp/>X11.</highlight></codeline>
+<codeline><highlight class="normal">Be<sp/>sure<sp/>to<sp/>have<sp/>installed<sp/>the<sp/>official<sp/>[Vulkan®<sp/>SDK](https://www.lunarg.com/vulkan-sdk/)<sp/>from<sp/>LunarG,<sp/>then<sp/>run<sp/>the<sp/>following<sp/>commands:</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">```bash</highlight></codeline>
 <codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
@@ -59,6 +59,40 @@
 <codeline><highlight class="normal">cd<sp/>build</highlight></codeline>
 <codeline><highlight class="normal">cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
 <codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">cd<sp/>bin/examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">start<sp/>shvulkan-clear-color</highlight></codeline>
+<codeline><highlight class="normal">start<sp/>shvulkan-scene</highlight></codeline>
+<codeline><highlight class="normal">start<sp/>shvulkan-compute-power-numbers</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![Debian](https://a11ybadges.com/badge?logo=debian)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">On<sp/>Debian<sp/>and<sp/>similar<sp/>distribution<sp/>before<sp/>building<sp/>the<sp/>project<sp/>you<sp/>first<sp/>need<sp/>to<sp/>install<sp/>some<sp/>packages:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">sudo<sp/>add-apt-repository<sp/>-y<sp/>ppa:oibaf/graphics-drivers</highlight></codeline>
+<codeline><highlight class="normal">sudo<sp/>apt<sp/>update<sp/>-y</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">sudo<sp/>apt<sp/>install<sp/>-yy<sp/>libvulkan-dev<sp/>libvulkan1<sp/>vulkan-utils<sp/>mesa-vulkan-drivers</highlight></codeline>
+<codeline><highlight class="normal">sudo<sp/>apt<sp/>install<sp/>-yy<sp/>libxrandr-dev<sp/>libxinerama-dev<sp/>libxcursor-dev<sp/>libxi-dev</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Now<sp/>run<sp/>these<sp/>commands<sp/>to<sp/>build:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```bash</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
+<codeline><highlight class="normal">mkdir<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>-DSH_VULKAN_BUILD_EXAMPLES=ON<sp/>..</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">cd<sp/>bin/examples</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
 <codeline><highlight class="normal">```</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">![NixOS](https://a11ybadges.com/badge?logo=nixos)</highlight></codeline>
