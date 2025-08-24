@@ -62,6 +62,9 @@ linux/*
 bin/*
 result/*
 
+CMakeLists.txt.user
+CMakePresets.json
+
 release-windows/*
 release-linux/*
 
