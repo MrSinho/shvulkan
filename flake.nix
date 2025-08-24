@@ -16,9 +16,9 @@
           pname = "shvulkan";
           version = "0.1.0";
           src = pkgs.fetchgit {
-            url = "https://github.com/mrsinho/shvulkan";
-            rev = "331e85f0f388dfbbb820ee4dd0b290a9f9c311fe";
-            sha256 = "AuidYsYxljkSPlh++TM0vZ/eKRMnAOkJg6vWFdUZoZk=";# dummy 0000000000000000000000000000000000000000000000000000
+            url = "./.";
+            #rev = "331e85f0f388dfbbb820ee4dd0b290a9f9c311fe";
+            #sha256 = "AuidYsYxljkSPlh++TM0vZ/eKRMnAOkJg6vWFdUZoZk=";# dummy 0000000000000000000000000000000000000000000000000000
             fetchSubmodules = true;
           };
 
@@ -97,10 +97,28 @@
             cp -r $PWD/../bin/*                $out/examples/bin/
           '';
 
+          cmake-presets = pkgs.stdenv.mkDerivation {
+            pname = "cmake-presets";
+            version = "1.0";
+            src = ./.;
+
+            buildPhase = ''
+              substituteAll ${./CMakePresets.json.in} $out/CMakePresets.json
+            '';
+
+            VULKAN_HEADERS = pkgs.vulkan-headers;
+            VULKAN_LOADER  = pkgs.vulkan-loader;
+            X11            = pkgs.xorg.libX11;
+            XRANDR         = pkgs.xorg.libXrandr;
+            XINERAMA       = pkgs.xorg.libXinerama;
+            XCURSOR        = pkgs.xorg.libXcursor;
+            XI             = pkgs.xorg.libXi;
+            XEXT           = pkgs.xorg.libXext;
+          };
+
         }
       );
     in rec {
-
       defaultApp = flake-utils.lib.mkApp {
         drv = defaultPackage;
       };

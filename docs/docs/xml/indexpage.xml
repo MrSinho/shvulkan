@@ -11,8 +11,8 @@
  <ulink url="https://github.com/mrsinho/shvulkan"><image type="html" name="https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black" inline="yes"></image>
 </ulink></para>
 <para><image type="html" name="https://img.shields.io/github/commit-activity/t/mrsinho/shvulkan?style=for-the-badge&amp;label=Total%20commits&amp;color=ac162c" inline="yes"></image>
- <image type="html" name="https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey" inline="yes"></image>
-</para>
+ <ulink url="https://github.com/MrSinho/shvulkan/actions"><image type="html" name="https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey" inline="yes"></image>
+</ulink></para>
 <para><image type="html" name="https://img.shields.io/github/languages/code-size/mrsinho/shvulkan?style=for-the-badge&amp;labelColor=grey&amp;color=5277c3" inline="yes"></image>
  <image type="html" name="https://img.shields.io/github/languages/top/mrsinho/shvulkan?style=for-the-badge&amp;label=C%20language%20coverage&amp;color=7d78f2" inline="yes"></image>
 </para>
@@ -38,8 +38,8 @@
 <para><hruler/>
 </para>
 <sect1 id="index_1autotoc_md2">
-<title>Build status</title><para><image type="html" name="https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey" inline="yes"></image>
- <image type="html" name="https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&amp;logo=c&amp;logoColor=white&amp;labelColor=0AD0DF#.svg" inline="yes"></image>
+<title>Build status</title><para><ulink url="https://github.com/MrSinho/shvulkan/actions"><image type="html" name="https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey" inline="yes"></image>
+</ulink> <image type="html" name="https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&amp;logo=c&amp;logoColor=white&amp;labelColor=0AD0DF#.svg" inline="yes"></image>
  <image type="html" name="https://img.shields.io/badge/Compatible_with_C%2b%2b-3CFADC?style=for-the-badge&amp;logo=c%2b%2b&amp;logoColor=white&amp;labelColor=0AD0DF#.svg" inline="yes"></image>
 </para>
 <para>The examples are frequently being tested on <bold>Windows 11</bold>, <bold>NixOS</bold> (with Nix flake), <bold>Linux Mint</bold> (virtual machine and pc) with different compilers (<bold>MSVC</bold>, <bold>gcc</bold>), hardware configurations (RX580 4GB GDDR5, Radeon V Carrizo 500MB) and windowing systems (<bold>Win32</bold>, <bold>X11</bold>, <bold>Wayland</bold>).</para>
@@ -64,8 +64,9 @@
 </simplesect>
 <programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
-<codeline><highlight class="normal">nix<sp/>develop<sp/>--command<sp/>bash<sp/>#<sp/>enter<sp/>the<sp/>flake<sp/>environment</highlight></codeline>
-<codeline><highlight class="normal">cd<sp/>bin/linux</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>develop</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>result/examples/bin</highlight></codeline>
 <codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
 </programlisting></para>
 <para><image type="html" name="nixos-wayland-scene.png">NixOS Wayland</image>
@@ -111,7 +112,7 @@
 </table>
 </para>
 <para>If the cmake option <computeroutput>SH_VULKAN_BUILD_EXAMPLES</computeroutput> is enabled, the additional <ulink url="https://github.com/glfw/glfw"><computeroutput>glfw</computeroutput></ulink> target will be generated as a static library.</para>
-<para><table rows="4" cols="2"><row>
+<para><table rows="5" cols="2"><row>
 <entry thead="yes"><para>CMake Variable   </para>
 </entry><entry thead="yes"><para>About    </para>
 </entry></row>
@@ -124,8 +125,12 @@
 </entry><entry thead="no"><para>Absolute path to the root of the repository directory    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>SH_VULKAN_BINARIES_DIR   </para>
-</entry><entry thead="no"><para>Absolute path to the output binaries directory   </para>
+<entry thead="no"><para>SH_VULKAN_LIB_DIR   </para>
+</entry><entry thead="no"><para>Absolute path to the output library directory    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>SH_VULKAN_BIN_DIR   </para>
+</entry><entry thead="no"><para>Absolute path to the output executable directory   </para>
 </entry></row>
 </table>
 </para>

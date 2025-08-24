@@ -13,7 +13,7 @@
 <codeline><highlight class="normal">[![](https://img.shields.io/badge/GitHub_repository-3CFADC?style=for-the-badge&amp;logo=github&amp;logoColor=black)](https://github.com/mrsinho/shvulkan)</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">![](https://img.shields.io/github/commit-activity/t/mrsinho/shvulkan?style=for-the-badge&amp;label=Total%20commits&amp;color=ac162c)</highlight></codeline>
-<codeline><highlight class="normal">![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey)</highlight></codeline>
+<codeline><highlight class="normal">[![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey)](https://github.com/MrSinho/shvulkan/actions)</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">![](https://img.shields.io/github/languages/code-size/mrsinho/shvulkan?style=for-the-badge&amp;labelColor=grey&amp;color=5277c3)</highlight></codeline>
 <codeline><highlight class="normal">![](https://img.shields.io/github/languages/top/mrsinho/shvulkan?style=for-the-badge&amp;label=C%20language%20coverage&amp;color=7d78f2)</highlight></codeline>
@@ -39,7 +39,7 @@
 <codeline></codeline>
 <codeline><highlight class="normal">##<sp/>Build<sp/>status<sp/></highlight></codeline>
 <codeline></codeline>
-<codeline><highlight class="normal">![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey)<sp/>![](https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&amp;logo=c&amp;logoColor=white&amp;labelColor=0AD0DF#.svg)</highlight></codeline>
+<codeline><highlight class="normal">[![](https://img.shields.io/github/actions/workflow/status/mrsinho/shvulkan/test.yaml?style=for-the-badge&amp;label=Nix%20flake%20check&amp;labelColor=grey)](https://github.com/MrSinho/shvulkan/actions)<sp/>![](https://img.shields.io/badge/Written_in_C-3CFADC?style=for-the-badge&amp;logo=c&amp;logoColor=white&amp;labelColor=0AD0DF#.svg)</highlight></codeline>
 <codeline><highlight class="normal">![](https://img.shields.io/badge/Compatible_with_C%2b%2b-3CFADC?style=for-the-badge&amp;logo=c%2b%2b&amp;logoColor=white&amp;labelColor=0AD0DF#.svg)</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">The<sp/>examples<sp/>are<sp/>frequently<sp/>being<sp/>tested<sp/>on<sp/>**Windows<sp/>11**,<sp/>**NixOS**<sp/>(with<sp/>Nix<sp/>flake),<sp/>**Linux<sp/>Mint**<sp/>(virtual<sp/>machine<sp/>and<sp/>pc)<sp/>with<sp/>different<sp/>compilers<sp/>(**MSVC**,<sp/>**gcc**),<sp/>hardware<sp/>configurations<sp/>(RX580<sp/>4GB<sp/>GDDR5,<sp/>Radeon<sp/>V<sp/>Carrizo<sp/>500MB)<sp/>and<sp/>windowing<sp/>systems<sp/>(**Win32**,<sp/>**X11**,<sp/>**Wayland**).</highlight></codeline>
@@ -71,8 +71,9 @@
 <codeline><highlight class="normal">```bash</highlight></codeline>
 <codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
-<codeline><highlight class="normal">nix<sp/>develop<sp/>--command<sp/>bash<sp/>#<sp/>enter<sp/>the<sp/>flake<sp/>environment</highlight></codeline>
-<codeline><highlight class="normal">cd<sp/>bin/linux</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>develop</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>result/examples/bin</highlight></codeline>
 <codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
 <codeline><highlight class="normal">```</highlight></codeline>
 <codeline></codeline>
@@ -96,7 +97,8 @@
 <codeline><highlight class="normal">|--------------------------------|--------------------------------------------------------|</highlight></codeline>
 <codeline><highlight class="normal">|<sp/>SH_VULKAN_VERSION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Version<sp/>of<sp/>the<sp/>`shvulkan`<sp/>library<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
 <codeline><highlight class="normal">|<sp/>SH_VULKAN_ROOT_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>root<sp/>of<sp/>the<sp/>repository<sp/>directory<sp/><sp/>|</highlight></codeline>
-<codeline><highlight class="normal">|<sp/>SH_VULKAN_BINARIES_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>output<sp/>binaries<sp/>directory<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_LIB_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>output<sp/>library<sp/>directory<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">|<sp/>SH_VULKAN_BIN_DIR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/>Absolute<sp/>path<sp/>to<sp/>the<sp/>output<sp/>executable<sp/>directory<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">---</highlight></codeline>
 <codeline></codeline>

@@ -41,8 +41,9 @@
 <codeline><highlight class="normal">```bash</highlight></codeline>
 <codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>https://github.com/mrsinho/shvulkan.git</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>shvulkan</highlight></codeline>
-<codeline><highlight class="normal">nix<sp/>develop<sp/>--command<sp/>bash<sp/>#<sp/>enter<sp/>the<sp/>flake<sp/>environment</highlight></codeline>
-<codeline><highlight class="normal">cd<sp/>bin/linux</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">nix<sp/>develop</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>result/examples/bin</highlight></codeline>
 <codeline><highlight class="normal">./shvulkan-clear-color<sp/>&amp;<sp/>./shvulkan-scene<sp/>&amp;<sp/>./shvulkan-compute-power-numbers</highlight></codeline>
 <codeline><highlight class="normal">```</highlight></codeline>
 <codeline></codeline>

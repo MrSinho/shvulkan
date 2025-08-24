@@ -161,8 +161,9 @@ Clone and Build</h1>
 <dl class="section warning"><dt>Warning</dt><dd>While testing with Wayland revealed no issues, there are some resizing issues when using X11.</dd></dl>
 <div class="fragment"><div class="line">git clone --recursive https://github.com/mrsinho/shvulkan.git</div>
 <div class="line">cd shvulkan</div>
-<div class="line">nix develop --command bash # enter the flake environment</div>
-<div class="line">cd bin/linux</div>
+<div class="line">nix build</div>
+<div class="line">nix develop</div>
+<div class="line">cd result/examples/bin</div>
 <div class="line">./shvulkan-clear-color &amp; ./shvulkan-scene &amp; ./shvulkan-compute-power-numbers</div>
 </div><!-- fragment --><p><img src="../media/nixos-wayland-scene.png" alt="NixOS Wayland" class="inline"/></p>
 <hr  />

@@ -34,8 +34,9 @@ While testing with Wayland revealed no issues, there are some resizing issues wh
 \begin{DoxyCode}{0}
 \DoxyCodeLine{git\ clone\ -\/-\/recursive\ https://github.com/mrsinho/shvulkan.git}
 \DoxyCodeLine{cd\ shvulkan}
-\DoxyCodeLine{nix\ develop\ -\/-\/command\ bash\ \#\ enter\ the\ flake\ environment}
-\DoxyCodeLine{cd\ bin/linux}
+\DoxyCodeLine{nix\ build}
+\DoxyCodeLine{nix\ develop}
+\DoxyCodeLine{cd\ result/examples/bin}
 \DoxyCodeLine{./shvulkan-\/clear-\/color\ \&\ ./shvulkan-\/scene\ \&\ ./shvulkan-\/compute-\/power-\/numbers}
 
 \end{DoxyCode}

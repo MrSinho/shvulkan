@@ -1,0 +1,19 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x10\x00s\x00h\x00v\x00u\x00l\x00k\x00a\x00n)
+
+[CMake]
+Build Directory Count=1
+Current Build Directory Index-Host System=0
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=/home/sinho/Desktop/Github/shvulkan/build
+Build Type=Debug
+CMake Binary=/nix/store/a3w3ka2d796ghlhf31il839c0658m5ih-cmake-3.31.7/bin/cmake
+CMake Executable=/nix/store/a3w3ka2d796ghlhf31il839c0658m5ih-cmake-3.31.7/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=
+Runtime=Host System
+
+[Project]
+VersionControlSupport=kdevgit

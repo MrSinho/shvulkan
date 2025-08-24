@@ -1,0 +1,34 @@
+{
+  description = "My Vulkan project with presets";
+
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+  outputs = { self, nixpkgs }: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { inherit system; };
+  in {
+    packages.${system}.cmake-presets = pkgs.stdenv.mkDerivation {
+      pname = "cmake-presets";
+      version = "1.0";
+      src = ./.;
+
+      buildPhase = ''
+        substituteAll ${./CMakePresets.json.in} $out
+      '';
+
+      passthru = {
+        inherit (pkgs) vulkan-headers vulkan-loader xorg;
+      };
+
+      # Variables for substituteAll
+      VULKAN_HEADERS = pkgs.vulkan-headers;
+      VULKAN_LOADER  = pkgs.vulkan-loader;
+      X11            = pkgs.xorg.libX11;
+      XRANDR         = pkgs.xorg.libXrandr;
+      XINERAMA       = pkgs.xorg.libXinerama;
+      XCURSOR        = pkgs.xorg.libXcursor;
+      XI             = pkgs.xorg.libXi;
+      XEXT           = pkgs.xorg.libXext;
+    };
+  };
+}

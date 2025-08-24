@@ -6,7 +6,7 @@
 
  \href{https://github.com/mrsinho/shvulkan}{\texttt{ }}
 
- 
+ \href{https://github.com/MrSinho/shvulkan/actions}{\texttt{ }}
 
  
 
@@ -34,7 +34,7 @@
 
 \DoxyHorRuler{0}
 \hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{Build status}{Build status}}\label{index_autotoc_md2}
-  
+\href{https://github.com/MrSinho/shvulkan/actions}{\texttt{ }}  
 
 The examples are frequently being tested on {\bfseries{Windows 11}}, {\bfseries{Nix\+OS}} (with Nix flake), {\bfseries{Linux Mint}} (virtual machine and pc) with different compilers ({\bfseries{MSVC}}, {\bfseries{gcc}}), hardware configurations (RX580 4GB GDDR5, Radeon V Carrizo 500MB) and windowing systems ({\bfseries{Win32}}, {\bfseries{X11}}, {\bfseries{Wayland}}).\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{Clone and Build}{Clone and Build}}\label{index_autotoc_md3}
 Open the terminal and run the following commands\+:
@@ -66,8 +66,9 @@ While testing with Wayland revealed no issues, there are some resizing issues wh
 \begin{DoxyCode}{0}
 \DoxyCodeLine{git\ clone\ -\/-\/recursive\ https://github.com/mrsinho/shvulkan.git}
 \DoxyCodeLine{cd\ shvulkan}
-\DoxyCodeLine{nix\ develop\ -\/-\/command\ bash\ \#\ enter\ the\ flake\ environment}
-\DoxyCodeLine{cd\ bin/linux}
+\DoxyCodeLine{nix\ build}
+\DoxyCodeLine{nix\ develop}
+\DoxyCodeLine{cd\ result/examples/bin}
 \DoxyCodeLine{./shvulkan-\/clear-\/color\ \&\ ./shvulkan-\/scene\ \&\ ./shvulkan-\/compute-\/power-\/numbers}
 
 \end{DoxyCode}
@@ -114,7 +115,8 @@ If the cmake option {\ttfamily SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES} is
 \endhead
 SH\+\_\+\+VULKAN\+\_\+\+VERSION   &Version of the {\ttfamily shvulkan} library    \\\cline{1-2}
 SH\+\_\+\+VULKAN\+\_\+\+ROOT\+\_\+\+DIR   &Absolute path to the root of the repository directory    \\\cline{1-2}
-SH\+\_\+\+VULKAN\+\_\+\+BINARIES\+\_\+\+DIR   &Absolute path to the output binaries directory   \\\cline{1-2}
+SH\+\_\+\+VULKAN\+\_\+\+LIB\+\_\+\+DIR   &Absolute path to the output library directory    \\\cline{1-2}
+SH\+\_\+\+VULKAN\+\_\+\+BIN\+\_\+\+DIR   &Absolute path to the output executable directory   \\\cline{1-2}
 \end{longtabu}
 
 
