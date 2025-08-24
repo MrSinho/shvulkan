@@ -372,15 +372,15 @@ int main(void) {
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
-		int _width = 0;
-		int _height = 0;
-		glfwGetWindowSize(window, &_width, &_height);
+		int glfw_width = 0;
+		int glfw_height = 0;
+		glfwGetWindowSize(window, &glfw_width, &glfw_height);
 
-		if (_width != 0 && _height != 0) {//otherwise it's minimized
-			if (_width != width || _height != height) {//window is resized
+		if (glfw_width != 0 && glfw_height != 0) {//otherwise it's minimized
+			if (glfw_width != width || glfw_height != height) {//window is resized
 
-				width = _width;
-				height = _height;
+				width = glfw_width;
+				height = glfw_height;
 
 				resizeWindow(
 					width, height, instance, window, &surface, &surface_capabilities, physical_device,
@@ -573,7 +573,7 @@ void resizeWindow(
 	shCreateRenderpass(device, RENDERPASS_ATTACHMENT_COUNT, p_attachment_descriptions, 1, p_subpass, p_renderpass);
 	for (uint32_t i = 0; i < (*p_swapchain_image_count); i++) {
 		VkImageView image_views[RENDERPASS_ATTACHMENT_COUNT] = { p_swapchain_image_views[i] };
-		shCreateFramebuffer(device, *p_renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, new_width, new_width, 1, &p_framebuffers[i]);
+		shCreateFramebuffer(device, *p_renderpass, RENDERPASS_ATTACHMENT_COUNT, image_views, new_width, new_height, 1, &p_framebuffers[i]);
 	}
 }
 
