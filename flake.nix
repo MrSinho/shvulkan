@@ -80,6 +80,16 @@
             make -j $NIX_BUILD_CORES
             cd ../docs
             doxygen
+
+            substitute ${./CMakePresets.json.in} $out/CMakePresets.json \
+              --subst-var-by VULKAN_HEADERS ${pkgs.vulkan-headers} \
+              --subst-var-by VULKAN_LOADER  ${pkgs.vulkan-loader} \
+              --subst-var-by X11            ${pkgs.xorg.libX11} \
+              --subst-var-by XRANDR         ${pkgs.xorg.libXrandr} \
+              --subst-var-by XINERAMA       ${pkgs.xorg.libXinerama} \
+              --subst-var-by XCURSOR        ${pkgs.xorg.libXcursor} \
+              --subst-var-by XI             ${pkgs.xorg.libXi} \
+              --subst-var-by XEXT           ${pkgs.xorg.libXext}
           '';
 
           installPhase = '' # Starts from build directory (equal to $PWD)
@@ -96,25 +106,6 @@
             cp -r $PWD/../examples/shaders/bin $out/examples/shaders/
             cp -r $PWD/../bin/*                $out/examples/bin/
           '';
-
-          cmake-presets = pkgs.stdenv.mkDerivation {
-            pname = "cmake-presets";
-            version = "1.0";
-            src = ./.;
-
-            buildPhase = ''
-              substituteAll ${./CMakePresets.json.in} $out/CMakePresets.json
-            '';
-
-            VULKAN_HEADERS = pkgs.vulkan-headers;
-            VULKAN_LOADER  = pkgs.vulkan-loader;
-            X11            = pkgs.xorg.libX11;
-            XRANDR         = pkgs.xorg.libXrandr;
-            XINERAMA       = pkgs.xorg.libXinerama;
-            XCURSOR        = pkgs.xorg.libXcursor;
-            XI             = pkgs.xorg.libXi;
-            XEXT           = pkgs.xorg.libXext;
-          };
 
         }
       );
