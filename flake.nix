@@ -15,12 +15,18 @@
       shvulkan = (with pkgs; stdenv.mkDerivation {
           pname = "shvulkan";
           version = "0.1.0";
-          src = pkgs.fetchgit {
-            url = "./.";
-            #rev = "331e85f0f388dfbbb820ee4dd0b290a9f9c311fe";
-            #sha256 = "AuidYsYxljkSPlh++TM0vZ/eKRMnAOkJg6vWFdUZoZk=";# dummy 0000000000000000000000000000000000000000000000000000
-            fetchSubmodules = true;
+          src = pkgs.stdenv.mkDerivation {
+            pname = "shvulkan";
+            version = "0.1.0";
+            src = ./.;
+            # … your build inputs …
           };
+          #src = pkgs.fetchgit {
+          #  url = "https://github.com/mrsinho/shvulkan";
+          #  rev = "331e85f0f388dfbbb820ee4dd0b290a9f9c311fe";
+          #  sha256 = "AuidYsYxljkSPlh++TM0vZ/eKRMnAOkJg6vWFdUZoZk=";# dummy 0000000000000000000000000000000000000000000000000000
+          #  fetchSubmodules = true;
+          #};
 
           nativeBuildInputs = [
             pkgs.pkg-config
