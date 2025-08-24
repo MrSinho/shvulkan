@@ -61,7 +61,7 @@ start shvulkan-compute-power-numbers
 
 ![Debian](https://a11ybadges.com/badge?logo=debian)
 
-On Debian and similar distribution before building the project you first need to install some packages:
+On Debian and similar distributions before building the project you first need to install some packages:
 
 ```bash
 sudo add-apt-repository -y ppa:oibaf/graphics-drivers
