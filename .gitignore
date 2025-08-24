@@ -55,6 +55,7 @@ dkms.conf
 .vscode/*
 .idea/*
 .shci/*
+.kdev4/*
 build/*
 windows/*
 linux/*
