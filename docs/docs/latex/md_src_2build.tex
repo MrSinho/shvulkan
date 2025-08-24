@@ -1,10 +1,10 @@
-\chapter{Build shvulkan}
+\chapter{Build shvulkan }
 \hypertarget{md_src_2build}{}\label{md_src_2build}\index{Build shvulkan@{Build shvulkan}}
 \label{md_src_2build_autotoc_md9}%
 \Hypertarget{md_src_2build_autotoc_md9}%
 
 
- \href{https://github.com/mrsinho/shvulkan}{\texttt{ }}\hypertarget{md_src_2build_autotoc_md10}{}\doxysection{\texorpdfstring{Clone and Build}{Clone and Build}}\label{md_src_2build_autotoc_md10}
+ \href{https://github.com/mrsinho/shvulkan}{\texttt{}}\hypertarget{md_src_2build_autotoc_md10}{}\doxysection{\texorpdfstring{Clone and Build}{Clone and Build}}\label{md_src_2build_autotoc_md10}
 Open the terminal and run the following commands\+:
 
  
@@ -49,36 +49,36 @@ While testing with Wayland revealed no issues, there are some resizing issues wh
 \tabulinesep=1mm
 \begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
 \hline
-\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Target   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Configure Flags    }\\\cline{1-3}
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Target  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Configure Flags  }\\\cline{1-3}
 \endfirsthead
 \hline
 \endfoot
 \hline
-\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Target   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Configure Flags    }\\\cline{1-3}
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Target  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Configure Flags  }\\\cline{1-3}
 \endhead
-shvulkan   &library   &/    \\\cline{1-3}
-shvulkan-\/docs   &Doxygen outputs   &/    \\\cline{1-3}
-shvulkan-\/clear-\/color   &executable   &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES=ON    \\\cline{1-3}
-shvulkan-\/scene   &executable   &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES=ON    \\\cline{1-3}
-shvulkan-\/compute-\/example   &executable   &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES=ON   \\\cline{1-3}
+shvulkan  &library  &/  \\\cline{1-3}
+shvulkan-\/docs  &Doxygen outputs  &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+DOCS=ON  \\\cline{1-3}
+shvulkan-\/clear-\/color  &executable  &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES=ON  \\\cline{1-3}
+shvulkan-\/scene  &executable  &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES=ON  \\\cline{1-3}
+shvulkan-\/compute-\/example  &executable  &SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES=ON  \\\cline{1-3}
 \end{longtabu}
 
 
-If the cmake option {\ttfamily SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES} is enabled, the additional \href{https://github.com/glfw/glfw}{\texttt{ {\ttfamily glfw}}} target will be generated as a static library.
+If the cmake option {\ttfamily SH\+\_\+\+VULKAN\+\_\+\+BUILD\+\_\+\+EXAMPLES} is enabled, the additional \href{https://github.com/glfw/glfw}{\texttt{{\ttfamily glfw}}} target will be generated as a static library.
 
 \tabulinesep=1mm
 \begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
 \hline
-\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Variable   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ About    }\\\cline{1-2}
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Variable  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ About  }\\\cline{1-2}
 \endfirsthead
 \hline
 \endfoot
 \hline
-\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Variable   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ About    }\\\cline{1-2}
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CMake Variable  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ About  }\\\cline{1-2}
 \endhead
-SH\+\_\+\+VULKAN\+\_\+\+VERSION   &Version of the {\ttfamily shvulkan} library    \\\cline{1-2}
-SH\+\_\+\+VULKAN\+\_\+\+ROOT\+\_\+\+DIR   &Absolute path to the root of the repository directory    \\\cline{1-2}
-SH\+\_\+\+VULKAN\+\_\+\+BINARIES\+\_\+\+DIR   &Absolute path to the output binaries directory   \\\cline{1-2}
+SH\+\_\+\+VULKAN\+\_\+\+VERSION  &Version of the {\ttfamily shvulkan} library  \\\cline{1-2}
+SH\+\_\+\+VULKAN\+\_\+\+ROOT\+\_\+\+DIR  &Absolute path to the root of the repository directory  \\\cline{1-2}
+SH\+\_\+\+VULKAN\+\_\+\+BINARIES\+\_\+\+DIR  &Absolute path to the output binaries directory  \\\cline{1-2}
 \end{longtabu}
 
 

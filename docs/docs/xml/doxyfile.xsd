@@ -210,6 +210,7 @@
       <xsd:enumeration value="ECLIPSE_DOC_ID"/>
       <xsd:enumeration value="DISABLE_INDEX"/>
       <xsd:enumeration value="GENERATE_TREEVIEW"/>
+      <xsd:enumeration value="PAGE_OUTLINE_PANEL"/>
       <xsd:enumeration value="FULL_SIDEBAR"/>
       <xsd:enumeration value="ENUM_VALUES_PER_LINE"/>
       <xsd:enumeration value="SHOW_ENUM_VALUES"/>
@@ -302,6 +303,7 @@
       <xsd:enumeration value="GROUP_GRAPHS"/>
       <xsd:enumeration value="UML_LOOK"/>
       <xsd:enumeration value="UML_LIMIT_NUM_FIELDS"/>
+      <xsd:enumeration value="UML_MAX_EDGE_LABELS"/>
       <xsd:enumeration value="DOT_UML_DETAILS"/>
       <xsd:enumeration value="DOT_WRAP_THRESHOLD"/>
       <xsd:enumeration value="TEMPLATE_RELATIONS"/>

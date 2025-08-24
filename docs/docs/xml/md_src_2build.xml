@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.14.0" xml:lang="en-US">
   <compounddef id="md_src_2build" kind="page">
     <compoundname>md_src_2build</compoundname>
     <title>Build shvulkan</title>
@@ -42,53 +42,53 @@
 </sect1>
 <sect1 id="md_src_2build_1autotoc_md12">
 <title>CMake targets and variables</title><para><table rows="6" cols="3"><row>
-<entry thead="yes"><para>CMake Target   </para>
-</entry><entry thead="yes"><para>Type   </para>
-</entry><entry thead="yes"><para>Configure Flags    </para>
+<entry thead="yes"><para>CMake Target  </para>
+</entry><entry thead="yes"><para>Type  </para>
+</entry><entry thead="yes"><para>Configure Flags  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>shvulkan   </para>
-</entry><entry thead="no"><para>library   </para>
-</entry><entry thead="no"><para>/    </para>
+<entry thead="no"><para>shvulkan  </para>
+</entry><entry thead="no"><para>library  </para>
+</entry><entry thead="no"><para>/  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>shvulkan-docs   </para>
-</entry><entry thead="no"><para>Doxygen outputs   </para>
-</entry><entry thead="no"><para>/    </para>
+<entry thead="no"><para>shvulkan-docs  </para>
+</entry><entry thead="no"><para>Doxygen outputs  </para>
+</entry><entry thead="no"><para>SH_VULKAN_BUILD_DOCS=ON  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>shvulkan-clear-color   </para>
-</entry><entry thead="no"><para>executable   </para>
-</entry><entry thead="no"><para>SH_VULKAN_BUILD_EXAMPLES=ON    </para>
+<entry thead="no"><para>shvulkan-clear-color  </para>
+</entry><entry thead="no"><para>executable  </para>
+</entry><entry thead="no"><para>SH_VULKAN_BUILD_EXAMPLES=ON  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>shvulkan-scene   </para>
-</entry><entry thead="no"><para>executable   </para>
-</entry><entry thead="no"><para>SH_VULKAN_BUILD_EXAMPLES=ON    </para>
+<entry thead="no"><para>shvulkan-scene  </para>
+</entry><entry thead="no"><para>executable  </para>
+</entry><entry thead="no"><para>SH_VULKAN_BUILD_EXAMPLES=ON  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>shvulkan-compute-example   </para>
-</entry><entry thead="no"><para>executable   </para>
-</entry><entry thead="no"><para>SH_VULKAN_BUILD_EXAMPLES=ON   </para>
+<entry thead="no"><para>shvulkan-compute-example  </para>
+</entry><entry thead="no"><para>executable  </para>
+</entry><entry thead="no"><para>SH_VULKAN_BUILD_EXAMPLES=ON  </para>
 </entry></row>
 </table>
 </para>
 <para>If the cmake option <computeroutput>SH_VULKAN_BUILD_EXAMPLES</computeroutput> is enabled, the additional <ulink url="https://github.com/glfw/glfw"><computeroutput>glfw</computeroutput></ulink> target will be generated as a static library.</para>
 <para><table rows="4" cols="2"><row>
-<entry thead="yes"><para>CMake Variable   </para>
-</entry><entry thead="yes"><para>About    </para>
+<entry thead="yes"><para>CMake Variable  </para>
+</entry><entry thead="yes"><para>About  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>SH_VULKAN_VERSION   </para>
-</entry><entry thead="no"><para>Version of the <computeroutput>shvulkan</computeroutput> library    </para>
+<entry thead="no"><para>SH_VULKAN_VERSION  </para>
+</entry><entry thead="no"><para>Version of the <computeroutput>shvulkan</computeroutput> library  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>SH_VULKAN_ROOT_DIR   </para>
-</entry><entry thead="no"><para>Absolute path to the root of the repository directory    </para>
+<entry thead="no"><para>SH_VULKAN_ROOT_DIR  </para>
+</entry><entry thead="no"><para>Absolute path to the root of the repository directory  </para>
 </entry></row>
 <row>
-<entry thead="no"><para>SH_VULKAN_BINARIES_DIR   </para>
-</entry><entry thead="no"><para>Absolute path to the output binaries directory   </para>
+<entry thead="no"><para>SH_VULKAN_BINARIES_DIR  </para>
+</entry><entry thead="no"><para>Absolute path to the output binaries directory  </para>
 </entry></row>
 </table>
 </para>

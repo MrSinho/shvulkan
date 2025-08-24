@@ -1,12 +1,12 @@
-\chapter{Clear Color Example}
+\chapter{Clear Color Example }
 \hypertarget{md_src_2clear__color__example}{}\label{md_src_2clear__color__example}\index{Clear Color Example@{Clear Color Example}}
 \label{md_src_2clear__color__example_autotoc_md15}%
 \Hypertarget{md_src_2clear__color__example_autotoc_md15}%
 
 
- \href{https://github.com/mrsinho/shvulkan}{\texttt{ }}
+ \href{https://github.com/mrsinho/shvulkan}{\texttt{}}
 
-Setting up a Vulkan application involves several critical steps to ensure proper configuration and resource management for rendering. \href{https://github.com/MrSinho/shvulkan/blob/main/examples/src/graphics/clear-color.c}{\texttt{ This example ({\ttfamily shvulkan-\/clear-\/color})}} outlines the process from instance creation to frame presentation, integrating the various components and their roles.
+Setting up a Vulkan application involves several critical steps to ensure proper configuration and resource management for rendering. \href{https://github.com/MrSinho/shvulkan/blob/main/examples/src/graphics/clear-color.c}{\texttt{This example ({\ttfamily shvulkan-\/clear-\/color})}} outlines the process from instance creation to frame presentation, integrating the various components and their roles.
 
 \hypertarget{md_src_2clear__color__example_autotoc_md16}{}\doxysubsection{\texorpdfstring{Instance and Surface Creation}{Instance and Surface Creation}}\label{md_src_2clear__color__example_autotoc_md16}
 The Vulkan setup begins with creating a Vulkan instance using the {\ttfamily sh\+Create\+Instance} function. This step establishes the connection between the application and the Vulkan library, specifying the application and engine names, enabling validation layers for debugging, and defining required extensions and API versions. Following the instance creation, a window surface is created via {\ttfamily glfw\+Create\+Window\+Surface}. This surface allows Vulkan to render content to a window, interfacing directly with the windowing system.\hypertarget{md_src_2clear__color__example_autotoc_md17}{}\doxysubsection{\texorpdfstring{Physical Device and Queue Setup}{Physical Device and Queue Setup}}\label{md_src_2clear__color__example_autotoc_md17}

@@ -384,6 +384,8 @@ uint8\+\_\+t \mbox{\hyperlink{shVulkan_8h_aa9fb1a7b0e06ac4543f75298c0ca4fdb}{sh\
 \begin{DoxyCompactList}\small\item\em Updates descriptor set units in the pipeline pool. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
+\label{doc-define-members}
+\Hypertarget{shVulkan_8h_doc-define-members}
 \doxysubsection{Macro Definition Documentation}
 \Hypertarget{shVulkan_8h_a4f2eaae3258ecc9d23c25a434fff37f7}\index{shVulkan.h@{shVulkan.h}!SH\_FALSE@{SH\_FALSE}}
 \index{SH\_FALSE@{SH\_FALSE}!shVulkan.h@{shVulkan.h}}
@@ -739,6 +741,8 @@ This macro calls {\ttfamily \doxylink{shVulkan_8h_ab10f609829185e735e0612e8c2a23
 \end{DoxyCode}
 
 
+\label{doc-typedef-members}
+\Hypertarget{shVulkan_8h_doc-typedef-members}
 \doxysubsection{Typedef Documentation}
 \Hypertarget{shVulkan_8h_aaccfb38ea85b91664878d2596ec39da1}\index{shVulkan.h@{shVulkan.h}!ShImageChannelTypeFlags@{ShImageChannelTypeFlags}}
 \index{ShImageChannelTypeFlags@{ShImageChannelTypeFlags}!shVulkan.h@{shVulkan.h}}
@@ -768,6 +772,8 @@ Represents a collection of Vulkan pipeline objects and their related resources.
 
 This structure holds arrays of Vulkan pipelines, descriptor set layouts, descriptor pools, and other related resources required to manage and use Vulkan pipelines in a pipeline pool. 
 
+\label{doc-enum-members}
+\Hypertarget{shVulkan_8h_doc-enum-members}
 \doxysubsection{Enumeration Type Documentation}
 \Hypertarget{shVulkan_8h_a9d7f7eadebd45156134f5a2742d6e6e1}\index{shVulkan.h@{shVulkan.h}!ShImageChannelTypeFlags@{ShImageChannelTypeFlags}}
 \index{ShImageChannelTypeFlags@{ShImageChannelTypeFlags}!shVulkan.h@{shVulkan.h}}
@@ -803,6 +809,8 @@ SH\+\_\+\+IMAGE\+\_\+\+CHANNEL\+\_\+\+TYPE\+\_\+\+UNDEFINED&\\
 \end{DoxyEnumFields}
 
 
+\label{doc-func-members}
+\Hypertarget{shVulkan_8h_doc-func-members}
 \doxysubsection{Function Documentation}
 \Hypertarget{shVulkan_8h_a3d82b550f662b158986c904a1c6da096}\index{shVulkan.h@{shVulkan.h}!shAcquireSwapchainImage@{shAcquireSwapchainImage}}
 \index{shAcquireSwapchainImage@{shAcquireSwapchainImage}!shVulkan.h@{shVulkan.h}}
@@ -2986,7 +2994,7 @@ This function allocates descriptor set units for the pipeline pool.
 \hline
  & {\em descriptor\+\_\+set\+\_\+unit\+\_\+count} & Number of descriptor set units to allocate. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3012,7 +3020,7 @@ This function copies descriptor set layouts from source indices to destination i
 \hline
  & {\em dst\+\_\+set\+\_\+layout\+\_\+count} & Number of destination descriptor set layouts. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3040,7 +3048,7 @@ This function initializes a descriptor pool in the pipeline pool.
 \hline
  & {\em descriptor\+\_\+count} & Number of descriptors in the pool. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3068,7 +3076,7 @@ This function initializes descriptor set layouts in the pipeline pool.
 \hline
  & {\em set\+\_\+layout\+\_\+idx} & Index of the set layout to initialize. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3096,7 +3104,7 @@ This function initializes a descriptor set layout binding in the pipeline pool.
 \hline
  & {\em shader\+\_\+stage} & Shader stages that use this descriptor. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3122,7 +3130,7 @@ This function destroys a range of descriptor pools in the pipeline pool.
 \hline
  & {\em pool\+\_\+count} & Number of descriptor pools to destroy. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3148,7 +3156,7 @@ This function destroys a range of descriptor set layouts in the pipeline pool.
 \hline
  & {\em set\+\_\+layout\+\_\+count} & Number of descriptor set layouts to destroy. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3178,7 +3186,7 @@ This function sets the buffer information for descriptors in the pipeline pool.
 \hline
  & {\em buffer\+\_\+size} & Size of the buffer. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -3204,7 +3212,7 @@ This function updates the descriptor set units within the pipeline pool.
 \hline
  & {\em descriptor\+\_\+set\+\_\+unit\+\_\+count} & Number of descriptor set units to update. \\
 \hline
-\mbox{\texttt{ in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
+\mbox{\texttt{in,out}}  & {\em p\+\_\+pipeline\+\_\+pool} & Valid pointer to the \doxylink{structShVkPipelinePool}{Sh\+Vk\+Pipeline\+Pool} structure.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
