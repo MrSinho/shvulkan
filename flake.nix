@@ -20,9 +20,9 @@
           #  filter = path: type: true;  # include everything
           #};
           src = pkgs.fetchgit {
-            url = "https://github.com/mrsinho/shvulkan";
-            rev = "df81ffb022a99f99a5c48b4eb962fc4697df67d9";
-            sha256 = "+e72StGu4hZh6T2GlEdIMItIADtyXOUXIdaLuAPHuSk=";# dummy 0000000000000000000000000000000000000000000000000000
+            url = "https://github.com/mrsinho/shvulkan.git";
+            rev = "69fe61b6272ea20580508b2c66ea68c357e67732"; # git rev-parse HEAD
+            sha256 = "sha256-f7usFadasQkjHeTmtiEYV2pMNndP2onqz6c+ZPuGKFU="; # nix hash path --type sha256 .    or paste dummy 0000000000000000000000000000000000000000000000000000
             fetchSubmodules = true;
           };
 
