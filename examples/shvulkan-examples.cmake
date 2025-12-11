@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5...4.1.2)
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
