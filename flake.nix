@@ -21,8 +21,8 @@
           #};
           src = pkgs.fetchgit {
             url = "https://github.com/mrsinho/shvulkan.git";
-            rev = "69fe61b6272ea20580508b2c66ea68c357e67732"; # git rev-parse HEAD
-            sha256 = "sha256-f7usFadasQkjHeTmtiEYV2pMNndP2onqz6c+ZPuGKFU="; # nix hash path --type sha256 .    or paste dummy 0000000000000000000000000000000000000000000000000000
+            rev = "20e96be9ea829a90f42bed015e86635ba20e227a"; # git rev-parse HEAD
+            sha256 = "sha256-6w1DH+lgafxiS2+MGcJHjBlpvkBUBXfMphcsMm1EBl8="; # nix hash path --type sha256 .    or paste dummy 0000000000000000000000000000000000000000000000000000
             fetchSubmodules = true;
           };
 
