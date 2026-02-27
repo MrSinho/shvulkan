@@ -1,26 +1,6 @@
 { pkgs, ... }:
 
 let
-  buildInputs = [
-    pkgs.vulkan-tools
-    pkgs.vulkan-loader
-    pkgs.vulkan-helper
-    pkgs.vulkan-headers
-    pkgs.glfw
-    pkgs.kdePackages.wayland
-    pkgs.kdePackages.wayland-protocols
-    pkgs.wayland-scanner
-    pkgs.libxkbcommon.dev
-    pkgs.libX11.dev
-    pkgs.libXi.dev
-    pkgs.libXrandr.dev
-    pkgs.libXinerama.dev
-    pkgs.libXcursor.dev
-    pkgs.libXext.dev
-    pkgs.doxygen
-  ];
-in
-{
   nativeBuildInputs = [
     pkgs.cmake
     pkgs.ninja
@@ -133,20 +113,25 @@ in
       --subst-var-by WAYLAND_DEV       ${pkgs.wayland.dev}\
       --subst-var-by WAYLAND_PROTOCOLS ${pkgs.wayland-protocols}\
   '';
+in
+{
+  nativeBuildInputs = nativeBuildInputs;
+  buildInputs = buildInputs;
+  environmentSetup = environmentSetup;
 
-  shvulkan = stdenv.mkDerivation {
+  shvulkan = pkgs.stdenv.mkDerivation {
     pname = "shvulkan";
     version = "1.1.1";
 
     src = ./.;
 
-    nativeBuildInputs = pipeline.nativeBuildInputs;
-    buildInputs = pipeline.buildInputs;
+    nativeBuildInputs = nativeBuildInputs;
+    buildInputs = buildInputs;
 
-    cmakeFlags = pipeline.cmakeFlags;
+    cmakeFlags = cmakeFlags;
 
-    buildPhase = pipeline.buildPhase;
-    installPhase = pipeline.installPhase;
+    buildPhase = buildPhase;
+    installPhase = installPhase;
   
   };
 
