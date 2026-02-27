@@ -31,7 +31,7 @@
         nativeBuildInputs = pipeline.nativeBuildInputs;
         buildInputs = pipeline.buildInputs;
         #LD_LIBRARY_PATH = pipeline.LD_LIBRARY_PATH;
-        shellHook = pipeline.environmentSetup;
+        #shellHook = pipeline.environmentSetup;
       };
 
     }

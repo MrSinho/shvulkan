@@ -32,6 +32,7 @@ let
     "-U'*'"
     "-DSH_VULKAN_BUILD_EXAMPLES=ON"
     "-DSH_VULKAN_BUILD_DOCS=ON"
+    "-DSH_VULKAN_SKIP_HEADLESS_SCENE=ON"
     "-DSH_GLFW_CMAKE_CONFIG_PATH=${pkgs.glfw}/lib/cmake/glfw3/glfw3Config.cmake"
     
     # If dev outputs have been set correctly, no need to pass manually these libraries and headers
@@ -69,16 +70,19 @@ let
   '';
 
   installPhase = '' # Starts from build directory (equal to $PWD)
-    # Copy binaries
-    cp -r $PWD/../lib $out/lib
-    cp -r $PWD/../bin $out/bin
+    mkdir -p $out/lib $out/bin $out/docs $out/shvulkan $out/examples
 
-    # Copy source code
-    cp -r $PWD/../shvulkan $out/shvulkan
-    cp -r $PWD/../examples $out/examples
+    # Copy binaries
+    cp -r $PWD/../lib $out/
+    cp -r $PWD/../bin $out/
 
     # Copy docs
     cp -r $PWD/../docs $out/
+
+    # Copy source code
+    cp -r $PWD/../shvulkan $out/
+    cp -r $PWD/../examples $out/
+    
   '';
 
   # Shouldn't be needed anymore if the dev outputs have been set correctly
@@ -123,7 +127,7 @@ in
     pname = "shvulkan";
     version = "1.1.1";
 
-    src = ./.;
+    src = ./../.;
 
     nativeBuildInputs = nativeBuildInputs;
     buildInputs = buildInputs;

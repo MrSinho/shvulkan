@@ -21,21 +21,11 @@ else()
 add_subdirectory(${SH_VULKAN_ROOT_DIR}/examples/external/glfw)
 endif()
 
-#if (NOT TARGET vvo)
-#set(VVO_BINARIES_DIR ${SH_VULKAN_LIB_DIR})
-#set(VVO_ROOT_DIR     ${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs)
-#include(${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs/vvo/vvo.cmake)
-#build_vvo()
-#endif()
-
-
 add_executable(shvulkan-compute-power-numbers ${SH_VULKAN_ROOT_DIR}/examples/src/compute/power-numbers.c)
 add_executable(shvulkan-clear-color           ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/clear-color.c)
 add_executable(shvulkan-scene                 ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/scene.c)
-#add_executable(shvulkan-headless-scene        ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/headless-scene.c)
 
 target_link_libraries(shvulkan-compute-power-numbers PUBLIC shvulkan)
-#target_link_libraries(shvulkan-headless-scene        PUBLIC shvulkan vvo)
 
 if (WIN32)
 target_link_libraries(shvulkan-clear-color PUBLIC shvulkan glfw)
@@ -43,7 +33,6 @@ target_link_libraries(shvulkan-scene       PUBLIC shvulkan glfw)
 elseif (UNIX)
 target_link_libraries(shvulkan-clear-color    PUBLIC shvulkan glfw X11 m)
 target_link_libraries(shvulkan-scene          PUBLIC shvulkan glfw X11 m)
-#target_link_libraries(shvulkan-headless-scene PUBLIC m)
 endif(WIN32)
 
 set_target_properties(
@@ -56,5 +45,27 @@ set_target_properties(
     RUNTIME_OUTPUT_DIRECTORY      ${SH_VULKAN_BIN_DIR}/examples
     VS_DEBUGGER_WORKING_DIRECTORY ${SH_VULKAN_BIN_DIR}/examples
 )
+
+# Not fully implemented
+if (NOT DEFINED SH_VULKAN_SKIP_HEADLESS_SCENE)
+
+if (NOT TARGET vvo)
+set(VVO_BINARIES_DIR ${SH_VULKAN_LIB_DIR})
+set(VVO_ROOT_DIR     ${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs)
+include(${SH_VULKAN_ROOT_DIR}/examples/external/vulkan-virtual-outputs/vvo/vvo.cmake)
+build_vvo()
+endif()
+
+add_executable(shvulkan-headless-scene        ${SH_VULKAN_ROOT_DIR}/examples/src/graphics/headless-scene.c)
+target_link_libraries(shvulkan-headless-scene PUBLIC shvulkan vvo m)
+set_target_properties(
+    shvulkan-headless-scene
+
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY      ${SH_VULKAN_BIN_DIR}/examples
+    VS_DEBUGGER_WORKING_DIRECTORY ${SH_VULKAN_BIN_DIR}/examples
+)
+
+endif()
 
 endfunction()
