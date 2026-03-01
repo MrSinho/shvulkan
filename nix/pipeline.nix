@@ -35,6 +35,8 @@ let
     "-DSH_VULKAN_SKIP_HEADLESS_SCENE=ON"
     "-DSH_GLFW_CMAKE_CONFIG_PATH=${pkgs.glfw}/lib/cmake/glfw3/glfw3Config.cmake"
     
+    # GLFW relies on pkg-config files (`.pc`) to locate the required libraries, so should I
+
     # If dev outputs have been set correctly, no need to pass manually these libraries and headers
 
     #"-DVulkan_INCLUDE_DIR=${pkgs.vulkan-headers}/include"
@@ -69,20 +71,44 @@ let
     doxygen
   '';
 
+  pkgConfig = ''
+    prefix=$out
+    exec_prefix=${"\${prefix}"}
+    libdir=${"\${exec_prefix}"}/lib
+    includedir=${"\${prefix}"}/shvulkan/include
+
+    Name: shvulkan
+    Description: A C wrapper around the Vulkan API
+    Version: 1.1.1
+    URL: https://www.github.com/mrsinho/shvulkan
+    Requires.private:
+    Libs:
+    Libs.private: -lvulkan
+    Cflags: -I${"\${includedir}"}
+  '';
+
+  # See derivation outputs https://nix.dev/manual/nix/2.29/store/derivation/outputs
   installPhase = '' # Starts from build directory (equal to $PWD)
-    mkdir -p $out/lib $out/bin $out/docs $out/shvulkan $out/examples
+    
+    # Create out output (for shared libraries, executables, docs)
+    mkdir -p $out/bin
+    mkdir -p $out/docs
+    
+    # Create dev output (for static libraries, headers)
+    mkdir -p $dev/lib
+    mkdir -p $dev/include
+    mkdir -p $dev/lib/pkgconfig
 
-    # Copy binaries
-    cp -r $PWD/../lib $out/
-    cp -r $PWD/../bin $out/
-
-    # Copy docs
+    # Copy binaries to dev output
+    cp -r $PWD/../bin  $out/
     cp -r $PWD/../docs $out/
 
-    # Copy source code
-    cp -r $PWD/../shvulkan $out/
-    cp -r $PWD/../examples $out/
-    
+    # Copy static libraries and headers to dev closure
+    cp -r $PWD/../lib $dev/
+    cp -r $PWD/../shvulkan/include $dev/
+
+    # Generate pkg-config file
+    echo "${pkgConfig}" > $dev/lib/pkgconfig/shvulkan.pc
   '';
 
   # Shouldn't be needed anymore if the dev outputs have been set correctly
@@ -121,13 +147,14 @@ in
 {
   nativeBuildInputs = nativeBuildInputs;
   buildInputs = buildInputs;
-  environmentSetup = environmentSetup;
 
   shvulkan = pkgs.stdenv.mkDerivation {
     pname = "shvulkan";
     version = "1.1.1";
 
     src = ./../.;
+
+    outputs = [ "out" "dev" ]; # Pointed by $out and $dev
 
     nativeBuildInputs = nativeBuildInputs;
     buildInputs = buildInputs;
