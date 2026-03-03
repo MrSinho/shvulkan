@@ -32,8 +32,11 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-    - name: "Build flake"
-      run: nix build .
+    - name: "Build flake `out` output"
+      run: nix build .#shvulkan.out
+    
+    - name: "Build flake `dev` output"
+      run: nix build .#shvulkan.dev
 
     - name: "Check flake hash"
       run: nix flake check

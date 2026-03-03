@@ -92,6 +92,7 @@ let
     
     # Create out output (for shared libraries, executables, docs)
     mkdir -p $out/bin
+    mkdir -p $out/examples/shaders
     mkdir -p $out/docs
     
     # Create dev output (for static libraries, headers)
@@ -101,6 +102,7 @@ let
 
     # Copy binaries to dev output
     cp -r $PWD/../bin  $out/
+    cp -r $PWD/../examples/shaders/ $out/examples/
     cp -r $PWD/../docs $out/
 
     # Copy static libraries and headers to dev closure

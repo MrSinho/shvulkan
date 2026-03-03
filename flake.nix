@@ -19,19 +19,25 @@
 
       pipeline = import ./nix/pipeline.nix { inherit pkgs; };
 
-    in rec {
-      
-      defaultPackage = pipeline.shvulkan;
-      
-      defaultApp = flake-utils.lib.mkApp {
-        drv = defaultPackage;
+      shvulkanApp = flake-utils.lib.mkApp {
+        drv = pipeline.shvulkan;
       };
 
-      devShell = pkgs.mkShell {
+    in rec {
+
+      packages = {
+        shvulkan = pipeline.shvulkan;
+        default = pipeline.shvulkan;
+      };
+
+      apps = {
+        shvulkan = shvulkanApp;
+        default = shvulkanApp;
+      };
+
+      devShells.default = pkgs.mkShell {
         nativeBuildInputs = pipeline.nativeBuildInputs;
         buildInputs = pipeline.buildInputs;
-        #LD_LIBRARY_PATH = pipeline.LD_LIBRARY_PATH;
-        #shellHook = pipeline.environmentSetup;
       };
 
     }

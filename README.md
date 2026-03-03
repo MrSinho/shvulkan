@@ -164,10 +164,17 @@ Tested on X11 and Wayland graphics servers. The Nix flake lets the system choose
 > [!WARNING]
 > While testing with Wayland revealed no issues, there are some resizing issues when using X11.
 
+* Build examples and docs. Nix output is `out`:
 ```bash
-nix build .
-cd bin/examples
+nix build .#shvulkan.out
+cd result/bin/examples
 ./shvulkan-clear-color & ./shvulkan-scene & ./shvulkan-compute-power-numbers
+```
+
+* Build static library and generate pkgconfig file. Nix output is `dev`:
+```bash
+nix build .#shvulkan.dev
+cd result-dev
 ```
 
 ![NixOS Wayland](./docs/media/nixos-wayland-scene.png)
