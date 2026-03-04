@@ -38,6 +38,14 @@ target_include_directories(shvulkan PUBLIC
     ${SH_VULKAN_ROOT_DIR}/shvulkan/include
 )
 
+set(SH_VULKAN_PKG_CONFIG_SRC ${SH_VULKAN_ROOT_DIR}/shvulkan/shvulkan.pc.in)
+set(SH_VULKAN_PKG_CONFIG_DST ${SH_VULKAN_ROOT_DIR}/shvulkan/shvulkan.pc)
+
+configure_file(
+    ${SH_VULKAN_PKG_CONFIG_SRC}
+    ${SH_VULKAN_PKG_CONFIG_DST}
+)
+
 target_link_libraries(shvulkan PUBLIC ${Vulkan_LIBRARY})
 set_target_properties(shvulkan PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${SH_VULKAN_LIB_DIR})
 

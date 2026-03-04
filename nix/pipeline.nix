@@ -109,8 +109,8 @@ let
     cp -r $PWD/../lib $dev/
     cp -r $PWD/../shvulkan/include $dev/
 
-    # Generate pkg-config file
-    echo "${pkgConfig}" > $dev/lib/pkgconfig/shvulkan.pc
+    # Copy pkg-config file to dev closure
+    cp $PWD/../shvulkan/shvulkan.pc $dev/lib/pkgconfig/
   '';
 
   # Shouldn't be needed anymore if the dev outputs have been set correctly

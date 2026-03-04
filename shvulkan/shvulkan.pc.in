@@ -1,0 +1,13 @@
+prefix=@$SH_VULKAN_ROOT_DIR@
+exec_prefix=${prefix} # Legacy option for multi-arch builds
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: shvulkan
+Description: A C wrapper around the Vulkan API
+Version: 1.1.1
+URL: https://github.com/mrsinho/shvulkan
+Libs: -L${libdir} -lshvulkan
+# Libs.private: -lvulkan # prefer Requires.private if Vulkan has a pkgconfig file
+Requires.private: vulkan # cleaner option
+Cflags: -I${includedir}
