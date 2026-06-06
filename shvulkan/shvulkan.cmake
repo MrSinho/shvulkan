@@ -29,11 +29,13 @@ message(STATUS "shvulkan message: found Vulkan")
 message(STATUS "shvulkan message: Vulkan_INCLUDE_DIR: ${Vulkan_INCLUDE_DIR}")
 message(STATUS "shvulkan message: Vulkan_LIBRARY:     ${Vulkan_LIBRARY}")
 
-add_library(shvulkan STATIC 
+set(SH_VULKAN_LIBRARY shvulkan)
+
+add_library(${SH_VULKAN_LIBRARY} STATIC 
     ${SH_VULKAN_ROOT_DIR}/shvulkan/src/shvulkan/shVulkan.c
 )
 
-target_include_directories(shvulkan PUBLIC 
+target_include_directories(${SH_VULKAN_LIBRARY} PUBLIC 
     ${Vulkan_INCLUDE_DIR}
     ${SH_VULKAN_ROOT_DIR}/shvulkan/include
 )
@@ -46,7 +48,7 @@ configure_file(
     ${SH_VULKAN_PKG_CONFIG_DST}
 )
 
-target_link_libraries(shvulkan PUBLIC ${Vulkan_LIBRARY})
-set_target_properties(shvulkan PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${SH_VULKAN_LIB_DIR})
+target_link_libraries(${SH_VULKAN_LIBRARY} PUBLIC ${Vulkan_LIBRARY})
+set_target_properties(${SH_VULKAN_LIBRARY} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${SH_VULKAN_LIB_DIR})
 
 endfunction()

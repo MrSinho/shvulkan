@@ -33,7 +33,7 @@ let
     "-DSH_VULKAN_BUILD_EXAMPLES=ON"
     "-DSH_VULKAN_BUILD_DOCS=ON"
     "-DSH_VULKAN_SKIP_HEADLESS_SCENE=ON"
-    "-DSH_GLFW_CMAKE_CONFIG_PATH=${pkgs.glfw}/lib/cmake/glfw3/glfw3Config.cmake"
+    "-DSH_GLFW_CMAKE_CONFIG_PATH=${pkgs.glfw.dev}/lib/cmake/glfw3/glfw3Config.cmake"
     
     # GLFW relies on pkg-config files (`.pc`) to locate the required libraries, so should I
 

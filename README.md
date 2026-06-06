@@ -20,6 +20,9 @@
 ## Todo
 
 - add `package/lib/pkgconfig/shvulkan.pc` file for `pkg-config`
+- fix semaphores syncronization to avoid recreating semaphores for each frames (eats up lots of latency)
+
+---
 
 `shvulkan` is a lightweight and flexible wrapper around the Vulkan® API written completely in C, that makes it easier to work with graphics efficiently without writing thousands of lines of code.
 
@@ -49,6 +52,12 @@ The examples are frequently being tested on **Windows 11**, **NixOS** (with Nix 
   - Minimal clear color example
   - Scene example with indexed draw calls
   - Compute examples
+
+## Recommended Vulkan guides
+
+- [vklearn](www.vklearn.org)
+- [Sascha Willems Vulkan samples](www.github.com/SaschaWillems/Vulkan) 
+- [vkguide](www.vkguide.dev)
 
 ## CMake targets and variables
 

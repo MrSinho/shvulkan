@@ -3,8 +3,10 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
 
-set(SH_VULKAN_VERSION  "pre-release")
+set(SH_VULKAN_VERSION  "1.1.1")
 set(SH_VULKAN_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SH_VULKAN_REPO_URL "https://github.com/mrsinho/shvulkan")
+set(SH_VULKAN_DOCS_URL "https://github.com/mrsinho/shvulkan")
 
 
 
